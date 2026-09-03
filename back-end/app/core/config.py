@@ -99,7 +99,7 @@ class Settings(BaseSettings):
     OPEN_METEO_MIN_REQUEST_INTERVAL_SECONDS: float = 1.0
 
     # Phase 3: GDACS Global Disaster Alert and Coordination System Adapter
-    GDACS_ENDPOINT: str = "https://www.gdacs.org/gdacsapi/api/events/geteventlist/FEED"
+    GDACS_ENDPOINT: str = "https://www.gdacs.org/gdacsapi/api/events/geteventlist/SEARCH"
     GDACS_EVENT_TYPES: List[str] = ["FL", "TC", "DR", "WF"]
     GDACS_COUNTRY_CODE: str = "IND"
     GDACS_LOOKBACK_DAYS: int = 7

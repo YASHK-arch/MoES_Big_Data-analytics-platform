@@ -18,7 +18,7 @@ def test_ssrf_validator_allows_whitelisted_domains():
         "https://mausam.imd.gov.in/api/v1/aws_feed",
         "https://api.gdeltproject.org/api/v2/doc/doc",
         "https://mastodon.social/api/v1/timelines/tag/flood",
-        "https://www.gdacs.org/gdacsapi/api/events/geteventlist/FEED",
+        "https://www.gdacs.org/gdacsapi/api/events/geteventlist/SEARCH",
         "https://api.open-meteo.com/v1/forecast?latitude=19.07&longitude=72.87",
     ]
     for url in valid_urls:

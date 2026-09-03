@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import React, { useState } from "react";
+import { useNavigate, Link } from "react-router-dom";
 import {
   UserCheck,
   User,
@@ -12,25 +12,25 @@ import {
   CheckCircle2,
   Eye,
   EyeOff,
-} from 'lucide-react';
-import { Navbar } from '@/components/layout/Navbar';
-import { useAuth } from '@/context/AuthContext';
+} from "lucide-react";
+import { Navbar } from "@/components/layout/Navbar";
+import { useAuth } from "@/context/AuthContext";
 
 export const SignupPage: React.FC = () => {
   const navigate = useNavigate();
   const { signup, isLoading, isAuthenticated } = useAuth();
 
-  const [fullName, setFullName] = useState('');
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
+  const [fullName, setFullName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
   React.useEffect(() => {
     if (isAuthenticated) {
-      navigate('/citizen-dashboard', { replace: true });
+      navigate("/citizen-dashboard", { replace: true });
     }
   }, [isAuthenticated, navigate]);
 
@@ -39,31 +39,35 @@ export const SignupPage: React.FC = () => {
     setErrorMsg(null);
 
     if (!fullName.trim()) {
-      setErrorMsg('Please enter your full name.');
+      setErrorMsg("Please enter your full name.");
       return;
     }
     if (!email.trim()) {
-      setErrorMsg('Please enter your email address.');
+      setErrorMsg("Please enter your email address.");
       return;
     }
     if (!password) {
-      setErrorMsg('Please enter a secure password.');
+      setErrorMsg("Please enter a secure password.");
       return;
     }
     if (password.length < 8) {
-      setErrorMsg('Password must be at least 8 characters long.');
+      setErrorMsg("Password must be at least 8 characters long.");
       return;
     }
     if (password !== confirmPassword) {
-      setErrorMsg('Passwords do not match.');
+      setErrorMsg("Passwords do not match.");
       return;
     }
 
     try {
       await signup(fullName.trim(), email.trim(), password);
-      navigate('/citizen-dashboard', { replace: true });
+      navigate("/citizen-dashboard", { replace: true });
     } catch (err: unknown) {
-      setErrorMsg(err instanceof Error ? err.message : 'Registration failed. Please try again.');
+      setErrorMsg(
+        err instanceof Error
+          ? err.message
+          : "Registration failed. Please try again.",
+      );
     }
   };
 
@@ -89,7 +93,8 @@ export const SignupPage: React.FC = () => {
                   Create Citizen Account
                 </h1>
                 <p className="text-xs sm:text-sm text-slate-500 font-medium mt-0.5">
-                  Save your home location, receive proximity disaster alerts, and track eyewitness reports.
+                  Save your home location, receive proximity disaster alerts,
+                  and track eyewitness reports.
                 </p>
               </div>
             </div>
@@ -100,7 +105,10 @@ export const SignupPage: React.FC = () => {
                 role="alert"
                 className="flex items-start space-x-2.5 rounded-xl border border-red-200 bg-red-50/90 p-3.5 text-xs text-red-700 animate-in fade-in"
               >
-                <AlertCircle className="h-4 w-4 shrink-0 text-red-600 mt-0.5" aria-hidden="true" />
+                <AlertCircle
+                  className="h-4 w-4 shrink-0 text-red-600 mt-0.5"
+                  aria-hidden="true"
+                />
                 <span className="font-medium leading-relaxed">{errorMsg}</span>
               </div>
             )}
@@ -154,7 +162,7 @@ export const SignupPage: React.FC = () => {
                     <Lock className="h-4 w-4" aria-hidden="true" />
                   </div>
                   <input
-                    type={showPassword ? 'text' : 'password'}
+                    type={showPassword ? "text" : "password"}
                     required
                     minLength={8}
                     value={password}
@@ -165,7 +173,9 @@ export const SignupPage: React.FC = () => {
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    aria-label={showPassword ? 'Hide password' : 'Show password'}
+                    aria-label={
+                      showPassword ? "Hide password" : "Show password"
+                    }
                     className="absolute inset-y-0 right-0 pr-3.5 flex items-center text-slate-400 hover:text-slate-600 focus:outline-none transition-colors cursor-pointer"
                   >
                     {showPassword ? (
@@ -186,7 +196,7 @@ export const SignupPage: React.FC = () => {
                     <Lock className="h-4 w-4" aria-hidden="true" />
                   </div>
                   <input
-                    type={showConfirmPassword ? 'text' : 'password'}
+                    type={showConfirmPassword ? "text" : "password"}
                     required
                     minLength={8}
                     value={confirmPassword}
@@ -197,7 +207,11 @@ export const SignupPage: React.FC = () => {
                   <button
                     type="button"
                     onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                    aria-label={showConfirmPassword ? 'Hide confirm password' : 'Show confirm password'}
+                    aria-label={
+                      showConfirmPassword
+                        ? "Hide confirm password"
+                        : "Show confirm password"
+                    }
                     className="absolute inset-y-0 right-0 pr-3.5 flex items-center text-slate-400 hover:text-slate-600 focus:outline-none transition-colors cursor-pointer"
                   >
                     {showConfirmPassword ? (
@@ -216,7 +230,9 @@ export const SignupPage: React.FC = () => {
                   <span>Account Features</span>
                 </div>
                 <p className="text-[11px] text-emerald-700 leading-relaxed">
-                  Automatic location syncing across devices, immediate proximity alerts for severe cyclones and floods, and real-time review progress on eyewitness reports.
+                  Automatic location syncing across devices, immediate proximity
+                  alerts for severe cyclones and floods, and real-time review
+                  progress on eyewitness reports.
                 </p>
               </div>
 
@@ -227,7 +243,10 @@ export const SignupPage: React.FC = () => {
               >
                 {isLoading ? (
                   <>
-                    <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />
+                    <Loader2
+                      className="h-4 w-4 animate-spin"
+                      aria-hidden="true"
+                    />
                     <span>Creating Account...</span>
                   </>
                 ) : (
@@ -254,7 +273,7 @@ export const SignupPage: React.FC = () => {
             <div className="pt-2 flex justify-center">
               <button
                 type="button"
-                onClick={() => navigate('/')}
+                onClick={() => navigate("/welcome")}
                 className="inline-flex items-center space-x-1.5 text-xs font-semibold text-slate-500 hover:text-slate-800 transition-colors cursor-pointer"
               >
                 <ArrowLeft className="h-3.5 w-3.5" aria-hidden="true" />

@@ -1,25 +1,25 @@
-import { useEffect } from 'react';
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import '@/i18n';
-import { AuthProvider } from '@/context/AuthContext';
-import { ProtectedRoute } from '@/components/auth/ProtectedRoute';
-import { LocationProvider } from '@/context/LocationContext';
-import { realtimeService } from '@/services/realtimeService';
-import { HomePage } from '@/pages/HomePage';
-import { DashboardPage } from '@/pages/DashboardPage';
-import { LiveMapPage } from '@/pages/LiveMapPage';
-import { CitizenReportPage } from '@/pages/CitizenReportPage';
-import { TrackReportPage } from '@/pages/TrackReportPage';
-import { IncidentListPage } from '@/pages/IncidentListPage';
-import { IncidentDetailPage } from '@/pages/IncidentDetailPage';
-import { CitizenDashboardPage } from '@/pages/CitizenDashboardPage';
-import { NationalMapPage } from '@/pages/NationalMapPage';
-import { AdminVerificationQueuePage } from '@/pages/AdminVerificationQueuePage';
-import { AnalyticsPage } from '@/pages/AnalyticsPage';
-import { LoginPage } from '@/pages/LoginPage';
-import { SignupPage } from '@/pages/SignupPage';
-import { MyReportsPage } from '@/pages/MyReportsPage';
+import { useEffect } from "react";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import "@/i18n";
+import { AuthProvider, useAuth } from "@/context/AuthContext";
+import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
+import { LocationProvider } from "@/context/LocationContext";
+import { realtimeService } from "@/services/realtimeService";
+import { HomePage } from "@/pages/HomePage";
+import { DashboardPage } from "@/pages/DashboardPage";
+import { LiveMapPage } from "@/pages/LiveMapPage";
+import { CitizenReportPage } from "@/pages/CitizenReportPage";
+import { TrackReportPage } from "@/pages/TrackReportPage";
+import { IncidentListPage } from "@/pages/IncidentListPage";
+import { IncidentDetailPage } from "@/pages/IncidentDetailPage";
+import { CitizenDashboardPage } from "@/pages/CitizenDashboardPage";
+import { NationalMapPage } from "@/pages/NationalMapPage";
+import { AdminVerificationQueuePage } from "@/pages/AdminVerificationQueuePage";
+import { AnalyticsPage } from "@/pages/AnalyticsPage";
+import { LoginPage } from "@/pages/LoginPage";
+import { SignupPage } from "@/pages/SignupPage";
+import { MyReportsPage } from "@/pages/MyReportsPage";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -29,6 +29,24 @@ const queryClient = new QueryClient({
     },
   },
 });
+
+export function AuthGate() {
+  const { isAuthenticated, user } = useAuth();
+
+  if (!isAuthenticated) {
+    return <LoginPage />;
+  }
+
+  const role = (user?.role || "CITIZEN").toUpperCase();
+  const destination =
+    role === "ADMIN"
+      ? "/dashboard"
+      : role === "OPERATOR"
+        ? "/admin/queue"
+        : "/citizen-dashboard";
+
+  return <Navigate to={destination} replace />;
+}
 
 export function App() {
   useEffect(() => {
@@ -40,23 +58,76 @@ export function App() {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <AuthProvider>
-        <LocationProvider>
-          <BrowserRouter>
+      <BrowserRouter>
+        <AuthProvider>
+          <LocationProvider>
             <Routes>
-              <Route path="/" element={<HomePage />} />
-              <Route path="/citizen-dashboard" element={<CitizenDashboardPage />} />
-              <Route path="/national-map" element={<NationalMapPage />} />
-              <Route path="/dashboard" element={<DashboardPage />} />
-              <Route path="/incidents" element={<IncidentListPage />} />
-              <Route path="/incidents/:id" element={<IncidentDetailPage />} />
-              <Route path="/live-map" element={<LiveMapPage />} />
-              <Route path="/report" element={<CitizenReportPage />} />
-              <Route path="/track-report" element={<TrackReportPage />} />
+              <Route path="/" element={<AuthGate />} />
+              <Route path="/welcome" element={<HomePage />} />
+              <Route
+                path="/citizen-dashboard"
+                element={<CitizenDashboardPage />}
+              />
+              <Route
+                path="/national-map"
+                element={
+                  <ProtectedRoute roles={["CITIZEN", "OPERATOR", "ADMIN"]}>
+                    <NationalMapPage />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/dashboard"
+                element={
+                  <ProtectedRoute roles={["CITIZEN", "OPERATOR", "ADMIN"]}>
+                    <DashboardPage />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/incidents"
+                element={
+                  <ProtectedRoute roles={["CITIZEN", "OPERATOR", "ADMIN"]}>
+                    <IncidentListPage />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/incidents/:id"
+                element={
+                  <ProtectedRoute roles={["CITIZEN", "OPERATOR", "ADMIN"]}>
+                    <IncidentDetailPage />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/live-map"
+                element={
+                  <ProtectedRoute roles={["CITIZEN", "OPERATOR", "ADMIN"]}>
+                    <LiveMapPage />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/report"
+                element={
+                  <ProtectedRoute roles={["CITIZEN", "ADMIN"]}>
+                    <CitizenReportPage />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/track-report"
+                element={
+                  <ProtectedRoute roles={["CITIZEN", "ADMIN"]}>
+                    <TrackReportPage />
+                  </ProtectedRoute>
+                }
+              />
               <Route
                 path="/my-reports"
                 element={
-                  <ProtectedRoute roles={['CITIZEN', 'ADMIN']}>
+                  <ProtectedRoute roles={["CITIZEN", "ADMIN"]}>
                     <MyReportsPage />
                   </ProtectedRoute>
                 }
@@ -64,7 +135,7 @@ export function App() {
               <Route
                 path="/admin/queue"
                 element={
-                  <ProtectedRoute roles={['OPERATOR', 'ADMIN']}>
+                  <ProtectedRoute roles={["OPERATOR", "ADMIN"]}>
                     <AdminVerificationQueuePage />
                   </ProtectedRoute>
                 }
@@ -73,14 +144,21 @@ export function App() {
                 path="/verification"
                 element={<Navigate to="/admin/queue" replace />}
               />
-              <Route path="/analytics" element={<AnalyticsPage />} />
+              <Route
+                path="/analytics"
+                element={
+                  <ProtectedRoute roles={["CITIZEN", "OPERATOR", "ADMIN"]}>
+                    <AnalyticsPage />
+                  </ProtectedRoute>
+                }
+              />
               <Route path="/login" element={<LoginPage />} />
               <Route path="/signup" element={<SignupPage />} />
               <Route path="*" element={<Navigate to="/" replace />} />
             </Routes>
-          </BrowserRouter>
-        </LocationProvider>
-      </AuthProvider>
+          </LocationProvider>
+        </AuthProvider>
+      </BrowserRouter>
     </QueryClientProvider>
   );
 }

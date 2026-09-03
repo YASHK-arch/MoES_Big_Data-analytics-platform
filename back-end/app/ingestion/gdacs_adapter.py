@@ -5,7 +5,7 @@ disaster alerts affecting India. Produces NormalizedIngestionEvent records route
 stream:weather:events.
 
 GDACS API Contract:
-  GET https://www.gdacs.org/gdacsapi/api/events/geteventlist/FEED
+    GET https://www.gdacs.org/gdacsapi/api/events/geteventlist/SEARCH
       ?eventtype=FL,TC,DR,WF
       &country=IND
       &fromDate=YYYY-MM-DD
@@ -41,7 +41,7 @@ class GDACSAlertAdapter:
     humanitarian system. They are used directly as incident coordinates.
     """
 
-    GDACS_ENDPOINT = "https://www.gdacs.org/gdacsapi/api/events/geteventlist/FEED"
+    GDACS_ENDPOINT = "https://www.gdacs.org/gdacsapi/api/events/geteventlist/SEARCH"
     USER_AGENT = "NationalWeatherPlatform-SIH26069/1.0 (sih26069@weather-platform.gov.in)"
 
     # GDACS alert level → domain severity mapping
