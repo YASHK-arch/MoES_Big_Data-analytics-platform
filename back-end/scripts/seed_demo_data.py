@@ -4,7 +4,7 @@ import asyncio
 import os
 import sys
 import uuid
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 
 # Add parent directory to path so 'app' package imports work cleanly
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
@@ -16,6 +16,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.core.security import get_password_hash
 from app.db.session import async_session_factory
 from app.models.category import EventCategory
+from app.models.forecast import ForecastAdvisory
 from app.models.relief_center import ReliefCenter
 from app.models.report import WeatherReport
 from app.models.source import Source
@@ -309,12 +310,82 @@ async def seed_active_incidents(session: AsyncSession) -> None:
     print("✅ Seeded Active Verified Metro Weather Incidents.")
 
 
+async def seed_forecast_advisories(session: AsyncSession) -> None:
+    """Seed active official forecast advisories across representative Indian regions."""
+    now = datetime.now(timezone.utc)
+    advisories = [
+        {
+            "source_code": "NDMA_SACHET",
+            "hazard_type": "CYCLONE_TRACK",
+            "severity": "HIGH",
+            "advisory_title": "Cyclone Track Advisory - Arabian Sea Coast",
+            "advisory_text": "Forecast track indicates hazardous winds and heavy rainfall along the west coast.",
+            "geom": "LINESTRING(72.8777 19.0760, 72.6500 19.5000, 72.4000 20.0500)",
+        },
+        {
+            "source_code": "NDMA_SACHET",
+            "hazard_type": "FLOOD_WARNING",
+            "severity": "SEVERE",
+            "advisory_title": "Flood Warning Zone - Brahmaputra Basin",
+            "advisory_text": "Low-lying districts should prepare for river level rise and localized inundation.",
+            "geom": "POLYGON((91.5000 26.0000, 92.3000 26.0000, 92.3000 26.7000, 91.5000 26.7000, 91.5000 26.0000))",
+        },
+        {
+            "source_code": "IMD_NOWCAST",
+            "hazard_type": "HEAVY_RAINFALL",
+            "severity": "MODERATE",
+            "advisory_title": "Heavy Rainfall Watch - Bengaluru Region",
+            "advisory_text": "Thunderstorm activity and intense rainfall are possible during the advisory window.",
+            "geom": "POINT(77.5946 12.9716)",
+        },
+        {
+            "source_code": "NDMA_SACHET",
+            "hazard_type": "CYCLONE_TRACK",
+            "severity": "MODERATE",
+            "advisory_title": "Cyclone Track Advisory - Bay of Bengal",
+            "advisory_text": "Coastal authorities should monitor changing wind and rainfall conditions.",
+            "geom": "LINESTRING(87.6000 15.2000, 87.9000 16.0000, 88.2000 16.8000)",
+        },
+    ]
+
+    for advisory in advisories:
+        existing = await session.scalar(
+            select(ForecastAdvisory).where(
+                ForecastAdvisory.source_code == advisory["source_code"],
+                ForecastAdvisory.advisory_title == advisory["advisory_title"],
+            )
+        )
+        if existing:
+            existing.valid_from = now
+            existing.valid_until = now + timedelta(days=3)
+            continue
+
+        session.add(
+            ForecastAdvisory(
+                source_code=advisory["source_code"],
+                hazard_type=advisory["hazard_type"],
+                severity=advisory["severity"],
+                advisory_title=advisory["advisory_title"],
+                advisory_text=advisory["advisory_text"],
+                geom=WKTElement(advisory["geom"], srid=4326),
+                valid_from=now,
+                valid_until=now + timedelta(days=3),
+                issued_at=now,
+                raw_payload={"seed": True, "source_code": advisory["source_code"]},
+            )
+        )
+
+    await session.commit()
+    print("✅ Seeded 4 active forecast advisories.")
+
+
 async def main() -> None:
     print("🌱 Running National Weather Platform Database Seeder...")
     async with async_session_factory() as session:
         await seed_users(session)
         await seed_relief_centers(session)
         await seed_active_incidents(session)
+        await seed_forecast_advisories(session)
     print("🚀 All demo data seeded successfully!")
 
 

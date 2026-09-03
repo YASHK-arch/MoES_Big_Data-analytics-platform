@@ -6,10 +6,9 @@ stream:weather:events.
 
 GDACS API Contract:
     GET https://www.gdacs.org/gdacsapi/api/events/geteventlist/SEARCH
-      ?eventtype=FL,TC,DR,WF
-      &country=IND
-      &fromDate=YYYY-MM-DD
-      &toDate=YYYY-MM-DD
+    ?eventlist=FL,TC,DR,WF
+    &fromdate=YYYY-MM-DD
+    &todate=YYYY-MM-DD
 
 Alert levels: 1 = Green, 2 = Orange, 3 = Red.
 Event types: FL (Flood), TC (Tropical Cyclone), DR (Drought), WF (Wildfire), EQ (Earthquake).
@@ -125,10 +124,9 @@ class GDACSAlertAdapter:
         from_date = (now - timedelta(days=self.lookback_days)).strftime("%Y-%m-%d")
         to_date = now.strftime("%Y-%m-%d")
         return {
-            "eventtype": ",".join(self.event_types),
-            "country": self.country_code,
-            "fromDate": from_date,
-            "toDate": to_date,
+            "eventlist": ",".join(self.event_types),
+            "fromdate": from_date,
+            "todate": to_date,
         }
 
     @classmethod
@@ -302,6 +300,22 @@ class GDACSAlertAdapter:
             },
         )
 
+    def _matches_country(self, event: Dict[str, Any]) -> bool:
+        """Keep only events whose GDACS country metadata matches the configured country."""
+        target = self.country_code.strip().upper()
+        target_name = {"IND": "INDIA"}.get(target, target)
+        iso3 = str(event.get("iso3") or event.get("countrycode") or "").strip().upper()
+        if iso3:
+            return iso3 == target
+
+        country_value = event.get("country") or event.get("countryname")
+        countries = {
+            part.strip().upper()
+            for part in str(country_value or "").split(",")
+            if part.strip()
+        }
+        return target in countries or target_name in countries
+
     def _parse_response(self, data: Any) -> List[NormalizedIngestionEvent]:
         """Extract and parse the event list from the GDACS API response envelope."""
         raw_events: List[Dict[str, Any]] = []
@@ -337,6 +351,8 @@ class GDACSAlertAdapter:
 
         normalized: List[NormalizedIngestionEvent] = []
         for evt in raw_events:
+            if not self._matches_country(evt):
+                continue
             try:
                 result = self._parse_event(evt)
                 if result is not None:

@@ -59,9 +59,11 @@ def main():
     print("=" * 70)
 
     # 1. Run Alembic Database Migrations
-    print("\n[1/4] Running Alembic Database Migrations...")
-    venv_python = BACKEND_DIR / ".venv" / "bin" / "python"
-    venv_alembic = BACKEND_DIR / ".venv" / "bin" / "alembic"
+    print("\n[1/5] Running Alembic Database Migrations...")
+    venv_bin = "Scripts" if os.name == "nt" else "bin"
+    executable_suffix = ".exe" if os.name == "nt" else ""
+    venv_python = BACKEND_DIR / ".venv" / venv_bin / f"python{executable_suffix}"
+    venv_alembic = BACKEND_DIR / ".venv" / venv_bin / f"alembic{executable_suffix}"
 
     if not venv_python.exists():
         print(f"[ERROR] Virtual environment not found at {venv_python}")
@@ -71,17 +73,26 @@ def main():
     run_command([str(venv_alembic), "upgrade", "head"], cwd=BACKEND_DIR)
 
     # 2. Start Uvicorn Backend Dev Server
-    print("\n[2/4] Starting FastAPI Backend Dev Server (Port 8000)...")
-    venv_uvicorn = BACKEND_DIR / ".venv" / "bin" / "uvicorn"
+    print("\n[2/5] Starting FastAPI Backend Dev Server (Port 8000)...")
+    venv_uvicorn = BACKEND_DIR / ".venv" / venv_bin / f"uvicorn{executable_suffix}"
     spawn_process("Backend API", [str(venv_uvicorn), "app.main:app", "--host", "127.0.0.1", "--port", "8000", "--reload"], cwd=BACKEND_DIR)
 
     # 3. Start Outbox & Scheduler Background Workers
-    print("\n[3/4] Starting Transactional Outbox Worker...")
+    print("\n[3/5] Starting Transactional Outbox Worker...")
     spawn_process("Outbox Worker", [str(venv_python), "-m", "app.workers.run_outbox_worker"], cwd=BACKEND_DIR)
 
-    # 4. Start React Vite Frontend Dev Server
-    print("\n[4/4] Starting Frontend Vite Dev Server (Port 5173)...")
-    spawn_process("Frontend Vite", ["npm", "run", "dev"], cwd=FRONTEND_DIR)
+    # 4. Start orchestration dispatcher
+    print("\n[4/5] Starting Orchestration Dispatcher...")
+    spawn_process(
+        "Orchestration Dispatcher",
+        [str(venv_python), "-m", "app.workers.run_dispatcher"],
+        cwd=BACKEND_DIR,
+    )
+
+    # 5. Start React Vite Frontend Dev Server
+    print("\n[5/5] Starting Frontend Vite Dev Server (Port 5173)...")
+    npm_command = "npm.cmd" if os.name == "nt" else "npm"
+    spawn_process("Frontend Vite", [npm_command, "run", "dev"], cwd=FRONTEND_DIR)
 
     print("\n" + "=" * 70)
     print(" All platform services launched successfully!")
