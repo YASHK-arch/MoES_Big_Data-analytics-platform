@@ -313,6 +313,25 @@ class TestGDACSAdapter:
         assert adapter._map_severity("green") == "LOW"
         assert adapter._map_severity("Red") == "SEVERE"
 
+    def test_matches_country_multi_country(self):
+        """GDACS entries spanning multiple countries or delimited codes should match correctly."""
+        adapter = self._make_adapter()
+
+        # Comma-separated iso3
+        assert adapter._matches_country({"iso3": "BGD, IND"}) is True
+        # Slash-separated iso3
+        assert adapter._matches_country({"iso3": "IND/MMR"}) is True
+        # List of codes
+        assert adapter._matches_country({"countrycode": ["BGD", "IND"]}) is True
+        # Multi-country name even if iso3 is single foreign country
+        assert adapter._matches_country({"country": "India, Bangladesh", "iso3": "BGD"}) is True
+        # Delimited countryname
+        assert adapter._matches_country({"countryname": "Nepal | India"}) is True
+        # Completely disjoint country
+        assert adapter._matches_country({"country": "Bangladesh, Myanmar", "iso3": "BGD, MMR"}) is False
+        # Empty/missing fields
+        assert adapter._matches_country({}) is False
+
     @pytest.mark.asyncio
     async def test_fetch_raw_events_http_429_raises_adapter_error(self):
         """HTTP 429 from GDACS should raise AdapterFetchError."""

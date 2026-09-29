@@ -304,17 +304,33 @@ class GDACSAlertAdapter:
         """Keep only events whose GDACS country metadata matches the configured country."""
         target = self.country_code.strip().upper()
         target_name = {"IND": "INDIA"}.get(target, target)
-        iso3 = str(event.get("iso3") or event.get("countrycode") or "").strip().upper()
-        if iso3:
-            return iso3 == target
 
-        country_value = event.get("country") or event.get("countryname")
-        countries = {
-            part.strip().upper()
-            for part in str(country_value or "").split(",")
-            if part.strip()
-        }
-        return target in countries or target_name in countries
+        def extract_tokens(val: Any) -> set[str]:
+            if not val:
+                return set()
+            if isinstance(val, (list, tuple, set)):
+                tokens: set[str] = set()
+                for item in val:
+                    tokens.update(extract_tokens(item))
+                return tokens
+            raw_str = str(val).upper()
+            for delimiter in (",", "/", ";", "|"):
+                raw_str = raw_str.replace(delimiter, " ")
+            return {part.strip() for part in raw_str.split() if part.strip()}
+
+        iso3_tokens = extract_tokens(event.get("iso3") or event.get("countrycode"))
+        if target in iso3_tokens or target_name in iso3_tokens:
+            return True
+
+        country_tokens = extract_tokens(event.get("country") or event.get("countryname"))
+        if target in country_tokens or target_name in country_tokens:
+            return True
+
+        raw_country = str(event.get("country") or event.get("countryname") or "").upper()
+        if target_name in raw_country or target in raw_country:
+            return True
+
+        return False
 
     def _parse_response(self, data: Any) -> List[NormalizedIngestionEvent]:
         """Extract and parse the event list from the GDACS API response envelope."""
