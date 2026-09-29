@@ -212,6 +212,25 @@ class DuplicateStageHandler:
             )
             fp = hashlib.sha256(fp_payload.encode("utf-8")).hexdigest()
 
+            # When a new report clusters with an existing report, trigger targeted credibility update
+            # on the matched report so its crowd corroboration factor reflects the new cluster size.
+            if is_clustered and cluster_res.matched_report_id:
+                try:
+                    from app.orchestration.incident_pipeline import incident_pipeline
+
+                    await incident_pipeline.execute_single_stage(
+                        db=db,
+                        incident_id=cluster_res.matched_report_id,
+                        stage_name=StageName.CREDIBILITY,
+                        commit=False,
+                    )
+                except Exception as ex:
+                    logger.warning(
+                        "Failed to update credibility for matched cluster incident %s: %s",
+                        cluster_res.matched_report_id,
+                        ex,
+                    )
+
             return StageExecutionResult(
                 stage_name=StageName.DUPLICATE,
                 outcome=outcome,

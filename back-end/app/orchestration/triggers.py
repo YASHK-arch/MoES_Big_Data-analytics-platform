@@ -35,10 +35,13 @@ async def on_incident_ingested(
     db: AsyncSession,
     incident_id: uuid.UUID,
     commit: bool = True,
+    force: bool = False,
 ) -> PipelineOrchestrationState:
     """Trigger full forward intelligence pipeline for a newly ingested incident."""
     logger.info("Triggering full pipeline for new incident %s", incident_id)
-    return await incident_pipeline.execute_pipeline(db=db, incident_id=incident_id, commit=commit)
+    return await incident_pipeline.execute_pipeline(
+        db=db, incident_id=incident_id, commit=commit, force=force
+    )
 
 
 async def on_evidence_ingested(
@@ -109,15 +112,18 @@ async def on_observation_ingested(
     time_min = obs.observed_at - time_window
     time_max = obs.observed_at + time_window
 
+    from geoalchemy2 import Geography
+
     cand_stmt = (
         select(WeatherReport)
+        .join(WeatherObservation, WeatherObservation.id == obs.id)
         .where(
             WeatherReport.geom.isnot(None),
             WeatherReport.occurred_at >= time_min,
             WeatherReport.occurred_at <= time_max,
             func.ST_DWithin(
-                func.ST_GeogFromWKB(WeatherReport.geom),
-                func.ST_GeogFromWKB(obs.geom),
+                func.cast(WeatherReport.geom, Geography),
+                func.cast(WeatherObservation.geom, Geography),
                 policy.spatial_radius_meters,
             ),
         )

@@ -69,10 +69,15 @@ class IncidentPipeline:
         db: AsyncSession,
         incident_id: uuid.UUID,
         commit: bool = True,
+        force: bool = False,
     ) -> PipelineOrchestrationState:
         """Run all eligible intelligence stages for target incident with failure isolation."""
-        # 1. Fetch target incident
-        stmt = select(WeatherReport).where(WeatherReport.id == incident_id)
+        # 1. Fetch target incident with row lock to serialize concurrent executions (inline + worker)
+        stmt = (
+            select(WeatherReport)
+            .where(WeatherReport.id == incident_id)
+            .with_for_update()
+        )
         res = await db.execute(stmt)
         report = res.scalar_one_or_none()
 
@@ -81,6 +86,21 @@ class IncidentPipeline:
             raise ValueError(f"Incident {incident_id} not found")
 
         state = load_orchestration_state(report)
+
+        # Idempotency guard: prevent redundant re-execution when already completed
+        if (
+            not force
+            and report.processing_status == "COMPLETED"
+            and state.overall_readiness in (OverallReadiness.INTELLIGENCE_READY, OverallReadiness.INTELLIGENCE_PARTIAL)
+        ):
+            logger.info(
+                "Incident %s is already %s with readiness %s; skipping redundant pipeline execution.",
+                incident_id,
+                report.processing_status,
+                state.overall_readiness.value,
+            )
+            return state
+
         stages_order = DependencyGraph.get_pipeline_execution_order()
         current_report: WeatherReport = report
 
