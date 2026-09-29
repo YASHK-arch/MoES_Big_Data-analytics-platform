@@ -3,9 +3,11 @@
 Exposes GeoJSON vector feature layers and spatial clusters for Leaflet mapping.
 """
 
-from typing import Optional, Tuple
+import hashlib
+from typing import Any, Optional, Tuple
 
-from fastapi import APIRouter, Depends, HTTPException, Query, status
+import orjson
+from fastapi import APIRouter, Depends, HTTPException, Query, Request, Response, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.db.session import get_db
@@ -13,6 +15,32 @@ from app.schemas.geo import GeoJSONFeatureCollection
 from app.services.incident_query_service import incident_query_service
 
 router = APIRouter()
+
+
+def create_cached_geojson_response(request: Request, geojson_data: Any) -> Response:
+    """Format GeoJSON response with Cache-Control and ETag headers, honoring If-None-Match with 304."""
+    content_bytes = orjson.dumps(geojson_data.model_dump(mode="json"))
+    etag = f'"{hashlib.sha256(content_bytes).hexdigest()}"'
+    headers = {
+        "ETag": etag,
+        "Cache-Control": "public, max-age=30",
+    }
+
+    if_none_match = request.headers.get("if-none-match")
+    if if_none_match:
+        client_etags = [e.strip() for e in if_none_match.split(",")]
+        if etag in client_etags or etag.strip('"') in [e.strip('"') for e in client_etags] or "*" in client_etags:
+            return Response(
+                status_code=status.HTTP_304_NOT_MODIFIED,
+                headers=headers,
+            )
+
+    return Response(
+        content=content_bytes,
+        status_code=status.HTTP_200_OK,
+        media_type="application/json",
+        headers=headers,
+    )
 
 
 @router.get(
@@ -29,6 +57,7 @@ router = APIRouter()
     include_in_schema=False,
 )
 async def get_geo_incidents(
+    request: Request,
     bbox: Optional[str] = Query(
         None,
         description="Bounding box min_lon,min_lat,max_lon,max_lat (optional for national view)",
@@ -41,7 +70,7 @@ async def get_geo_incidents(
         default=24, ge=1, le=720, description="Hours window (optional; omit for all-time)"
     ),
     db: AsyncSession = Depends(get_db),
-) -> GeoJSONFeatureCollection:
+) -> Any:
     """Retrieve GeoJSON FeatureCollection bounded by PostGIS viewport or national overview."""
     parsed_bbox: Optional[Tuple[float, float, float, float]] = None
     if bbox is not None:
@@ -99,13 +128,14 @@ async def get_geo_incidents(
 
         parsed_bbox = (min_lon, min_lat, max_lon, max_lat)
 
-    return await incident_query_service.get_geo_incidents(
+    geojson_data = await incident_query_service.get_geo_incidents(
         session=db,
         bbox=parsed_bbox,
         status=status_filter,
         category=category,
         hours_ago=hours_ago,
     )
+    return create_cached_geojson_response(request, geojson_data)
 
 
 @router.get(
@@ -116,20 +146,22 @@ async def get_geo_incidents(
     description="Retrieval of spatial incidents within a radius around user location.",
 )
 async def get_nearby_geo_incidents(
+    request: Request,
     lat: float = Query(..., ge=-90.0, le=90.0, description="Center latitude"),
     lng: float = Query(..., ge=-180.0, le=180.0, description="Center longitude"),
     radius_km: float = Query(default=25.0, ge=1.0, le=500.0, description="Proximity radius in km"),
     status_filter: Optional[str] = Query(None, alias="status", description="Verification status filter"),
     db: AsyncSession = Depends(get_db),
-) -> GeoJSONFeatureCollection:
+) -> Any:
     """Retrieve GeoJSON FeatureCollection bounded by PostGIS distance radius for citizen dashboard."""
-    return await incident_query_service.get_nearby_incidents(
+    geojson_data = await incident_query_service.get_nearby_incidents(
         session=db,
         lat=lat,
         lng=lng,
         radius_km=radius_km,
         status=status_filter,
     )
+    return create_cached_geojson_response(request, geojson_data)
 
 
 @router.get(
@@ -140,13 +172,15 @@ async def get_nearby_geo_incidents(
     description="Retrieval of active weather forecast advisories, cyclone tracks, and warning zones.",
 )
 async def get_geo_forecast_advisories(
+    request: Request,
     hazard_type: Optional[str] = Query(None, description="Hazard category filter"),
     active_only: bool = Query(default=True, description="Filter to currently active advisories"),
     db: AsyncSession = Depends(get_db),
-) -> GeoJSONFeatureCollection:
+) -> Any:
     """Retrieve GeoJSON FeatureCollection of official forecast advisories."""
-    return await incident_query_service.get_forecast_advisories(
+    geojson_data = await incident_query_service.get_forecast_advisories(
         session=db,
         active_only=active_only,
         hazard_type=hazard_type,
     )
+    return create_cached_geojson_response(request, geojson_data)

@@ -5,7 +5,8 @@ from typing import Any
 from fastapi import FastAPI, HTTPException, Request, status
 from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import JSONResponse
+from fastapi.responses import JSONResponse, ORJSONResponse
+from starlette.middleware.gzip import GZipMiddleware
 
 from app.api.v1.router import api_v1_router
 from app.core.config import settings
@@ -20,7 +21,10 @@ def create_application() -> FastAPI:
         docs_url=None if is_prod else "/docs",
         redoc_url=None if is_prod else "/redoc",
         openapi_url=None if is_prod else f"{settings.API_V1_STR}/openapi.json",
+        default_response_class=ORJSONResponse,
     )
+
+    app.add_middleware(GZipMiddleware, minimum_size=1000)
 
     # CORS Middleware configuration
     if settings.ALLOWED_ORIGINS:
