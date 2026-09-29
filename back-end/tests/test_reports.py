@@ -268,7 +268,7 @@ async def test_get_report_by_tracking_id_success():
         assert data["location"]["latitude"] == 28.6139
         assert data["location"]["longitude"] == 77.2090
         assert data["location"]["name"] == "Connaught Place, New Delhi"
-        assert data["category"]["code"] == "EXTREME_HEAT"
+        assert data["category"]["code"] in ("HEATWAVE", "EXTREME_HEAT")
 
 
 @pytest.mark.asyncio
@@ -714,3 +714,130 @@ async def test_legacy_triage_routes_and_admin_reports_absent():
 
         res_admin_verify = await client.post(f"/api/v1/admin/reports/{tracking_id}/verify")
         assert res_admin_verify.status_code == 404
+
+
+@pytest.mark.asyncio
+async def test_submit_citizen_report_rate_limiting():
+    """Verify that 11th report submission within a minute receives HTTP 429 with Retry-After header."""
+    import uuid
+    from datetime import datetime, timezone
+    from unittest.mock import AsyncMock, patch
+
+    from app.core.rate_limiter import report_rate_limiter
+
+    report_rate_limiter.reset("reports:127.0.0.1")
+    report_rate_limiter.reset("reports:testclient")
+
+    payload = {
+        "latitude": "19.0760",
+        "longitude": "72.8777",
+        "category_code": "FLOOD_WATERLOGGING",
+        "severity": "MODERATE",
+        "title": "Rate limit probe report",
+    }
+
+    mock_report = WeatherReport(
+        id=uuid.uuid4(),
+        tracking_id="RPT-RATE-TEST",
+        reported_category="FLOOD_WATERLOGGING",
+        severity="MODERATE",
+        title="Rate limit probe report",
+        latitude=19.0760,
+        longitude=72.8777,
+        occurred_at=datetime.now(timezone.utc),
+        processing_status="QUEUED",
+        verification_status="PENDING",
+        credibility_score=0.0,
+        created_at=datetime.now(timezone.utc),
+    )
+
+    with patch("app.api.v1.reports.report_service.create_citizen_report", new_callable=AsyncMock) as mock_create:
+        mock_create.return_value = (mock_report, 0)
+        async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as client:
+            # First 10 requests should succeed (HTTP 201)
+            for i in range(10):
+                res = await client.post("/api/v1/reports", data=payload)
+                assert res.status_code == 201, f"Request {i+1} failed with {res.status_code}"
+
+            # 11th request must receive HTTP 429
+            res_11th = await client.post("/api/v1/reports", data=payload)
+            assert res_11th.status_code == 429
+            assert "Retry-After" in res_11th.headers
+            assert int(res_11th.headers["Retry-After"]) >= 1
+            body = res_11th.json()
+            code = body.get("error", {}).get("code") or body.get("detail", {}).get("code")
+            assert code == "RATE_LIMIT_EXCEEDED"
+
+
+@pytest.mark.asyncio
+async def test_new_categories_accepted_and_classified():
+    """Verify that reports with FOG, DUST_STORM, STRONG_WIND are accepted and classified."""
+    import uuid
+    from datetime import datetime, timezone
+    from unittest.mock import AsyncMock, patch
+
+    from app.core.rate_limiter import report_rate_limiter
+    from app.ingestion.normalizer import EventNormalizer
+    from app.intelligence.category_rules import classify_text_category
+
+    # 1. Normalizer keyword classification (English + Hindi/Hinglish)
+    assert EventNormalizer.normalize_category("FOG") == "FOG"
+    assert EventNormalizer.normalize_category("DUST_STORM") == "DUST_STORM"
+    assert EventNormalizer.normalize_category("STRONG_WIND") == "STRONG_WIND"
+
+    assert EventNormalizer.normalize_category(None, "Very dense kohra on highway") == "FOG"
+    assert EventNormalizer.normalize_category(None, "Heavy aandhi and sandstorm") == "DUST_STORM"
+    assert EventNormalizer.normalize_category(None, "Tez hawa and gusty wind") == "STRONG_WIND"
+
+    # 2. Category rules classification
+    assert classify_text_category("Heavy fog and mist blinding visibility") == "FOG"
+    assert classify_text_category("Bhot tez dhool toofan aur sandstorm aaya") == "DUST_STORM"
+    assert classify_text_category("Dangerous gust and tez hawa damaging roofs") == "STRONG_WIND"
+
+    # 3. Report submission acceptance for each new category
+    report_rate_limiter.reset("reports:127.0.0.1")
+    report_rate_limiter.reset("reports:testclient")
+
+    new_categories = [
+        ("FOG", "Dense kohra near highway", "MODERATE"),
+        ("DUST_STORM", "Severe aandhi toofan in desert", "HIGH"),
+        ("STRONG_WIND", "Tez hawayen gale warning", "HIGH"),
+    ]
+
+    for cat_code, title, sev in new_categories:
+        mock_report = WeatherReport(
+            id=uuid.uuid4(),
+            tracking_id=f"RPT-{cat_code}-TEST",
+            reported_category=cat_code,
+            severity=sev,
+            title=title,
+            latitude=28.6139,
+            longitude=77.2090,
+            occurred_at=datetime.now(timezone.utc),
+            processing_status="QUEUED",
+            verification_status="PENDING",
+            credibility_score=0.0,
+            created_at=datetime.now(timezone.utc),
+        )
+
+        with patch("app.api.v1.reports.report_service.create_citizen_report", new_callable=AsyncMock) as mock_create:
+            mock_create.return_value = (mock_report, 0)
+            async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as client:
+                res = await client.post(
+                    "/api/v1/reports",
+                    data={
+                        "latitude": "28.6139",
+                        "longitude": "77.2090",
+                        "category_code": cat_code,
+                        "severity": sev,
+                        "title": title,
+                        "description": f"Detailed report for {title}",
+                    },
+                )
+                assert res.status_code == 201, f"Failed for {cat_code}: {res.text}"
+                data = res.json()["data"]
+                assert data["tracking_id"] == f"RPT-{cat_code}-TEST"
+                passed_payload = mock_create.call_args.kwargs.get("payload")
+                assert passed_payload.category_code == cat_code
+
+

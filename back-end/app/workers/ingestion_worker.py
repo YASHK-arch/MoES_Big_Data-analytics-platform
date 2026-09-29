@@ -22,11 +22,15 @@ class IngestionWorker:
         report_svc: Optional[ReportService] = None,
         session_factory: Optional[async_sessionmaker[AsyncSession]] = None,
         consumer_name: str = "worker-primary",
+        stream_name: Optional[str] = None,
+        group_name: Optional[str] = None,
     ) -> None:
         self.stream_svc = stream_svc or stream_service
         self.report_svc = report_svc or report_service
         self.session_factory = session_factory or async_session_factory
         self.consumer_name = consumer_name
+        self.stream_name = stream_name
+        self.group_name = group_name
 
     async def process_event(
         self,
@@ -58,6 +62,8 @@ class IngestionWorker:
             count=count,
             block_ms=block_ms,
             from_id=from_id,
+            stream_name=self.stream_name,
+            group_name=self.group_name,
         )
 
         results: List[Tuple[str, Optional[WeatherReport]]] = []

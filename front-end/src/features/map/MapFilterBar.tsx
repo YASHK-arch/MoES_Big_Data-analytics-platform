@@ -23,10 +23,16 @@ const HAZARD_OPTIONS = [
   { label: 'All Hazards', value: 'ALL' },
   { label: 'Flooding & Waterlogging', value: 'FLOOD_WATERLOGGING' },
   { label: 'Heavy Rainfall', value: 'HEAVY_RAINFALL' },
-  { label: 'Thunderstorm & Lightning', value: 'THUNDERSTORM' },
+  { label: 'Thunderstorm & Lightning', value: 'THUNDERSTORM_LIGHTNING' },
   { label: 'Strong Winds', value: 'STRONG_WIND' },
-  { label: 'Heatwave', value: 'EXTREME_HEAT' },
-  { label: 'Dense Fog', value: 'DENSE_FOG' },
+  { label: 'Heatwave', value: 'HEATWAVE' },
+  { label: 'Dense Fog', value: 'FOG' },
+  { label: 'Dust Storm', value: 'DUST_STORM' },
+  { label: 'Cyclone & Storm', value: 'CYCLONE_STORM' },
+  { label: 'Hailstorm', value: 'HAILSTORM' },
+  { label: 'Landslide', value: 'LANDSLIDE' },
+  { label: 'Urban Inundation', value: 'URBAN_FLOOD' },
+  { label: 'Drought Condition', value: 'DROUGHT' },
 ];
 
 const STATE_OPTIONS = [

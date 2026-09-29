@@ -13,6 +13,7 @@ from typing import Any, Dict, List, Optional, Tuple
 
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker
 
+from app.core.config import settings
 from app.core.redis import AsyncRedisClient, redis_client
 from app.db.session import async_session_factory
 from app.orchestration.events import (
@@ -211,34 +212,94 @@ class OrchestrationDispatcher:
         count: int = 10,
         block_ms: Optional[int] = 2000,
         from_id: str = ">",
+        claim_idle_ms: Optional[int] = None,
     ) -> List[Tuple[str, OrchestrationEvent]]:
-        """Read a batch of orchestration events from Redis Streams."""
+        """Read a batch of orchestration events from Redis Streams, reclaiming idle unacked messages first."""
         await self.client.xgroup_create(
             self.DEFAULT_STREAM, self.DEFAULT_GROUP, id_str="0", mkstream=True
         )
 
-        raw_results = await self.client.xreadgroup(
-            group=self.DEFAULT_GROUP,
-            consumer=self.consumer_name,
-            streams={self.DEFAULT_STREAM: from_id},
-            count=count,
-            block_ms=block_ms,
-        )
+        entries_to_process: List[Tuple[str, Dict[str, str]]] = []
+
+        if from_id == ">":
+            idle_ms = (
+                claim_idle_ms
+                if claim_idle_ms is not None
+                else getattr(settings, "STREAM_CLAIM_IDLE_MS", 60000)
+            )
+            max_attempts = getattr(settings, "STREAM_MAX_DELIVERY_ATTEMPTS", 3)
+            try:
+                _, claimed = await self.client.xautoclaim(
+                    stream=self.DEFAULT_STREAM,
+                    group=self.DEFAULT_GROUP,
+                    consumer=self.consumer_name,
+                    min_idle_time_ms=idle_ms,
+                    count=count,
+                )
+                if claimed:
+                    pending_details = await self.client.xpending_detail(
+                        self.DEFAULT_STREAM, self.DEFAULT_GROUP, count=max(count * 2, 50)
+                    )
+                    delivery_map = {item["id"]: item["deliveries"] for item in pending_details}
+
+                    for msg_id, fields in claimed:
+                        deliveries = delivery_map.get(msg_id, 1)
+                        if deliveries > max_attempts:
+                            logger.error(
+                                "Event %s exceeded max delivery attempts (%d > %d), routing to DLQ",
+                                msg_id,
+                                deliveries,
+                                max_attempts,
+                            )
+                            try:
+                                data_dict = json.loads(fields.get("data", "{}"))
+                                ev = OrchestrationEvent.model_validate(data_dict)
+                                await self.route_to_dead_letter(
+                                    event=ev,
+                                    error_class=FailureClass.PERMANENT,
+                                    error_message=f"Exceeded max delivery attempts ({deliveries}/{max_attempts})",
+                                    stage_name=StageName.LOCATION.value,
+                                )
+                            except Exception:
+                                await self.client.xadd(
+                                    self.DEAD_LETTER_STREAM,
+                                    {
+                                        "msg_id": msg_id,
+                                        "reason": f"Exceeded max deliveries ({deliveries})",
+                                        "fields": json.dumps(fields),
+                                    },
+                                )
+                            await self.client.xack(self.DEFAULT_STREAM, self.DEFAULT_GROUP, msg_id)
+                        else:
+                            entries_to_process.append((msg_id, fields))
+            except Exception as e:
+                logger.warning("Failed during XAUTOCLAIM in dispatcher: %s", e)
+
+        remaining_count = count - len(entries_to_process)
+        if remaining_count > 0:
+            raw_results = await self.client.xreadgroup(
+                group=self.DEFAULT_GROUP,
+                consumer=self.consumer_name,
+                streams={self.DEFAULT_STREAM: from_id},
+                count=remaining_count,
+                block_ms=block_ms if not entries_to_process else 0,
+            )
+            for _, entries in raw_results:
+                entries_to_process.extend(entries)
 
         events: List[Tuple[str, OrchestrationEvent]] = []
-        for _, entries in raw_results:
-            for msg_id, fields in entries:
-                try:
-                    if "data" in fields:
-                        data_dict = json.loads(fields["data"])
-                        ev = OrchestrationEvent.model_validate(data_dict)
-                    else:
-                        ev = OrchestrationEvent.model_validate(fields)
-                    events.append((msg_id, ev))
-                except Exception as e:
-                    logger.error("Failed to parse orchestration stream message '%s': %s", msg_id, e)
-                    # Acknowledge unrecoverable malformed message so queue does not block
-                    await self.client.xack(self.DEFAULT_STREAM, self.DEFAULT_GROUP, msg_id)
+        for msg_id, fields in entries_to_process:
+            try:
+                if "data" in fields:
+                    data_dict = json.loads(fields["data"])
+                    ev = OrchestrationEvent.model_validate(data_dict)
+                else:
+                    ev = OrchestrationEvent.model_validate(fields)
+                events.append((msg_id, ev))
+            except Exception as e:
+                logger.error("Failed to parse orchestration stream message '%s': %s", msg_id, e)
+                # Acknowledge unrecoverable malformed message so queue does not block
+                await self.client.xack(self.DEFAULT_STREAM, self.DEFAULT_GROUP, msg_id)
 
         return events
 

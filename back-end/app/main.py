@@ -12,13 +12,14 @@ from app.core.config import settings
 
 
 def create_application() -> FastAPI:
+    is_prod = settings.ENVIRONMENT.lower() == "production"
     app = FastAPI(
         title=settings.PROJECT_NAME,
         description="National Weather Big Data Analytics Platform (SIH26069) Backend API",
         version="0.1.0",
-        docs_url="/docs",
-        redoc_url="/redoc",
-        openapi_url=f"{settings.API_V1_STR}/openapi.json",
+        docs_url=None if is_prod else "/docs",
+        redoc_url=None if is_prod else "/redoc",
+        openapi_url=None if is_prod else f"{settings.API_V1_STR}/openapi.json",
     )
 
     # CORS Middleware configuration
@@ -46,6 +47,7 @@ def create_application() -> FastAPI:
 
         return JSONResponse(
             status_code=exc.status_code,
+            headers=exc.headers,
             content={
                 "success": False,
                 "error": {

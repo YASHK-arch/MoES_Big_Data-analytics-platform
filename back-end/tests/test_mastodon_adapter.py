@@ -114,6 +114,20 @@ def test_mastodon_instance_and_hashtag_configuration():
     assert custom_adapter.max_results_per_tag == 10
 
 
+def test_mastodon_default_hashtags_include_imd_variants():
+    """Verify default MASTODON_HASHTAGS in settings includes imd, imdweather, and imdindia."""
+    from app.core.config import Settings
+    fresh_settings = Settings()
+    assert "imd" in fresh_settings.MASTODON_HASHTAGS
+    assert "imdweather" in fresh_settings.MASTODON_HASHTAGS
+    assert "imdindia" in fresh_settings.MASTODON_HASHTAGS
+
+    adapter = MastodonSocialAdapter()
+    assert "imd" in adapter.hashtags
+    assert "imdweather" in adapter.hashtags
+    assert "imdindia" in adapter.hashtags
+
+
 def test_mastodon_html_sanitization_and_title_derivation():
     """Verify stripping of HTML tags, entity unescaping, and neutral title generation."""
     raw_html = "<p>Floods &amp; landslides hit <b>Wayanad</b> district! <a href='https://link'>#alert</a></p>"

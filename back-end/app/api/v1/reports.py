@@ -11,6 +11,7 @@ from fastapi import (
     HTTPException,
     Path,
     Query,
+    Request,
     UploadFile,
     status,
 )
@@ -18,6 +19,8 @@ from pydantic import ValidationError
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.api.deps import get_optional_user
+from app.core.config import settings
+from app.core.rate_limiter import report_rate_limiter
 from app.db.session import get_db
 from app.models.report import WeatherReport
 from app.models.user import User
@@ -135,10 +138,26 @@ async def submit_citizen_report(
     media_files: Optional[List[UploadFile]] = File(
         None, description="Up to 3 attached photos or videos"
     ),
+    request: Request = None,
     db: AsyncSession = Depends(get_db),
     current_user: Optional[User] = Depends(get_optional_user),
 ) -> ReportSubmitResponse:
     """Intake and persist citizen weather incident reports."""
+    # 0. Rate limiting check (per client IP)
+    client_ip = (request.client.host if request and request.client else "unknown")
+    rate_key = f"reports:{client_ip}"
+    limit = getattr(settings, "REPORT_RATE_LIMIT_PER_MINUTE", 10)
+    if not report_rate_limiter.is_allowed(rate_key, max_requests=limit):
+        retry_after = report_rate_limiter.get_retry_after(rate_key)
+        raise HTTPException(
+            status_code=status.HTTP_429_TOO_MANY_REQUESTS,
+            detail={
+                "code": "RATE_LIMIT_EXCEEDED",
+                "message": f"Too many report submissions. Please wait {retry_after} seconds before trying again.",
+            },
+            headers={"Retry-After": str(retry_after)},
+        )
+
     # 1. Pydantic validation
     try:
         payload = CitizenReportCreate(

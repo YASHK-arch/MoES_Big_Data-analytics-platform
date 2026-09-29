@@ -25,11 +25,14 @@ const CATEGORY_OPTIONS: { value: string; label: string }[] = [
   { value: 'HEAVY_RAINFALL', label: 'Heavy Rainfall' },
   { value: 'CYCLONE_STORM', label: 'Cyclone / Storm' },
   { value: 'URBAN_FLOOD', label: 'Urban Inundation' },
-  { value: 'EXTREME_HEAT', label: 'Extreme Heatwave' },
+  { value: 'HEATWAVE', label: 'Heatwave' },
   { value: 'HAILSTORM', label: 'Hailstorm' },
   { value: 'LANDSLIDE', label: 'Landslide' },
   { value: 'THUNDERSTORM_LIGHTNING', label: 'Thunderstorm' },
   { value: 'DROUGHT', label: 'Drought' },
+  { value: 'FOG', label: 'Dense Fog' },
+  { value: 'DUST_STORM', label: 'Dust Storm' },
+  { value: 'STRONG_WIND', label: 'Strong Wind' },
   { value: 'OTHER', label: 'Other Event' },
 ];
 

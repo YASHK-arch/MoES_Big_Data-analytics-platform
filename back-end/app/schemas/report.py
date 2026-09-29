@@ -56,7 +56,12 @@ class CitizenReportCreate(BaseModel):
     @field_validator("category_code")
     @classmethod
     def normalize_category_code(cls, v: str) -> str:
-        return v.strip().upper()
+        clean = v.strip().upper()
+        alias_map = {
+            "CYCLONE_GALE": "CYCLONE_STORM",
+            "EXTREME_HEAT": "HEATWAVE",
+        }
+        return alias_map.get(clean, clean)
 
     @field_validator("title")
     @classmethod

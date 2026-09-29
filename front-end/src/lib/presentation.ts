@@ -19,9 +19,11 @@ export function formatHazardCategory(code?: HazardCategoryCode | string | null):
     case 'HEAVY_RAINFALL':
       return 'Heavy Rainfall';
     case 'CYCLONE_STORM':
+    case 'CYCLONE_GALE':
       return 'Cyclone / Storm';
     case 'URBAN_FLOOD':
       return 'Urban Inundation';
+    case 'HEATWAVE':
     case 'EXTREME_HEAT':
       return 'Extreme Heatwave';
     case 'HAILSTORM':
@@ -32,6 +34,12 @@ export function formatHazardCategory(code?: HazardCategoryCode | string | null):
       return 'Thunderstorm & Lightning';
     case 'DROUGHT':
       return 'Drought Condition';
+    case 'FOG':
+      return 'Dense Fog';
+    case 'DUST_STORM':
+      return 'Dust Storm';
+    case 'STRONG_WIND':
+      return 'Strong Wind';
     case 'OTHER':
       return 'Weather Event';
     default:

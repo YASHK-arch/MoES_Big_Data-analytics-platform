@@ -1,6 +1,6 @@
-from typing import List, Union
+from typing import Any, List, Union
 
-from pydantic import field_validator
+from pydantic import field_validator, model_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -15,7 +15,7 @@ class Settings(BaseSettings):
     # Core Application Settings
     PROJECT_NAME: str = "National Weather Big Data Analytics Platform"
     ENVIRONMENT: str = "development"
-    DEBUG: bool = True
+    DEBUG: bool = False
     API_V1_STR: str = "/api/v1"
 
     # Security
@@ -31,6 +31,11 @@ class Settings(BaseSettings):
     REDIS_URL: str = "redis://localhost:6379/0"
     REALTIME_STREAM_NAME: str = "stream:weather:realtime"
     REALTIME_STREAM_MAXLEN: int = 10000
+    STREAM_CLAIM_IDLE_MS: int = 60000
+    STREAM_MAX_DELIVERY_ATTEMPTS: int = 3
+    STREAM_DEAD_LETTER_NAME: str = "stream:weather:dead_letter"
+    REPORT_RATE_LIMIT_PER_MINUTE: int = 10
+    TRUSTED_PROXY_COUNT: int = 0
 
     # Realtime Outbox Worker Configuration
     OUTBOX_WORKER_ENABLED: bool = True
@@ -87,6 +92,9 @@ class Settings(BaseSettings):
         "flood",
         "cyclone",
         "heatwave",
+        "imd",
+        "imdweather",
+        "imdindia",
     ]
     MASTODON_MAX_RESULTS_PER_TAG: int = 20
     MASTODON_REQUEST_TIMEOUT_SECONDS: float = 15.0
@@ -158,18 +166,38 @@ class Settings(BaseSettings):
     LLM_API_KEY: str = ""
 
     # CORS Configuration
-    ALLOWED_ORIGINS: List[str] = ["http://localhost:5173", "http://localhost:3000"]
+    ALLOWED_ORIGINS: Union[List[str], str] = ["http://localhost:5173", "http://localhost:3000"]
 
     @field_validator("ALLOWED_ORIGINS", mode="before")
     @classmethod
-    def assemble_cors_origins(cls, v: Union[str, List[str]]) -> List[str]:
-        if isinstance(v, str) and not v.startswith("["):
-            return [i.strip() for i in v.split(",")]
+    def assemble_cors_origins(cls, v: Any) -> List[str]:
+        if isinstance(v, str):
+            v_strip = v.strip()
+            if v_strip.startswith("[") and v_strip.endswith("]"):
+                try:
+                    import json
+
+                    parsed = json.loads(v_strip)
+                    if isinstance(parsed, list):
+                        return [str(i).strip() for i in parsed]
+                except Exception:
+                    pass
+            return [i.strip() for i in v.split(",") if i.strip()]
         elif isinstance(v, list):
-            return [str(i) for i in v]
-        elif isinstance(v, str):
-            return [v]
-        raise ValueError(v)
+            return [str(i).strip() for i in v]
+        return [str(v)]
+
+    @model_validator(mode="after")
+    def validate_production_guards(self) -> "Settings":
+        """Enforce strict security guards when running in production environment."""
+        if self.ENVIRONMENT.lower() == "production":
+            if self.SECRET_KEY == "default-insecure-dev-secret-key-replace-in-production":
+                raise ValueError("SECRET_KEY must not use default insecure value in production environment.")
+            if self.DEBUG is True:
+                raise ValueError("DEBUG must be False in production environment.")
+            if "*" in self.ALLOWED_ORIGINS:
+                raise ValueError("ALLOWED_ORIGINS cannot contain wildcard '*' in production environment.")
+        return self
 
 
 settings = Settings()

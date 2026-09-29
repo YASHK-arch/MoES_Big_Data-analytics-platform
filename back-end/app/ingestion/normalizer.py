@@ -10,38 +10,113 @@ class EventNormalizer:
     """Normalizes, cleanses, and validates heterogeneous raw ingestion events."""
 
     VALID_CATEGORIES = {
-        "HEAVY_RAINFALL",
         "FLOOD_WATERLOGGING",
+        "HEAVY_RAINFALL",
         "THUNDERSTORM_LIGHTNING",
-        "CYCLONE_GALE",
+        "CYCLONE_STORM",
         "HEATWAVE",
         "HAILSTORM",
         "LANDSLIDE",
+        "DROUGHT",
+        "URBAN_FLOOD",
+        "FOG",
+        "DUST_STORM",
+        "STRONG_WIND",
         "OTHER",
     }
 
     CATEGORY_MAP: Dict[str, str] = {
+        # Thunderstorm & Lightning (English + Hindi/Hinglish)
         "thunderstorm": "THUNDERSTORM_LIGHTNING",
         "lightning": "THUNDERSTORM_LIGHTNING",
         "thunder": "THUNDERSTORM_LIGHTNING",
         "squall": "THUNDERSTORM_LIGHTNING",
-        "waterlogging": "FLOOD_WATERLOGGING",
+        "bijli": "THUNDERSTORM_LIGHTNING",
+        "bijlee": "THUNDERSTORM_LIGHTNING",
+        "garaj": "THUNDERSTORM_LIGHTNING",
+        # Rainfall & Monsoon
         "cloudburst": "HEAVY_RAINFALL",
         "heavy_rain": "HEAVY_RAINFALL",
         "rainfall": "HEAVY_RAINFALL",
+        "downpour": "HEAVY_RAINFALL",
+        "deluge": "HEAVY_RAINFALL",
+        "rain": "HEAVY_RAINFALL",
+        "baarish": "HEAVY_RAINFALL",
+        "barish": "HEAVY_RAINFALL",
+        "barsat": "HEAVY_RAINFALL",
+        "musladhar": "HEAVY_RAINFALL",
+        # Flooding & Waterlogging
+        "waterlogging": "FLOOD_WATERLOGGING",
+        "waterlog": "FLOOD_WATERLOGGING",
         "flooding": "FLOOD_WATERLOGGING",
         "flood": "FLOOD_WATERLOGGING",
+        "inundation": "FLOOD_WATERLOGGING",
+        "baadh": "FLOOD_WATERLOGGING",
+        "badh": "FLOOD_WATERLOGGING",
+        "jalbharao": "FLOOD_WATERLOGGING",
+        "jalbhorao": "FLOOD_WATERLOGGING",
+        # Urban Flood
+        "urban_flood": "URBAN_FLOOD",
+        "urban_flooding": "URBAN_FLOOD",
+        "city_flood": "URBAN_FLOOD",
+        "shahri_baadh": "URBAN_FLOOD",
+        # Hailstorm
         "hailstorm": "HAILSTORM",
         "hail": "HAILSTORM",
+        "olavrishti": "HAILSTORM",
+        "ole": "HAILSTORM",
+        "ola": "HAILSTORM",
+        # Landslide
         "landslide": "LANDSLIDE",
         "mudslide": "LANDSLIDE",
-        "cyclone": "CYCLONE_GALE",
-        "gale": "CYCLONE_GALE",
+        "rockfall": "LANDSLIDE",
+        "bhooskhalan": "LANDSLIDE",
+        "bhuskhalan": "LANDSLIDE",
+        # Cyclone & Storm
+        "cyclone_gale": "CYCLONE_STORM",
+        "cyclone_storm": "CYCLONE_STORM",
+        "cyclone": "CYCLONE_STORM",
+        "gale": "CYCLONE_STORM",
+        "storm": "CYCLONE_STORM",
+        "chakravat": "CYCLONE_STORM",
+        "samudri_toofan": "CYCLONE_STORM",
+        # Heatwave
         "heatwave": "HEATWAVE",
+        "extreme_heat": "HEATWAVE",
         "heat": "HEATWAVE",
-        "storm": "CYCLONE_GALE",
-        "wind": "CYCLONE_GALE",
-        "rain": "HEAVY_RAINFALL",
+        "loo": "HEATWAVE",
+        "garmi": "HEATWAVE",
+        "tapman": "HEATWAVE",
+        # Drought
+        "drought": "DROUGHT",
+        "dry_spell": "DROUGHT",
+        "water_scarcity": "DROUGHT",
+        "sookha": "DROUGHT",
+        "sukha": "DROUGHT",
+        "akaal": "DROUGHT",
+        # Fog
+        "dense_fog": "FOG",
+        "fog": "FOG",
+        "mist": "FOG",
+        "smog": "FOG",
+        "kohra": "FOG",
+        "dhund": "FOG",
+        "kuhra": "FOG",
+        # Dust Storm
+        "dust_storm": "DUST_STORM",
+        "sandstorm": "DUST_STORM",
+        "dust": "DUST_STORM",
+        "dhool_toofan": "DUST_STORM",
+        "dhool_aandhi": "DUST_STORM",
+        "retila_toofan": "DUST_STORM",
+        # Strong Wind
+        "strong_wind": "STRONG_WIND",
+        "high_wind": "STRONG_WIND",
+        "gust": "STRONG_WIND",
+        "wind": "STRONG_WIND",
+        "tez_hawa": "STRONG_WIND",
+        "jhakkad": "STRONG_WIND",
+        "aandhi": "STRONG_WIND",
     }
 
     SEVERITY_MAP: Dict[str, str] = {
@@ -176,19 +251,27 @@ class EventNormalizer:
     @classmethod
     def normalize_category(cls, raw_cat: Optional[str], title: str = "") -> str:
         """Standardize category code."""
+        legacy_map = {
+            "CYCLONE_GALE": "CYCLONE_STORM",
+            "EXTREME_HEAT": "HEATWAVE",
+        }
         if raw_cat:
             upper_clean = str(raw_cat).upper().strip()
+            if upper_clean in legacy_map:
+                return legacy_map[upper_clean]
             if upper_clean in cls.VALID_CATEGORIES:
                 return upper_clean
 
+            sorted_items = sorted(cls.CATEGORY_MAP.items(), key=lambda x: len(x[0]), reverse=True)
             clean = re.sub(r"[^a-z0-9_]", "_", str(raw_cat).lower().strip())
-            for key, mapped in cls.CATEGORY_MAP.items():
+            for key, mapped in sorted_items:
                 if key in clean:
                     return mapped
 
         # Fallback inspection on title keywords
         clean_title = title.lower()
-        for key, mapped in cls.CATEGORY_MAP.items():
+        sorted_items = sorted(cls.CATEGORY_MAP.items(), key=lambda x: len(x[0]), reverse=True)
+        for key, mapped in sorted_items:
             if key in clean_title:
                 return mapped
 

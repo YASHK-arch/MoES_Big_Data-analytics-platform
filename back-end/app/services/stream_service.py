@@ -1,7 +1,8 @@
 import json
 import logging
-from typing import List, Optional, Tuple
+from typing import Dict, List, Optional, Tuple
 
+from app.core.config import settings
 from app.core.redis import AsyncRedisClient, redis_client
 from app.ingestion.schemas import (
     NormalizedEvidenceEvent,
@@ -128,6 +129,76 @@ class StreamService:
         group = group_name or self.DEFAULT_GROUP
         return await self.client.xgroup_create(stream, group, id_str="0", mkstream=True)
 
+    async def _read_stream_with_recovery(
+        self,
+        stream: str,
+        group: str,
+        consumer_name: str,
+        count: int = 10,
+        block_ms: Optional[int] = 2000,
+        from_id: str = ">",
+        claim_idle_ms: Optional[int] = None,
+    ) -> List[Tuple[str, Dict[str, str]]]:
+        """Read entries with XAUTOCLAIM recovery for unacknowledged idle messages."""
+        await self.ensure_consumer_group(stream, group)
+        entries_to_process: List[Tuple[str, Dict[str, str]]] = []
+
+        if from_id == ">":
+            idle_ms = (
+                claim_idle_ms
+                if claim_idle_ms is not None
+                else getattr(settings, "STREAM_CLAIM_IDLE_MS", 60000)
+            )
+            max_attempts = getattr(settings, "STREAM_MAX_DELIVERY_ATTEMPTS", 3)
+            try:
+                _, claimed = await self.client.xautoclaim(
+                    stream=stream,
+                    group=group,
+                    consumer=consumer_name,
+                    min_idle_time_ms=idle_ms,
+                    count=count,
+                )
+                if claimed:
+                    pending_details = await self.client.xpending_detail(
+                        stream, group, count=max(count * 2, 50)
+                    )
+                    delivery_map = {item["id"]: item["deliveries"] for item in pending_details}
+
+                    for msg_id, fields in claimed:
+                        deliveries = delivery_map.get(msg_id, 1)
+                        if deliveries > max_attempts:
+                            logger.error(
+                                "Message %s on %s exceeded max delivery attempts (%d > %d), routing to DLQ",
+                                msg_id,
+                                stream,
+                                deliveries,
+                                max_attempts,
+                            )
+                            dlq_fields = dict(fields)
+                            dlq_fields["original_stream"] = stream
+                            dlq_fields["original_msg_id"] = msg_id
+                            dlq_fields["dlq_reason"] = f"Exceeded max delivery attempts ({deliveries})"
+                            await self.client.xadd(self.DEFAULT_DEAD_LETTER_STREAM, dlq_fields)
+                            await self.client.xack(stream, group, msg_id)
+                        else:
+                            entries_to_process.append((msg_id, fields))
+            except Exception as e:
+                logger.warning("Failed during XAUTOCLAIM in stream_service: %s", e)
+
+        remaining_count = count - len(entries_to_process)
+        if remaining_count > 0:
+            raw_results = await self.client.xreadgroup(
+                group=group,
+                consumer=consumer_name,
+                streams={stream: from_id},
+                count=remaining_count,
+                block_ms=block_ms if not entries_to_process else 0,
+            )
+            for _, entries in raw_results:
+                entries_to_process.extend(entries)
+
+        return entries_to_process
+
     async def read_events(
         self,
         group_name: Optional[str] = None,
@@ -136,35 +207,35 @@ class StreamService:
         block_ms: Optional[int] = 2000,
         stream_name: Optional[str] = None,
         from_id: str = ">",
+        claim_idle_ms: Optional[int] = None,
     ) -> List[Tuple[str, NormalizedIngestionEvent]]:
         """Read a batch of events from the stream for this consumer group."""
         stream = stream_name or self.DEFAULT_STREAM
         group = group_name or self.DEFAULT_GROUP
 
-        await self.ensure_consumer_group(stream, group)
-
-        raw_results = await self.client.xreadgroup(
+        raw_entries = await self._read_stream_with_recovery(
+            stream=stream,
             group=group,
-            consumer=consumer_name,
-            streams={stream: from_id},
+            consumer_name=consumer_name,
             count=count,
             block_ms=block_ms,
+            from_id=from_id,
+            claim_idle_ms=claim_idle_ms,
         )
 
         events: List[Tuple[str, NormalizedIngestionEvent]] = []
-        for _, entries in raw_results:
-            for msg_id, fields in entries:
-                try:
-                    if "data" in fields:
-                        data_dict = json.loads(fields["data"])
-                        event = NormalizedIngestionEvent.model_validate(data_dict)
-                    else:
-                        event = NormalizedIngestionEvent.model_validate(fields)
-                    events.append((msg_id, event))
-                except Exception as e:
-                    logger.error(f"Failed to deserialize stream message '{msg_id}': {e}")
-                    # Acknowledge unrecoverable malformed message so queue does not block
-                    await self.client.xack(stream, group, msg_id)
+        for msg_id, fields in raw_entries:
+            try:
+                if "data" in fields:
+                    data_dict = json.loads(fields["data"])
+                    event = NormalizedIngestionEvent.model_validate(data_dict)
+                else:
+                    event = NormalizedIngestionEvent.model_validate(fields)
+                events.append((msg_id, event))
+            except Exception as e:
+                logger.error(f"Failed to deserialize stream message '{msg_id}': {e}")
+                # Acknowledge unrecoverable malformed message so queue does not block
+                await self.client.xack(stream, group, msg_id)
 
         return events
 
@@ -176,37 +247,37 @@ class StreamService:
         block_ms: Optional[int] = 2000,
         stream_name: Optional[str] = None,
         from_id: str = ">",
+        claim_idle_ms: Optional[int] = None,
     ) -> List[Tuple[str, NormalizedObservationEvent]]:
         """Read a batch of observations from the observation stream for this consumer group."""
         stream = stream_name or self.DEFAULT_OBSERVATION_STREAM
         group = group_name or self.DEFAULT_OBSERVATION_GROUP
 
-        await self.ensure_consumer_group(stream, group)
-
-        raw_results = await self.client.xreadgroup(
+        raw_entries = await self._read_stream_with_recovery(
+            stream=stream,
             group=group,
-            consumer=consumer_name,
-            streams={stream: from_id},
+            consumer_name=consumer_name,
             count=count,
             block_ms=block_ms,
+            from_id=from_id,
+            claim_idle_ms=claim_idle_ms,
         )
 
         observations: List[Tuple[str, NormalizedObservationEvent]] = []
-        for _, entries in raw_results:
-            for msg_id, fields in entries:
-                try:
-                    if "data" in fields:
-                        data_dict = json.loads(fields["data"])
-                        obs = NormalizedObservationEvent.model_validate(data_dict)
-                    else:
-                        obs = NormalizedObservationEvent.model_validate(fields)
-                    observations.append((msg_id, obs))
-                except Exception as e:
-                    logger.error(
-                        f"Failed to deserialize observation stream message '{msg_id}': {e}"
-                    )
-                    # Acknowledge unrecoverable malformed message so queue does not block
-                    await self.client.xack(stream, group, msg_id)
+        for msg_id, fields in raw_entries:
+            try:
+                if "data" in fields:
+                    data_dict = json.loads(fields["data"])
+                    obs = NormalizedObservationEvent.model_validate(data_dict)
+                else:
+                    obs = NormalizedObservationEvent.model_validate(fields)
+                observations.append((msg_id, obs))
+            except Exception as e:
+                logger.error(
+                    f"Failed to deserialize observation stream message '{msg_id}': {e}"
+                )
+                # Acknowledge unrecoverable malformed message so queue does not block
+                await self.client.xack(stream, group, msg_id)
 
         return observations
 
@@ -218,35 +289,35 @@ class StreamService:
         block_ms: Optional[int] = 2000,
         stream_name: Optional[str] = None,
         from_id: str = ">",
+        claim_idle_ms: Optional[int] = None,
     ) -> List[Tuple[str, NormalizedEvidenceEvent]]:
         """Read a batch of evidence from the evidence stream for this consumer group."""
         stream = stream_name or self.DEFAULT_EVIDENCE_STREAM
         group = group_name or self.DEFAULT_EVIDENCE_GROUP
 
-        await self.ensure_consumer_group(stream, group)
-
-        raw_results = await self.client.xreadgroup(
+        raw_entries = await self._read_stream_with_recovery(
+            stream=stream,
             group=group,
-            consumer=consumer_name,
-            streams={stream: from_id},
+            consumer_name=consumer_name,
             count=count,
             block_ms=block_ms,
+            from_id=from_id,
+            claim_idle_ms=claim_idle_ms,
         )
 
         evidence_items: List[Tuple[str, NormalizedEvidenceEvent]] = []
-        for _, entries in raw_results:
-            for msg_id, fields in entries:
-                try:
-                    if "data" in fields:
-                        data_dict = json.loads(fields["data"])
-                        ev = NormalizedEvidenceEvent.model_validate(data_dict)
-                    else:
-                        ev = NormalizedEvidenceEvent.model_validate(fields)
-                    evidence_items.append((msg_id, ev))
-                except Exception as e:
-                    logger.error(f"Failed to deserialize evidence stream message '{msg_id}': {e}")
-                    # Acknowledge unrecoverable malformed message so queue does not block
-                    await self.client.xack(stream, group, msg_id)
+        for msg_id, fields in raw_entries:
+            try:
+                if "data" in fields:
+                    data_dict = json.loads(fields["data"])
+                    ev = NormalizedEvidenceEvent.model_validate(data_dict)
+                else:
+                    ev = NormalizedEvidenceEvent.model_validate(fields)
+                evidence_items.append((msg_id, ev))
+            except Exception as e:
+                logger.error(f"Failed to deserialize evidence stream message '{msg_id}': {e}")
+                # Acknowledge unrecoverable malformed message so queue does not block
+                await self.client.xack(stream, group, msg_id)
 
         return evidence_items
 

@@ -4,6 +4,7 @@ Validates schema contracts, deterministic serialization, privacy guardrails,
 transaction-isolated publishing, and failure resiliency.
 """
 
+import asyncio
 import json
 import uuid
 from datetime import datetime, timezone
@@ -338,3 +339,44 @@ async def test_redis_client_xread_and_xrange_parsing():
     msg_id2, fields2 = range_results[0]
     assert msg_id2 == "1725000000001-0"
     assert fields2["event_type"] == "report.verification_changed"
+
+
+@pytest.mark.asyncio
+async def test_redis_client_db_select_connect_within_2s():
+    """Verify AsyncRedisClient connects to non-zero db (e.g. 5) within 2s without deadlock."""
+    client = AsyncRedisClient(redis_url="redis://localhost:6379/5")
+    try:
+        await asyncio.wait_for(client.connect(), timeout=2.0)
+        res = await asyncio.wait_for(client.ping(), timeout=2.0)
+        assert res is True
+    except (ConnectionError, OSError):
+        pytest.skip("Local Redis server not accessible")
+    finally:
+        await client.close()
+
+
+@pytest.mark.asyncio
+async def test_redis_client_xautoclaim_parsing():
+    """Verify AsyncRedisClient parses raw RESP response for xautoclaim."""
+    client = AsyncRedisClient()
+    mock_autoclaim_resp = [
+        "1725000000002-0",
+        [
+            [
+                "1725000000001-0",
+                ["event_id", "evt-789", "event_type", "report.created"],
+            ]
+        ],
+    ]
+    client._execute_raw = AsyncMock(return_value=mock_autoclaim_resp)
+    next_id, entries = await client.xautoclaim(
+        stream="stream:weather:test",
+        group="group:test",
+        consumer="consumer:1",
+        min_idle_time_ms=60000,
+    )
+    assert next_id == "1725000000002-0"
+    assert len(entries) == 1
+    assert entries[0][0] == "1725000000001-0"
+    assert entries[0][1]["event_id"] == "evt-789"
+

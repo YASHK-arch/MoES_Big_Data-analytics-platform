@@ -303,8 +303,8 @@ async def test_recoverable_persistence_failure_and_pel_retry():
     if not is_alive:
         pytest.skip("Redis server not reachable")
 
-    test_stream = "stream:weather:events"
-    test_group = "group:weather:processors"
+    test_stream = f"stream:weather:events:{uuid.uuid4().hex[:6]}"
+    test_group = f"group:weather:processors:{uuid.uuid4().hex[:6]}"
     consumer_name = f"test-pel-consumer-{uuid.uuid4().hex[:6]}"
     unique_ext_id = f"PEL-FAIL-TEST-{uuid.uuid4().hex[:8]}"
 
@@ -334,6 +334,8 @@ async def test_recoverable_persistence_failure_and_pel_retry():
         report_svc=failing_report_svc,
         session_factory=async_session_factory,
         consumer_name=consumer_name,
+        stream_name=test_stream,
+        group_name=test_group,
     )
 
     # Attempt 1: Process batch -> fails persistence
@@ -360,6 +362,8 @@ async def test_recoverable_persistence_failure_and_pel_retry():
         report_svc=report_service,
         session_factory=async_session_factory,
         consumer_name=consumer_name,
+        stream_name=test_stream,
+        group_name=test_group,
     )
 
     results_retry = await recovering_worker.process_batch(count=10, block_ms=500, from_id="0")

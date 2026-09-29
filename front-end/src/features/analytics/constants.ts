@@ -16,10 +16,15 @@ export const HAZARD_OPTIONS = [
   { code: 'HEAVY_RAINFALL', label: 'Heavy Rainfall' },
   { code: 'FLOOD_WATERLOGGING', label: 'Flooding & Waterlogging' },
   { code: 'THUNDERSTORM_LIGHTNING', label: 'Thunderstorm' },
-  { code: 'CYCLONE_GALE', label: 'Strong Wind & Cyclone' },
+  { code: 'CYCLONE_STORM', label: 'Strong Wind & Cyclone' },
   { code: 'HEATWAVE', label: 'Heatwave' },
   { code: 'HAILSTORM', label: 'Hailstorm' },
   { code: 'LANDSLIDE', label: 'Landslide' },
+  { code: 'URBAN_FLOOD', label: 'Urban Inundation' },
+  { code: 'DROUGHT', label: 'Drought' },
+  { code: 'FOG', label: 'Dense Fog' },
+  { code: 'DUST_STORM', label: 'Dust Storm' },
+  { code: 'STRONG_WIND', label: 'Strong Wind' },
   { code: 'OTHER', label: 'Other Hazard' },
 ];
 

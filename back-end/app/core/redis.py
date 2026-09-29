@@ -31,10 +31,33 @@ class AsyncRedisClient:
 
         self._reader: Optional[asyncio.StreamReader] = None
         self._writer: Optional[asyncio.StreamWriter] = None
-        self._lock = asyncio.Lock()
+        self._conn_loop: Optional[asyncio.AbstractEventLoop] = None
+        self._lock_obj: Optional[asyncio.Lock] = None
+        self._lock_loop: Optional[asyncio.AbstractEventLoop] = None
+
+    @property
+    def _lock(self) -> asyncio.Lock:
+        try:
+            loop = asyncio.get_running_loop()
+        except RuntimeError:
+            loop = None
+        if self._lock_obj is None or self._lock_loop is not loop:
+            self._lock_obj = asyncio.Lock()
+            self._lock_loop = loop
+        return self._lock_obj
 
     async def connect(self) -> None:
         """Establish asynchronous TCP socket connection to Redis server."""
+        try:
+            loop = asyncio.get_running_loop()
+        except RuntimeError:
+            loop = None
+
+        if self._conn_loop is not loop:
+            self._reader = None
+            self._writer = None
+            self._conn_loop = loop
+
         if self._writer is not None and not self._writer.is_closing():
             return
 
@@ -46,11 +69,11 @@ class AsyncRedisClient:
 
             # Authenticate if password provided
             if self.password:
-                await self._execute_raw("AUTH", self.password)
+                await self._send_command("AUTH", self.password)
 
             # Select DB if not 0
             if self.db != 0:
-                await self._execute_raw("SELECT", str(self.db))
+                await self._send_command("SELECT", str(self.db))
 
         except Exception as e:
             self._reader = None
@@ -127,21 +150,26 @@ class AsyncRedisClient:
 
         raise RedisProtocolError(f"Unknown RESP prefix: {prefix!r}")
 
+    async def _send_command(self, *args: Union[str, bytes, int, float]) -> Any:
+        """Write command and parse response without acquiring self._lock."""
+        if self._writer is None:
+            raise ConnectionError("Redis client is not connected.")
+        try:
+            cmd_bytes = self._encode_command(*args)
+            self._writer.write(cmd_bytes)
+            await self._writer.drain()
+            return await self._read_response()
+        except (ConnectionError, asyncio.TimeoutError, OSError) as e:
+            # Reset connection on transport failures
+            self._writer = None
+            self._reader = None
+            raise ConnectionError(f"Redis transport failure: {e}")
+
     async def _execute_raw(self, *args: Union[str, bytes, int, float]) -> Any:
         """Execute command over socket with connection safety and retry."""
         async with self._lock:
             await self.connect()
-            assert self._writer is not None
-            try:
-                cmd_bytes = self._encode_command(*args)
-                self._writer.write(cmd_bytes)
-                await self._writer.drain()
-                return await self._read_response()
-            except (ConnectionError, asyncio.TimeoutError, OSError) as e:
-                # Reset connection on transport failures
-                self._writer = None
-                self._reader = None
-                raise ConnectionError(f"Redis transport failure: {e}")
+            return await self._send_command(*args)
 
     async def ping(self) -> bool:
         """Check Redis connectivity."""
@@ -338,12 +366,113 @@ class AsyncRedisClient:
             "consumers": res[3] if isinstance(res[3], list) else [],
         }
 
+    async def xautoclaim(
+        self,
+        stream: str,
+        group: str,
+        consumer: str,
+        min_idle_time_ms: int,
+        start_id: str = "0-0",
+        count: Optional[int] = None,
+    ) -> Tuple[str, List[Tuple[str, Dict[str, str]]]]:
+        """Reclaim pending stream entries idle longer than min_idle_time_ms.
+
+        Returns (next_start_id, list_of_(msg_id, fields_dict)).
+        """
+        cmd: List[Union[str, bytes, int, float]] = [
+            "XAUTOCLAIM",
+            stream,
+            group,
+            consumer,
+            str(min_idle_time_ms),
+            start_id,
+        ]
+        if count is not None:
+            cmd.extend(["COUNT", str(count)])
+
+        res = await self._execute_raw(*cmd)
+        if not res or not isinstance(res, list) or len(res) < 2:
+            return ("0-0", [])
+
+        next_start_id = str(res[0]) if res[0] is not None else "0-0"
+        entries = self._parse_stream_entries(res[1]) if isinstance(res[1], list) else []
+        return (next_start_id, entries)
+
+    async def xpending_detail(
+        self,
+        stream: str,
+        group: str,
+        start_id: str = "-",
+        end_id: str = "+",
+        count: int = 50,
+        consumer: Optional[str] = None,
+    ) -> List[Dict[str, Any]]:
+        """Fetch detailed pending entries (id, consumer, idle_ms, deliveries)."""
+        cmd: List[Union[str, bytes, int, float]] = [
+            "XPENDING",
+            stream,
+            group,
+            start_id,
+            end_id,
+            str(count),
+        ]
+        if consumer is not None:
+            cmd.append(consumer)
+        res = await self._execute_raw(*cmd)
+        if not res or not isinstance(res, list):
+            return []
+        items = []
+        for entry in res:
+            if isinstance(entry, list) and len(entry) >= 4:
+                items.append({
+                    "id": str(entry[0]),
+                    "consumer": str(entry[1]),
+                    "idle_ms": int(entry[2]) if entry[2] is not None else 0,
+                    "deliveries": int(entry[3]) if entry[3] is not None else 0,
+                })
+        return items
+
     async def delete(self, *keys: str) -> int:
         """Delete one or more keys from Redis."""
         if not keys:
             return 0
         res = await self._execute_raw("DEL", *keys)
         return int(res) if isinstance(res, int) else 0
+
+    async def incr(self, key: str) -> int:
+        """Increment integer value of key."""
+        res = await self._execute_raw("INCR", key)
+        return int(res) if res is not None else 1
+
+    async def expire(self, key: str, seconds: int) -> int:
+        """Set a timeout on key."""
+        res = await self._execute_raw("EXPIRE", key, str(seconds))
+        return int(res) if res is not None else 0
+
+    async def get(self, key: str) -> Optional[str]:
+        """Get value of key."""
+        res = await self._execute_raw("GET", key)
+        if res is None:
+            return None
+        if isinstance(res, bytes):
+            return res.decode("utf-8")
+        return str(res)
+
+    async def set(
+        self,
+        key: str,
+        value: Union[str, bytes],
+        ex: Optional[int] = None,
+        nx: bool = False,
+    ) -> bool:
+        """Set key to value with optional expiry and NX condition."""
+        args: List[Union[str, bytes, int, float]] = ["SET", key, value]
+        if ex is not None:
+            args.extend(["EX", str(ex)])
+        if nx:
+            args.append("NX")
+        res = await self._execute_raw(*args)
+        return res is not None and (res == "OK" or res is True or res == 1)
 
 
 redis_client = AsyncRedisClient()

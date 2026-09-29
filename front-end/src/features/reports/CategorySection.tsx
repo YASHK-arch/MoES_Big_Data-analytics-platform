@@ -19,10 +19,10 @@ interface CategorySectionProps {
 const CATEGORIES = [
   { code: 'HEAVY_RAINFALL', label: 'Heavy Rainfall', icon: CloudRain },
   { code: 'FLOOD_WATERLOGGING', label: 'Flooding', icon: Droplet },
-  { code: 'THUNDERSTORM', label: 'Thunderstorm', icon: Zap },
+  { code: 'THUNDERSTORM_LIGHTNING', label: 'Thunderstorm', icon: Zap },
   { code: 'STRONG_WIND', label: 'Strong Wind', icon: Wind },
-  { code: 'EXTREME_HEAT', label: 'Heatwave', icon: ThermometerSun },
-  { code: 'DENSE_FOG', label: 'Fog', icon: CloudFog },
+  { code: 'HEATWAVE', label: 'Heatwave', icon: ThermometerSun },
+  { code: 'FOG', label: 'Fog', icon: CloudFog },
   { code: 'DUST_STORM', label: 'Dust Storm', icon: Sparkles },
   { code: 'OTHER', label: 'Other', icon: MoreHorizontal },
 ];

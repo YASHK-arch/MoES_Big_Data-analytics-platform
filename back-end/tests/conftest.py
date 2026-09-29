@@ -58,3 +58,15 @@ async def api_client():
         headers={"Authorization": f"Bearer {token}"},
     ) as client:
         yield client
+
+
+@pytest_asyncio.fixture(autouse=True)
+def reset_rate_limiters():
+    """Ensure rate limiters do not leak state between test cases."""
+    from app.core.rate_limiter import login_rate_limiter, report_rate_limiter
+
+    report_rate_limiter.clear()
+    login_rate_limiter.clear()
+    yield
+    report_rate_limiter.clear()
+    login_rate_limiter.clear()

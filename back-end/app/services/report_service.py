@@ -5,8 +5,6 @@ import uuid
 from datetime import datetime, timedelta, timezone
 from typing import Any, Dict, List, Optional, Tuple
 
-logger = logging.getLogger(__name__)
-
 from fastapi import UploadFile
 from geoalchemy2.elements import WKTElement
 from sqlalchemy import func, or_, select
@@ -25,6 +23,8 @@ from app.models.verification import VerificationEvent
 from app.schemas.report import CitizenReportCreate
 from app.services.realtime_service import RealtimeService, realtime_service
 from app.services.storage import StorageService, storage_service
+
+logger = logging.getLogger(__name__)
 
 
 class InvalidStateTransitionError(Exception):
@@ -160,12 +160,24 @@ class ReportService:
         self, session: AsyncSession, category_code: str
     ) -> Tuple[Optional[uuid.UUID], Optional[str]]:
         """Resolve category UUID and reported category title."""
-        stmt = select(EventCategory).where(EventCategory.category_code == category_code.upper())
+        alias_map = {
+            "CYCLONE_GALE": "CYCLONE_STORM",
+            "EXTREME_HEAT": "HEATWAVE",
+        }
+        clean_code = category_code.upper().strip()
+        canonical_code = alias_map.get(clean_code, clean_code)
+        stmt = select(EventCategory).where(EventCategory.category_code == canonical_code)
         result = await session.execute(stmt)
         category = result.scalar_one_or_none()
 
         if category is not None:
             return category.id, category.title
+        if canonical_code != clean_code:
+            stmt = select(EventCategory).where(EventCategory.category_code == clean_code)
+            result = await session.execute(stmt)
+            category = result.scalar_one_or_none()
+            if category is not None:
+                return category.id, category.title
         return None, category_code
 
     async def create_citizen_report(
