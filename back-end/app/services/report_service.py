@@ -1,8 +1,11 @@
+import logging
 import math
 import secrets
 import uuid
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 from typing import Any, Dict, List, Optional, Tuple
+
+logger = logging.getLogger(__name__)
 
 from fastapi import UploadFile
 from geoalchemy2.elements import WKTElement
@@ -13,6 +16,7 @@ from sqlalchemy.orm import selectinload
 from app.core.config import settings
 from app.ingestion.schemas import NormalizedIngestionEvent
 from app.models.category import EventCategory
+from app.models.forecast import ForecastAdvisory
 from app.models.media import ReportMedia
 from app.models.report import WeatherReport
 from app.models.source import Source
@@ -61,6 +65,69 @@ class ReportService:
         self.realtime_svc = realtime_svc or realtime_service
 
     @staticmethod
+    def _parse_ndma_end_time(raw_value: Any) -> Optional[datetime]:
+        """Parse the NDMA CAP effective end time, including its published IST format."""
+        if not raw_value:
+            return None
+        raw_text = str(raw_value).strip()
+        for fmt, tz in (
+            ("%a %b %d %H:%M:%S IST %Y", timezone(timedelta(hours=5, minutes=30))),
+            ("%Y-%m-%dT%H:%M:%S%z", timezone.utc),
+            ("%Y-%m-%dT%H:%M:%SZ", timezone.utc),
+        ):
+            try:
+                parsed = datetime.strptime(raw_text, fmt)
+                if parsed.tzinfo is None:
+                    parsed = parsed.replace(tzinfo=tz)
+                return parsed.astimezone(timezone.utc)
+            except ValueError:
+                continue
+        return None
+
+    async def _maybe_create_ndma_forecast(
+        self,
+        session: AsyncSession,
+        event: NormalizedIngestionEvent,
+    ) -> None:
+        """Persist NDMA CAP warnings with an explicit validity end as forecast advisories."""
+        if event.source_code != "NDMA_SACHET":
+            return
+
+        raw_record = event.raw_payload.get("ndma_raw_record")
+        if not isinstance(raw_record, dict) or not raw_record.get("effective_end_time"):
+            return
+
+        valid_until = self._parse_ndma_end_time(raw_record["effective_end_time"])
+        if valid_until is None:
+            return
+
+        existing = await session.scalar(
+            select(ForecastAdvisory).where(
+                ForecastAdvisory.source_code == event.source_code,
+                ForecastAdvisory.advisory_title == event.title,
+                ForecastAdvisory.valid_until == valid_until,
+            )
+        )
+        if existing:
+            existing.raw_payload = event.raw_payload
+            return
+
+        session.add(
+            ForecastAdvisory(
+                source_code=event.source_code,
+                hazard_type=event.category_code or "OTHER",
+                severity=event.severity,
+                advisory_title=event.title,
+                advisory_text=event.description,
+                geom=WKTElement(f"POINT({event.longitude} {event.latitude})", srid=4326),
+                valid_from=event.occurred_at,
+                valid_until=valid_until,
+                issued_at=event.ingested_at,
+                raw_payload=event.raw_payload,
+            )
+        )
+
+    @staticmethod
     def generate_tracking_id() -> str:
         """Generate human-readable and safe tracking identifier.
 
@@ -106,8 +173,9 @@ class ReportService:
         session: AsyncSession,
         payload: CitizenReportCreate,
         media_files: Optional[List[UploadFile]] = None,
+        user_id: Optional[uuid.UUID] = None,
     ) -> Tuple[WeatherReport, int]:
-        """Process and persist a citizen weather report with optional media uploads."""
+        """Process and persist a citizen weather report with optional media uploads and user linking."""
         uploaded_keys: List[str] = []
         report_id = uuid.uuid4()
         tracking_id = self.generate_tracking_id()
@@ -147,22 +215,20 @@ class ReportService:
                         )
                         uploaded_keys.append(storage_key)
 
-                        media_records.append(
-                            ReportMedia(
-                                report_id=report_id,
-                                media_type=media_type,
-                                storage_bucket=settings.S3_BUCKET_NAME,
-                                storage_key=storage_key,
-                                mime_type=content_type,
-                                file_size_bytes=file_size,
-                                sha256_hash=sha256_hash,
-                            )
+                        media = ReportMedia(
+                            id=uuid.uuid4(),
+                            report_id=report_id,
+                            media_type=media_type,
+                            storage_bucket=settings.S3_BUCKET_NAME,
+                            storage_key=storage_key,
+                            mime_type=content_type,
+                            file_size_bytes=file_size,
+                            sha256_hash=sha256_hash,
                         )
+                        media_records.append(media)
 
-            # 3. Construct spatial PostGIS Point
-            point_wkt = f"POINT({payload.longitude} {payload.latitude})"
-            geom = WKTElement(point_wkt, srid=4326)
-
+            # 3. Create WeatherReport entity with geometry
+            geom = WKTElement(f"POINT({payload.longitude} {payload.latitude})", srid=4326)
             occurred_time = payload.occurred_at or datetime.now(timezone.utc)
 
             # 4. Instantiate WeatherReport entity
@@ -170,6 +236,7 @@ class ReportService:
                 id=report_id,
                 tracking_id=tracking_id,
                 source_id=source.id,
+                user_id=user_id,
                 category_id=category_id,
                 reported_category=reported_category,
                 severity=payload.severity,
@@ -209,6 +276,17 @@ class ReportService:
             # Fast-path publish to Redis Stream (worker retries if this fails or network blips)
             await self.realtime_svc.publish_staged_outbox(outbox_row)
             await self.realtime_svc.publish_staged_outbox(orch_outbox_row)
+
+            # Fast-path immediate intelligence pipeline execution (location, duplicate, evidence, observation, credibility)
+            try:
+                from app.orchestration.incident_pipeline import incident_pipeline
+
+                await incident_pipeline.execute_pipeline(db=session, incident_id=report.id, commit=True)
+                await session.refresh(report)
+            except Exception as pipe_err:
+                logger.warning(
+                    "Inline intelligence pipeline execution deferred to worker: %s", pipe_err
+                )
 
             return report, len(media_records)
 
@@ -555,6 +633,7 @@ class ReportService:
             raw_payload=event.raw_payload,
         )
         session.add(report)
+        await self._maybe_create_ndma_forecast(session, event)
 
         # Stage outbox row inside the atomic database transaction
         outbox_row = self.realtime_svc.stage_report_created(

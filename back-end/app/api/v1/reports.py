@@ -17,8 +17,10 @@ from fastapi import (
 from pydantic import ValidationError
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.api.deps import get_optional_user
 from app.db.session import get_db
 from app.models.report import WeatherReport
+from app.models.user import User
 from app.schemas.report import (
     CategoryDetail,
     CitizenReportCreate,
@@ -134,6 +136,7 @@ async def submit_citizen_report(
         None, description="Up to 3 attached photos or videos"
     ),
     db: AsyncSession = Depends(get_db),
+    current_user: Optional[User] = Depends(get_optional_user),
 ) -> ReportSubmitResponse:
     """Intake and persist citizen weather incident reports."""
     # 1. Pydantic validation
@@ -164,6 +167,7 @@ async def submit_citizen_report(
             session=db,
             payload=payload,
             media_files=media_files,
+            user_id=current_user.id if current_user else None,
         )
     except ValueError as e:
         raise HTTPException(

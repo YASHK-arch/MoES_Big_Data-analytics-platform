@@ -106,3 +106,47 @@ async def get_geo_incidents(
         category=category,
         hours_ago=hours_ago,
     )
+
+
+@router.get(
+    "/incidents/nearby",
+    response_model=GeoJSONFeatureCollection,
+    status_code=status.HTTP_200_OK,
+    summary="Geospatial Proximity Query for My Area Dashboard",
+    description="Retrieval of spatial incidents within a radius around user location.",
+)
+async def get_nearby_geo_incidents(
+    lat: float = Query(..., ge=-90.0, le=90.0, description="Center latitude"),
+    lng: float = Query(..., ge=-180.0, le=180.0, description="Center longitude"),
+    radius_km: float = Query(default=25.0, ge=1.0, le=500.0, description="Proximity radius in km"),
+    status_filter: Optional[str] = Query(None, alias="status", description="Verification status filter"),
+    db: AsyncSession = Depends(get_db),
+) -> GeoJSONFeatureCollection:
+    """Retrieve GeoJSON FeatureCollection bounded by PostGIS distance radius for citizen dashboard."""
+    return await incident_query_service.get_nearby_incidents(
+        session=db,
+        lat=lat,
+        lng=lng,
+        radius_km=radius_km,
+        status=status_filter,
+    )
+
+
+@router.get(
+    "/forecasts",
+    response_model=GeoJSONFeatureCollection,
+    status_code=status.HTTP_200_OK,
+    summary="Official IMD & NDMA Forecast Advisories & Cyclone Tracks (GeoJSON)",
+    description="Retrieval of active weather forecast advisories, cyclone tracks, and warning zones.",
+)
+async def get_geo_forecast_advisories(
+    hazard_type: Optional[str] = Query(None, description="Hazard category filter"),
+    active_only: bool = Query(default=True, description="Filter to currently active advisories"),
+    db: AsyncSession = Depends(get_db),
+) -> GeoJSONFeatureCollection:
+    """Retrieve GeoJSON FeatureCollection of official forecast advisories."""
+    return await incident_query_service.get_forecast_advisories(
+        session=db,
+        active_only=active_only,
+        hazard_type=hazard_type,
+    )

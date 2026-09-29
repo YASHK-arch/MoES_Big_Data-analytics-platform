@@ -30,6 +30,10 @@ export interface IncidentCredibilitySummary {
   score: number | null;
   label: string;
   explanation: string;
+  reason?: string | null;
+  positive_drivers?: string[];
+  negative_drivers?: string[];
+  uncertainty_flags?: string[];
   is_machine_assessed: boolean;
 }
 
@@ -64,6 +68,8 @@ export interface IncidentSummary {
   occurred_at: string | null;
   verification_status: VerificationStatus;
   credibility_score: number | null;
+  credibility_reason?: string | null;
+  credibility_explanation?: Record<string, unknown> | null;
   readiness: OverallReadiness;
   media_count: number;
   created_at: string;

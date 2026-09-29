@@ -2,6 +2,8 @@ import math
 import re
 from typing import Dict, List, Optional, Set, Tuple
 
+from app.core.security_guard import sanitize_nlp_text
+
 # Domain synonym maps to normalize terminology
 SYNONYM_MAP: Dict[str, str] = {
     "subway": "underpass",
@@ -102,7 +104,10 @@ class SemanticVectorizer:
         """Normalize, stem, and generate word unigrams and bigrams with tiered weights."""
         if not text:
             return []
-        cleaned = re.sub(r"[^\w\s]", " ", text.lower())
+        sanitized = sanitize_nlp_text(text)
+        if not sanitized:
+            return []
+        cleaned = re.sub(r"[^\w\s]", " ", sanitized.lower())
         raw_words = [w for w in cleaned.split() if w and w not in STOP_WORDS]
         norm_words = [self.normalize_word(w) for w in raw_words]
 

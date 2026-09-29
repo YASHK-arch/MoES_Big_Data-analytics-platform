@@ -24,9 +24,12 @@ import {
   IncidentSummary,
   ReportDetailData,
 } from '@/types';
-import { AlertTriangle } from 'lucide-react';
+import { useLocationScope } from '@/hooks';
+import { AlertTriangle, MapPin, Globe } from 'lucide-react';
 
 export const DashboardPage: React.FC = () => {
+  const { currentLocation, isDefault } = useLocationScope();
+
   const [filters, setFilters] = useState<DashboardFilterState>({
     timeRange: '24h',
     hazard: 'ALL',
@@ -35,6 +38,15 @@ export const DashboardPage: React.FC = () => {
   });
 
   const [selectedReport, setSelectedReport] = useState<MapIncidentPoint | null>(null);
+
+  // Compute effective bounding box: manual region filter takes precedence; otherwise use detected/searched city bbox
+  const effectiveBbox = useMemo(() => {
+    const regionInfo = REGIONS[filters.region];
+    if (regionInfo?.bbox) {
+      return regionInfo.bbox;
+    }
+    return currentLocation.bbox || undefined;
+  }, [filters.region, currentLocation.bbox]);
 
   // Summary aggregation query parameters
   const summaryParams: DashboardSummaryQueryParams = useMemo(() => {
@@ -48,12 +60,11 @@ export const DashboardPage: React.FC = () => {
     if (filters.status !== 'ALL') {
       params.status = filters.status;
     }
-    const regionInfo = REGIONS[filters.region];
-    if (regionInfo?.bbox) {
-      params.bbox = regionInfo.bbox;
+    if (effectiveBbox) {
+      params.bbox = effectiveBbox;
     }
     return params;
-  }, [filters]);
+  }, [filters, effectiveBbox]);
 
   // Fetch SQL-aggregated summary data from backend
   const {
@@ -79,11 +90,6 @@ export const DashboardPage: React.FC = () => {
     return undefined; // All-time
   }, [filters.timeRange]);
 
-  const geoRegionBbox = useMemo(() => {
-    const regionInfo = REGIONS[filters.region];
-    return regionInfo?.bbox || undefined;
-  }, [filters.region]);
-
   const geoParams = useMemo(() => {
     const p: { status?: string; category?: string; hours_ago?: number } = {};
     if (filters.hazard !== 'ALL') p.category = filters.hazard;
@@ -100,8 +106,8 @@ export const DashboardPage: React.FC = () => {
     error: geoError,
     refetch: refetchGeo,
   } = useQuery({
-    queryKey: incidentKeys.geo(geoRegionBbox || '', geoParams as Record<string, unknown>),
-    queryFn: ({ signal }) => incidentApi.getGeoIncidents(geoRegionBbox, geoParams, signal),
+    queryKey: incidentKeys.geo(effectiveBbox || '', geoParams as Record<string, unknown>),
+    queryFn: ({ signal }) => incidentApi.getGeoIncidents(effectiveBbox, geoParams, signal),
     staleTime: 1000 * 60 * 2, // 2 minutes
   });
 
@@ -140,13 +146,12 @@ export const DashboardPage: React.FC = () => {
     if (filters.status !== 'ALL') {
       params.verification_status = filters.status;
     }
-    const regionInfo = REGIONS[filters.region];
-    if (regionInfo?.bbox) {
-      params.bbox = regionInfo.bbox;
+    if (effectiveBbox) {
+      params.bbox = effectiveBbox;
     }
 
     return params;
-  }, [filters, fromDate]);
+  }, [filters, fromDate, effectiveBbox]);
 
   // Fetch bounded recent incidents for feed
   const {
@@ -169,8 +174,14 @@ export const DashboardPage: React.FC = () => {
 
   const targetRegion = useMemo(() => {
     const reg = REGIONS[filters.region];
+    if (reg && filters.region !== 'ALL') {
+      return { center: reg.center, zoom: reg.zoom };
+    }
+    if (currentLocation.lat != null && currentLocation.lon != null && !isDefault) {
+      return { center: [currentLocation.lat, currentLocation.lon] as [number, number], zoom: 10 };
+    }
     return reg ? { center: reg.center, zoom: reg.zoom } : undefined;
-  }, [filters.region]);
+  }, [filters.region, currentLocation, isDefault]);
 
   const handleRefresh = () => {
     refetchSummary();
@@ -221,6 +232,28 @@ export const DashboardPage: React.FC = () => {
             onRefresh={handleRefresh}
             isFetching={isFetching}
           />
+
+          {/* Location Scope Indicator Banner */}
+          <div className="flex items-center justify-between rounded-xl bg-blue-50/80 border border-blue-200/80 px-3.5 py-2 text-xs text-blue-900 shadow-2xs">
+            <div className="flex items-center space-x-2">
+              {isDefault ? (
+                <Globe className="h-4 w-4 text-blue-600 shrink-0" />
+              ) : (
+                <MapPin className="h-4 w-4 text-blue-600 shrink-0" />
+              )}
+              <span>
+                {isDefault ? (
+                  <>
+                    Viewing <strong>All India (National Overview)</strong>. Search your city in the top bar to narrow telemetry.
+                  </>
+                ) : (
+                  <>
+                    Situational view scoped to <strong>{currentLocation.name}</strong> (±55km radius). Telemetry, maps, and KPIs filtered automatically.
+                  </>
+                )}
+              </span>
+            </div>
+          </div>
 
           {/* Error Banner if API call fails */}
           {isError && (

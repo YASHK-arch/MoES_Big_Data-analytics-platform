@@ -42,6 +42,10 @@ The **National Weather Big Data Analytics Platform (SIH26069)** solves this gap 
 
 ### Tier 2: Submitted Solution Baseline Concepts
 - **Citizen Weather & Event Reporting**: Mobile-friendly citizen reporting form with photo upload, reverse geocoding, and instant reference tracking ID. — **IMPLEMENTED** (`/report`, `/track-report`, `POST /api/v1/reports`).
+- **Location Onboarding Gate**: Session-persisted geolocation detection with Nominatim reverse-geocode fallback and manual city search prompt. — **IMPLEMENTED** (`LocationContext.tsx`, `LocationGateModal.tsx`).
+- **"My Area" Citizen Dashboard**: Hyper-local verified incident proximity map (`/citizen-dashboard`), distance calculations, and public safety radius filters (`GET /api/v1/geo/incidents/nearby`). — **IMPLEMENTED**
+- **Destination Route-Blockage Corridor Check**: Real road routing using self-hosted OSRM engine; PostGIS `ST_Buffer` (2 km corridor) & `ST_Intersects` checking against verified hazard zones (`/routes/check`, `POST /api/v1/routes/check`). — **IMPLEMENTED**
+- **National All-India + EEZ Maritime Map**: Unified national map (`/national-map`) with India EEZ boundary overlay, official IMD/NDMA cyclone tracks & forecast advisories (`forecast_advisories` table, `GET /api/v1/geo/forecasts`), and toggleable Hazard Density Heatmaps (B5). — **IMPLEMENTED**
 - **Multi-Source Ingestion**: Ingestion of IMD weather station observations, NDMA SACHET alerts, CWC river telemetry, Mastodon posts, and GDELT disaster news. — **IMPLEMENTED** (`back-end/app/ingestion/`).
 - **Intelligence & Triage Pipeline**:
   - Automated syntactic and semantic validation. — **IMPLEMENTED**
@@ -62,6 +66,12 @@ The **National Weather Big Data Analytics Platform (SIH26069)** solves this gap 
 ### Tier 3: Engineering Decisions for MVP (Current Build Scope)
 - **Primary System of Record**: PostgreSQL 16+ with PostGIS spatial extension. — **IMPLEMENTED**
 - **Media Storage**: S3-compatible Object Storage (MinIO locally) with SHA-256 integrity verification. — **IMPLEMENTED**
+- **Operator Security & Auth (Part 5)**: JWT access tokens (`pyjwt`), direct bcrypt password hashing, `POST /api/v1/auth/login`, `get_current_operator` FastAPI dependency locking all `/api/v1/verification/*` endpoints, `ProtectedRoute.tsx`, and `LoginPage.tsx` with role tabs and 1-click credential autofill. — **IMPLEMENTED**
+- **Relief Center Locator (B1)**: Admin-curated emergency shelters; PostGIS spatial query (`GET /api/v1/geo/relief-centers`); Leaflet shelter map layer (`🏕️`). — **IMPLEMENTED**
+- **Vernacular Language Support (B2)**: `react-i18next` Hindi & English bilingual localization with Navbar `EN`/`HI` toggle. — **IMPLEMENTED**
+- **Opt-In Proximity Alerts (B3)**: Real-time SSE listener comparing live weather alerts against user location; 25 km threshold animated toast banner. — **IMPLEMENTED**
+- **Community Crowd Validation (B4)**: Citizen "still accurate?" crowd validation feedback loop (`incident_feedback` model & API `POST /api/v1/incidents/{id}/feedback`). — **IMPLEMENTED**
+- **One-Tap Emergency Contacts (B7)**: Quick-dial directory for NDRF (1078), SDRF (1070), DEOC (1077), and CWC (1800-11-2020). — **IMPLEMENTED**
 - **Transactional Real-Time Outbox & SSE**: PostgreSQL outbox table, independent worker process, Redis Streams buffer (`stream:weather:realtime`), and FastAPI Server-Sent Events (`/api/v1/events/stream`). — **IMPLEMENTED**
 - **Multi-Stream Redis Buffer**: 6 dedicated streams (`realtime`, `events`, `observations`, `evidence`, `orchestration`, `dead_letter`). — **IMPLEMENTED**
 - **State Machine for Verification**: Explicit states: `PENDING`, `UNDER_REVIEW`, `VERIFIED`, `REJECTED`, `DUPLICATE`. — **IMPLEMENTED**
@@ -72,7 +82,6 @@ The **National Weather Big Data Analytics Platform (SIH26069)** solves this gap 
 - **Enterprise Messaging**: Migration from Redis Streams to Apache Kafka for multi-region streaming. — **FUTURE EXTENSION**
 - **Multimodal Deep Learning**: Fine-tuned Vision-Language Models (VLM) for flood depth estimation from citizen photos. — **FUTURE EXTENSION**
 - **CAP Dissemination**: Automated outbound Common Alerting Protocol broadcast to NDMA SACHET. — **FUTURE EXTENSION**
-- **Production RBAC / JWT**: Institutional OAuth2 / JWT bearer authentication and role permissions. — **DEFERRED PRODUCTION HARDENING**
 
 ---
 

@@ -1,16 +1,16 @@
-import React from 'react';
-import { Link, useLocation } from 'react-router-dom';
-import { Home, Map, AlertTriangle, BarChart3, Search } from 'lucide-react';
+import React from "react";
+import { Link, useLocation } from "react-router-dom";
+import { Home, Map, AlertTriangle, BarChart3, Search } from "lucide-react";
 
 export const MobileBottomNav: React.FC = () => {
   const location = useLocation();
 
   const items = [
-    { name: 'Home', path: '/', icon: Home },
-    { name: 'Live Map', path: '/live-map', icon: Map },
-    { name: 'Report', path: '/report', icon: AlertTriangle },
-    { name: 'Analytics', path: '/analytics', icon: BarChart3 },
-    { name: 'Track', path: '/track-report', icon: Search },
+    { name: "Home", path: "/welcome", icon: Home },
+    { name: "Live Map", path: "/live-map", icon: Map },
+    { name: "Report", path: "/report", icon: AlertTriangle },
+    { name: "Analytics", path: "/analytics", icon: BarChart3 },
+    { name: "Track", path: "/track-report", icon: Search },
   ];
 
   return (
@@ -26,11 +26,13 @@ export const MobileBottomNav: React.FC = () => {
               to={item.path}
               className={`flex flex-col items-center justify-center space-y-1 px-3 py-1 text-[11px] font-medium transition-colors ${
                 isActive
-                  ? 'text-blue-600 font-bold'
-                  : 'text-slate-500 hover:text-slate-900'
+                  ? "text-blue-600 font-bold"
+                  : "text-slate-500 hover:text-slate-900"
               }`}
             >
-              <Icon className={`h-5 w-5 ${isActive ? 'text-blue-600' : 'text-slate-500'}`} />
+              <Icon
+                className={`h-5 w-5 ${isActive ? "text-blue-600" : "text-slate-500"}`}
+              />
               <span>{item.name}</span>
             </Link>
           );

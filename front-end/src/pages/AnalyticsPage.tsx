@@ -26,9 +26,12 @@ import {
   DashboardSummaryQueryParams,
   IncidentListQueryParams,
 } from '@/types';
-import { BarChart3, Filter, AlertCircle } from 'lucide-react';
+import { useLocationScope } from '@/hooks';
+import { BarChart3, Filter, AlertCircle, MapPin, Globe } from 'lucide-react';
 
 export const AnalyticsPage: React.FC = () => {
+  const { currentLocation, isDefault } = useLocationScope();
+
   const [filters, setFilters] = useState<AnalyticsFilterState>({
     timeRange: '7d',
     category: 'ALL',
@@ -39,6 +42,14 @@ export const AnalyticsPage: React.FC = () => {
 
   const [tempFilters, setTempFilters] = useState<AnalyticsFilterState>(filters);
   const [mobileFilterOpen, setMobileFilterOpen] = useState(false);
+
+  // Compute effective bounding box
+  const effectiveBbox = useMemo(() => {
+    if (filters.region !== 'ALL' && GEOGRAPHY_OPTIONS[filters.region]?.bbox) {
+      return GEOGRAPHY_OPTIONS[filters.region].bbox;
+    }
+    return currentLocation.bbox || undefined;
+  }, [filters.region, currentLocation.bbox]);
 
   // 1. Summary Metrics Query (dashboardApi.getSummary)
   const summaryParams = useMemo<DashboardSummaryQueryParams>(() => {
@@ -56,12 +67,12 @@ export const AnalyticsPage: React.FC = () => {
     if (filters.status !== 'ALL') {
       params.status = filters.status;
     }
-    if (filters.region !== 'ALL' && GEOGRAPHY_OPTIONS[filters.region]?.bbox) {
-      params.bbox = GEOGRAPHY_OPTIONS[filters.region].bbox;
+    if (effectiveBbox) {
+      params.bbox = effectiveBbox;
     }
 
     return params;
-  }, [filters]);
+  }, [filters, effectiveBbox]);
 
   const {
     data: summaryResponse,
@@ -93,12 +104,12 @@ export const AnalyticsPage: React.FC = () => {
     if (filters.status !== 'ALL') {
       params.status = filters.status;
     }
-    if (filters.region !== 'ALL' && GEOGRAPHY_OPTIONS[filters.region]?.bbox) {
-      params.bbox = GEOGRAPHY_OPTIONS[filters.region].bbox;
+    if (effectiveBbox) {
+      params.bbox = effectiveBbox;
     }
 
     return params;
-  }, [filters]);
+  }, [filters, effectiveBbox]);
 
   const {
     data: trendResponse,
@@ -129,12 +140,12 @@ export const AnalyticsPage: React.FC = () => {
     if (filters.status !== 'ALL') {
       params.status = filters.status;
     }
-    if (filters.region !== 'ALL' && GEOGRAPHY_OPTIONS[filters.region]?.bbox) {
-      params.bbox = GEOGRAPHY_OPTIONS[filters.region].bbox;
+    if (effectiveBbox) {
+      params.bbox = effectiveBbox;
     }
 
     return params;
-  }, [filters]);
+  }, [filters, effectiveBbox]);
 
   const {
     data: regionalResponse,
@@ -176,12 +187,12 @@ export const AnalyticsPage: React.FC = () => {
     if (filters.status !== 'ALL') {
       params.verification_status = filters.status;
     }
-    if (filters.region !== 'ALL' && GEOGRAPHY_OPTIONS[filters.region]?.bbox) {
-      params.bbox = GEOGRAPHY_OPTIONS[filters.region].bbox;
+    if (effectiveBbox) {
+      params.bbox = effectiveBbox;
     }
 
     return params;
-  }, [filters]);
+  }, [filters, effectiveBbox]);
 
   const {
     data: recentResponse,
@@ -249,6 +260,28 @@ export const AnalyticsPage: React.FC = () => {
                 <Filter className="h-3.5 w-3.5 text-blue-600" />
                 <span>Filters</span>
               </button>
+            </div>
+          </div>
+
+          {/* Location Scope Indicator Banner */}
+          <div className="flex items-center justify-between rounded-xl bg-blue-50/80 border border-blue-200/80 px-3.5 py-2 text-xs text-blue-900 shadow-2xs">
+            <div className="flex items-center space-x-2">
+              {isDefault ? (
+                <Globe className="h-4 w-4 text-blue-600 shrink-0" />
+              ) : (
+                <MapPin className="h-4 w-4 text-blue-600 shrink-0" />
+              )}
+              <span>
+                {isDefault ? (
+                  <>
+                    Viewing analytics for <strong>All India (National Overview)</strong>. Search your city in the top bar to focus analytics trends.
+                  </>
+                ) : (
+                  <>
+                    Analytics trends scoped to <strong>{currentLocation.name}</strong> (±55km area). Aggregations and charts filtered automatically.
+                  </>
+                )}
+              </span>
             </div>
           </div>
 

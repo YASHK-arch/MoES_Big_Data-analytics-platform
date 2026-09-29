@@ -25,9 +25,9 @@ class ObservationService:
         self,
         session: AsyncSession,
         source_code: str = "CWC_NWDP",
-        name: str = "Central Water Commission River Telemetry (NWDP)",
-        source_type: str = "GOV_OPEN_DATA",
-        base_trust_score: float = 0.92,
+        name: Optional[str] = None,
+        source_type: Optional[str] = None,
+        base_trust_score: Optional[float] = None,
     ) -> Source:
         """Fetch existing observation source or register a new one idempotently."""
         normalized_code = source_code.strip().upper()
@@ -35,17 +35,41 @@ class ObservationService:
         result = await session.execute(stmt)
         source = result.scalar_one_or_none()
 
-        if not source:
-            source = Source(
-                source_code=normalized_code,
-                name=name,
-                source_type=source_type,
-                base_trust_score=base_trust_score,
-                is_active=True,
-            )
-            session.add(source)
-            await session.flush()
-            logger.info(f"Registered observation source: {normalized_code}")
+        if source is not None:
+            if base_trust_score is not None:
+                source.base_trust_score = base_trust_score
+            else:
+                from app.ingestion.registry import adapter_registry
+
+                registered = adapter_registry.get(normalized_code)
+                if registered:
+                    source.base_trust_score = registered.base_trust_score
+            return source
+
+        resolved_trust = base_trust_score
+        resolved_name = name
+        resolved_type = source_type or "GOV_OPEN_DATA"
+
+        from app.ingestion.registry import adapter_registry
+
+        registered = adapter_registry.get(normalized_code)
+        if registered:
+            if resolved_trust is None:
+                resolved_trust = registered.base_trust_score
+            if not resolved_name:
+                resolved_name = registered.source_name
+            resolved_type = registered.source_type
+
+        source = Source(
+            source_code=normalized_code,
+            name=resolved_name or f"Observation Source {normalized_code}",
+            source_type=resolved_type,
+            base_trust_score=resolved_trust if resolved_trust is not None else 0.92,
+            is_active=True,
+        )
+        session.add(source)
+        await session.flush()
+        logger.info(f"Registered observation source: {normalized_code} (trust: {source.base_trust_score})")
 
         return source
 

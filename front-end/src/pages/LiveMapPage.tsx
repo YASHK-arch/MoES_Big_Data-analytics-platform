@@ -10,6 +10,7 @@ import { LiveMapContainer } from '@/features/map/LiveMapContainer';
 import { incidentApi } from '@/services/incidentApi';
 import { incidentKeys } from '@/lib/queryKeys';
 import { geoJSONToMapPoints, MapIncidentPoint } from '@/features/map/adapters';
+import { useLocationScope } from '@/hooks';
 import { Info, AlertTriangle, Loader2 } from 'lucide-react';
 
 const REGION_BOUNDS: Record<string, { center: [number, number]; zoom: number; bbox?: string }> = {
@@ -55,6 +56,8 @@ const REGION_BOUNDS: Record<string, { center: [number, number]; zoom: number; bb
 };
 
 export const LiveMapPage: React.FC = () => {
+  const { currentLocation, isDefault } = useLocationScope();
+
   const [filters, setFilters] = useState<MapFilters>({
     timeRange: '24h',
     hazard: 'ALL',
@@ -72,8 +75,25 @@ export const LiveMapPage: React.FC = () => {
     return undefined; // All-time
   }, [filters.timeRange]);
 
-  const targetRegion = REGION_BOUNDS[filters.state];
-  const activeBbox = targetRegion?.bbox || undefined;
+  // Compute effective bounding box: manual state filter takes precedence; otherwise use detected/searched city bbox
+  const activeBbox = useMemo(() => {
+    const regionInfo = REGION_BOUNDS[filters.state];
+    if (regionInfo?.bbox) {
+      return regionInfo.bbox;
+    }
+    return currentLocation.bbox || undefined;
+  }, [filters.state, currentLocation.bbox]);
+
+  const targetRegion = useMemo(() => {
+    const reg = REGION_BOUNDS[filters.state];
+    if (reg && filters.state !== 'ALL') {
+      return reg;
+    }
+    if (currentLocation.lat != null && currentLocation.lon != null && !isDefault) {
+      return { center: [currentLocation.lat, currentLocation.lon] as [number, number], zoom: 11 };
+    }
+    return reg;
+  }, [filters.state, currentLocation, isDefault]);
 
   const geoParams = useMemo(() => {
     const p: { status?: string; category?: string; hours_ago?: number } = {};

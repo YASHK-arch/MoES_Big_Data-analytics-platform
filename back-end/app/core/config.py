@@ -40,6 +40,12 @@ class Settings(BaseSettings):
     OUTBOX_WORKER_PRUNE_INTERVAL_SECONDS: int = 3600
     OUTBOX_WORKER_RETENTION_HOURS: int = 72
 
+    # Data Retention & Archival TTL Configuration (C2)
+    DATA_RETENTION_ENABLED: bool = True
+    DATA_RETENTION_DAYS: int = 6
+    DATA_RETENTION_RUN_INTERVAL_SECONDS: float = 86400.0
+    DATA_RETENTION_BATCH_SIZE: int = 500
+
     # Object Storage (MinIO / S3)
     S3_ENDPOINT_URL: str = "http://localhost:9000"
     S3_ACCESS_KEY_ID: str = "minioadmin"
@@ -86,6 +92,19 @@ class Settings(BaseSettings):
     MASTODON_REQUEST_TIMEOUT_SECONDS: float = 15.0
     MASTODON_POLL_INTERVAL_SECONDS: float = 30.0
     MASTODON_MIN_REQUEST_INTERVAL_SECONDS: float = 1.0
+
+    # Phase 3: Open-Meteo Hourly Weather Observation Adapter
+    OPEN_METEO_ENDPOINT: str = "https://api.open-meteo.com/v1/forecast"
+    OPEN_METEO_TIMEOUT_SECONDS: float = 15.0
+    OPEN_METEO_MIN_REQUEST_INTERVAL_SECONDS: float = 1.0
+
+    # Phase 3: GDACS Global Disaster Alert and Coordination System Adapter
+    GDACS_ENDPOINT: str = "https://www.gdacs.org/gdacsapi/api/events/geteventlist/SEARCH"
+    GDACS_EVENT_TYPES: List[str] = ["FL", "TC", "DR", "WF"]
+    GDACS_COUNTRY_CODE: str = "IND"
+    GDACS_LOOKBACK_DAYS: int = 7
+    GDACS_MIN_REQUEST_INTERVAL_SECONDS: float = 5.0
+    GDACS_REQUEST_TIMEOUT_SECONDS: float = 15.0
 
     # AI & Semantic Intelligence / Deduplication Engine (v1 Initial Parameters)
     DUPLICATE_SEMANTIC_METHOD: str = "sparse_tfidf_ngram_v1"

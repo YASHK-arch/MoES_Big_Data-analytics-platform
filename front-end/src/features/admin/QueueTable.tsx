@@ -239,18 +239,25 @@ export const QueueTable: React.FC<QueueTableProps> = ({
                   </td>
 
                   {/* Credibility (Honest Representation) */}
-                  <td className="px-4 py-3">
+                  <td className="px-4 py-3" title={report.credibility_reason || undefined}>
                     {report.credibility_score > 0 ? (
-                      <div className="flex items-center space-x-2">
-                        <div className="h-1.5 w-12 rounded-full bg-slate-200 overflow-hidden">
-                          <div
-                            className="h-full bg-emerald-500"
-                            style={{ width: `${Math.round(report.credibility_score * 100)}%` }}
-                          />
+                      <div className="flex flex-col space-y-0.5">
+                        <div className="flex items-center space-x-2">
+                          <div className="h-1.5 w-12 rounded-full bg-slate-200 overflow-hidden">
+                            <div
+                              className="h-full bg-emerald-500"
+                              style={{ width: `${Math.round(report.credibility_score * 100)}%` }}
+                            />
+                          </div>
+                          <span className="font-mono text-slate-700 font-bold">
+                            {report.credibility_score.toFixed(2)}
+                          </span>
                         </div>
-                        <span className="font-mono text-slate-700 font-bold">
-                          {report.credibility_score.toFixed(2)}
-                        </span>
+                        {report.credibility_reason && (
+                          <span className="text-[10px] text-slate-500 font-normal line-clamp-1 max-w-[180px]">
+                            {report.credibility_reason}
+                          </span>
+                        )}
                       </div>
                     ) : (
                       <span className="text-[11px] text-slate-400 italic">

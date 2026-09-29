@@ -1,5 +1,5 @@
 import React from 'react';
-import { RefreshCw, CheckCircle2, AlertTriangle } from 'lucide-react';
+import { AlertTriangle, CheckCircle2, Clock, Copy } from 'lucide-react';
 import { ReportDetailData } from '@/types';
 
 interface ReportStatusBannerProps {
@@ -15,12 +15,18 @@ export const ReportStatusBanner: React.FC<ReportStatusBannerProps> = ({ report }
 
   const getStatusBadge = (status: string) => {
     switch (status) {
-      case 'COMPLETED':
       case 'VERIFIED':
         return (
           <span className="inline-flex items-center space-x-1.5 rounded-full bg-emerald-50 px-3.5 py-1 text-xs font-bold text-emerald-700 border border-emerald-200">
             <CheckCircle2 className="h-3.5 w-3.5" />
             <span>VERIFIED</span>
+          </span>
+        );
+      case 'UNDER_REVIEW':
+        return (
+          <span className="inline-flex items-center space-x-1.5 rounded-full bg-amber-50 px-3.5 py-1 text-xs font-bold text-amber-700 border border-amber-200">
+            <Clock className="h-3.5 w-3.5" />
+            <span>UNDER REVIEW</span>
           </span>
         );
       case 'REJECTED':
@@ -30,13 +36,19 @@ export const ReportStatusBanner: React.FC<ReportStatusBannerProps> = ({ report }
             <span>REJECTED</span>
           </span>
         );
-      case 'PROCESSING':
-      case 'QUEUED':
+      case 'DUPLICATE':
+        return (
+          <span className="inline-flex items-center space-x-1.5 rounded-full bg-purple-50 px-3.5 py-1 text-xs font-bold text-purple-700 border border-purple-200">
+            <Copy className="h-3.5 w-3.5" />
+            <span>DUPLICATE</span>
+          </span>
+        );
+      case 'PENDING':
       default:
         return (
-          <span className="inline-flex items-center space-x-1.5 rounded-full bg-blue-50 px-3.5 py-1 text-xs font-bold text-blue-700 border border-blue-200">
-            <RefreshCw className="h-3.5 w-3.5 animate-spin text-blue-600" />
-            <span>{status || 'QUEUED'}</span>
+          <span className="inline-flex items-center space-x-1.5 rounded-full bg-slate-100 px-3.5 py-1 text-xs font-bold text-slate-700 border border-slate-200">
+            <Clock className="h-3.5 w-3.5 text-slate-500" />
+            <span>PENDING</span>
           </span>
         );
     }
@@ -56,7 +68,7 @@ export const ReportStatusBanner: React.FC<ReportStatusBannerProps> = ({ report }
         </div>
 
         {/* Status Badge */}
-        <div>{getStatusBadge(report.processing_status)}</div>
+        <div>{getStatusBadge(report.verification_status)}</div>
       </div>
 
       {/* Main Title */}

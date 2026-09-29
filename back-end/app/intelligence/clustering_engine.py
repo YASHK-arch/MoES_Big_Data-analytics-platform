@@ -83,26 +83,34 @@ class IncidentClusteringEngine:
             )
 
         # Get incoming report category code
-        cat_code_a = "OTHER"
+        cat_code_a: Optional[str] = None
         if report.category_id:
             cat_stmt = select(EventCategory).where(EventCategory.id == report.category_id)
             cat_res = await db.execute(cat_stmt)
             cat_obj = cat_res.scalar_one_or_none()
-            if cat_obj:
+            if cat_obj and cat_obj.category_code:
                 cat_code_a = cat_obj.category_code
+        if not cat_code_a and report.reported_category and report.reported_category.strip():
+            cat_code_a = report.reported_category.strip()
+        if not cat_code_a:
+            cat_code_a = "OTHER"
 
         # 2. Evaluate pairwise assessments against all candidates
         best_assessment: Optional[DuplicateAssessment] = None
         matched_report: Optional[WeatherReport] = None
 
         for cand in candidates:
-            cat_code_b = "OTHER"
+            cat_code_b: Optional[str] = None
             if cand.category_id:
                 cand_cat_stmt = select(EventCategory).where(EventCategory.id == cand.category_id)
                 cand_cat_res = await db.execute(cand_cat_stmt)
                 cand_cat_obj = cand_cat_res.scalar_one_or_none()
-                if cand_cat_obj:
+                if cand_cat_obj and cand_cat_obj.category_code:
                     cat_code_b = cand_cat_obj.category_code
+            if not cat_code_b and cand.reported_category and cand.reported_category.strip():
+                cat_code_b = cand.reported_category.strip()
+            if not cat_code_b:
+                cat_code_b = "OTHER"
 
             assessment = self.scorer.score_pair(
                 report_a_id=report.id,

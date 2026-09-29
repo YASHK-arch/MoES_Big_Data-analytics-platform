@@ -13,6 +13,7 @@ import { MapContainer, TileLayer, Marker } from 'react-leaflet';
 import L from 'leaflet';
 import { Navbar } from '@/components/layout/Navbar';
 import { Footer } from '@/components/layout/Footer';
+import { FeedbackWidget } from '@/components/incident/FeedbackWidget';
 import { CredibilitySection } from '@/features/incidents/CredibilitySection';
 import { IntelligenceStatusSection } from '@/features/incidents/IntelligenceStatusSection';
 import { LinkedEvidenceSection } from '@/features/incidents/LinkedEvidenceSection';
@@ -175,6 +176,9 @@ export const IncidentDetailPage: React.FC = () => {
                     {incident.description}
                   </p>
                 )}
+
+                {/* Feature B4: Community Crowd Validation Widget */}
+                <FeedbackWidget incidentId={incident.id} />
               </div>
 
               {/* 2-Column Responsive Layout */}

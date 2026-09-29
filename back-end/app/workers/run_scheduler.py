@@ -11,16 +11,19 @@ import asyncio
 import logging
 import signal
 import sys
+import time
 from typing import Any, List
 
 from app.core.config import settings
 from app.core.redis import redis_client
+from app.db.session import async_session_factory
 from app.ingestion import adapter_registry
 from app.ingestion.schemas import (
     NormalizedEvidenceEvent,
     NormalizedIngestionEvent,
     NormalizedObservationEvent,
 )
+from app.services.retention_service import retention_service
 from app.services.stream_service import stream_service
 
 logging.basicConfig(
@@ -94,6 +97,33 @@ async def trigger_ingestion_cycle() -> None:
             )
 
 
+async def trigger_retention_cycle(dry_run: bool = False) -> None:
+    """Trigger data retention cycle to prune and archive expired records."""
+    if not getattr(settings, "DATA_RETENTION_ENABLED", True):
+        return
+
+    logger.info("Starting scheduled data retention cycle...")
+    try:
+        async with async_session_factory() as session:
+            result = await retention_service.run_retention_cycle(
+                session=session,
+                retention_days=settings.DATA_RETENTION_DAYS,
+                dry_run=dry_run,
+            )
+            await session.commit()
+            logger.info(
+                "Data retention cycle completed successfully: archived=%d, deleted_reports=%d, "
+                "deleted_obs=%d, deleted_evidence=%d in %.2fms",
+                result.reports_archived,
+                result.reports_deleted,
+                result.observations_deleted,
+                result.evidence_deleted,
+                result.duration_ms,
+            )
+    except Exception as e:
+        logger.error("Failed to execute data retention cycle: %s", e, exc_info=True)
+
+
 async def main() -> int:
     """Run the Ingestion Scheduler standalone process with graceful signal handling."""
     stop_event = asyncio.Event()
@@ -117,6 +147,9 @@ async def main() -> int:
     try:
         # Loop until stop event is set
         poll_interval = getattr(settings, "INGESTION_SCHEDULER_INTERVAL_SECONDS", 60.0)
+        retention_interval = getattr(settings, "DATA_RETENTION_RUN_INTERVAL_SECONDS", 86400.0)
+        last_retention_run = 0.0
+
         while not stop_event.is_set():
             try:
                 await trigger_ingestion_cycle()
@@ -126,6 +159,19 @@ async def main() -> int:
                     loop_err,
                     exc_info=True,
                 )
+
+            # Check if retention cycle is due
+            now_ts = time.time()
+            if now_ts - last_retention_run >= retention_interval:
+                try:
+                    await trigger_retention_cycle()
+                    last_retention_run = now_ts
+                except Exception as ret_err:
+                    logger.error(
+                        "Unexpected error in retention scheduler cycle: %s",
+                        ret_err,
+                        exc_info=True,
+                    )
 
             # Wait for next cycle or shutdown signal
             try:

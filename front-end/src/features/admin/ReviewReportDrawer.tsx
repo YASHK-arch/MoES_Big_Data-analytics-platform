@@ -327,10 +327,11 @@ export const ReviewReportDrawer: React.FC<ReviewReportDrawerProps> = ({
               </span>
             )}
           </div>
-          <p className="text-[11px] text-slate-500 leading-relaxed">
-            {report.credibility_score > 0
-              ? 'Algorithmic credibility score computed from metadata and corroboration factors.'
-              : 'Statistical credibility scoring pipeline not yet executed for this report.'}
+          <p className="text-[11px] text-slate-600 leading-relaxed font-medium bg-white p-2.5 rounded-lg border border-slate-200/60 mt-2">
+            {report.credibility_reason ||
+              (report.credibility_score > 0
+                ? 'Algorithmic credibility score computed from metadata and corroboration factors.'
+                : 'Statistical credibility scoring pipeline not yet executed for this report.')}
           </p>
         </div>
 

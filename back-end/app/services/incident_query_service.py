@@ -12,8 +12,16 @@ import uuid
 from datetime import datetime, timedelta, timezone
 from typing import Any, Dict, List, Optional, Tuple
 
-from geoalchemy2.functions import ST_MakeEnvelope
-from sqlalchemy import and_, case, func, select
+from geoalchemy2 import Geography
+from geoalchemy2.functions import (
+    ST_AsGeoJSON,
+    ST_Distance,
+    ST_DWithin,
+    ST_MakeEnvelope,
+    ST_MakePoint,
+    ST_SetSRID,
+)
+from sqlalchemy import and_, case, cast, func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
@@ -22,6 +30,7 @@ from app.models.category import EventCategory
 from app.models.corroboration import IncidentObservationCorroboration
 from app.models.duplicate import DuplicateCluster, DuplicateMember
 from app.models.evidence import EvidenceItem, IncidentEvidenceLink
+from app.models.forecast import ForecastAdvisory
 from app.models.observation import WeatherObservation
 from app.models.report import WeatherReport
 from app.orchestration.events import OverallReadiness
@@ -238,6 +247,8 @@ class IncidentQueryService:
                 occurred_at=r.occurred_at,
                 verification_status=r.verification_status,
                 credibility_score=r.credibility_score,
+                credibility_reason=r.credibility_reason,
+                credibility_explanation=r.credibility_explanation,
                 readiness=self._extract_readiness(r),
                 media_count=len(r.media) if r.media else 0,
                 created_at=r.created_at,
@@ -326,8 +337,14 @@ class IncidentQueryService:
 
         # Credibility summary
         cred_exp = None
+        pos_drivers: List[str] = []
+        neg_drivers: List[str] = []
+        flags: List[str] = []
         if report.credibility_explanation and isinstance(report.credibility_explanation, dict):
-            cred_exp = report.credibility_explanation.get("explanation_text")
+            cred_exp = report.credibility_explanation.get("explanation_text") or report.credibility_explanation.get("explanation")
+            pos_drivers = report.credibility_explanation.get("positive_drivers") or []
+            neg_drivers = report.credibility_explanation.get("negative_drivers") or []
+            flags = report.credibility_explanation.get("uncertainty_flags") or []
         elif isinstance(report.credibility_explanation, str):
             cred_exp = report.credibility_explanation
 
@@ -335,6 +352,10 @@ class IncidentQueryService:
             score=report.credibility_score,
             is_machine_assessed=True,
             explanation=cred_exp,
+            reason=report.credibility_reason,
+            positive_drivers=pos_drivers,
+            negative_drivers=neg_drivers,
+            uncertainty_flags=flags,
         )
 
         # Verification summary
@@ -883,6 +904,8 @@ class IncidentQueryService:
                 occurred_at=r.occurred_at,
                 verification_status=r.verification_status,
                 credibility_score=r.credibility_score,
+                credibility_reason=r.credibility_reason,
+                credibility_explanation=r.credibility_explanation,
                 readiness=self._extract_readiness(r),
                 media_count=len(r.media) if r.media else 0,
                 created_at=r.created_at,
@@ -926,7 +949,7 @@ class IncidentQueryService:
                 WeatherReport.occurred_at >= func.now() - func.make_interval(0, 0, 0, 0, hours_ago)
             )
 
-        stmt = stmt.limit(500)
+        stmt = stmt.order_by(WeatherReport.occurred_at.desc().nullslast(), WeatherReport.created_at.desc()).limit(500)
         res = await session.execute(stmt)
         reports = res.scalars().all()
 
@@ -943,6 +966,7 @@ class IncidentQueryService:
                         category_code=cat_code,
                         severity=r.severity,
                         credibility_score=r.credibility_score,
+                        credibility_reason=r.credibility_reason,
                         verification_status=r.verification_status,
                         readiness=self._extract_readiness(r).value,
                         occurred_at=r.occurred_at.isoformat(),
@@ -1551,6 +1575,133 @@ class IncidentQueryService:
             total_classified=total_classified,
             regions=regions,
         )
+
+    async def get_nearby_incidents(
+        self,
+        session: AsyncSession,
+        lat: float,
+        lng: float,
+        radius_km: float = 25.0,
+        status: Optional[str] = None,
+        limit: int = 50,
+    ) -> GeoJSONFeatureCollection:
+        """Fetch GeoJSON FeatureCollection of incidents within radius_km around (lat, lng) for My Area dashboard."""
+        center_point = ST_SetSRID(ST_MakePoint(lng, lat), 4326)
+        radius_meters = radius_km * 1000.0
+
+        stmt = (
+            select(WeatherReport)
+            .options(selectinload(WeatherReport.category))
+            .where(
+                WeatherReport.geom.isnot(None),
+                ST_DWithin(
+                    cast(WeatherReport.geom, Geography),
+                    cast(center_point, Geography),
+                    radius_meters,
+                ),
+            )
+        )
+
+        if status:
+            statuses = [s.strip().upper() for s in status.split(",") if s.strip()]
+            if statuses:
+                stmt = stmt.where(WeatherReport.verification_status.in_(statuses))
+        else:
+            # Default citizen guardrail: VERIFIED or high-credibility UNDER_REVIEW
+            stmt = stmt.where(
+                (WeatherReport.verification_status == "VERIFIED")
+                | (
+                    (WeatherReport.verification_status == "UNDER_REVIEW")
+                    & (WeatherReport.credibility_score >= 0.70)
+                )
+            )
+
+        # Distance ordering from center
+        dist_expr = ST_Distance(
+            cast(WeatherReport.geom, Geography),
+            cast(center_point, Geography),
+        )
+        stmt = stmt.order_by(dist_expr.asc(), WeatherReport.occurred_at.desc()).limit(limit)
+
+        res = await session.execute(stmt)
+        reports = res.scalars().all()
+
+        features: List[GeoJSONIncidentFeature] = []
+        for r in reports:
+            cat_code = r.category.category_code if r.category else (r.reported_category or "OTHER")
+            features.append(
+                GeoJSONIncidentFeature(
+                    geometry=GeoJSONGeometryPoint(coordinates=[r.longitude, r.latitude]),
+                    properties=GeoJSONIncidentProperties(
+                        id=r.id,
+                        tracking_id=r.tracking_id,
+                        title=r.title,
+                        category_code=cat_code,
+                        severity=r.severity,
+                        credibility_score=r.credibility_score,
+                        credibility_reason=r.credibility_reason,
+                        verification_status=r.verification_status,
+                        readiness=self._extract_readiness(r).value,
+                        occurred_at=r.occurred_at.isoformat(),
+                        location_name=r.location_name,
+                    ),
+                )
+            )
+
+        return GeoJSONFeatureCollection(features=features)
+
+    async def get_forecast_advisories(
+        self,
+        session: AsyncSession,
+        active_only: bool = True,
+        hazard_type: Optional[str] = None,
+    ) -> GeoJSONFeatureCollection:
+        """Fetch GeoJSON FeatureCollection of official IMD/NDMA forecast advisories & cyclone tracks."""
+        import json
+
+        now = datetime.now(timezone.utc)
+        stmt = select(ForecastAdvisory).where(ForecastAdvisory.geom.isnot(None))
+
+        if active_only:
+            stmt = stmt.where(ForecastAdvisory.valid_until >= now)
+
+        if hazard_type:
+            stmt = stmt.where(
+                func.upper(ForecastAdvisory.hazard_type) == hazard_type.strip().upper()
+            )
+
+        stmt = stmt.order_by(ForecastAdvisory.valid_until.desc()).limit(100)
+        res = await session.execute(stmt)
+        advisories = res.scalars().all()
+
+        features: List[GeoJSONIncidentFeature] = []
+        for adv in advisories:
+            geom_stmt = select(ST_AsGeoJSON(adv.geom).label("geojson_str"))
+            g_res = await session.execute(geom_stmt)
+            g_str = g_res.scalar()
+            geom_dict = json.loads(g_str) if g_str else {"type": "Point", "coordinates": [0, 0]}
+
+            props = GeoJSONIncidentProperties(
+                id=adv.id,
+                tracking_id=f"ADV-{adv.source_code}-{str(adv.id)[:6].upper()}",
+                title=adv.advisory_title,
+                category_code=adv.hazard_type,
+                severity=adv.severity,
+                credibility_score=0.95,
+                credibility_reason=f"Official forecast advisory issued by {adv.source_code}.",
+                verification_status="VERIFIED",
+                readiness="INTELLIGENCE_READY",
+                occurred_at=adv.issued_at.isoformat(),
+                location_name=adv.advisory_text[:100] if adv.advisory_text else "Advisory Area",
+            )
+            features.append(
+                GeoJSONIncidentFeature(
+                    geometry=geom_dict,
+                    properties=props,
+                )
+            )
+
+        return GeoJSONFeatureCollection(features=features)
 
 
 incident_query_service = IncidentQueryService()

@@ -18,6 +18,7 @@ from fastapi.responses import StreamingResponse
 
 from app.core.config import settings
 from app.core.redis import AsyncRedisClient
+from app.core.security import redeem_sse_ticket
 from app.schemas.realtime import (
     RealtimeEvent,
     RealtimeEventType,
@@ -262,7 +263,8 @@ def get_redis_client() -> AsyncRedisClient:
     description=(
         "Establishes a persistent Server-Sent Events (SSE) connection streaming "
         "live weather reports, verification transitions, and intelligence events. "
-        "Supports reconnection and stream replay via standard 'Last-Event-ID' header."
+        "Supports reconnection and stream replay via standard 'Last-Event-ID' header "
+        "and single-use security ticket nonces (?ticket=...)."
     ),
     response_class=StreamingResponse,
 )
@@ -270,9 +272,16 @@ async def stream_events(
     request: Request,
     last_event_id_header: Optional[str] = Header(default=None, alias="Last-Event-ID"),
     last_event_id_query: Optional[str] = Query(default=None, alias="last_event_id"),
+    ticket: Optional[str] = Query(default=None, alias="ticket"),
     redis: AsyncRedisClient = Depends(get_redis_client),
 ) -> StreamingResponse:
     """Stream real-time platform events over Server-Sent Events (SSE)."""
+    # Redeem single-use ticket nonce if provided by client EventSource
+    if ticket:
+        ticket_data = redeem_sse_ticket(ticket)
+        if not ticket_data:
+            logger.warning("SSE connection attempted with expired or invalid ticket nonce: %s", ticket[:8])
+
     # Accept Last-Event-ID from either standard HTTP header or query parameter fallback
     effective_last_id = last_event_id_header or last_event_id_query
 

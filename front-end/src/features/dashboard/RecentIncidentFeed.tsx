@@ -102,22 +102,30 @@ export const RecentIncidentFeed: React.FC<RecentIncidentFeedProps> = ({
                   <span className="truncate">{report.location?.name || 'Reported Area'}</span>
                 </div>
 
-                <div className="mt-2.5 flex items-center justify-between pt-2 border-t border-slate-100 text-[10px]">
-                  {credScore != null && (
-                    <div className="flex items-center space-x-1 text-slate-700 font-bold">
-                      <Sparkles className="h-3 w-3 text-indigo-600" aria-hidden="true" />
-                      <span>Credibility: {credScore} / 100</span>
-                    </div>
-                  )}
+                <div className="mt-2.5 flex flex-col space-y-1 pt-2 border-t border-slate-100 text-[10px]">
+                  <div className="flex items-center justify-between">
+                    {credScore != null && (
+                      <div className="flex items-center space-x-1 text-slate-700 font-bold">
+                        <Sparkles className="h-3 w-3 text-indigo-600 shrink-0" aria-hidden="true" />
+                        <span>Credibility: {credScore} / 100</span>
+                      </div>
+                    )}
 
-                  <Link
-                    to={`/incidents/${encodeURIComponent(report.id || report.tracking_id)}`}
-                    onClick={(e) => e.stopPropagation()}
-                    className="flex items-center space-x-1 text-[10px] font-bold text-blue-600 hover:text-blue-800 ml-auto"
-                  >
-                    <span>Inspect</span>
-                    <ExternalLink className="h-3 w-3" aria-hidden="true" />
-                  </Link>
+                    <Link
+                      to={`/incidents/${encodeURIComponent(report.id || report.tracking_id)}`}
+                      onClick={(e) => e.stopPropagation()}
+                      className="flex items-center space-x-1 text-[10px] font-bold text-blue-600 hover:text-blue-800 ml-auto"
+                    >
+                      <span>Inspect</span>
+                      <ExternalLink className="h-3 w-3" aria-hidden="true" />
+                    </Link>
+                  </div>
+
+                  {report.credibility_reason && (
+                    <p className="text-[10px] text-slate-500 font-normal line-clamp-1 italic">
+                      Reason: {report.credibility_reason}
+                    </p>
+                  )}
                 </div>
               </div>
             );

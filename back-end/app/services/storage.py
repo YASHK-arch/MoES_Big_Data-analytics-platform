@@ -1,5 +1,5 @@
 import hashlib
-import re
+import os
 import uuid
 from datetime import datetime, timezone
 from typing import Optional, Tuple
@@ -19,6 +19,45 @@ ALLOWED_MIME_TYPES = {
 }
 
 MAX_FILE_SIZE_BYTES = 15 * 1024 * 1024  # 15 MB
+
+MAGIC_SIGNATURES = {
+    "image/jpeg": [b"\xff\xd8\xff"],
+    "image/png": [b"\x89PNG\r\n\x1a\n"],
+    "image/webp": [b"RIFF"],
+    "video/mp4": [b"ftyp", b"moov", b"\x00\x00\x00"],
+    "video/quicktime": [b"moov", b"mdat", b"ftypqt", b"\x00\x00\x00"],
+}
+
+
+def validate_file_magic_bytes(file_bytes: bytes, declared_mime: str) -> None:
+    """Validate that the file header bytes match the declared MIME type to prevent disguised uploads."""
+    if not file_bytes:
+        raise ValueError("Uploaded file is empty (0 bytes).")
+
+    # Reject HTML/SVG/executable injection signatures
+    header_preview = file_bytes[:1024].lower()
+    dangerous_signatures = [b"<script", b"<html", b"<?php", b"<!doctype html", b"<svg", b"#!/"]
+    for danger in dangerous_signatures:
+        if danger in header_preview:
+            raise ValueError(f"File contains disallowed executable or script payload signature: {danger.decode('latin-1')}")
+
+    # Check magic byte signatures
+    expected_magics = MAGIC_SIGNATURES.get(declared_mime, [])
+    matched = False
+    for magic in expected_magics:
+        if magic in file_bytes[:32]:
+            matched = True
+            break
+
+    # Special check for WebP (RIFF....WEBP)
+    if declared_mime == "image/webp":
+        if file_bytes[:4] == b"RIFF" and b"WEBP" in file_bytes[:16]:
+            matched = True
+
+    if not matched and expected_magics:
+        raise ValueError(
+            f"File magic bytes do not match declared MIME type '{declared_mime}'. Upload rejected."
+        )
 
 
 class StorageService:
@@ -85,6 +124,9 @@ class StorageService:
                 f"Allowed types: {list(ALLOWED_MIME_TYPES.keys())}"
             )
 
+        # 1. Enforce Magic Byte Verification
+        validate_file_magic_bytes(file_bytes, content_type)
+
         file_size = len(file_bytes)
         if file_size > MAX_FILE_SIZE_BYTES:
             raise ValueError(
@@ -98,13 +140,17 @@ class StorageService:
         sha256_hash = hashlib.sha256(file_bytes).hexdigest()
         media_type = ALLOWED_MIME_TYPES[content_type]
 
-        # Sanitize filename
-        clean_filename = re.sub(r"[^a-zA-Z0-9_.-]", "_", filename)
+        # 2. Strict path traversal prevention: strip directory components and generate immutable key
+        safe_basename = os.path.basename(filename)
+        clean_ext = os.path.splitext(safe_basename)[1].lower()
+        if not clean_ext:
+            clean_ext = ".jpg" if "jpeg" in content_type else ".png"
+
         now = datetime.now(timezone.utc)
         folder = report_id or uuid.uuid4()
         storage_key = (
             f"reports/{now.year}/{now.month:02d}/{now.day:02d}/{folder}/"
-            f"{uuid.uuid4().hex[:8]}_{clean_filename}"
+            f"{uuid.uuid4().hex}{clean_ext}"
         )
 
         self.client.put_object(

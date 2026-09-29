@@ -70,6 +70,7 @@ export interface ReportDetailData {
   processing_status: string;
   verification_status: string;
   credibility_score: number;
+  credibility_reason?: string | null;
   media: MediaDetail[];
   verification_history?: VerificationEventDetail[];
   created_at: string;

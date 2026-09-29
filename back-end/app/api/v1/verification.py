@@ -10,7 +10,9 @@ from typing import Optional
 from fastapi import APIRouter, Depends, HTTPException, Path, Query, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.api.deps import get_current_operator
 from app.db.session import get_db
+from app.models.user import User
 from app.schemas.incident import IncidentListResponse, IncidentOperatorDetailResponse
 from app.schemas.report import (
     PaginationMeta,
@@ -39,6 +41,7 @@ async def get_verification_queue(
     category: Optional[str] = Query(None, description="Category code"),
     jurisdiction: Optional[str] = Query(None, description="Administrative jurisdiction name"),
     db: AsyncSession = Depends(get_db),
+    current_operator: User = Depends(get_current_operator),
 ) -> IncidentListResponse:
     """Retrieve prioritized triage queue for authorized operators."""
     (
@@ -85,6 +88,7 @@ async def verify_incident(
     id: str = Path(..., min_length=3, max_length=64, description="Incident UUID or Tracking ID"),
     payload: Optional[ReportVerifyRequest] = None,
     db: AsyncSession = Depends(get_db),
+    current_operator: User = Depends(get_current_operator),
 ) -> IncidentOperatorDetailResponse:
     """Authorize an incident as confirmed ground truth."""
     clean_id = id.strip()
@@ -159,6 +163,7 @@ async def reject_incident(
     id: str = Path(..., min_length=3, max_length=64, description="Incident UUID or Tracking ID"),
     payload: Optional[ReportRejectRequest] = None,
     db: AsyncSession = Depends(get_db),
+    current_operator: User = Depends(get_current_operator),
 ) -> IncidentOperatorDetailResponse:
     """Reject a false alarm or spam report."""
     clean_id = id.strip()
@@ -233,6 +238,7 @@ async def mark_duplicate_incident(
     id: str = Path(..., min_length=3, max_length=64, description="Incident UUID or Tracking ID"),
     payload: Optional[ReportDuplicateRequest] = None,
     db: AsyncSession = Depends(get_db),
+    current_operator: User = Depends(get_current_operator),
 ) -> IncidentOperatorDetailResponse:
     """Mark an incident as a duplicate."""
     clean_id = id.strip()
@@ -307,6 +313,7 @@ async def review_incident(
     id: str = Path(..., min_length=3, max_length=64, description="Incident UUID or Tracking ID"),
     payload: Optional[ReportReviewRequest] = None,
     db: AsyncSession = Depends(get_db),
+    current_operator: User = Depends(get_current_operator),
 ) -> IncidentOperatorDetailResponse:
     """Mark an incident as actively being triaged."""
     clean_id = id.strip()

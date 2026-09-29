@@ -2,7 +2,7 @@ import uuid
 from datetime import datetime
 from typing import TYPE_CHECKING, List, Optional
 
-from sqlalchemy import Boolean, DateTime, String, func
+from sqlalchemy import Boolean, DateTime, Float, String, func
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
@@ -38,11 +38,28 @@ class User(Base):
     role: Mapped[str] = mapped_column(
         String(50),
         nullable=False,
-        default="DEOC_OFFICER",
+        default="CITIZEN",
     )
     jurisdiction_code: Mapped[Optional[str]] = mapped_column(
         String(50),
         nullable=True,
+    )
+    home_location_lat: Mapped[Optional[float]] = mapped_column(
+        Float,
+        nullable=True,
+    )
+    home_location_lng: Mapped[Optional[float]] = mapped_column(
+        Float,
+        nullable=True,
+    )
+    home_location_name: Mapped[Optional[str]] = mapped_column(
+        String(255),
+        nullable=True,
+    )
+    alert_radius_km: Mapped[Optional[float]] = mapped_column(
+        Float,
+        nullable=True,
+        default=25.0,
     )
     is_active: Mapped[bool] = mapped_column(
         Boolean,

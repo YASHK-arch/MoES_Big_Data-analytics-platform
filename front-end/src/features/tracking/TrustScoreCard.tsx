@@ -26,9 +26,16 @@ export const TrustScoreCard: React.FC<TrustScoreCardProps> = ({ report }) => {
         <span className="text-sm font-semibold text-slate-400">/ 100</span>
       </div>
 
-      <p className="mt-2 text-xs leading-relaxed text-slate-500">
-        Score indicates initial heuristic credibility based on geographical proximity and evidence.
-      </p>
+      {report.credibility_reason ? (
+        <p className="mt-2 text-xs leading-relaxed text-blue-900 bg-blue-50/80 p-2.5 rounded-xl border border-blue-100/80 font-medium">
+          <span className="font-bold text-blue-700">Reason: </span>
+          {report.credibility_reason}
+        </p>
+      ) : (
+        <p className="mt-2 text-xs leading-relaxed text-slate-500">
+          Score indicates initial heuristic credibility based on geographical proximity and evidence.
+        </p>
+      )}
 
       <div className="mt-4 divide-y divide-slate-100 text-xs">
         <div className="flex items-center justify-between py-2">

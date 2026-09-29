@@ -43,6 +43,10 @@ class IncidentCredibilitySummary(BaseModel):
     engine_version: str = "v1"
     policy_version: str = "v1"
     explanation: Optional[str] = None
+    reason: Optional[str] = Field(default=None, description="Concise human-readable credibility reason.")
+    positive_drivers: List[str] = Field(default_factory=list)
+    negative_drivers: List[str] = Field(default_factory=list)
+    uncertainty_flags: List[str] = Field(default_factory=list)
 
 
 class IncidentVerificationSummary(BaseModel):
@@ -89,6 +93,8 @@ class IncidentSummaryResponse(BaseModel):
     occurred_at: datetime
     verification_status: str
     credibility_score: float = Field(..., ge=0.0, le=1.0)
+    credibility_reason: Optional[str] = Field(default=None, description="Concise human-readable reason for credibility score.")
+    credibility_explanation: Optional[Dict[str, Any]] = Field(default=None, description="Structured credibility assessment breakdown.")
     readiness: OverallReadiness
     media_count: int = 0
     created_at: datetime

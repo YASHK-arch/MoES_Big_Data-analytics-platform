@@ -1,9 +1,13 @@
 import json
 import logging
 import re
-import xml.etree.ElementTree as ET
 from datetime import datetime, timezone
 from typing import Any, Dict, List, Optional, Tuple, Union
+
+try:
+    import defusedxml.ElementTree as ET  # noqa: N817
+except ImportError:
+    import xml.etree.ElementTree as ET  # type: ignore[no-redef]  # noqa: N817
 
 import httpx
 
