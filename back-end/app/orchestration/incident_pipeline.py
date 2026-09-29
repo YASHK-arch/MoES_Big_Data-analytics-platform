@@ -38,6 +38,7 @@ from app.orchestration.handlers import (
 from app.orchestration.models import PipelineOrchestrationState
 from app.orchestration.retry_policy import retry_policy
 from app.orchestration.state import (
+    SUCCESS_OUTCOMES,
     load_orchestration_state,
     update_stage_state,
 )
@@ -72,12 +73,8 @@ class IncidentPipeline:
         force: bool = False,
     ) -> PipelineOrchestrationState:
         """Run all eligible intelligence stages for target incident with failure isolation."""
-        # 1. Fetch target incident with row lock to serialize concurrent executions (inline + worker)
-        stmt = (
-            select(WeatherReport)
-            .where(WeatherReport.id == incident_id)
-            .with_for_update()
-        )
+        # 1. Fetch target incident without holding long-lived outer transaction lock across all stages
+        stmt = select(WeatherReport).where(WeatherReport.id == incident_id)
         res = await db.execute(stmt)
         report = res.scalar_one_or_none()
 
@@ -87,11 +84,12 @@ class IncidentPipeline:
 
         state = load_orchestration_state(report)
 
-        # Idempotency guard: prevent redundant re-execution when already completed
+        # Idempotency guard: only skip when already completed and overall_readiness is INTELLIGENCE_READY.
+        # Incidents with INTELLIGENCE_PARTIAL or PENDING are NOT skipped, allowing workers to retry failed stages.
         if (
             not force
             and report.processing_status == "COMPLETED"
-            and state.overall_readiness in (OverallReadiness.INTELLIGENCE_READY, OverallReadiness.INTELLIGENCE_PARTIAL)
+            and state.overall_readiness == OverallReadiness.INTELLIGENCE_READY
         ):
             logger.info(
                 "Incident %s is already %s with readiness %s; skipping redundant pipeline execution.",
@@ -114,11 +112,22 @@ class IncidentPipeline:
                 )
                 continue
 
+            current_stage_model = state.stages.get(stage_name)
+            # If not forced, skip stages that already succeeded previously with at least 1 completed attempt,
+            # unless it's CREDIBILITY which must re-run to incorporate newly retried enrichment stages.
+            if (
+                not force
+                and current_stage_model is not None
+                and current_stage_model.attempt > 0
+                and current_stage_model.status in SUCCESS_OUTCOMES
+                and stage_name != StageName.CREDIBILITY
+            ):
+                continue
+
             handler = self.handlers.get(stage_name)
             if not handler:
                 continue
 
-            current_stage_model = state.stages.get(stage_name)
             current_attempt = (
                 current_stage_model.attempt + 1 if current_stage_model is not None else 1
             )
@@ -170,21 +179,45 @@ class IncidentPipeline:
 
         outbox_row = None
         if state.overall_readiness == OverallReadiness.INTELLIGENCE_READY:
+            from app.models.outbox import RealtimeOutbox
             from app.services.realtime_service import realtime_service
 
-            outbox_row = realtime_service.stage_intelligence_ready(
-                session=db,
-                report=current_report,
-                credibility_score=float(current_report.credibility_score or 0.0),
-                readiness=state.overall_readiness.value,
+            existing_outbox_stmt = (
+                select(RealtimeOutbox.id)
+                .where(
+                    RealtimeOutbox.entity_id == str(current_report.id),
+                    RealtimeOutbox.event_type == "report.intelligence_ready",
+                )
+                .limit(1)
             )
+            existing_res = await db.execute(existing_outbox_stmt)
+            if not existing_res.scalar_one_or_none():
+                det_event_id = uuid.uuid5(
+                    uuid.NAMESPACE_OID, f"report.intelligence_ready:{current_report.id}"
+                )
+                outbox_row = realtime_service.stage_intelligence_ready(
+                    session=db,
+                    report=current_report,
+                    credibility_score=float(current_report.credibility_score or 0.0),
+                    readiness=state.overall_readiness.value,
+                    event_id=det_event_id,
+                )
 
         if commit:
-            await db.commit()
-            if outbox_row is not None:
-                from app.services.realtime_service import realtime_service
+            from sqlalchemy.exc import IntegrityError
 
-                await realtime_service.publish_staged_outbox(outbox_row)
+            try:
+                await db.commit()
+                if outbox_row is not None:
+                    from app.services.realtime_service import realtime_service
+
+                    await realtime_service.publish_staged_outbox(outbox_row)
+            except IntegrityError:
+                await db.rollback()
+                logger.info(
+                    "Concurrent transaction already committed state/outbox for incident %s",
+                    incident_id,
+                )
 
         logger.info(
             "Completed intelligence pipeline for incident %s -> readiness: %s",

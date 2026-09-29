@@ -1,8 +1,11 @@
+import logging
 import math
 import secrets
 import uuid
 from datetime import datetime, timedelta, timezone
 from typing import Any, Dict, List, Optional, Tuple
+
+logger = logging.getLogger(__name__)
 
 from fastapi import UploadFile
 from geoalchemy2.elements import WKTElement
@@ -276,9 +279,9 @@ class ReportService:
 
             # Fast-path immediate intelligence pipeline execution (location, duplicate, evidence, observation, credibility)
             try:
-                from app.orchestration.incident_pipeline import IncidentPipeline
-                pipeline = IncidentPipeline()
-                await pipeline.execute_pipeline(db=session, incident_id=report.id, commit=True)
+                from app.orchestration.incident_pipeline import incident_pipeline
+
+                await incident_pipeline.execute_pipeline(db=session, incident_id=report.id, commit=True)
                 await session.refresh(report)
             except Exception as pipe_err:
                 logger.warning(

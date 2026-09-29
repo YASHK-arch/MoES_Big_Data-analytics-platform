@@ -214,9 +214,23 @@ class DuplicateStageHandler:
 
             # When a new report clusters with an existing report, trigger targeted credibility update
             # on the matched report so its crowd corroboration factor reflects the new cluster size.
+            # Enforce consistent lock ordering (by ascending report ID) to prevent deadlocks
+            # between concurrent pipelines clustering with each other.
             if is_clustered and cluster_res.matched_report_id:
                 try:
                     from app.orchestration.incident_pipeline import incident_pipeline
+
+                    first_id, second_id = (
+                        (report.id, cluster_res.matched_report_id)
+                        if report.id < cluster_res.matched_report_id
+                        else (cluster_res.matched_report_id, report.id)
+                    )
+                    await db.execute(
+                        select(WeatherReport.id)
+                        .where(WeatherReport.id.in_([first_id, second_id]))
+                        .order_by(WeatherReport.id)
+                        .with_for_update()
+                    )
 
                     await incident_pipeline.execute_single_stage(
                         db=db,
