@@ -41,6 +41,7 @@ class Settings(BaseSettings):
     STREAM_DEAD_LETTER_NAME: str = "stream:weather:dead_letter"
     REPORT_RATE_LIMIT_PER_MINUTE: int = 10
     TRUSTED_PROXY_COUNT: int = 0
+    DASHBOARD_CACHE_TTL_SECONDS: int = 10
 
     # Realtime Outbox Worker Configuration
     OUTBOX_WORKER_ENABLED: bool = True

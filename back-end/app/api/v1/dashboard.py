@@ -12,6 +12,7 @@ from typing import Optional, Tuple
 from fastapi import APIRouter, Depends, HTTPException, Query, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.core.cache import get_or_compute
 from app.db.session import get_db
 from app.schemas.analytics import DashboardSummaryResponse
 from app.services.incident_query_service import incident_query_service
@@ -134,13 +135,29 @@ async def get_dashboard_summary(
 
     parsed_bbox = _parse_bbox(bbox)
 
-    summary_data = await incident_query_service.get_dashboard_summary(
-        session=db,
-        time_range=time_range.strip().lower() if time_range else "24h",
-        category=category,
-        severity=severity,
-        verification_status=status_filter,
-        bbox=parsed_bbox,
+    params = {
+        "time_range": time_range.strip().lower() if time_range else "24h",
+        "category": category,
+        "severity": severity,
+        "status": status_filter,
+        "bbox": bbox,
+    }
+
+    async def _compute():
+        data = await incident_query_service.get_dashboard_summary(
+            session=db,
+            time_range=time_range.strip().lower() if time_range else "24h",
+            category=category,
+            severity=severity,
+            verification_status=status_filter,
+            bbox=parsed_bbox,
+        )
+        return data.model_dump(mode="json")
+
+    summary_data = await get_or_compute(
+        endpoint="dashboard:summary",
+        query_params=params,
+        compute_fn=_compute,
     )
 
     return DashboardSummaryResponse(

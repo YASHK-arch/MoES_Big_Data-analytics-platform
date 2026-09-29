@@ -13,6 +13,7 @@ from typing import Optional, Tuple
 from fastapi import APIRouter, Depends, HTTPException, Query, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.core.cache import get_or_compute
 from app.db.session import get_db
 from app.schemas.analytics import AnalyticsRegionalResponse, AnalyticsTrendResponse
 from app.services.incident_query_service import incident_query_service
@@ -143,14 +144,31 @@ async def get_analytics_trends(
 
     parsed_bbox = _parse_bbox(bbox)
 
-    trend_data = await incident_query_service.get_analytics_trends(
-        session=db,
-        time_range=time_range.strip().lower() if time_range else "7d",
-        interval=interval.strip().lower() if interval else None,
-        category=category,
-        severity=severity,
-        verification_status=status_filter,
-        bbox=parsed_bbox,
+    params = {
+        "time_range": time_range.strip().lower() if time_range else "7d",
+        "interval": interval.strip().lower() if interval else None,
+        "category": category,
+        "severity": severity,
+        "status": status_filter,
+        "bbox": bbox,
+    }
+
+    async def _compute_trends():
+        data = await incident_query_service.get_analytics_trends(
+            session=db,
+            time_range=time_range.strip().lower() if time_range else "7d",
+            interval=interval.strip().lower() if interval else None,
+            category=category,
+            severity=severity,
+            verification_status=status_filter,
+            bbox=parsed_bbox,
+        )
+        return data.model_dump(mode="json")
+
+    trend_data = await get_or_compute(
+        endpoint="analytics:trends",
+        query_params=params,
+        compute_fn=_compute_trends,
     )
 
     return AnalyticsTrendResponse(
@@ -212,13 +230,29 @@ async def get_analytics_regional(
 
     parsed_bbox = _parse_bbox(bbox)
 
-    regional_data = await incident_query_service.get_regional_distribution(
-        session=db,
-        time_range=time_range.strip().lower() if time_range else "7d",
-        category=category,
-        severity=severity,
-        verification_status=status_filter,
-        bbox=parsed_bbox,
+    params = {
+        "time_range": time_range.strip().lower() if time_range else "7d",
+        "category": category,
+        "severity": severity,
+        "status": status_filter,
+        "bbox": bbox,
+    }
+
+    async def _compute_regional():
+        data = await incident_query_service.get_regional_distribution(
+            session=db,
+            time_range=time_range.strip().lower() if time_range else "7d",
+            category=category,
+            severity=severity,
+            verification_status=status_filter,
+            bbox=parsed_bbox,
+        )
+        return data.model_dump(mode="json")
+
+    regional_data = await get_or_compute(
+        endpoint="analytics:regional",
+        query_params=params,
+        compute_fn=_compute_regional,
     )
 
     return AnalyticsRegionalResponse(
