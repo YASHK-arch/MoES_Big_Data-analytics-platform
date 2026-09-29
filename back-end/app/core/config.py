@@ -26,6 +26,11 @@ class Settings(BaseSettings):
     # Primary Database (PostgreSQL + PostGIS)
     DATABASE_URL: str = "postgresql+asyncpg://postgres:postgres@localhost:5432/weather_platform"
     DATABASE_ECHO: bool = False
+    DB_POOL_SIZE: int = 10
+    DB_MAX_OVERFLOW: int = 20
+    DB_POOL_TIMEOUT: int = 30
+    DB_POOL_RECYCLE: int = 1800
+    DB_DISABLE_POOL: bool = False
 
     # Cache & Event Streaming (Redis)
     REDIS_URL: str = "redis://localhost:6379/0"

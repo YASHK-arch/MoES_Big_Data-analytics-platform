@@ -1,4 +1,5 @@
-"""Shared pytest fixtures for the weather platform test suite."""
+import os
+os.environ["DB_DISABLE_POOL"] = "true"
 
 import pytest_asyncio
 from httpx import ASGITransport, AsyncClient
@@ -6,6 +7,8 @@ from sqlalchemy import pool, select
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
 
 from app.core.config import settings
+
+settings.DB_DISABLE_POOL = True
 from app.core.security import create_access_token, get_password_hash
 from app.main import app
 from app.models.user import User
