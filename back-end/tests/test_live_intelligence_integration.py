@@ -443,7 +443,10 @@ async def test_new_report_joining_completed_incident_cluster_updates_score(db_se
 
 
 async def test_concurrent_inline_and_worker_pipeline_atomic_idempotency(db_session: AsyncSession) -> None:
-    """Proves that inline execution and background worker produce exactly one intelligence_ready outbox event and 0 duplicate audit rows."""
+    """Proves that concurrent inline execution and background worker on two independent DB connections produce exactly one intelligence_ready outbox event and 0 duplicate audit rows."""
+    import asyncio
+    from app.db.session import async_session_factory
+
     mock_redis, _ = _create_mock_redis_stream_bus()
     mock_realtime = RealtimeService(client=mock_redis)
     report_svc = ReportService(realtime_svc=mock_realtime)
@@ -457,23 +460,26 @@ async def test_concurrent_inline_and_worker_pipeline_atomic_idempotency(db_sessi
         description="Visibility reduced severely across Central Delhi area.",
         location_name="Connaught Place, New Delhi",
     )
-    # create_citizen_report executes the inline intelligence pipeline
+    # create_citizen_report executes the initial report creation and commits it to DB
     report, _ = await report_svc.create_citizen_report(session=db_session, payload=payload)
-    await db_session.refresh(report)
-    assert report.processing_status == "COMPLETED"
+    report_id = report.id
 
-    # Worker executes pipeline concurrently or sequentially on the same incident
-    state_worker = await on_incident_ingested(db=db_session, incident_id=report.id, commit=True)
-    assert state_worker.overall_readiness == OverallReadiness.INTELLIGENCE_READY
-    state_inline = await on_incident_ingested(db=db_session, incident_id=report.id, commit=True)
-    state_worker = await on_incident_ingested(db=db_session, incident_id=report.id, commit=True)
+    # Concurrently execute pipeline across two independent DB sessions/connections
+    async def run_in_connection_1():
+        async with async_session_factory() as session1:
+            return await on_incident_ingested(db=session1, incident_id=report_id, commit=True)
 
-    assert state_inline.overall_readiness == OverallReadiness.INTELLIGENCE_READY
-    assert state_worker.overall_readiness == OverallReadiness.INTELLIGENCE_READY
+    async def run_in_connection_2():
+        async with async_session_factory() as session2:
+            return await on_incident_ingested(db=session2, incident_id=report_id, commit=True)
+
+    res1, res2 = await asyncio.gather(run_in_connection_1(), run_in_connection_2())
+    assert res1.overall_readiness == OverallReadiness.INTELLIGENCE_READY
+    assert res2.overall_readiness == OverallReadiness.INTELLIGENCE_READY
 
     # Verify exactly one intelligence_ready event was staged in realtime_outbox
     outbox_stmt = select(RealtimeOutbox).where(
-        RealtimeOutbox.entity_id == str(report.id),
+        RealtimeOutbox.entity_id == str(report_id),
         RealtimeOutbox.event_type == "report.intelligence_ready",
     )
     outbox_res = await db_session.execute(outbox_stmt)
@@ -481,8 +487,104 @@ async def test_concurrent_inline_and_worker_pipeline_atomic_idempotency(db_sessi
     assert len(outbox_rows) == 1
 
     # Verify zero duplicate human verification audit rows were created
-    audit_stmt = select(VerificationEvent).where(VerificationEvent.report_id == report.id)
+    audit_stmt = select(VerificationEvent).where(VerificationEvent.report_id == report_id)
     audit_res = await db_session.execute(audit_stmt)
     audit_rows = list(audit_res.scalars().all())
     assert len(audit_rows) == 0
+
+
+async def test_worker_retries_partial_incident_without_force_to_ready(db_session: AsyncSession) -> None:
+    """Proves that an incident left in INTELLIGENCE_PARTIAL is NOT skipped by worker run without force=True,
+    retries the failed stage to reach INTELLIGENCE_READY, producing exactly 1 outbox event and 0 duplicate audit rows."""
+    from app.db.session import async_session_factory
+    from app.orchestration.state import SUCCESS_OUTCOMES, load_orchestration_state
+
+    mock_redis, _ = _create_mock_redis_stream_bus()
+    mock_realtime = RealtimeService(client=mock_redis)
+    report_svc = ReportService(realtime_svc=mock_realtime)
+
+    # 1. Create base report with failing EVIDENCE stage to simulate partial inline failure
+    payload = CitizenReportCreate(
+        latitude=12.9716,
+        longitude=77.5946,
+        category_code="URBAN_FLOODING",
+        severity="SEVERE",
+        title="Severe Inundation at MG Road",
+        description="Road completely submerged under 3 feet of water.",
+        location_name="MG Road, Bengaluru",
+    )
+    original_evidence_handler = incident_pipeline.handlers[StageName.EVIDENCE]
+
+    class FailingEvidenceHandler:
+        async def execute(self, db: AsyncSession, report: WeatherReport):
+            raise ConnectionError("Simulated temporary network error querying evidence index")
+
+    try:
+        incident_pipeline.handlers[StageName.EVIDENCE] = FailingEvidenceHandler()  # type: ignore[assignment]
+
+        # Inline execution leaves report in PARTIAL_INTELLIGENCE
+        report, _ = await report_svc.create_citizen_report(session=db_session, payload=payload)
+        report_id = report.id
+
+        await db_session.refresh(report)
+        assert report.processing_status == "PARTIAL_INTELLIGENCE"
+        state = load_orchestration_state(report)
+        assert state.overall_readiness == OverallReadiness.INTELLIGENCE_PARTIAL
+        assert state.stages[StageName.EVIDENCE.value].status == StageOutcome.RETRYABLE_FAILURE.value
+        assert state.stages[StageName.LOCATION.value].status in SUCCESS_OUTCOMES
+
+        # Verify no outbox event was staged during the failed/partial inline run
+        outbox_stmt = select(RealtimeOutbox).where(
+            RealtimeOutbox.entity_id == str(report_id),
+            RealtimeOutbox.event_type == "report.intelligence_ready",
+        )
+        outbox_res = await db_session.execute(outbox_stmt)
+        assert len(list(outbox_res.scalars().all())) == 0
+
+    finally:
+        # Restore healthy evidence handler
+        incident_pipeline.handlers[StageName.EVIDENCE] = original_evidence_handler
+
+    # 2. Worker executes pipeline WITHOUT force=True on an independent DB session
+    async with async_session_factory() as worker_session:
+        worker_state = await on_incident_ingested(
+            db=worker_session,
+            incident_id=report_id,
+            force=False,
+            commit=True,
+        )
+
+    # 3. Verify worker did NOT skip PARTIAL incident, retried failed stage, and reached READY
+    assert worker_state.overall_readiness == OverallReadiness.INTELLIGENCE_READY
+    assert worker_state.stages[StageName.EVIDENCE.value].status in SUCCESS_OUTCOMES
+    assert worker_state.stages[StageName.EVIDENCE.value].attempt == 2
+    # Verify successfully completed stages (LOCATION) were NOT re-executed
+    assert worker_state.stages[StageName.LOCATION.value].attempt == 1
+
+    await db_session.refresh(report)
+    assert report.processing_status == "COMPLETED"
+
+    # 4. Verify exactly one intelligence_ready outbox event exists in total
+    outbox_res = await db_session.execute(outbox_stmt)
+    outbox_rows = list(outbox_res.scalars().all())
+    assert len(outbox_rows) == 1
+
+    # 5. Verify zero duplicate verification audit rows
+    audit_stmt = select(VerificationEvent).where(VerificationEvent.report_id == report_id)
+    audit_res = await db_session.execute(audit_stmt)
+    audit_rows = list(audit_res.scalars().all())
+    assert len(audit_rows) == 0
+
+    # 6. Run worker a SECOND time without force=True: now that it is READY, guard MUST skip it
+    async with async_session_factory() as worker_session2:
+        second_worker_state = await on_incident_ingested(
+            db=worker_session2,
+            incident_id=report_id,
+            force=False,
+            commit=True,
+        )
+    assert second_worker_state.overall_readiness == OverallReadiness.INTELLIGENCE_READY
+    # Outbox event count remains exactly 1
+    outbox_res = await db_session.execute(outbox_stmt)
+    assert len(list(outbox_res.scalars().all())) == 1
 
