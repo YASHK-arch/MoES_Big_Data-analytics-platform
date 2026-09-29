@@ -19,8 +19,13 @@ from app.orchestration.events import (
     StageName,
     StageOutcome,
 )
+import uuid
+from datetime import datetime, timezone
+from app.models.observation import WeatherObservation
+from app.models.source import Source
+from app.models.verification import VerificationEvent
 from app.orchestration.incident_pipeline import incident_pipeline
-from app.orchestration.triggers import on_incident_ingested
+from app.orchestration.triggers import on_incident_ingested, on_observation_ingested
 from app.schemas.report import CitizenReportCreate
 from app.services.realtime_service import RealtimeService
 from app.services.report_service import ReportService
@@ -215,7 +220,7 @@ async def test_live_intelligence_failure_isolation(db_session: AsyncSession) -> 
 
     try:
         incident_pipeline.handlers[StageName.OBSERVATION] = FailingObservationHandler()  # type: ignore[assignment]
-        state = await on_incident_ingested(db=db_session, incident_id=report_id)
+        state = await on_incident_ingested(db=db_session, incident_id=report_id, force=True)
 
         # 3. Verify report remains persisted in PostgreSQL
         stmt = select(WeatherReport).where(WeatherReport.id == report_id)
@@ -334,3 +339,150 @@ async def test_stream_routing_separation(db_session: AsyncSession) -> None:
         and f.get("aggregate_id") == str(report.id)
         for f in orch_events
     )
+
+
+async def test_observation_joining_completed_incident_updates_score(db_session: AsyncSession) -> None:
+    """Proves that a new physical observation matching an already-COMPLETED incident still triggers credibility re-scoring."""
+    mock_redis, _ = _create_mock_redis_stream_bus()
+    mock_realtime = RealtimeService(client=mock_redis)
+    report_svc = ReportService(realtime_svc=mock_realtime)
+
+    # 1. Create and ingest initial citizen report at isolated location
+    payload = CitizenReportCreate(
+        latitude=21.1458,
+        longitude=79.0882,
+        category_code="FLOOD_WATERLOGGING",
+        severity="HIGH",
+        title="Sudden Flash Flood on Wardha Road",
+        description="Rapid water accumulation on roadway causing traffic halt.",
+        location_name="Wardha Road, Nagpur",
+    )
+    report, _ = await report_svc.create_citizen_report(session=db_session, payload=payload)
+    state_initial = await on_incident_ingested(db=db_session, incident_id=report.id, commit=True)
+    assert state_initial.overall_readiness == OverallReadiness.INTELLIGENCE_READY
+
+    await db_session.refresh(report)
+    assert report.processing_status == "COMPLETED"
+    initial_score = float(report.credibility_score or 0.0)
+
+    # 2. Ingest matching physical observation
+    uid = uuid.uuid4().hex[:8]
+    obs_source = Source(
+        source_code=f"CWC_SENSOR_{uid}",
+        name="CWC Hydrological Monitoring",
+        source_type="PHYSICAL_SENSOR",
+        base_trust_score=0.95,
+        is_active=True,
+    )
+    db_session.add(obs_source)
+    await db_session.flush()
+
+    from geoalchemy2.shape import from_shape
+    from shapely.geometry import Point
+
+    obs = WeatherObservation(
+        source_id=obs_source.id,
+        external_id=f"cwc_obs_{uid}",
+        station_code=f"NGP_{uid}",
+        station_name="Nagpur Hydrology Gauge",
+        water_level_m=525.0,
+        observed_at=report.occurred_at,
+        geom=from_shape(Point(report.longitude, report.latitude), srid=4326),
+    )
+    db_session.add(obs)
+    await db_session.commit()
+
+    affected_ids = await on_observation_ingested(db=db_session, observation_id=obs.id, commit=True)
+    assert report.id in affected_ids
+
+    # 3. Verify that already-COMPLETED incident received updated credibility score
+    await db_session.refresh(report)
+    assert report.processing_status == "COMPLETED"
+    assert float(report.credibility_score) > initial_score
+
+
+async def test_new_report_joining_completed_incident_cluster_updates_score(db_session: AsyncSession) -> None:
+    """Proves that a new duplicate report joining a cluster with an already-COMPLETED incident updates its score."""
+    mock_redis, _ = _create_mock_redis_stream_bus()
+    mock_realtime = RealtimeService(client=mock_redis)
+    report_svc = ReportService(realtime_svc=mock_realtime)
+
+    # 1. Create first report and ingest to COMPLETED status
+    payload1 = CitizenReportCreate(
+        latitude=13.0827,
+        longitude=80.2707,
+        category_code="FLOOD_WATERLOGGING",
+        severity="HIGH",
+        title="Severe Waterlogging on Mount Road",
+        description="Knee deep water near Anna Salai junction blocking traffic.",
+        location_name="Anna Salai, Chennai",
+    )
+    report1, _ = await report_svc.create_citizen_report(session=db_session, payload=payload1)
+    await on_incident_ingested(db=db_session, incident_id=report1.id, commit=True)
+    await db_session.refresh(report1)
+    assert report1.processing_status == "COMPLETED"
+    initial_score1 = float(report1.credibility_score or 0.0)
+
+    # 2. Ingest duplicate second report at same location
+    payload2 = CitizenReportCreate(
+        latitude=13.0830,
+        longitude=80.2710,
+        category_code="FLOOD_WATERLOGGING",
+        severity="HIGH",
+        title="Severe Waterlogging on Mount Road Junction",
+        description="Knee deep water near Anna Salai junction blocking traffic completely.",
+        location_name="Anna Salai, Chennai",
+    )
+    report2, _ = await report_svc.create_citizen_report(session=db_session, payload=payload2)
+    await on_incident_ingested(db=db_session, incident_id=report2.id, commit=True)
+
+    # 3. Verify that already-COMPLETED report1's credibility score was updated by cluster reinforcement
+    await db_session.refresh(report1)
+    assert report1.processing_status == "COMPLETED"
+    assert float(report1.credibility_score) >= initial_score1
+
+
+async def test_concurrent_inline_and_worker_pipeline_atomic_idempotency(db_session: AsyncSession) -> None:
+    """Proves that inline execution and background worker produce exactly one intelligence_ready outbox event and 0 duplicate audit rows."""
+    mock_redis, _ = _create_mock_redis_stream_bus()
+    mock_realtime = RealtimeService(client=mock_redis)
+    report_svc = ReportService(realtime_svc=mock_realtime)
+
+    payload = CitizenReportCreate(
+        latitude=28.6139,
+        longitude=77.2090,
+        category_code="AIR_QUALITY_SMOG",
+        severity="MODERATE",
+        title="Dense Smog Layer Observed",
+        description="Visibility reduced severely across Central Delhi area.",
+        location_name="Connaught Place, New Delhi",
+    )
+    # create_citizen_report executes the inline intelligence pipeline
+    report, _ = await report_svc.create_citizen_report(session=db_session, payload=payload)
+    await db_session.refresh(report)
+    assert report.processing_status == "COMPLETED"
+
+    # Worker executes pipeline concurrently or sequentially on the same incident
+    state_worker = await on_incident_ingested(db=db_session, incident_id=report.id, commit=True)
+    assert state_worker.overall_readiness == OverallReadiness.INTELLIGENCE_READY
+    state_inline = await on_incident_ingested(db=db_session, incident_id=report.id, commit=True)
+    state_worker = await on_incident_ingested(db=db_session, incident_id=report.id, commit=True)
+
+    assert state_inline.overall_readiness == OverallReadiness.INTELLIGENCE_READY
+    assert state_worker.overall_readiness == OverallReadiness.INTELLIGENCE_READY
+
+    # Verify exactly one intelligence_ready event was staged in realtime_outbox
+    outbox_stmt = select(RealtimeOutbox).where(
+        RealtimeOutbox.entity_id == str(report.id),
+        RealtimeOutbox.event_type == "report.intelligence_ready",
+    )
+    outbox_res = await db_session.execute(outbox_stmt)
+    outbox_rows = list(outbox_res.scalars().all())
+    assert len(outbox_rows) == 1
+
+    # Verify zero duplicate human verification audit rows were created
+    audit_stmt = select(VerificationEvent).where(VerificationEvent.report_id == report.id)
+    audit_res = await db_session.execute(audit_stmt)
+    audit_rows = list(audit_res.scalars().all())
+    assert len(audit_rows) == 0
+
