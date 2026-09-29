@@ -1,8 +1,9 @@
 // Incident Detail Page — Public & Operational Intelligence View
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
+import { realtimeService } from '@/services/realtimeService';
 import {
   ArrowLeft,
   MapPin,
@@ -60,6 +61,15 @@ export const IncidentDetailPage: React.FC = () => {
   });
 
   const incident = response?.data;
+
+  useEffect(() => {
+    if (cleanId) {
+      realtimeService.setActiveIncidentId(cleanId);
+    }
+    return () => {
+      realtimeService.setActiveIncidentId(null);
+    };
+  }, [cleanId]);
 
   if (!cleanId) {
     return (

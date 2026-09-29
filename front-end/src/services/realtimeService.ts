@@ -180,51 +180,138 @@ export class RealtimeService {
     });
   }
 
+  private debounceTimers: Map<string, ReturnType<typeof setTimeout>> = new Map();
+  private pendingActions: Map<string, () => void> = new Map();
+  public debounceIntervalMs: number = 2000;
+  private activeIncidentId: string | null = null;
+
+  public setActiveIncidentId(id: string | null): void {
+    this.activeIncidentId = id;
+  }
+
+  public getActiveIncidentId(): string | null {
+    if (this.activeIncidentId) return this.activeIncidentId;
+    if (typeof window !== 'undefined' && window.location?.pathname) {
+      const match = window.location.pathname.match(/\/incidents\/([^/]+)/);
+      if (match) return match[1];
+    }
+    return null;
+  }
+
+  /**
+   * Schedule debounced invalidation per query group (at most once per 2 seconds, trailing edge).
+   */
+  public scheduleDebouncedInvalidation(group: string, queryKey: readonly unknown[]): void {
+    if (!this.queryClient) return;
+
+    const action = () => {
+      this.queryClient?.invalidateQueries({ queryKey });
+    };
+
+    if (this.debounceIntervalMs <= 0) {
+      action();
+      return;
+    }
+
+    const existingTimer = this.debounceTimers.get(group);
+    if (existingTimer) {
+      clearTimeout(existingTimer);
+    }
+
+    this.pendingActions.set(group, action);
+
+    const timer = setTimeout(() => {
+      this.debounceTimers.delete(group);
+      this.pendingActions.delete(group);
+      action();
+    }, this.debounceIntervalMs);
+
+    this.debounceTimers.set(group, timer);
+  }
+
+  /**
+   * Clear all pending debounced invalidations and reset timers.
+   */
+  public clearPendingInvalidations(): void {
+    this.debounceTimers.forEach((timer) => clearTimeout(timer));
+    this.debounceTimers.clear();
+    this.pendingActions.clear();
+  }
+
+  /**
+   * Immediately flush all pending debounced query invalidations.
+   */
+  public flushPendingInvalidations(): void {
+    if (!this.queryClient) return;
+    const actions = Array.from(this.pendingActions.values());
+    this.clearPendingInvalidations();
+    for (const action of actions) {
+      action();
+    }
+  }
+
   /**
    * Centralized query invalidation matrix mapping domain/system events to React Query keys.
+   * Debounces query group invalidations to at most once per 2 seconds (trailing edge),
+   * while keeping it immediate for the currently open incident detail.
    */
   public invalidateQueriesForEvent(event: RealtimeEvent): void {
     if (!this.queryClient) return;
 
+    const currentOpenId = this.getActiveIncidentId();
+    const isCurrentOpenDetail = Boolean(event.entity_id && currentOpenId && event.entity_id === currentOpenId);
+
+    // Immediate invalidation for currently open incident detail
+    const invalidateDetail = (entityId: string) => {
+      if (!this.queryClient || !entityId) return;
+      if (isCurrentOpenDetail) {
+        // Immediate!
+        this.queryClient.invalidateQueries({ queryKey: incidentKeys.detail(entityId) });
+      } else {
+        // Debounced for other details
+        this.scheduleDebouncedInvalidation(`detail:${entityId}`, incidentKeys.detail(entityId));
+      }
+    };
+
     switch (event.event_type) {
       case 'report.created':
-        this.queryClient.invalidateQueries({ queryKey: incidentKeys.lists() });
-        this.queryClient.invalidateQueries({ queryKey: incidentKeys.geoAll() });
-        this.queryClient.invalidateQueries({ queryKey: dashboardKeys.all });
-        this.queryClient.invalidateQueries({ queryKey: analyticsKeys.all });
-        this.queryClient.invalidateQueries({ queryKey: incidentKeys.verificationQueues() });
+        this.scheduleDebouncedInvalidation('incident_lists', incidentKeys.lists());
+        this.scheduleDebouncedInvalidation('incident_geo', incidentKeys.geoAll());
+        this.scheduleDebouncedInvalidation('dashboard', dashboardKeys.all);
+        this.scheduleDebouncedInvalidation('analytics', analyticsKeys.all);
+        this.scheduleDebouncedInvalidation('verification_queues', incidentKeys.verificationQueues());
         break;
 
       case 'report.verification_changed':
-        this.queryClient.invalidateQueries({ queryKey: incidentKeys.lists() });
+        this.scheduleDebouncedInvalidation('incident_lists', incidentKeys.lists());
         if (event.entity_id) {
-          this.queryClient.invalidateQueries({ queryKey: incidentKeys.detail(event.entity_id) });
+          invalidateDetail(event.entity_id);
         }
-        this.queryClient.invalidateQueries({ queryKey: incidentKeys.geoAll() });
-        this.queryClient.invalidateQueries({ queryKey: dashboardKeys.all });
-        this.queryClient.invalidateQueries({ queryKey: analyticsKeys.all });
-        this.queryClient.invalidateQueries({ queryKey: incidentKeys.verificationQueues() });
+        this.scheduleDebouncedInvalidation('incident_geo', incidentKeys.geoAll());
+        this.scheduleDebouncedInvalidation('dashboard', dashboardKeys.all);
+        this.scheduleDebouncedInvalidation('analytics', analyticsKeys.all);
+        this.scheduleDebouncedInvalidation('verification_queues', incidentKeys.verificationQueues());
         break;
 
       case 'report.intelligence_ready':
         if (event.entity_id) {
-          this.queryClient.invalidateQueries({ queryKey: incidentKeys.detail(event.entity_id) });
+          invalidateDetail(event.entity_id);
         }
-        this.queryClient.invalidateQueries({ queryKey: incidentKeys.lists() });
-        this.queryClient.invalidateQueries({ queryKey: analyticsKeys.all });
+        this.scheduleDebouncedInvalidation('incident_lists', incidentKeys.lists());
+        this.scheduleDebouncedInvalidation('analytics', analyticsKeys.all);
         break;
 
       case 'cluster.updated':
-        this.queryClient.invalidateQueries({ queryKey: incidentKeys.geoAll() });
-        this.queryClient.invalidateQueries({ queryKey: incidentKeys.all });
-        this.queryClient.invalidateQueries({ queryKey: dashboardKeys.all });
+        this.scheduleDebouncedInvalidation('incident_geo', incidentKeys.geoAll());
+        this.scheduleDebouncedInvalidation('incidents_all', incidentKeys.all);
+        this.scheduleDebouncedInvalidation('dashboard', dashboardKeys.all);
         break;
 
       case 'system.resync_required':
         // Broad authoritative state revalidation
-        this.queryClient.invalidateQueries({ queryKey: incidentKeys.all });
-        this.queryClient.invalidateQueries({ queryKey: dashboardKeys.all });
-        this.queryClient.invalidateQueries({ queryKey: analyticsKeys.all });
+        this.scheduleDebouncedInvalidation('incidents_all', incidentKeys.all);
+        this.scheduleDebouncedInvalidation('dashboard', dashboardKeys.all);
+        this.scheduleDebouncedInvalidation('analytics', analyticsKeys.all);
         break;
 
       default:
@@ -279,6 +366,7 @@ export class RealtimeService {
    * Disconnect and release the EventSource socket.
    */
   public disconnect(explicit: boolean = true): void {
+    this.clearPendingInvalidations();
     if (explicit) {
       this.isExplicitlyClosed = true;
     }
@@ -295,6 +383,7 @@ export class RealtimeService {
    * Tear down all resources, subscribers, and listeners.
    */
   public destroy(): void {
+    this.clearPendingInvalidations();
     this.disconnect(true);
     this.eventSubscribers.clear();
     this.stateSubscribers.clear();

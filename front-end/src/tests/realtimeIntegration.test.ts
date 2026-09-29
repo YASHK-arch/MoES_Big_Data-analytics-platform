@@ -90,6 +90,7 @@ describe('End-to-End Realtime Integration & Cache Invalidation', () => {
     });
     invalidateSpy = vi.spyOn(queryClient, 'invalidateQueries');
     service = new RealtimeService();
+    service.debounceIntervalMs = 0;
   });
 
   afterEach(() => {

@@ -80,6 +80,7 @@ describe('RealtimeService & Centralized SSE Manager', () => {
     queryClient = new QueryClient();
     invalidateSpy = vi.spyOn(queryClient, 'invalidateQueries');
     service = new RealtimeService();
+    service.debounceIntervalMs = 0;
   });
 
   afterEach(() => {
