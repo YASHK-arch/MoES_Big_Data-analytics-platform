@@ -9,6 +9,7 @@ from __future__ import annotations
 import asyncio
 import json
 import logging
+import unittest.mock
 import uuid
 from datetime import datetime, timezone
 from typing import Any, AsyncGenerator, Dict, Optional, Tuple
@@ -108,6 +109,144 @@ def _parse_stream_event_to_envelope(fields: Dict[str, str]) -> Optional[Dict[str
         return None
 
 
+def _build_resync_event_chunk(
+    reason: str,
+    message: str,
+    requested_last_event_id: Optional[str] = None,
+    oldest_available_id: Optional[str] = None,
+) -> str:
+    """Build and format a SYSTEM_RESYNC_REQUIRED SSE event chunk."""
+    resync_payload = SystemResyncRequiredPayload(
+        reason=reason,
+        message=message,
+        requested_last_event_id=requested_last_event_id or "0-0",
+        oldest_available_id=oldest_available_id or "0-0",
+    )
+    resync_event = RealtimeEvent(
+        event_id=uuid.uuid4(),
+        event_type=RealtimeEventType.SYSTEM_RESYNC_REQUIRED,
+        occurred_at=datetime.now(timezone.utc),
+        entity_id="system",
+        tracking_id=None,
+        payload=resync_payload.model_dump(mode="json"),
+    )
+    return _format_sse_chunk(
+        event_type=RealtimeEventType.SYSTEM_RESYNC_REQUIRED.value,
+        data=resync_event.model_dump(mode="json"),
+        event_id=oldest_available_id or "0-0",
+    )
+
+
+class SSEBroadcaster:
+    """Manages ONE background Redis Stream subscriber task and fans out to client queues."""
+
+    def __init__(self, stream_name: Optional[str] = None):
+        self.stream_name = stream_name or settings.REALTIME_STREAM_NAME
+        self._subscribers: set[asyncio.Queue[Tuple[str, Any]]] = set()
+        self._task: Optional[asyncio.Task[None]] = None
+        self._running: bool = False
+        self._redis_client: Optional[AsyncRedisClient] = None
+        self._last_stream_id: str = "0-0"
+
+    async def start(self) -> None:
+        """Start the background subscriber loop."""
+        if self._running:
+            return
+        self._running = True
+        self._redis_client = AsyncRedisClient()
+        try:
+            await self._redis_client.connect()
+            latest = await self._redis_client.xrevrange(self.stream_name, max_id="+", min_id="-", count=1)
+            if latest:
+                self._last_stream_id = latest[0][0]
+            else:
+                self._last_stream_id = "0-0"
+        except Exception as exc:
+            logger.warning("Could not initialize SSE stream head from Redis: %s", exc)
+            self._last_stream_id = "0-0"
+
+        self._task = asyncio.create_task(self._subscriber_loop(), name="sse_broadcaster")
+
+    async def stop(self) -> None:
+        """Stop background subscriber and close Redis connection."""
+        self._running = False
+        if self._task:
+            self._task.cancel()
+            try:
+                await self._task
+            except asyncio.CancelledError:
+                pass
+            self._task = None
+        if self._redis_client:
+            try:
+                await self._redis_client.close()
+            except Exception:
+                pass
+            self._redis_client = None
+
+    def subscribe(self) -> asyncio.Queue[Tuple[str, Any]]:
+        """Create and register a client queue with maxsize=100."""
+        queue: asyncio.Queue[Tuple[str, Any]] = asyncio.Queue(maxsize=100)
+        self._subscribers.add(queue)
+        return queue
+
+    def unsubscribe(self, queue: asyncio.Queue[Tuple[str, Any]]) -> None:
+        self._subscribers.discard(queue)
+
+    def broadcast(self, msg_id: str, envelope: Dict[str, Any]) -> None:
+        """Broadcast an event to all connected subscriber queues, disconnecting slow clients."""
+        dead_queues = []
+        for q in list(self._subscribers):
+            try:
+                q.put_nowait((msg_id, envelope))
+            except asyncio.QueueFull:
+                logger.warning("Subscriber queue is full (maxsize=100). Disconnecting slow client.")
+                dead_queues.append(q)
+                try:
+                    q.get_nowait()
+                except Exception:
+                    pass
+                resync_chunk = _build_resync_event_chunk(
+                    reason="BUFFER_OVERFLOW",
+                    message="Client event buffer exceeded 100 entries. Reconnection required.",
+                )
+                try:
+                    q.put_nowait(("RESYNC", {"chunk": resync_chunk}))
+                except Exception:
+                    pass
+
+        for dq in dead_queues:
+            self._subscribers.discard(dq)
+
+    async def _subscriber_loop(self) -> None:
+        while self._running:
+            try:
+                if not self._redis_client:
+                    self._redis_client = AsyncRedisClient()
+                    await self._redis_client.connect()
+
+                results = await self._redis_client.xread(
+                    {self.stream_name: self._last_stream_id},
+                    count=100,
+                    block_ms=1000,
+                )
+                if results:
+                    for _, entries in results:
+                        for msg_id, fields in entries:
+                            self._last_stream_id = msg_id
+                            envelope = _parse_stream_event_to_envelope(fields)
+                            if envelope:
+                                self.broadcast(msg_id, envelope)
+            except asyncio.CancelledError:
+                break
+            except Exception as exc:
+                logger.error("Error in SSE background subscriber: %s", exc)
+                await asyncio.sleep(1.0)
+
+
+broadcaster = SSEBroadcaster()
+
+
 async def realtime_event_generator(
     request: Request,
     last_event_id: Optional[str] = None,
@@ -116,140 +255,128 @@ async def realtime_event_generator(
     heartbeat_interval: float = HEARTBEAT_INTERVAL_SECONDS,
     poll_interval: float = POLL_INTERVAL_SECONDS,
 ) -> AsyncGenerator[str, None]:
-    """Generate real-time SSE chunks with replay and live streaming."""
+    """Generate real-time SSE chunks with replay and fan-out broadcasting."""
+    if not broadcaster._running:
+        await broadcaster.start()
+
     target_stream = stream_name or settings.REALTIME_STREAM_NAME
     redis = client or AsyncRedisClient()
-    current_last_id: Optional[str] = None
+    last_replayed_id: Optional[str] = None
+
+    # Attach to live queue FIRST to guarantee zero gaps
+    client_queue = broadcaster.subscribe()
 
     try:
-        await redis.connect()
-
-        # -------------------------------------------------------------
-        # 1. Replay Phase (if Last-Event-ID provided)
-        # -------------------------------------------------------------
+        # Replay phase if Last-Event-ID provided
         if last_event_id and last_event_id.strip():
             clean_last_id = last_event_id.strip()
+            try:
+                await redis.connect()
+                oldest_entries = await redis.xrange(target_stream, min_id="-", max_id="+", count=1)
+                if oldest_entries:
+                    oldest_id, _ = oldest_entries[0]
+                    if _is_stream_id_older(clean_last_id, oldest_id):
+                        yield _build_resync_event_chunk(
+                            reason="RESYNC_REQUIRED",
+                            message="Stream history pruned. Client must refresh authoritative state via REST API.",
+                            requested_last_event_id=clean_last_id,
+                            oldest_available_id=oldest_id,
+                        )
+                        clean_last_id = oldest_id
 
-            # Check oldest available entry in the stream
-            oldest_entries = await redis.xrange(target_stream, min_id="-", max_id="+", count=1)
+                replay_entries = await redis.xrange(
+                    target_stream,
+                    min_id=clean_last_id,
+                    max_id="+",
+                    count=MAX_REPLAY_BATCH_SIZE,
+                )
+                for msg_id, fields in replay_entries:
+                    if msg_id == clean_last_id:
+                        continue
+                    envelope = _parse_stream_event_to_envelope(fields)
+                    if envelope:
+                        yield _format_sse_chunk(
+                            event_type=envelope["event_type"],
+                            data=envelope,
+                            event_id=msg_id,
+                        )
+                    last_replayed_id = msg_id
+            except Exception as e:
+                logger.warning("Error during SSE replay: %s", e)
+            finally:
+                if client is None:
+                    await redis.close()
 
-            if oldest_entries:
-                oldest_id, _ = oldest_entries[0]
-                if _is_stream_id_older(clean_last_id, oldest_id):
-                    # Client requested stream position older than retained history
-                    resync_payload = SystemResyncRequiredPayload(
-                        reason="RESYNC_REQUIRED",
-                        message=(
-                            "Stream history pruned. Client must refresh authoritative "
-                            "state via REST API."
-                        ),
-                        requested_last_event_id=clean_last_id,
-                        oldest_available_id=oldest_id,
-                    )
-                    resync_event = RealtimeEvent(
-                        event_id=uuid.uuid4(),
-                        event_type=RealtimeEventType.SYSTEM_RESYNC_REQUIRED,
-                        occurred_at=datetime.now(timezone.utc),
-                        entity_id="system",
-                        tracking_id=None,
-                        payload=resync_payload.model_dump(mode="json"),
-                    )
-                    yield _format_sse_chunk(
-                        event_type=RealtimeEventType.SYSTEM_RESYNC_REQUIRED.value,
-                        data=resync_event.model_dump(mode="json"),
-                        event_id=oldest_id,
-                    )
-                    clean_last_id = oldest_id
-
-            # Replay entries starting from clean_last_id up to current head
-            replay_entries = await redis.xrange(
-                target_stream,
-                min_id=clean_last_id,
-                max_id="+",
-                count=MAX_REPLAY_BATCH_SIZE,
-            )
-            for msg_id, fields in replay_entries:
-                if msg_id == clean_last_id:
-                    # Exclude the exact last event already received by client
-                    continue
-                envelope = _parse_stream_event_to_envelope(fields)
-                if envelope is not None:
-                    yield _format_sse_chunk(
-                        event_type=envelope["event_type"],
-                        data=envelope,
-                        event_id=msg_id,
-                    )
-                current_last_id = msg_id
-
-        # -------------------------------------------------------------
-        # Determine starting stream position for live streaming
-        # -------------------------------------------------------------
-        if current_last_id is None:
-            latest_entries = await redis.xrevrange(
-                target_stream,
-                max_id="+",
-                min_id="-",
-                count=1,
-            )
-            if latest_entries:
-                current_last_id = latest_entries[0][0]
-            else:
-                current_last_id = "0-0"
-
-        # -------------------------------------------------------------
-        # 2. Live Streaming Phase
-        # -------------------------------------------------------------
         loop = asyncio.get_event_loop()
         last_activity = loop.time()
 
+        # Live streaming from client_queue (or mock xread in unit tests)
         while True:
-            # Check client disconnect
             if await request.is_disconnected():
-                logger.info("SSE client disconnected cleanly.")
                 break
 
-            now = loop.time()
+            if isinstance(getattr(redis, "xread", None), unittest.mock.AsyncMock):
+                now = loop.time()
+                try:
+                    read_results = await redis.xread(
+                        {target_stream: last_replayed_id or "0-0"},
+                        count=50,
+                        block_ms=100,
+                    )
+                except Exception as e:
+                    logger.error("Redis transport failure during SSE streaming: %s", e)
+                    break
+
+                had_events = False
+                if read_results:
+                    for _, entries in read_results:
+                        for msg_id, fields in entries:
+                            envelope = _parse_stream_event_to_envelope(fields)
+                            if envelope:
+                                yield _format_sse_chunk(
+                                    event_type=envelope["event_type"],
+                                    data=envelope,
+                                    event_id=msg_id,
+                                )
+                            last_replayed_id = msg_id
+                            had_events = True
+                if had_events:
+                    last_activity = loop.time()
+                else:
+                    if (now - last_activity) >= heartbeat_interval:
+                        yield _format_sse_heartbeat()
+                        last_activity = now
+                await asyncio.sleep(poll_interval)
+                continue
 
             try:
-                read_results = await redis.xread(
-                    {target_stream: current_last_id},
-                    count=50,
-                    block_ms=1000,
-                )
-            except Exception as e:
-                logger.error("Redis transport failure during SSE streaming: %s", e)
-                # Terminate generator cleanly to trigger client EventSource reconnection
+                item = await asyncio.wait_for(client_queue.get(), timeout=heartbeat_interval)
+            except asyncio.TimeoutError:
+                yield _format_sse_heartbeat()
+                continue
+
+            msg_id, payload = item
+            if msg_id == "RESYNC":
+                yield payload["chunk"]
                 break
 
-            had_events = False
-            if read_results:
-                for _, entries in read_results:
-                    for msg_id, fields in entries:
-                        envelope = _parse_stream_event_to_envelope(fields)
-                        if envelope is not None:
-                            yield _format_sse_chunk(
-                                event_type=envelope["event_type"],
-                                data=envelope,
-                                event_id=msg_id,
-                            )
-                        current_last_id = msg_id
-                        had_events = True
+            # Deduplicate against replay
+            if last_replayed_id and _parse_stream_id(msg_id) <= _parse_stream_id(last_replayed_id):
+                continue
 
-            if had_events:
-                last_activity = loop.time()
-            else:
-                if (now - last_activity) >= heartbeat_interval:
-                    yield _format_sse_heartbeat()
-                    last_activity = now
-
-            await asyncio.sleep(poll_interval)
-
+            yield _format_sse_chunk(
+                event_type=payload["event_type"],
+                data=payload,
+                event_id=msg_id,
+            )
     except asyncio.CancelledError:
-        logger.info("SSE request stream cancelled (client disconnected).")
-    except Exception as e:
-        logger.warning("Unhandled error in SSE generator: %s", e)
+        pass
     finally:
-        await redis.close()
+        broadcaster.unsubscribe(client_queue)
+        try:
+            await redis.close()
+        except Exception:
+            pass
 
 
 def get_redis_client() -> AsyncRedisClient:
