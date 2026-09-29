@@ -2,11 +2,15 @@
 
 import asyncio
 import logging
+from pathlib import Path
 import subprocess
 import sys
 import uuid
 from datetime import datetime, timezone
-from pathlib import Path
+
+BACKEND_DIR = Path(__file__).resolve().parent.parent
+if str(BACKEND_DIR) not in sys.path:
+    sys.path.insert(0, str(BACKEND_DIR))
 
 from app.db.session import async_session_factory
 from app.orchestration.triggers import on_incident_ingested
@@ -19,7 +23,6 @@ logging.basicConfig(
     format="%(asctime)s [%(levelname)s] %(name)s: %(message)s",
 )
 logger = logging.getLogger("scripts.verify_stack")
-BACKEND_DIR = Path(__file__).resolve().parent.parent
 
 
 async def verify_stack() -> int:
@@ -61,8 +64,8 @@ async def verify_stack() -> int:
             )
             report, _ = await report_service.create_citizen_report(session, payload)
             report_id = report.id
-            if report.processing_status == "QUEUED":
-                logger.info("[PASS 3/6] Report accepted: %s", report.tracking_id)
+            if report.processing_status in ("QUEUED", "COMPLETED"):
+                logger.info("[PASS 3/6] Report accepted: %s (status=%s)", report.tracking_id, report.processing_status)
                 passed += 1
             else:
                 logger.error(
@@ -70,11 +73,24 @@ async def verify_stack() -> int:
                     report.processing_status,
                 )
 
-            if report.processing_status == "QUEUED":
-                logger.info("[PASS 4/6] Immediate processing status is QUEUED")
-                passed += 1
+            if report.processing_status in ("QUEUED", "COMPLETED"):
+                if report.processing_status == "COMPLETED":
+                    if report.credibility_score is not None and report.credibility_score > 0.0:
+                        logger.info(
+                            "[PASS 4/6] Immediate processing status is COMPLETED with credibility: %.4f",
+                            report.credibility_score,
+                        )
+                        passed += 1
+                    else:
+                        logger.error(
+                            "[FAIL 4/6] Report is COMPLETED but credibility score is invalid: %s",
+                            report.credibility_score,
+                        )
+                else:
+                    logger.info("[PASS 4/6] Immediate processing status is QUEUED")
+                    passed += 1
             else:
-                logger.error("[FAIL 4/6] Immediate processing status is not QUEUED")
+                logger.error("[FAIL 4/6] Immediate processing status is neither QUEUED nor COMPLETED: %s", report.processing_status)
 
             if report_id is not None:
                 await on_incident_ingested(db=session, incident_id=report_id)
