@@ -22,7 +22,7 @@ import { useAuth } from '@/context/AuthContext';
 export const Navbar: React.FC = () => {
   const location = useLocation();
   const { i18n, t } = useTranslation();
-  const { isAuthenticated, user, isOperator, isCitizen, logout } = useAuth();
+  const { isAuthenticated, user, isOperator, isCitizen, isAdmin, logout } = useAuth();
 
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [toolsDropdownOpen, setToolsDropdownOpen] = useState(false);
@@ -47,37 +47,59 @@ export const Navbar: React.FC = () => {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  // Primary navigation links
+  // Primary navigation links tailored by role and auth state
   const primaryLinks = [
-    { name: t('nav.home', 'Home'), path: '/' },
-    { name: t('nav.citizenArea', 'Citizen Area'), path: '/citizen-dashboard' },
+    ...(!isAuthenticated
+      ? [{ name: t('nav.home', 'Home'), path: '/welcome' }]
+      : []),
+    ...(isCitizen || !isAuthenticated
+      ? [
+          {
+            name: t('nav.citizenArea', 'Citizen Area'),
+            path: '/citizen-dashboard',
+          },
+        ]
+      : []),
     { name: t('nav.nationalMap', 'National Map'), path: '/national-map' },
     { name: t('nav.liveMap', 'Live Map'), path: '/live-map' },
     { name: t('nav.incidents', 'Incidents'), path: '/incidents' },
     { name: t('nav.analytics', 'Analytics'), path: '/analytics' },
   ];
 
-  // Secondary tools dropdown items
-  const toolItems = [
-    {
-      name: t('nav.dashboard', 'Operations Dashboard'),
-      path: '/dashboard',
-      icon: LayoutDashboard,
-      desc: 'Real-time telemetry and regional KPIs',
-    },
-    {
-      name: t('nav.reportWeather', 'Report Weather Event'),
-      path: '/report',
-      icon: FileText,
-      desc: 'Submit citizen eyewitness observations',
-    },
-    {
-      name: t('nav.trackReport', 'Track Incident Report'),
-      path: '/track-report',
-      icon: SearchCheck,
-      desc: 'Query report status by tracking ID',
-    },
-  ];
+  // Secondary tools dropdown items tailored by role
+  const toolItems = isCitizen
+    ? [
+        {
+          name: t('nav.reportWeather', 'Report Weather Event'),
+          path: '/report',
+          icon: FileText,
+          desc: 'Submit citizen eyewitness observations',
+        },
+        {
+          name: t('nav.trackReport', 'Track Incident Report'),
+          path: '/track-report',
+          icon: SearchCheck,
+          desc: 'Query report status by tracking ID',
+        },
+      ]
+    : [
+        {
+          name: t('nav.dashboard', 'Operations Dashboard'),
+          path: '/dashboard',
+          icon: LayoutDashboard,
+          desc: 'Real-time telemetry and regional KPIs',
+        },
+        ...(isAdmin
+          ? [
+              {
+                name: t('nav.trackReport', 'Track Incident Report'),
+                path: '/track-report',
+                icon: SearchCheck,
+                desc: 'Query report status by tracking ID',
+              },
+            ]
+          : []),
+      ];
 
   if (isCitizen) {
     toolItems.push({
