@@ -1,0 +1,65 @@
+============================= test session starts ==============================
+platform darwin -- Python 3.14.0, pytest-8.4.2, pluggy-1.6.0 -- /Users/akshatjain/Documents/SIH/back-end/.venv/bin/python3.14
+cachedir: .pytest_cache
+Using --randomly-seed=310080607
+rootdir: /Users/akshatjain/Documents/SIH/back-end
+configfile: pyproject.toml
+plugins: randomly-5.0.0, cov-4.1.0, anyio-4.14.2, asyncio-0.26.0
+asyncio: mode=Mode.AUTO, asyncio_default_fixture_loop_scope=None, asyncio_default_test_loop_scope=function
+collecting ... collected 11 items
+
+back-end/tests/test_image_forensics_logic.py::TestImageForensicsPureLogic::test_missing_exif_is_neutral PASSED [  9%]
+back-end/tests/test_image_forensics_logic.py::TestImageForensicsPureLogic::test_exif_timezone_offset_vs_naive_ist_assumption PASSED [ 18%]
+back-end/tests/test_image_forensics_logic.py::TestImageForensicsPureLogic::test_same_incident_duplicate_not_flagged PASSED [ 27%]
+back-end/tests/test_image_forensics_logic.py::TestImageForensicsPureLogic::test_p2_invariant_no_path_changes_verification_status PASSED [ 36%]
+back-end/tests/test_image_forensics_logic.py::TestImageForensicsPureLogic::test_oversized_file_returns_neutral_before_decode PASSED [ 45%]
+back-end/tests/test_image_forensics_logic.py::TestImageForensicsPureLogic::test_corrupt_file_returns_neutral_safely PASSED [ 54%]
+back-end/tests/test_image_forensics_logic.py::TestImageForensicsPureLogic::test_cross_incident_distant_reuse_flagged PASSED [ 63%]
+back-end/tests/test_image_forensics_logic.py::TestImageForensicsPureLogic::test_exif_time_boundaries PASSED [ 72%]
+back-end/tests/test_image_forensics_logic.py::TestImageForensicsPureLogic::test_exif_gps_boundaries_and_privacy PASSED [ 81%]
+back-end/tests/test_image_forensics_logic.py::TestImageForensicsPureLogic::test_credibility_adjustment_respects_cap PASSED [ 90%]
+back-end/tests/test_image_forensics_logic.py::TestImageForensicsPureLogic::test_phash_and_dhash_determinism PASSED [100%]
+
+=============================== warnings summary ===============================
+tests/test_image_forensics_logic.py::TestImageForensicsPureLogic::test_missing_exif_is_neutral
+  /Users/akshatjain/Documents/SIH/back-end/.venv/lib/python3.14/site-packages/pytest_asyncio/plugin.py:1216: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+    return asyncio.get_event_loop_policy()
+
+tests/test_image_forensics_logic.py: 12 warnings
+  /Users/akshatjain/Documents/SIH/back-end/.venv/lib/python3.14/site-packages/pytest_asyncio/plugin.py:772: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+    old_loop_policy = asyncio.get_event_loop_policy()
+
+tests/test_image_forensics_logic.py: 12 warnings
+  /Users/akshatjain/Documents/SIH/back-end/.venv/lib/python3.14/site-packages/pytest_asyncio/plugin.py:777: DeprecationWarning: 'asyncio.set_event_loop_policy' is deprecated and slated for removal in Python 3.16
+    asyncio.set_event_loop_policy(policy)
+
+tests/test_image_forensics_logic.py: 12 warnings
+  /Users/akshatjain/Documents/SIH/back-end/.venv/lib/python3.14/site-packages/pytest_asyncio/plugin.py:1183: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+    loop = asyncio.get_event_loop_policy().new_event_loop()
+
+tests/test_image_forensics_logic.py: 11 warnings
+  /Users/akshatjain/Documents/SIH/back-end/.venv/lib/python3.14/site-packages/pytest_asyncio/plugin.py:874: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+    _restore_event_loop_policy(asyncio.get_event_loop_policy()),
+
+tests/test_image_forensics_logic.py: 11 warnings
+  /Users/akshatjain/Documents/SIH/back-end/.venv/lib/python3.14/site-packages/pytest_asyncio/plugin.py:889: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+    policy = asyncio.get_event_loop_policy()
+
+tests/test_image_forensics_logic.py: 12 warnings
+  /Users/akshatjain/Documents/SIH/back-end/.venv/lib/python3.14/site-packages/pytest_asyncio/plugin.py:794: DeprecationWarning: 'asyncio.set_event_loop_policy' is deprecated and slated for removal in Python 3.16
+    asyncio.set_event_loop_policy(old_loop_policy)
+
+tests/test_image_forensics_logic.py: 11 warnings
+  /Users/akshatjain/Documents/SIH/back-end/.venv/lib/python3.14/site-packages/pytest_asyncio/plugin.py:942: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+    policy = asyncio.get_event_loop_policy()
+
+tests/test_image_forensics_logic.py: 11 warnings
+  /Users/akshatjain/Documents/SIH/back-end/.venv/lib/python3.14/site-packages/pytest_asyncio/plugin.py:966: DeprecationWarning: 'asyncio.set_event_loop_policy' is deprecated and slated for removal in Python 3.16
+    asyncio.set_event_loop_policy(previous_policy)
+
+tests/test_image_forensics_logic.py: 11 warnings
+  /Users/akshatjain/Documents/SIH/back-end/.venv/lib/python3.14/site-packages/pytest_asyncio/plugin.py:978: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+    policy = asyncio.get_event_loop_policy()
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+======================= 11 passed, 104 warnings in 3.31s =======================
