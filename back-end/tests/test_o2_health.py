@@ -7,9 +7,10 @@ Tests:
   - GET /health/workers lists expected workers
 """
 
-import pytest
 from unittest.mock import AsyncMock, patch
-from httpx import AsyncClient, ASGITransport
+
+import pytest
+from httpx import ASGITransport, AsyncClient
 
 from app.main import create_application
 
@@ -88,8 +89,9 @@ async def test_worker_health_lists_expected_workers(client):
 async def test_heartbeat_redis_key_written():
     """heartbeat_loop writes Redis key worker:heartbeat:<name> with TTL 30s."""
     import asyncio
-    from app.workers.heartbeat import heartbeat_loop
+
     from app.core.redis import redis_client
+    from app.workers.heartbeat import heartbeat_loop
 
     stop_event = asyncio.Event()
     # Run one iteration only
