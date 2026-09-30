@@ -1,0 +1,39 @@
+=== E3 Honest B4 Load Test & Geo Payload Optimization ===
+
+Payload Size (GET /api/v1/geo/incidents default 500 records):
+  - BEFORE: Raw 256134 bytes (250.1 KB) | Gzip 35658 bytes (34.8 KB)
+  - AFTER : Raw 239580 bytes (234.0 KB) | Gzip 35142 bytes (34.3 KB)
+  - SAVINGS: -16554 bytes raw (-6.5%), -516 bytes gzip (-1.4%)
+
+=== BASELINE LOAD TEST RESULTS (50 users, 20s, 3 runs) ===
+
+--- uvicorn --workers 1 ---
+Overall Average: Total RPS = 77.1 req/s | Generator CPU = 12.7%
+  Endpoint: /api/v1/geo/incidents
+    RPS = 38.5 req/s | p50 = 485.3 ms | p95 = 1431.7 ms
+  Endpoint: /api/v1/reports?page=1&page_size=20&status=PENDING,UNDER_REVIEW
+    RPS = 38.6 req/s | p50 = 529.8 ms | p95 = 1422.5 ms
+
+--- uvicorn --workers 4 ---
+Overall Average: Total RPS = 73.9 req/s | Generator CPU = 37.3%
+  Endpoint: /api/v1/geo/incidents
+    RPS = 37.2 req/s | p50 = 573.4 ms | p95 = 2250.0 ms
+  Endpoint: /api/v1/reports?page=1&page_size=20&status=PENDING,UNDER_REVIEW
+    RPS = 36.7 req/s | p50 = 294.9 ms | p95 = 1945.0 ms
+
+=== OPTIMIZED LOAD TEST RESULTS (50 users, 20s, 3 runs) ===
+
+--- uvicorn --workers 1 ---
+Overall Average: Total RPS = 79.2 req/s | Generator CPU = 13.4%
+  Endpoint: /api/v1/geo/incidents
+    RPS = 39.8 req/s | p50 = 488.2 ms | p95 = 1232.6 ms
+  Endpoint: /api/v1/reports?page=1&page_size=20&status=PENDING,UNDER_REVIEW
+    RPS = 39.4 req/s | p50 = 576.7 ms | p95 = 1322.8 ms
+
+--- uvicorn --workers 4 ---
+Overall Average: Total RPS = 77.5 req/s | Generator CPU = 38.4%
+  Endpoint: /api/v1/geo/incidents
+    RPS = 38.9 req/s | p50 = 540.9 ms | p95 = 2176.0 ms
+  Endpoint: /api/v1/reports?page=1&page_size=20&status=PENDING,UNDER_REVIEW
+    RPS = 38.6 req/s | p50 = 292.2 ms | p95 = 1843.8 ms
+

@@ -1,0 +1,144 @@
+=== Before Kill ===
+XINFO GROUPS:
+name
+group:weather:orchestrators
+consumers
+1
+pending
+1
+last-delivered-id
+1790729213996-2
+entries-read
+100
+lag
+100
+XINFO CONSUMERS:
+name
+orchestrator-worker-1
+pending
+1
+idle
+1365
+inactive
+1365
+XPENDING SUMMARY:
+1
+1790729213996-2
+1790729213996-2
+orchestrator-worker-1
+1
+XPENDING DETAIL:
+1790729213996-2
+orchestrator-worker-1
+1435
+1
+
+=== Right After Kill ===
+XINFO GROUPS:
+name
+group:weather:orchestrators
+consumers
+1
+pending
+1
+last-delivered-id
+1790729213996-2
+entries-read
+100
+lag
+100
+XINFO CONSUMERS:
+name
+orchestrator-worker-1
+pending
+1
+idle
+1504
+inactive
+1504
+XPENDING SUMMARY:
+1
+1790729213996-2
+1790729213996-2
+orchestrator-worker-1
+1
+XPENDING DETAIL:
+1790729213996-2
+orchestrator-worker-1
+1575
+1
+
+=== 30s After Restart ===
+XINFO GROUPS:
+name
+group:weather:orchestrators
+consumers
+2
+pending
+0
+last-delivered-id
+1790729214012-5
+entries-read
+200
+lag
+0
+XINFO CONSUMERS:
+name
+orchestrator-worker-1
+pending
+0
+idle
+31705
+inactive
+31705
+name
+orchestrator-worker-2
+pending
+0
+idle
+550
+inactive
+15163
+XPENDING SUMMARY:
+0
+XPENDING DETAIL:
+
+
+=== 60s After Restart ===
+XINFO GROUPS:
+name
+group:weather:orchestrators
+consumers
+2
+pending
+0
+last-delivered-id
+1790729214012-5
+entries-read
+200
+lag
+0
+XINFO CONSUMERS:
+name
+orchestrator-worker-1
+pending
+0
+idle
+61710
+inactive
+61710
+name
+orchestrator-worker-2
+pending
+0
+idle
+1632
+inactive
+45168
+XPENDING SUMMARY:
+0
+XPENDING DETAIL:
+
+
+Reached final state: 200/200
+Still QUEUED: 0/200

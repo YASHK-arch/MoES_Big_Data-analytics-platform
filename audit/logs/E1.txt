@@ -1,0 +1,107 @@
+Fetched 200 test incidents.
+
+--- (f) Seeded Incidents Category Analysis ---
+Total incidents checked: 200
+Incidents with category_id IS NULL: 126 / 200 (63.0%)
+
+--- (a) Per-Incident Count of Links ---
+OLD links per incident: min=0, median=0.0, max=23, total=320
+NEW links per incident: min=0, median=3.5, max=10, total=867
+
+--- (b) Score Histograms (0.1 buckets) ---
+Bucket     | Shared Links   | Only in NEW   
+--------------------------------------------
+0.0-0.1    | 0              | 0             
+0.1-0.2    | 0              | 0             
+0.2-0.3    | 0              | 0             
+0.3-0.4    | 0              | 0             
+0.4-0.5    | 3              | 3             
+0.5-0.6    | 69             | 254           
+0.6-0.7    | 86             | 299           
+0.7-0.8    | 44             | 51            
+0.8-0.9    | 29             | 29            
+0.9-1.0    | 0              | 0             
+Minimum score in shared links: 0.4749
+Minimum score in only-in-NEW: 0.4749
+Active Thresholds: Supporting=0.65, Related=0.45, Contextual=0.35
+
+--- (c) Negative Controls Test (10 pairs) ---
+Control  1: IRRELEVANT   (score=0.0000) | Distance (119.8km) exceeds max radius (25.0km).... | Linked? False
+Control  2: IRRELEVANT   (score=0.0000) | Distance (235.3km) exceeds max radius (25.0km).... | Linked? False
+Control  3: IRRELEVANT   (score=0.0000) | Distance (290.2km) exceeds max radius (25.0km).... | Linked? False
+Control  4: IRRELEVANT   (score=0.0000) | Incompatible hazard between evidence text and incident (HEAT... | Linked? False
+Control  5: IRRELEVANT   (score=0.4172) | Irrelevant to incident: score 0.42 below link threshold.... | Linked? False
+Control  6: IRRELEVANT   (score=0.0000) | Incompatible hazard between evidence text and incident (HEAV... | Linked? False
+Control  7: IRRELEVANT   (score=0.0000) | Evidence published 72.0h away, exceeding 48h window.... | Linked? False
+Control  8: IRRELEVANT   (score=0.0000) | Evidence published 96.0h away, exceeding 48h window.... | Linked? False
+Control  9: IRRELEVANT   (score=0.0000) | Evidence refers to foreign territory (India), irrelevant to ... | Linked? False
+Control 10: CONTRADICTORY (score=0.8500) | Evidence contains explicit denial or debunking regarding the... | Linked? False
+Negative controls unexpectedly linked: 0 / 10
+
+--- (d) 30 Random Only-in-NEW Pairs Table ---
+#   | Incident (City/Cat)            | Evidence (City/Type)             | Score  | Delta_h | Dist_km  | Verdict
+-------------------------------------------------------------------------------------------------------------------
+1   | Unknown / FLOOD                | Puri Flood News Arti / NEWS_ARTI | 0.6023 | 0.0h    | N/A      | Plausible
+2   | Puri, Odisha / OTHER           | Puri Flood News Arti / NEWS_ARTI | 0.5936 | 0.1h    | N/A      | Plausible
+3   | Bandra East / Flooding & Water | Subway Inundation at / NEWS_ARTI | 0.7122 | 0.1h    | 0.8km    | Plausible
+4   | Kurla Station West, Mumbai / F | Shimoga Floods: Wate / NEWS_ARTI | 0.5929 | 0.0h    | N/A      | Plausible
+5   | Unknown / Flooding & Waterlogg | Shimoga Floods: Wate / NEWS_ARTI | 0.5981 | 0.1h    | N/A      | Plausible
+6   | Unknown / CYCLONE_STORM        | Rainfall Alert Confi / NEWS_ARTI | 0.5534 | 0.0h    | N/A      | Plausible
+7   | Unknown / FLOOD                | Puri Flood News Arti / NEWS_ARTI | 0.6023 | 0.0h    | N/A      | Plausible
+8   | Andheri West, Mumbai / FLOOD_W | Subway Inundation at / NEWS_ARTI | 0.7784 | 0.1h    | 6.6km    | Plausible
+9   | Unknown / FLOOD_WATERLOGGING   | Severe Flooding in C / NEWS_ARTI | 0.6140 | 0.0h    | N/A      | Plausible
+10  | Bhadra Nagar, Shimoga / FLOOD  | Shimoga Floods: Wate / NEWS_ARTI | 0.6618 | 0.0h    | N/A      | Plausible
+11  | Anuppur, Madhya Pradesh / FLOO | Puri Flood News Arti / NEWS_ARTI | 0.5729 | 0.0h    | N/A      | Plausible
+12  | Puri, Odisha / OTHER           | Shimoga Floods: Wate / NEWS_ARTI | 0.5592 | 0.0h    | N/A      | Plausible
+13  | Puri, Odisha / OTHER           | Severe Flooding in C / NEWS_ARTI | 0.5657 | 0.1h    | N/A      | Plausible
+14  | Unknown / FLOOD_WATERLOGGING   | Shimoga Floods: Wate / NEWS_ARTI | 0.6088 | 0.1h    | N/A      | Plausible
+15  | Unknown / Heavy Rainfall       | Subway Inundation at / NEWS_ARTI | 0.6037 | 0.1h    | 15.2km   | Plausible
+16  | Koramangala 4th Block, Bengalu | Puri Flood News Arti / NEWS_ARTI | 0.5528 | 0.0h    | N/A      | Plausible
+17  | Unknown / FLOOD                | Subway Inundation at / NEWS_ARTI | 0.6808 | 0.1h    | 0.8km    | Plausible
+18  | Unknown / URBAN_FLOOD          | Severe Flooding in C / NEWS_ARTI | 0.5644 | 0.1h    | N/A      | Plausible
+19  | Puri, Odisha / OTHER           | Puri Flood News Arti / NEWS_ARTI | 0.5936 | 0.2h    | N/A      | Plausible
+20  | MG Road, Bangalore / FLOOD_WAT | Shimoga Floods: Wate / NEWS_ARTI | 0.6321 | 0.1h    | N/A      | Plausible
+21  | Unknown / URBAN_FLOOD          | Severe Flooding Aler / NEWS_ARTI | 0.5648 | 0.0h    | N/A      | Plausible
+22  | Anuppur, Madhya Pradesh / FLOO | Shimoga Floods: Wate / NEWS_ARTI | 0.5981 | 0.0h    | N/A      | Plausible
+23  | Unknown / Flooding & Waterlogg | Shimoga Floods: Wate / NEWS_ARTI | 0.5981 | 0.0h    | N/A      | Plausible
+24  | Unknown / FLOOD_WATERLOGGING   | Shimoga Floods: Wate / NEWS_ARTI | 0.5981 | 0.0h    | N/A      | Plausible
+25  | Bhadra Nagar, Shimoga / FLOOD  | Shimoga Floods: Wate / NEWS_ARTI | 0.6618 | 0.1h    | N/A      | Plausible
+26  | Bandra East / Flooding & Water | Subway Inundation at / NEWS_ARTI | 0.7122 | 0.1h    | 0.8km    | Plausible
+27  | Rishikesh, Uttarakhand / FLOOD | Shimoga Floods: Wate / NEWS_ARTI | 0.6067 | 0.1h    | N/A      | Plausible
+28  | Puri, Odisha / CYCLONE         | Cyclone Storm Gale H / NEWS_ARTI | 0.5804 | 0.0h    | N/A      | Plausible
+29  | MG Road, Bengaluru / URBAN_FLO | Flash Flood Submerge / NEWS_ARTI | 0.6183 | 0.1h    | N/A      | Plausible
+30  | Unknown / OTHER                | Puri Flood News Arti / NEWS_ARTI | 0.5538 | 0.0h    | N/A      | Plausible
+
+Plausibility estimate: 30 / 30 (100.0%)
+
+--- (e) Credibility for 5 Incidents with Largest Link Diff ---
+
+Top 1: Incident c2b287ec-3cbb-4f79-bb80-13949d89570d (Flood Inundation)
+Link counts: OLD=23 (Supp=0) | NEW=10 (Supp=0) | Diff=13
+Credibility inputs: BaseTrust=0.6000, ClusterMembers=1
+Old evidence groups=6, New evidence groups=3
+Computed Credibility Score: with OLD links = 0.7163 | with NEW links = 0.6773 (Diff = -0.0390)
+
+Top 2: Incident 2eef4d91-c6ee-415d-9796-8c744c0b48a9 (River Swelling Alert)
+Link counts: OLD=0 (Supp=0) | NEW=10 (Supp=0) | Diff=10
+Credibility inputs: BaseTrust=0.6000, ClusterMembers=1
+Old evidence groups=0, New evidence groups=3
+Computed Credibility Score: with OLD links = 0.6000 | with NEW links = 0.6691 (Diff = +0.0691)
+
+Top 3: Incident 1a8f7917-26e1-4463-b430-58ce00751484 (Urban Flood)
+Link counts: OLD=0 (Supp=0) | NEW=10 (Supp=0) | Diff=10
+Credibility inputs: BaseTrust=0.5000, ClusterMembers=1
+Old evidence groups=0, New evidence groups=3
+Computed Credibility Score: with OLD links = 0.4850 | with NEW links = 0.5742 (Diff = +0.0892)
+
+Top 4: Incident 12557327-c948-4da3-8c28-3ce206cd37c2 (Severe Waterlogging in Puri Market)
+Link counts: OLD=0 (Supp=0) | NEW=10 (Supp=0) | Diff=10
+Credibility inputs: BaseTrust=0.6000, ClusterMembers=1
+Old evidence groups=0, New evidence groups=3
+Computed Credibility Score: with OLD links = 0.6000 | with NEW links = 0.6771 (Diff = +0.0771)
+
+Top 5: Incident ad880d56-81b3-4305-8e43-1b844e9809d3 (Severe Flood Emergency)
+Link counts: OLD=0 (Supp=0) | NEW=10 (Supp=0) | Diff=10
+Credibility inputs: BaseTrust=0.6000, ClusterMembers=1
+Old evidence groups=0, New evidence groups=3
+Computed Credibility Score: with OLD links = 0.5370 | with NEW links = 0.6201 (Diff = +0.0831)

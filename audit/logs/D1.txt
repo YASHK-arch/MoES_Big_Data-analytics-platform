@@ -1,0 +1,120 @@
+=== D1 Evidence-Linking Equivalence Detailed Analysis ===
+
+Counts:
+  - Only in OLD logic: 134
+  - Only in NEW logic: 3257
+  - In both with identical score: 621
+  - In both with different score: 431
+
+=== 5 Examples: Only in OLD ===
+Example 1:
+  Incident: Title="State Machine Test Report 59e97f47", Location="None", Category="HEAVY_RAINFALL"
+  Evidence: Title="Flash Flood Submerges Grand Road Puri", Source="NEWS_ARTICLE", Domain="odishareport.com"
+  OLD Scores: Time=0.9670, Dist=0.0000, Text=0.0404, Src=0.5000, Cat=0.8000 -> Total=0.4505 (RELATED)
+  NEW Scores: Time=0.9670, Dist=0.0000, Text=0.0357, Src=0.5000, Cat=0.5000 -> Total=0.4041 (IRRELEVANT)
+  Exclusion Reason: OLD fell back to cat_code=OTHER (score >= 0.45 threshold); NEW resolved reported_category reducing category relevance below threshold to IRRELEVANT
+
+Example 2:
+  Incident: Title="State Machine Test Report 59e97f47", Location="None", Category="HEAVY_RAINFALL"
+  Evidence: Title="Flash Flood Submerges Grand Road Puri", Source="NEWS_ARTICLE", Domain="odishareport.com"
+  OLD Scores: Time=1.0000, Dist=0.0000, Text=0.0404, Src=0.5000, Cat=0.8000 -> Total=0.4571 (RELATED)
+  NEW Scores: Time=1.0000, Dist=0.0000, Text=0.0357, Src=0.5000, Cat=0.5000 -> Total=0.4107 (IRRELEVANT)
+  Exclusion Reason: OLD fell back to cat_code=OTHER (score >= 0.45 threshold); NEW resolved reported_category reducing category relevance below threshold to IRRELEVANT
+
+Example 3:
+  Incident: Title="State Machine Test Report 59e97f47", Location="None", Category="HEAVY_RAINFALL"
+  Evidence: Title="Cyclone Storm Gale Hits Puri Coast", Source="NEWS_ARTICLE", Domain="odishatv.in"
+  OLD Scores: Time=1.0000, Dist=0.0000, Text=0.0502, Src=0.5000, Cat=0.8000 -> Total=0.4601 (RELATED)
+  NEW Scores: Time=1.0000, Dist=0.0000, Text=0.0444, Src=0.5000, Cat=0.5000 -> Total=0.4133 (IRRELEVANT)
+  Exclusion Reason: OLD fell back to cat_code=OTHER (score >= 0.45 threshold); NEW resolved reported_category reducing category relevance below threshold to IRRELEVANT
+
+Example 4:
+  Incident: Title="State Machine Test Report 59e97f47", Location="None", Category="HEAVY_RAINFALL"
+  Evidence: Title="Cyclone Storm Gale Hits Puri Coast", Source="NEWS_ARTICLE", Domain="odishatv.in"
+  OLD Scores: Time=1.0000, Dist=0.0000, Text=0.0502, Src=0.5000, Cat=0.8000 -> Total=0.4601 (RELATED)
+  NEW Scores: Time=1.0000, Dist=0.0000, Text=0.0444, Src=0.5000, Cat=0.5000 -> Total=0.4133 (IRRELEVANT)
+  Exclusion Reason: OLD fell back to cat_code=OTHER (score >= 0.45 threshold); NEW resolved reported_category reducing category relevance below threshold to IRRELEVANT
+
+Example 5:
+  Incident: Title="State Machine Test Report 59e97f47", Location="None", Category="HEAVY_RAINFALL"
+  Evidence: Title="Cyclone Storm Gale Hits Puri Coast", Source="NEWS_ARTICLE", Domain="odishatv.in"
+  OLD Scores: Time=1.0000, Dist=0.0000, Text=0.0502, Src=0.5000, Cat=0.8000 -> Total=0.4601 (RELATED)
+  NEW Scores: Time=1.0000, Dist=0.0000, Text=0.0444, Src=0.5000, Cat=0.5000 -> Total=0.4133 (IRRELEVANT)
+  Exclusion Reason: OLD fell back to cat_code=OTHER (score >= 0.45 threshold); NEW resolved reported_category reducing category relevance below threshold to IRRELEVANT
+
+=== 5 Examples: Only in NEW ===
+Example 1:
+  Incident: Title="State Machine Test Report 59e97f47", Location="None", Category="HEAVY_RAINFALL"
+  Evidence: Title="Rainfall Alert Confirmed", Source="NEWS_ARTICLE", Domain="deccanherald.com"
+  NEW Scores: Time=1.0000, Dist=0.0000, Text=0.0012, Src=0.5000, Cat=1.0000 -> Total=0.4754 (RELATED)
+  Exclusion Reason: OLD evaluated 1-to-N from evidence to incidents and excluded this report during reverse incident candidate spatial/temporal limit filtering; NEW evaluates candidate evidence directly against the report
+
+Example 2:
+  Incident: Title="State Machine Test Report 59e97f47", Location="None", Category="HEAVY_RAINFALL"
+  Evidence: Title="Rainfall Alert Confirmed", Source="NEWS_ARTICLE", Domain="deccanherald.com"
+  NEW Scores: Time=0.9680, Dist=0.0000, Text=0.0012, Src=0.5000, Cat=1.0000 -> Total=0.4690 (RELATED)
+  Exclusion Reason: OLD evaluated 1-to-N from evidence to incidents and excluded this report during reverse incident candidate spatial/temporal limit filtering; NEW evaluates candidate evidence directly against the report
+
+Example 3:
+  Incident: Title="State Machine Test Report 59e97f47", Location="None", Category="HEAVY_RAINFALL"
+  Evidence: Title="Rainfall Alert Confirmed", Source="NEWS_ARTICLE", Domain="deccanherald.com"
+  NEW Scores: Time=1.0000, Dist=0.0000, Text=0.0012, Src=0.5000, Cat=1.0000 -> Total=0.4754 (RELATED)
+  Exclusion Reason: OLD evaluated 1-to-N from evidence to incidents and excluded this report during reverse incident candidate spatial/temporal limit filtering; NEW evaluates candidate evidence directly against the report
+
+Example 4:
+  Incident: Title="State Machine Test Report 59e97f47", Location="None", Category="HEAVY_RAINFALL"
+  Evidence: Title="Rainfall Alert Confirmed", Source="NEWS_ARTICLE", Domain="deccanherald.com"
+  NEW Scores: Time=0.9617, Dist=0.0000, Text=0.0012, Src=0.5000, Cat=1.0000 -> Total=0.4677 (RELATED)
+  Exclusion Reason: OLD evaluated 1-to-N from evidence to incidents and excluded this report during reverse incident candidate spatial/temporal limit filtering; NEW evaluates candidate evidence directly against the report
+
+Example 5:
+  Incident: Title="State Machine Test Report 59e97f47", Location="None", Category="HEAVY_RAINFALL"
+  Evidence: Title="Rainfall Alert Confirmed", Source="NEWS_ARTICLE", Domain="deccanherald.com"
+  NEW Scores: Time=0.9967, Dist=0.0000, Text=0.0012, Src=0.5000, Cat=1.0000 -> Total=0.4747 (RELATED)
+  Exclusion Reason: OLD evaluated 1-to-N from evidence to incidents and excluded this report during reverse incident candidate spatial/temporal limit filtering; NEW evaluates candidate evidence directly against the report
+
+=== Credibility Evaluation on Differing Link Sets ===
+Incident 1 (8584f4c1-fb93-4ca3-9a47-05179a30bb51):
+  OLD links count: 22, NEW links count: 18
+  Credibility score with OLD links: 0.5417
+  Credibility score with NEW links: 0.5417
+
+Incident 2 (1963a046-8903-426c-9e21-0a706d1dc155):
+  OLD links count: 22, NEW links count: 18
+  Credibility score with OLD links: 0.5417
+  Credibility score with NEW links: 0.5417
+
+Incident 3 (4c7a6181-6920-40ee-819e-268a13c9e2ef):
+  OLD links count: 22, NEW links count: 18
+  Credibility score with OLD links: 0.5417
+  Credibility score with NEW links: 0.5417
+
+Incident 4 (f15e2da7-25e4-468e-a6d4-902277863904):
+  OLD links count: 22, NEW links count: 18
+  Credibility score with OLD links: 0.5417
+  Credibility score with NEW links: 0.5417
+
+Incident 5 (840a4b70-b023-42c2-a32c-cf105a0deb28):
+  OLD links count: 22, NEW links count: 18
+  Credibility score with OLD links: 0.5417
+  Credibility score with NEW links: 0.5417
+
+Does the credibility engine read evidence links?
+  YES, the CredibilityCollector queries IncidentEvidenceLink for relationship_type IN ("SUPPORTING", "CORROBORATING").
+  However, for these synthetic/benchmark items, the links that differ are classified as RELATED or CONTEXTUAL (< 0.60 score),
+  or the corroboration factor is already saturated by baseline official stations, resulting in identical final credibility scores.
+
+Verdict:
+  NEW logic evaluates candidate evidence directly per report (1-to-N) rather than filtering reverse candidates (N-to-1),
+  yielding 3,257 additional valid links. The 134 pairs only in OLD arose because OLD defaulted to cat_code="OTHER" when
+  category_id is NULL (inflating category score to 0.8), while NEW used reported_category (cat_score=0.5), crossing below the 0.45
+  threshold into IRRELEVANT.
+
+=== Post-Restoration Rerun Results ===
+Restored rule: Matched evaluate_and_link_evidence category resolution (cat_code defaults to OTHER if category_id is NULL).
+Four Counts after restoration:
+  - Only in OLD logic: 0
+  - Only in NEW logic: 3261
+  - In both with identical score: 1186
+  - In both with different score: 0
+Final Verdict: NEW is a true SUPERSET of OLD with zero dropped links (0 only-in-OLD) and 100% identical scores on all 1,186 shared links.

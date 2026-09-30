@@ -1,0 +1,25 @@
+Total Indexes on weather_reports: 18
+Total Index Size: 57.77 MB
+
+COPY Ingest Throughput (20,000 rows): 2.866 s (6977.9 rows/sec)
+
+Index Name                               Size       idx_scan   Columns                                           
+-------------------------------------------------------------------------------------------------------------------
+idx_weather_reports_cat_occ              4120 kB    1          reported_category, occurred_at                    
+idx_weather_reports_credibility          3096 kB    0          credibility_score DESC                            
+idx_weather_reports_dashboard_summary    5816 kB    0          occurred_at, verification_status, severity, reported_category
+idx_weather_reports_geom                 4672 kB    0          geom                                              
+idx_weather_reports_occ_created          3104 kB    0          occurred_at DESC, created_at DESC                 
+idx_weather_reports_sev_occ              3344 kB    0          severity, occurred_at                             
+idx_weather_reports_source_external      840 kB     0          source_id, external_id                            
+idx_weather_reports_status_time          5072 kB    0          verification_status, occurred_at DESC             
+idx_weather_reports_summary_cov          6416 kB    3          verification_status, severity) INCLUDE (credibility_score, id
+idx_weather_reports_user_id              792 kB     0          user_id                                           
+ix_weather_reports_created_at            3048 kB    0          created_at                                        
+ix_weather_reports_credibility_score     3296 kB    0          credibility_score                                 
+ix_weather_reports_external_id           800 kB     0          external_id                                       
+ix_weather_reports_occurred_at           3048 kB    1          occurred_at                                       
+ix_weather_reports_tracking_id           3168 kB    0          tracking_id                                       
+ix_weather_reports_verification_status   768 kB     0          verification_status                               
+weather_reports_pkey                     4584 kB    0          id                                                
+weather_reports_tracking_id_key          3168 kB    0          tracking_id                                       

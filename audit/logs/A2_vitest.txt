@@ -1,0 +1,32 @@
+
+ RUN  v1.6.1 /Users/akshatjain/Documents/SIH/front-end
+
+ ✓ src/tests/analyticsCardsMigration.test.ts  (13 tests) 6ms
+ ✓ src/tests/incidentIntelligence.test.ts  (40 tests) 9ms
+ ✓ src/tests/triageCacheInvalidation.test.ts  (10 tests) 5ms
+ ✓ src/tests/apiClient.test.ts  (31 tests) 6ms
+ ✓ src/tests/realtimeIntegration.test.ts  (7 tests) 6ms
+ ✓ src/tests/dashboardAnalyticsApi.test.ts  (9 tests) 7ms
+ ✓ src/tests/liveMapGeoMigration.test.ts  (3 tests) 9ms
+ ✓ src/tests/dashboardMigration.test.ts  (19 tests) 38ms
+ ✓ src/tests/realtimeService.test.ts  (17 tests) 24ms
+ ✓ src/tests/dashboardGeoMigration.test.ts  (5 tests) 3ms
+ ✓ src/tests/analyticsMigration.test.ts  (6 tests) 2ms
+ ✓ src/tests/locationWiring.test.ts  (6 tests) 3ms
+stderr | src/tests/loginRedirect.test.tsx > LoginPage authenticated redirects > redirects an authenticated ADMIN user to /dashboard
+⚠️ React Router Future Flag Warning: React Router will begin wrapping state updates in `React.startTransition` in v7. You can use the `v7_startTransition` future flag to opt-in early. For more information, see https://reactrouter.com/v6/upgrading/future#v7_starttransition.
+⚠️ React Router Future Flag Warning: Relative route resolution within Splat routes is changing in v7. You can use the `v7_relativeSplatPath` future flag to opt-in early. For more information, see https://reactrouter.com/v6/upgrading/future#v7_relativesplatpath.
+
+ ✓ src/tests/loginRedirect.test.tsx  (4 tests) 39ms
+stderr | src/tests/authGate.test.tsx > AuthGate root route > renders the login page when unauthenticated
+⚠️ React Router Future Flag Warning: React Router will begin wrapping state updates in `React.startTransition` in v7. You can use the `v7_startTransition` future flag to opt-in early. For more information, see https://reactrouter.com/v6/upgrading/future#v7_starttransition.
+⚠️ React Router Future Flag Warning: Relative route resolution within Splat routes is changing in v7. You can use the `v7_relativeSplatPath` future flag to opt-in early. For more information, see https://reactrouter.com/v6/upgrading/future#v7_relativesplatpath.
+
+ ✓ src/tests/authGate.test.tsx  (4 tests) 18ms
+
+ Test Files  14 passed (14)
+      Tests  174 passed (174)
+   Start at  03:49:46
+   Duration  1.48s (transform 757ms, setup 0ms, collect 1.59s, tests 175ms, environment 890ms, prepare 852ms)
+
+Vitest exit: 0

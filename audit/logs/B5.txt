@@ -1,0 +1,4 @@
+Redis connections before: 3
+Redis connections during: 3
+Min events received: 10
+Max events received: 10

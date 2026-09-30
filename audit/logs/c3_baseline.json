@@ -1,0 +1,54 @@
+{
+  "worker_1": {
+    "rps": 73.90679276145138,
+    "p50": 396.1940620210953,
+    "p95": 1956.1512857326272,
+    "total_reqs": 920,
+    "error_rate": 0.0,
+    "load_gen_cpu_pct": 9.002152625532268,
+    "ep_latencies": {
+      "/api/v1/geo/incidents?bbox=72.0,18.0,74.0,20.0&limit=50": [
+        389.24320810474455,
+        2266.9671501731495,
+        457
+      ],
+      "/api/v1/reports?page=1&limit=20": [
+        405.092625063844,
+        1834.877479530404,
+        463
+      ]
+    }
+  },
+  "worker_4": {
+    "rps": 109.13865937544719,
+    "p50": 290.62424995936453,
+    "p95": 1422.9195419698951,
+    "total_reqs": 1349,
+    "error_rate": 0.0,
+    "load_gen_cpu_pct": 46.048278292373155,
+    "ep_latencies": {
+      "/api/v1/reports?page=1&limit=20": [
+        271.1353750200942,
+        1436.4908749703318,
+        721
+      ],
+      "/api/v1/geo/incidents?bbox=72.0,18.0,74.0,20.0&limit=50": [
+        328.80818750709295,
+        1383.9429023442785,
+        628
+      ]
+    }
+  },
+  "top_functions": [
+    "Wed Sep 30 06:37:54 2026    audit/logs/b4_cprofile.pstats",
+    "         34300240 function calls (33833236 primitive calls) in 22.396 seconds",
+    "   Ordered by: cumulative time",
+    "   List reduced from 11252 to 15 due to restriction <15>",
+    "   ncalls  tottime  percall  cumtime  percall filename:lineno(function)",
+    "    14367    0.090    0.000  729.368    0.051 /Users/akshatjain/Documents/SIH/back-end/.venv/lib/python3.14/site-packages/uvicorn/protocols/http/httptools_impl.py:420(run_asgi)",
+    "    14375    0.035    0.000  712.327    0.050 /Users/akshatjain/Documents/SIH/back-end/.venv/lib/python3.14/site-packages/uvicorn/middleware/proxy_headers.py:28(__call__)",
+    "    14375    0.266    0.000  687.095    0.048 /Users/akshatjain/Documents/SIH/back-end/.venv/lib/python3.14/site-packages/fastapi/applications.py:1160(__call__)",
+    "    14375    0.289    0.000  664.134    0.046 /Users/akshatjain/Documents/SIH/back-end/.venv/lib/python3.14/site-packages/starlette/applications.py:92(__call__)",
+    "    14375    0.033    0.000  572.039    0.040 /Users/akshatjain/Documents/SIH/back-end/.venv/lib/python3.14/site-packages/starlette/middleware/errors.py:149(__call__)"
+  ]
+}

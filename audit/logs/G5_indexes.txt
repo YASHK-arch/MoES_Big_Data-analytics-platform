@@ -1,0 +1,59 @@
+=== G5 INDEXES AUDIT AND OPTIMIZATION ===
+
+Running 50-user load across 4 endpoints (20s)...
+Load completed: Total RPS=225.9, Errors=0
+  /api/v1/geo/incidents: RPS=56.5, p50=109.5ms, p95=619.3ms
+  /api/v1/reports?page=1&page_size=20&status=PENDING,UNDER_REVIEW: RPS=56.6, p50=173.2ms, p95=731.9ms
+  /api/v1/dashboard/summary: RPS=56.5, p50=129.9ms, p95=623.2ms
+  /api/v1/incidents: RPS=56.4, p50=180.5ms, p95=709.1ms
+
+--- Index Scans (idx_scan delta during 50-user load) ---
+  idx_weather_reports_summary_cov         : total=  4066 | delta=  2220
+  idx_weather_reports_occ_created         : total=  2057 | delta=  1126
+  ix_weather_reports_occurred_at          : total=  2035 | delta=  1106
+  weather_reports_pkey                    : total=  1106 | delta=  1106
+  idx_weather_reports_source_external     : total=     1 | delta=     0
+  ix_weather_reports_verification_status  : total=     0 | delta=     0
+  ix_weather_reports_credibility_score    : total=     0 | delta=     0
+  ix_weather_reports_created_at           : total=     0 | delta=     0
+  idx_weather_reports_geom                : total=     0 | delta=     0
+  idx_weather_reports_status_time         : total=     0 | delta=     0
+  idx_weather_reports_credibility         : total=     0 | delta=     0
+  idx_weather_reports_user_id             : total=     0 | delta=     0
+  idx_weather_reports_cat_occ             : total=     0 | delta=     0
+  idx_weather_reports_sev_occ             : total=     0 | delta=     0
+  idx_weather_reports_dashboard_summary   : total=     0 | delta=     0
+  ix_weather_reports_tracking_id          : total=     0 | delta=     0
+  ix_weather_reports_external_id          : total=     0 | delta=     0
+  weather_reports_tracking_id_key         : total=     0 | delta=     0
+
+--- Column Order of Covering vs Dashboard Summary Indexes ---
+  idx_weather_reports_dashboard_summary:
+    CREATE INDEX idx_weather_reports_dashboard_summary ON public.weather_reports USING btree (occurred_at, verification_status, severity, reported_category)
+  idx_weather_reports_summary_cov:
+    CREATE INDEX idx_weather_reports_summary_cov ON public.weather_reports USING btree (verification_status, severity) INCLUDE (credibility_score, id)
+
+--- Measuring 20k COPY Before Migration (3 runs) ---
+  Times: [2024.96, 1675.61, 1688.2] ms
+  Median: 1688.20 ms
+
+--- Applying Migration 0013 (dropping duplicate indexes) ---
+Alembic upgrade output:
+
+INFO  [alembic.runtime.migration] Context impl PostgresqlImpl.
+INFO  [alembic.runtime.migration] Will assume transactional DDL.
+INFO  [alembic.runtime.migration] Running upgrade 0012_report_list_index -> 0013_drop_duplicate_indexes, Drop exact duplicate indexes on weather_reports table.
+
+
+--- Measuring 20k COPY After Migration 0013 (3 runs) ---
+  Times: [1062.72, 1237.38, 1342.27] ms
+  Median: 1237.38 ms
+  COPY Improvement: +26.70%
+
+--- Proposed Drops Table (NOT Applied - For Future Evaluation) ---
+Index Name                                 | Size       | Reason / Redundancy
+--------------------------------------------------------------------------------
+ix_weather_reports_verification_status     | 768 kB     | Prefix covered by idx_weather_reports_status_time & idx_weather_reports_summary_cov
+ix_weather_reports_occurred_at             | 3,048 kB   | Prefix covered by idx_weather_reports_occ_created
+ix_weather_reports_created_at              | 3,048 kB   | 0 scans; sorting uses occurred_at or composite occ_created
+idx_weather_reports_dashboard_summary      | 5,816 kB   | Superseded by idx_weather_reports_summary_cov for summary aggregation

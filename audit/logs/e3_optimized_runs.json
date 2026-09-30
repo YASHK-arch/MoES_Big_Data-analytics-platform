@@ -1,0 +1,137 @@
+{
+  "tag": "optimized",
+  "payload": {
+    "raw": 239580,
+    "gzip": 35142
+  },
+  "workers_1": [
+    {
+      "duration": 20.571151334093884,
+      "total_reqs": 1661,
+      "total_rps": 80.74414372943329,
+      "cpu_pct": 13.082320752459434,
+      "errors": 0,
+      "endpoints": {
+        "/api/v1/geo/incidents": {
+          "reqs": 834,
+          "rps": 40.54221304656675,
+          "p50": 460.53727046819404,
+          "p95": 1212.3622055980345
+        },
+        "/api/v1/reports?page=1&page_size=20&status=PENDING,UNDER_REVIEW": {
+          "reqs": 827,
+          "rps": 40.201930682866546,
+          "p50": 566.1030419869348,
+          "p95": 1438.0197918741026
+        }
+      }
+    },
+    {
+      "duration": 20.713914458989166,
+      "total_reqs": 1631,
+      "total_rps": 78.73934225368971,
+      "cpu_pct": 13.675961661464934,
+      "errors": 0,
+      "endpoints": {
+        "/api/v1/geo/incidents": {
+          "reqs": 817,
+          "rps": 39.44208621782005,
+          "p50": 507.24516704212874,
+          "p95": 1216.1275499733165
+        },
+        "/api/v1/reports?page=1&page_size=20&status=PENDING,UNDER_REVIEW": {
+          "reqs": 814,
+          "rps": 39.297256035869665,
+          "p50": 594.1050000255927,
+          "p95": 1225.8621227578258
+        }
+      }
+    },
+    {
+      "duration": 20.46789816603996,
+      "total_reqs": 1598,
+      "total_rps": 78.07347813814017,
+      "cpu_pct": 13.55034590020437,
+      "errors": 0,
+      "endpoints": {
+        "/api/v1/geo/incidents": {
+          "reqs": 804,
+          "rps": 39.281024044471025,
+          "p50": 496.7987500713207,
+          "p95": 1269.4050420483102
+        },
+        "/api/v1/reports?page=1&page_size=20&status=PENDING,UNDER_REVIEW": {
+          "reqs": 794,
+          "rps": 38.79245409366914,
+          "p50": 569.9086880194955,
+          "p95": 1304.6207710343845
+        }
+      }
+    }
+  ],
+  "workers_4": [
+    {
+      "duration": 20.57989979197737,
+      "total_reqs": 1683,
+      "total_rps": 81.7788238529753,
+      "cpu_pct": 42.63726300271213,
+      "errors": 1,
+      "endpoints": {
+        "/api/v1/geo/incidents": {
+          "reqs": 842,
+          "rps": 40.913707477246106,
+          "p50": 477.72508300840855,
+          "p95": 2158.0043097375874
+        },
+        "/api/v1/reports?page=1&page_size=20&status=PENDING,UNDER_REVIEW": {
+          "reqs": 840,
+          "rps": 40.81652527421227,
+          "p50": 263.06229195324704,
+          "p95": 1809.102725313278
+        }
+      }
+    },
+    {
+      "duration": 20.82608725002501,
+      "total_reqs": 1613,
+      "total_rps": 77.45093836568186,
+      "cpu_pct": 37.06524373650998,
+      "errors": 0,
+      "endpoints": {
+        "/api/v1/geo/incidents": {
+          "reqs": 811,
+          "rps": 38.94154433637197,
+          "p50": 577.1313329460099,
+          "p95": 2075.206187495496
+        },
+        "/api/v1/reports?page=1&page_size=20&status=PENDING,UNDER_REVIEW": {
+          "reqs": 802,
+          "rps": 38.50939402930989,
+          "p50": 301.608124980703,
+          "p95": 1752.6496960723302
+        }
+      }
+    },
+    {
+      "duration": 21.089359083911404,
+      "total_reqs": 1544,
+      "total_rps": 73.21227704723766,
+      "cpu_pct": 35.551061415231274,
+      "errors": 0,
+      "endpoints": {
+        "/api/v1/geo/incidents": {
+          "reqs": 776,
+          "rps": 36.79580763514017,
+          "p50": 567.7254580659792,
+          "p95": 2294.716500036884
+        },
+        "/api/v1/reports?page=1&page_size=20&status=PENDING,UNDER_REVIEW": {
+          "reqs": 768,
+          "rps": 36.41646941209749,
+          "p50": 311.83766649337485,
+          "p95": 1969.5951869245612
+        }
+      }
+    }
+  ]
+}

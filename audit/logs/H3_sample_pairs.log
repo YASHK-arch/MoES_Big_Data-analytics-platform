@@ -1,0 +1,71 @@
+=== 10 Sample Pairs from Old Precision Checker ===
+
+Pair 1:
+  Incident: "Test Report for CYCLONE_STORM" | loc_name="Bengaluru Central" | coords=(12.975, 77.598) | inc_res.city=None
+  Evidence: "Cyclone Storm Gale Hits Puri Coast" | evi_res.city=None
+  Rule components: same_city=False | delta_h=1.8h (<24h: True) | cat_compat=True | dist_km=None
+  Evaluated: same_city=False, time_gap=True, cat_compat=True -> Plausible: False
+  Why it failed in Old Checker: inc_city=None vs evi_city=None (one or both are None!)
+
+Pair 2:
+  Incident: "Test Report for LANDSLIDE" | loc_name="Bengaluru Central" | coords=(12.978, 77.601) | inc_res.city=None
+  Evidence: "Rainfall Alert Confirmed" | evi_res.city=None
+  Rule components: same_city=False | delta_h=1.7h (<24h: True) | cat_compat=True | dist_km=None
+  Evaluated: same_city=False, time_gap=True, cat_compat=True -> Plausible: False
+  Why it failed in Old Checker: inc_city=None vs evi_city=None (one or both are None!)
+
+Pair 3:
+  Incident: "Test Report for STRONG_WIND" | loc_name="Bengaluru Central" | coords=(12.983, 77.606) | inc_res.city=None
+  Evidence: "Shimoga Floods: Water level rises above danger mark" | evi_res.city=None
+  Rule components: same_city=False | delta_h=1.8h (<24h: True) | cat_compat=True | dist_km=None
+  Evaluated: same_city=False, time_gap=True, cat_compat=True -> Plausible: False
+  Why it failed in Old Checker: inc_city=None vs evi_city=None (one or both are None!)
+
+Pair 4:
+  Incident: "Real Ingestion Test DROUGHT" | loc_name="Mumbai, Maharashtra" | coords=(19.076, 72.878) | inc_res.city=None
+  Evidence: "Flash Flood Submerges Grand Road Puri" | evi_res.city=None
+  Rule components: same_city=False | delta_h=1.3h (<24h: True) | cat_compat=True | dist_km=None
+  Evaluated: same_city=False, time_gap=True, cat_compat=True -> Plausible: False
+  Why it failed in Old Checker: inc_city=None vs evi_city=None (one or both are None!)
+
+Pair 5:
+  Incident: "Test Report for DUST_STORM" | loc_name="Bengaluru Central" | coords=(12.982, 77.605) | inc_res.city=None
+  Evidence: "Flash Flood Submerges Grand Road Puri" | evi_res.city=None
+  Rule components: same_city=False | delta_h=1.7h (<24h: True) | cat_compat=True | dist_km=None
+  Evaluated: same_city=False, time_gap=True, cat_compat=True -> Plausible: False
+  Why it failed in Old Checker: inc_city=None vs evi_city=None (one or both are None!)
+
+Pair 6:
+  Incident: "Test Report for OTHER" | loc_name="Bengaluru Central" | coords=(12.984, 77.607) | inc_res.city=None
+  Evidence: "Rainfall Alert Confirmed" | evi_res.city=None
+  Rule components: same_city=False | delta_h=1.8h (<24h: True) | cat_compat=True | dist_km=None
+  Evaluated: same_city=False, time_gap=True, cat_compat=True -> Plausible: False
+  Why it failed in Old Checker: inc_city=None vs evi_city=None (one or both are None!)
+
+Pair 7:
+  Incident: "Test Report for FLOOD_WATERLOGGING" | loc_name="Bengaluru Central" | coords=(12.972, 77.595) | inc_res.city=None
+  Evidence: "Cyclone Storm Gale Hits Puri Coast" | evi_res.city=None
+  Rule components: same_city=False | delta_h=1.8h (<24h: True) | cat_compat=True | dist_km=None
+  Evaluated: same_city=False, time_gap=True, cat_compat=True -> Plausible: False
+  Why it failed in Old Checker: inc_city=None vs evi_city=None (one or both are None!)
+
+Pair 8:
+  Incident: "Test Report for HAILSTORM" | loc_name="Bengaluru Central" | coords=(12.977, 77.600) | inc_res.city=None
+  Evidence: "Cyclone Storm Gale Hits Puri Coast" | evi_res.city=None
+  Rule components: same_city=False | delta_h=1.8h (<24h: True) | cat_compat=True | dist_km=None
+  Evaluated: same_city=False, time_gap=True, cat_compat=True -> Plausible: False
+  Why it failed in Old Checker: inc_city=None vs evi_city=None (one or both are None!)
+
+Pair 9:
+  Incident: "Real Ingestion Test URBAN_FLOOD" | loc_name="Mumbai, Maharashtra" | coords=(19.076, 72.878) | inc_res.city=None
+  Evidence: "Storm in Goa 0f771dcc" | evi_res.city=None
+  Rule components: same_city=False | delta_h=1.5h (<24h: True) | cat_compat=True | dist_km=None
+  Evaluated: same_city=False, time_gap=True, cat_compat=True -> Plausible: False
+  Why it failed in Old Checker: inc_city=None vs evi_city=None (one or both are None!)
+
+Pair 10:
+  Incident: "Test Report for DROUGHT" | loc_name="Bengaluru Central" | coords=(12.979, 77.602) | inc_res.city=None
+  Evidence: "Rainfall Alert Confirmed" | evi_res.city=None
+  Rule components: same_city=False | delta_h=1.8h (<24h: True) | cat_compat=True | dist_km=None
+  Evaluated: same_city=False, time_gap=True, cat_compat=True -> Plausible: False
+  Why it failed in Old Checker: inc_city=None vs evi_city=None (one or both are None!)

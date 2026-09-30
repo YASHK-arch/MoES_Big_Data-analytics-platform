@@ -1,0 +1,10 @@
+Create report response: {"success":true,"data":{"id":"c57dccdc-2cff-4186-849c-f948d143e13c","tracking_id":"RPT-20260929-74AC7753","processing_status":"COMPLETED","verification_status":"PENDING","submitted_at":"2026-09-29T22:22:41.923513Z","media_count":0},"meta":{"timestamp":"2026-09-29T22:22:42.348242+00:00","request_id":"req_0f835453b028"}}
+Created Report ID: c57dccdc-2cff-4186-849c-f948d143e13c
+GET /verification-queue without auth: 404
+POST /verify without auth: 404
+POST /reject without auth: 404
+back-end/app/core/security.py:9:import jwt
+back-end/app/core/security.py:59:    encoded_jwt = jwt.encode(to_encode, settings.SECRET_KEY, algorithm=ALGORITHM)
+back-end/app/core/security.py:60:    return encoded_jwt
+back-end/app/core/security.py:109:        payload = jwt.decode(token, settings.SECRET_KEY, algorithms=[ALGORITHM])
+back-end/app/core/security.py:111:    except jwt.ExpiredSignatureError:

@@ -1,0 +1,48 @@
+Candidate query for report 80d479ec-1ef3-4211-840b-83385387db91 truncated at cap 50
+/Users/akshatjain/Documents/SIH/back-end/.venv/lib/python3.14/site-packages/fastapi/routing.py:144: FastAPIDeprecationWarning: ORJSONResponse is deprecated, FastAPI now serializes data directly to JSON bytes via Pydantic when a return type or response model is set, which is faster and doesn't need a custom response class. Read more in the FastAPI docs: https://fastapi.tiangolo.com/advanced/custom-response/#orjson-or-response-model and https://fastapi.tiangolo.com/tutorial/response-model/
+  response = await f(request)
+Candidate query for report d7b5ca61-7d11-45c7-ba67-e0e50f64b329 truncated at cap 50
+Candidate query for report ff7addad-7b03-4341-b01d-6abaf99e70c4 truncated at cap 50
+Candidate query for report dd03d35c-593d-49e3-983d-bdbf7e0f0b06 truncated at cap 50
+Candidate query for report 0995cd5f-0703-4425-bb05-3b78a1b84f15 truncated at cap 50
+Candidate query for report b1f47a58-b436-4ff2-9a2f-370646006815 truncated at cap 50
+Candidate query for report 2194aae9-b69a-487f-8afd-dce53b6aa445 truncated at cap 50
+Candidate query for report 01c28749-ebe8-4680-8b30-a30c58bcd2f0 truncated at cap 50
+Candidate query for report 3d863b1a-65fa-460e-922e-e69b7ad4b814 truncated at cap 50
+Candidate query for report c3192826-838b-4d00-8ee5-ccd8a365072c truncated at cap 50
+Candidate query for report cf2939c9-47be-48c5-b3ad-042853d42ca1 truncated at cap 50
+Candidate query for report 8b5f7f97-0455-4111-820e-cd18b489638b truncated at cap 50
+Candidate query for report c77bd9a4-6130-44a3-bce1-c7f4780506c2 truncated at cap 50
+/Users/akshatjain/Documents/SIH/back-end/.venv/lib/python3.14/site-packages/fastapi/routing.py:144: FastAPIDeprecationWarning: ORJSONResponse is deprecated, FastAPI now serializes data directly to JSON bytes via Pydantic when a return type or response model is set, which is faster and doesn't need a custom response class. Read more in the FastAPI docs: https://fastapi.tiangolo.com/advanced/custom-response/#orjson-or-response-model and https://fastapi.tiangolo.com/tutorial/response-model/
+  response = await f(request)
+FLOOD_WATERLOGGING: category_id=6c37c309-82a3-4731-9efa-de55a111bb02 (reported_cat=Flooding & Waterlogging)
+HEAVY_RAINFALL: category_id=80cfec26-a058-4aae-b3a2-86edfec41b5e (reported_cat=Heavy Rainfall)
+THUNDERSTORM_LIGHTNING: category_id=b90f9407-6553-4e73-a19d-3bb11e9f4d52 (reported_cat=Thunderstorm & Lightning)
+CYCLONE_STORM: category_id=b6c67c35-96d0-4fac-8034-d07868a5e3bb (reported_cat=Cyclone & Storm)
+HEATWAVE: category_id=7dad3549-d3fd-4a5d-ae40-1583cac1aa13 (reported_cat=Heatwave)
+HAILSTORM: category_id=0dcc31c9-c759-4c47-b443-b63daba27e59 (reported_cat=Hailstorm)
+LANDSLIDE: category_id=769c46b8-181a-4042-bf7d-8f1faa90d1cb (reported_cat=Landslide & Mudslip)
+DROUGHT: category_id=67a402fc-6565-4135-9468-889f470ead61 (reported_cat=Drought Condition)
+URBAN_FLOOD: category_id=7266a1c7-96b3-4225-a015-783fafc52b7b (reported_cat=Urban Inundation)
+FOG: category_id=f7649aff-eef1-4b89-a433-682cd04ecb0d (reported_cat=Dense Fog)
+DUST_STORM: category_id=062b6aa5-0153-4757-8fbd-1af945c11f59 (reported_cat=Dust Storm)
+STRONG_WIND: category_id=b954a5b8-25f0-4238-b56b-6018cb675619 (reported_cat=Strong Wind & Gale)
+OTHER: category_id=d7087fd6-2380-4809-964f-09345a0d3fe4 (reported_cat=Other Weather Hazard)
+
+--- Dashboard Summary By-Category Check ---
+DUST_STORM in distribution: True (count=3)
+STRONG_WIND in distribution: True (count=3)
+All categories in dashboard output:
+  FLOOD_WATERLOGGING (Flooding & Waterlogging): count=882, pct=43%
+  HEAVY_RAINFALL (Heavy Rainfall): count=437, pct=21%
+  OTHER (Other Weather Hazard): count=223, pct=11%
+  CYCLONE_STORM (Cyclone & Storm): count=198, pct=10%
+  LANDSLIDE (Landslide & Mudslip): count=108, pct=5%
+  HEATWAVE (Heatwave): count=68, pct=3%
+  URBAN_FLOOD (Urban Inundation): count=65, pct=3%
+  FOG (Dense Fog): count=27, pct=1%
+  HAILSTORM (Hailstorm): count=25, pct=1%
+  DROUGHT (Drought Condition): count=4, pct=0%
+  THUNDERSTORM_LIGHTNING (Thunderstorm & Lightning): count=4, pct=0%
+  DUST_STORM (Dust Storm): count=3, pct=0%
+  STRONG_WIND (Strong Wind & Gale): count=3, pct=0%

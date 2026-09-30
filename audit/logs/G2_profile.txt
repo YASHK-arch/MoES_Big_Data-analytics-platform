@@ -1,0 +1,29 @@
+=== G2 (a) & (b) Geo Query Breakdown ===
+
+SQL statements: 2 (1 main query + 1 selectinload category query)
+DB time: 19.17 ms
+Serialization time: 0.71 ms
+Gzip current time: 2.27 ms (size: 19490.0 B)
+Gzip level 4 time: 0.98 ms (size: 20402.0 B)
+Total time: 23.57 ms
+
+=== EXPLAIN (ANALYZE, BUFFERS) ===
+Limit  (cost=8403.58..8461.92 rows=500 width=1206) (actual time=68.206..74.177 rows=500 loops=1)
+  Buffers: shared hit=4600 read=303 dirtied=4311
+  ->  Gather Merge  (cost=8403.58..18445.08 rows=86064 width=1206) (actual time=68.113..74.005 rows=500 loops=1)
+        Workers Planned: 2
+        Workers Launched: 2
+        Buffers: shared hit=4600 read=303 dirtied=4311
+        ->  Sort  (cost=7403.55..7511.13 rows=43032 width=1206) (actual time=48.710..48.731 rows=311 loops=3)
+              Sort Key: occurred_at DESC NULLS LAST, created_at DESC
+              Sort Method: top-N heapsort  Memory: 546kB
+              Buffers: shared hit=4600 read=303 dirtied=4311
+              Worker 0:  Sort Method: top-N heapsort  Memory: 445kB
+              Worker 1:  Sort Method: top-N heapsort  Memory: 467kB
+              ->  Parallel Seq Scan on weather_reports  (cost=0.00..5259.32 rows=43032 width=1206) (actual time=0.490..42.022 rows=33627 loops=3)
+                    Filter: (geom IS NOT NULL)
+                    Buffers: shared hit=4526 read=303 dirtied=4311
+Planning:
+  Buffers: shared hit=421 read=34
+Planning Time: 19.434 ms
+Execution Time: 75.360 ms

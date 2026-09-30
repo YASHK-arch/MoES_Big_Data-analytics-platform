@@ -1,0 +1,2 @@
+Total weather_reports: 100000
+Seed time: 6.96s

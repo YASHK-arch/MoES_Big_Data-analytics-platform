@@ -1,0 +1,13 @@
+=== Fixed Programmatic Precision & Cap Hits ===
+Threshold 0.45:
+  Total links across 200 incidents: 1848
+  Incidents hitting 10-cap: 168 / 200 (84.0%)
+  100-pair programmatic precision: 5.9% (3/51 plausible links)
+Threshold 0.50:
+  Total links across 200 incidents: 1351
+  Incidents hitting 10-cap: 80 / 200 (40.0%)
+  100-pair programmatic precision: 10.3% (3/29 plausible links)
+Threshold 0.55:
+  Total links across 200 incidents: 946
+  Incidents hitting 10-cap: 67 / 200 (33.5%)
+  100-pair programmatic precision: 13.3% (2/15 plausible links)

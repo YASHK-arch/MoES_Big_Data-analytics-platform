@@ -1,0 +1,9 @@
+Total Requests: 1672
+RPS: 83.60
+p50: 555.47 ms
+p95: 1203.94 ms
+Error Rate: 0.00%
+Errors: 0
+
+[/api/v1/reports?page=1&limit=20] Reqs: 815, RPS: 40.75, p50: 554.47 ms, p95: 1198.53 ms
+[/api/v1/geo/incidents?bbox=72.0,18.0,74.0,20.0&limit=50] Reqs: 857, RPS: 42.85, p50: 556.24 ms, p95: 1211.53 ms

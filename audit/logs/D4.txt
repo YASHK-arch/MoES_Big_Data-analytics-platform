@@ -1,0 +1,18 @@
+=== D4 Redis Contention & Pooling Audit Log ===
+
+SSE Shared Subscriber Check:
+  SSEBroadcaster already initializes its own dedicated AsyncRedisClient instance.
+
+Redis Client RTT (Before vs After Pooling):
+  Before (Single Lock): Concurrency 1: p50=0.13 ms, p95=0.25 ms | Concurrency 50: p50=5.39 ms, p95=7.02 ms
+  After (Pool Size 8):  Concurrency 1: p50=0.14 ms, p95=0.29 ms | Concurrency 50: p50=0.21 ms, p95=8.21 ms
+
+Dashboard Summary Load (TTL=10, Concurrency 50, 3 runs):
+  Run 1: 514.40 RPS, p50 = 56.68 ms, p95 = 317.72 ms (5144 requests)
+  Run 2: 444.20 RPS, p50 = 64.21 ms, p95 = 393.58 ms (4442 requests)
+  Run 3: 366.80 RPS, p50 = 78.72 ms, p95 = 452.00 ms (3668 requests)
+  Average: 441.80 RPS, p50 = 66.54 ms, p95 = 387.76 ms
+
+Comparison with Before:
+  Before Pooling TTL=10: 388.93 RPS, p50 = 77.91 ms, p95 = 443.49 ms
+  After Pooling TTL=10:  441.80 RPS, p50 = 66.54 ms, p95 = 387.76 ms

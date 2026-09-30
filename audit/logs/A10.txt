@@ -1,0 +1,5 @@
+React.lazy or dynamic import( in front-end/src: NO
+GZipMiddleware in back-end/app: NO
+rediss/ssl in back-end/app/core/redis.py: NO
+XAUTOCLAIM or XCLAIM in back-end/app: NO
+pool_size in back-end/app: NO

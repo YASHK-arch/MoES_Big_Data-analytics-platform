@@ -1,0 +1,5 @@
+
+> weather-platform-frontend@0.1.0 typecheck
+> tsc --noEmit
+
+Typecheck exit: 0

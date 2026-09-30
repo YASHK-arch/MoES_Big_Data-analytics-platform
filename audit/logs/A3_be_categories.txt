@@ -1,0 +1,4 @@
+ category_code | title 
+---------------+-------
+(0 rows)
+

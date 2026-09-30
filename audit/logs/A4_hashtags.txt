@@ -1,0 +1,16 @@
+    MASTODON_HASHTAGS: List[str] = [
+        "mumbairains",
+        "delhirains",
+        "bengalururains",
+        "chennairains",
+        "assamfloods",
+        "monsoon",
+        "flood",
+        "cyclone",
+        "heatwave",
+    ]
+    MASTODON_MAX_RESULTS_PER_TAG: int = 20
+    MASTODON_REQUEST_TIMEOUT_SECONDS: float = 15.0
+    MASTODON_POLL_INTERVAL_SECONDS: float = 30.0
+    MASTODON_MIN_REQUEST_INTERVAL_SECONDS: float = 1.0
+

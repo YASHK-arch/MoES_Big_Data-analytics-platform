@@ -1,0 +1,5 @@
+ Test Files  14 passed (14)
+      Tests  174 passed (174)
+dist/index.html                     0.75 kB │ gzip:   0.45 kB
+dist/assets/index-DElOR0hQ.js   1,274.98 kB │ gzip: 341.41 kB
+dist/assets/index-BnYu8aDK.css     70.44 kB │ gzip:  16.49 kB

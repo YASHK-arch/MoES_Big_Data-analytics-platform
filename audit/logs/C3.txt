@@ -1,0 +1,45 @@
+=== C3 Audit Log: B4 Profiling & Optimization ===
+
+Endpoints Profiled at 100k Rows:
+1. GET /api/v1/reports?page=1&limit=20
+2. GET /api/v1/geo/incidents?bbox=72.0,18.0,74.0,20.0&limit=50
+
+(a) SQL Statements Count & DB Time per Request (at 100k rows):
+  GET /api/v1/reports?page=1&limit=20:
+    - SQL Statements: 4 (1 count [cached on repeat], 1 joinedload reports+category, 2 selectinload media/events)
+    - Total DB Time: 102.06 ms (cold count: 34.13 ms, paginated query: 65.40 ms, child loads: 2.52 ms; warm DB time: ~67 ms)
+  GET /api/v1/geo/incidents?bbox=72.0,18.0,74.0,20.0&limit=50:
+    - SQL Statements: 2 (1 ST_Intersects reports query with LIMIT 50, 1 category selectinload)
+    - Total DB Time: 16.17 ms (main query: 15.42 ms, category: 0.75 ms)
+
+(b) Top Functions Profiled under 50-User Load (cProfile):
+  1. json/decoder.py:raw_decode (JSON parsing of report raw_payload/metadata)
+  2. app/services/incident_query_service.py:get_geo_incidents
+  3. sqlalchemy/orm/attributes.py:__get__ (ORM column attribute access during serialization)
+  4. pydantic_core.SchemaValidator:validate_python (Pydantic response model validation)
+  5. sqlalchemy/orm/loading.py:_populate_full / _instance (ORM row hydration)
+  6. _thread.lock.acquire (Asyncio / connection pool thread synchronization)
+  7. starlette/applications.py:__call__ (Starlette middleware pipeline dispatch)
+  8. fastapi/routing.py:handle (Endpoint resolution and param dependency injection)
+  9. starlette/middleware/gzip.py:__call__ (Response Gzip compression check)
+  10. uvicorn/protocols/http/httptools_impl.py:run_asgi (ASGI event loop protocol loop)
+
+(c) Response Size & JSON Serialization Time:
+  - GET /api/v1/reports?page=1&limit=20: 10,764 bytes (10.51 KB), serialization time: 1.09 ms
+  - GET /api/v1/geo/incidents?bbox=...&limit=50: 25,636 bytes (25.04 KB), serialization time: 0.08 ms (optimized from 249 KB)
+
+(d) 50-User Load Results & Scaling:
+  Baseline (1 Worker):
+    - RPS: 73.91, p50: 396.19 ms, p95: 1956.15 ms
+    - Load-generator CPU: 9.0%
+  Baseline (4 Workers):
+    - RPS: 109.14, p50: 290.62 ms, p95: 1422.92 ms
+    - Load-generator CPU: 46.0%
+  Optimized (4 Workers, Minimal Diff: limit parameter in geo router, joinedload category, composite index 0012, count cache):
+    - Run 1: 218.55 RPS, p50: 143.12 ms, p95: 718.55 ms (load-gen CPU: 59.8%)
+    - Run 2: 208.13 RPS, p50: 153.89 ms, p95: 746.78 ms (load-gen CPU: 58.7%)
+    - Run 3: 231.69 RPS, p50: 142.66 ms, p95: 667.78 ms (load-gen CPU: 60.3%)
+    - Average: 219.45 RPS, p50: 146.56 ms, p95: 711.03 ms, load-gen CPU: 59.6%
+
+Target Assessment: p50 Target (< 150 ms at 50 users):
+  TARGET ACHIEVED: p50 is 146.56 ms (< 150 ms) under 50 concurrent users.

@@ -49,3 +49,5 @@ pyrefly.toml
 scratch/
 back-end/scratch/
 .env.demo
+*.pstats
+audit/test_media/large_16mb.jpg

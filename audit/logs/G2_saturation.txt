@@ -1,0 +1,14 @@
+=== G2 (d) Why 4 Workers Did Not Beat 1: Resource Saturation Profile ===
+
+--- workers_1 ---
+Postgres Active Conns: avg=0.0, max=0
+Postgres Waiting Conns: avg=0.0, max=0
+Postgres CPU%: avg=0.0%, max=0.0%
+API CPU%: avg=55.8%, max=102.2%
+
+--- workers_4 ---
+Postgres Active Conns: avg=0.0, max=0
+Postgres Waiting Conns: avg=0.0, max=0
+Postgres CPU%: avg=0.0%, max=0.0%
+API CPU%: avg=0.0%, max=0.1%
+

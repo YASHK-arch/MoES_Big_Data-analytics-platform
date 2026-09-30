@@ -1,0 +1,401 @@
+E402 Module level import not at top of file
+  --> app/services/report_service.py:10:1
+   |
+ 8 | logger = logging.getLogger(__name__)
+ 9 |
+10 | from fastapi import UploadFile
+   | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+11 | from geoalchemy2.elements import WKTElement
+12 | from sqlalchemy import func, or_, select
+   |
+help: Move module level imports to top of file
+
+E402 Module level import not at top of file
+  --> app/services/report_service.py:11:1
+   |
+10 | from fastapi import UploadFile
+11 | from geoalchemy2.elements import WKTElement
+   | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+12 | from sqlalchemy import func, or_, select
+13 | from sqlalchemy.ext.asyncio import AsyncSession
+   |
+help: Move module level imports to top of file
+
+E402 Module level import not at top of file
+  --> app/services/report_service.py:12:1
+   |
+10 | from fastapi import UploadFile
+11 | from geoalchemy2.elements import WKTElement
+12 | from sqlalchemy import func, or_, select
+   | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+13 | from sqlalchemy.ext.asyncio import AsyncSession
+14 | from sqlalchemy.orm import selectinload
+   |
+help: Move module level imports to top of file
+
+E402 Module level import not at top of file
+  --> app/services/report_service.py:13:1
+   |
+11 | from geoalchemy2.elements import WKTElement
+12 | from sqlalchemy import func, or_, select
+13 | from sqlalchemy.ext.asyncio import AsyncSession
+   | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+14 | from sqlalchemy.orm import selectinload
+   |
+help: Move module level imports to top of file
+
+E402 Module level import not at top of file
+  --> app/services/report_service.py:14:1
+   |
+12 | from sqlalchemy import func, or_, select
+13 | from sqlalchemy.ext.asyncio import AsyncSession
+14 | from sqlalchemy.orm import selectinload
+   | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+15 |
+16 | from app.core.config import settings
+   |
+help: Move module level imports to top of file
+
+E402 Module level import not at top of file
+  --> app/services/report_service.py:16:1
+   |
+14 | from sqlalchemy.orm import selectinload
+15 |
+16 | from app.core.config import settings
+   | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+17 | from app.ingestion.schemas import NormalizedIngestionEvent
+18 | from app.models.category import EventCategory
+   |
+help: Move module level imports to top of file
+
+E402 Module level import not at top of file
+  --> app/services/report_service.py:17:1
+   |
+16 | from app.core.config import settings
+17 | from app.ingestion.schemas import NormalizedIngestionEvent
+   | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+18 | from app.models.category import EventCategory
+19 | from app.models.forecast import ForecastAdvisory
+   |
+help: Move module level imports to top of file
+
+E402 Module level import not at top of file
+  --> app/services/report_service.py:18:1
+   |
+16 | from app.core.config import settings
+17 | from app.ingestion.schemas import NormalizedIngestionEvent
+18 | from app.models.category import EventCategory
+   | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+19 | from app.models.forecast import ForecastAdvisory
+20 | from app.models.media import ReportMedia
+   |
+help: Move module level imports to top of file
+
+E402 Module level import not at top of file
+  --> app/services/report_service.py:19:1
+   |
+17 | from app.ingestion.schemas import NormalizedIngestionEvent
+18 | from app.models.category import EventCategory
+19 | from app.models.forecast import ForecastAdvisory
+   | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+20 | from app.models.media import ReportMedia
+21 | from app.models.report import WeatherReport
+   |
+help: Move module level imports to top of file
+
+E402 Module level import not at top of file
+  --> app/services/report_service.py:20:1
+   |
+18 | from app.models.category import EventCategory
+19 | from app.models.forecast import ForecastAdvisory
+20 | from app.models.media import ReportMedia
+   | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+21 | from app.models.report import WeatherReport
+22 | from app.models.source import Source
+   |
+help: Move module level imports to top of file
+
+E402 Module level import not at top of file
+  --> app/services/report_service.py:21:1
+   |
+19 | from app.models.forecast import ForecastAdvisory
+20 | from app.models.media import ReportMedia
+21 | from app.models.report import WeatherReport
+   | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+22 | from app.models.source import Source
+23 | from app.models.user import User
+   |
+help: Move module level imports to top of file
+
+E402 Module level import not at top of file
+  --> app/services/report_service.py:22:1
+   |
+20 | from app.models.media import ReportMedia
+21 | from app.models.report import WeatherReport
+22 | from app.models.source import Source
+   | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+23 | from app.models.user import User
+24 | from app.models.verification import VerificationEvent
+   |
+help: Move module level imports to top of file
+
+E402 Module level import not at top of file
+  --> app/services/report_service.py:23:1
+   |
+21 | from app.models.report import WeatherReport
+22 | from app.models.source import Source
+23 | from app.models.user import User
+   | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+24 | from app.models.verification import VerificationEvent
+25 | from app.schemas.report import CitizenReportCreate
+   |
+help: Move module level imports to top of file
+
+E402 Module level import not at top of file
+  --> app/services/report_service.py:24:1
+   |
+22 | from app.models.source import Source
+23 | from app.models.user import User
+24 | from app.models.verification import VerificationEvent
+   | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+25 | from app.schemas.report import CitizenReportCreate
+26 | from app.services.realtime_service import RealtimeService, realtime_service
+   |
+help: Move module level imports to top of file
+
+E402 Module level import not at top of file
+  --> app/services/report_service.py:25:1
+   |
+23 | from app.models.user import User
+24 | from app.models.verification import VerificationEvent
+25 | from app.schemas.report import CitizenReportCreate
+   | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+26 | from app.services.realtime_service import RealtimeService, realtime_service
+27 | from app.services.storage import StorageService, storage_service
+   |
+help: Move module level imports to top of file
+
+E402 Module level import not at top of file
+  --> app/services/report_service.py:26:1
+   |
+24 | from app.models.verification import VerificationEvent
+25 | from app.schemas.report import CitizenReportCreate
+26 | from app.services.realtime_service import RealtimeService, realtime_service
+   | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+27 | from app.services.storage import StorageService, storage_service
+   |
+help: Move module level imports to top of file
+
+E402 Module level import not at top of file
+  --> app/services/report_service.py:27:1
+   |
+25 | from app.schemas.report import CitizenReportCreate
+26 | from app.services.realtime_service import RealtimeService, realtime_service
+27 | from app.services.storage import StorageService, storage_service
+   | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+help: Move module level imports to top of file
+
+I001 [*] Import block is un-sorted or un-formatted
+  --> scripts/verify_stack.py:3:1
+   |
+ 1 |   """Repeatable local stack verification for the SIH26069 weather platform."""
+ 2 |
+ 3 | / import asyncio
+ 4 | | import logging
+ 5 | | from pathlib import Path
+ 6 | | import subprocess
+ 7 | | import sys
+ 8 | | import uuid
+ 9 | | from datetime import datetime, timezone
+   | |_______________________________________^
+10 |
+11 |   BACKEND_DIR = Path(__file__).resolve().parent.parent
+   |
+help: Organize imports
+   |
+4  | import logging
+   - from pathlib import Path
+5  | import subprocess
+6  | import sys
+7  | import uuid
+8  | from datetime import datetime, timezone
+9  + from pathlib import Path
+10 |
+   |
+
+E402 Module level import not at top of file
+  --> scripts/verify_stack.py:15:1
+   |
+13 |     sys.path.insert(0, str(BACKEND_DIR))
+14 |
+15 | from app.db.session import async_session_factory
+   | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+16 | from app.orchestration.triggers import on_incident_ingested
+17 | from app.schemas.report import CitizenReportCreate
+   |
+help: Move module level imports to top of file
+
+E402 Module level import not at top of file
+  --> scripts/verify_stack.py:16:1
+   |
+15 | from app.db.session import async_session_factory
+16 | from app.orchestration.triggers import on_incident_ingested
+   | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+17 | from app.schemas.report import CitizenReportCreate
+18 | from app.services.report_service import report_service
+   |
+help: Move module level imports to top of file
+
+E402 Module level import not at top of file
+  --> scripts/verify_stack.py:17:1
+   |
+15 | from app.db.session import async_session_factory
+16 | from app.orchestration.triggers import on_incident_ingested
+17 | from app.schemas.report import CitizenReportCreate
+   | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+18 | from app.services.report_service import report_service
+19 | from app.services.retention_service import retention_service
+   |
+help: Move module level imports to top of file
+
+E402 Module level import not at top of file
+  --> scripts/verify_stack.py:18:1
+   |
+16 | from app.orchestration.triggers import on_incident_ingested
+17 | from app.schemas.report import CitizenReportCreate
+18 | from app.services.report_service import report_service
+   | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+19 | from app.services.retention_service import retention_service
+   |
+help: Move module level imports to top of file
+
+E402 Module level import not at top of file
+  --> scripts/verify_stack.py:19:1
+   |
+17 | from app.schemas.report import CitizenReportCreate
+18 | from app.services.report_service import report_service
+19 | from app.services.retention_service import retention_service
+   | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+20 |
+21 | logging.basicConfig(
+   |
+help: Move module level imports to top of file
+
+I001 [*] Import block is un-sorted or un-formatted
+  --> tests/test_live_intelligence_integration.py:3:1
+   |
+ 1 |   """End-to-end integration proof for live intelligence orchestration and pipeline execution."""
+ 2 |
+ 3 | / import json
+ 4 | | from typing import Any, Dict, List, Tuple
+ 5 | | from unittest.mock import AsyncMock, MagicMock
+ 6 | |
+ 7 | | import pytest
+ 8 | | from sqlalchemy import select
+ 9 | | from sqlalchemy.ext.asyncio import AsyncSession
+10 | |
+11 | | from app.core.redis import AsyncRedisClient
+12 | | from app.models.outbox import RealtimeOutbox
+13 | | from app.models.report import WeatherReport
+14 | | from app.orchestration.dispatcher import OrchestrationDispatcher
+15 | | from app.orchestration.events import (
+16 | |     OrchestrationEvent,
+17 | |     OrchestrationEventType,
+18 | |     OverallReadiness,
+19 | |     StageName,
+20 | |     StageOutcome,
+21 | | )
+22 | | import uuid
+23 | | from datetime import datetime, timezone
+24 | | from app.models.observation import WeatherObservation
+25 | | from app.models.source import Source
+26 | | from app.models.verification import VerificationEvent
+27 | | from app.orchestration.incident_pipeline import incident_pipeline
+28 | | from app.orchestration.triggers import on_incident_ingested, on_observation_ingested
+29 | | from app.schemas.report import CitizenReportCreate
+30 | | from app.services.realtime_service import RealtimeService
+31 | | from app.services.report_service import ReportService
+32 | | from app.workers.outbox_worker import RealtimeOutboxWorker
+   | |__________________________________________________________^
+33 |
+34 |   pytestmark = pytest.mark.asyncio
+   |
+help: Organize imports
+   |
+3  | import json
+4  + import uuid
+5  + from datetime import datetime, timezone
+6  | from typing import Any, Dict, List, Tuple
+--------------------------------------------------------------------------------
+13 | from app.core.redis import AsyncRedisClient
+14 + from app.models.observation import WeatherObservation
+15 | from app.models.outbox import RealtimeOutbox
+16 | from app.models.report import WeatherReport
+17 + from app.models.source import Source
+18 + from app.models.verification import VerificationEvent
+19 | from app.orchestration.dispatcher import OrchestrationDispatcher
+--------------------------------------------------------------------------------
+26 | )
+   - import uuid
+   - from datetime import datetime, timezone
+   - from app.models.observation import WeatherObservation
+   - from app.models.source import Source
+   - from app.models.verification import VerificationEvent
+27 | from app.orchestration.incident_pipeline import incident_pipeline
+   |
+
+F401 [*] `datetime.datetime` imported but unused
+  --> tests/test_live_intelligence_integration.py:23:22
+   |
+21 | )
+22 | import uuid
+23 | from datetime import datetime, timezone
+   |                      ^^^^^^^^
+24 | from app.models.observation import WeatherObservation
+25 | from app.models.source import Source
+   |
+help: Remove unused import
+   |
+22 | import uuid
+   - from datetime import datetime, timezone
+23 | from app.models.observation import WeatherObservation
+   |
+
+F401 [*] `datetime.timezone` imported but unused
+  --> tests/test_live_intelligence_integration.py:23:32
+   |
+21 | )
+22 | import uuid
+23 | from datetime import datetime, timezone
+   |                                ^^^^^^^^
+24 | from app.models.observation import WeatherObservation
+25 | from app.models.source import Source
+   |
+help: Remove unused import
+   |
+22 | import uuid
+   - from datetime import datetime, timezone
+23 | from app.models.observation import WeatherObservation
+   |
+
+I001 [*] Import block is un-sorted or un-formatted
+   --> tests/test_live_intelligence_integration.py:447:5
+    |
+445 |   async def test_concurrent_inline_and_worker_pipeline_atomic_idempotency(db_session: AsyncSession) -> None:
+446 |       """Proves that concurrent inline execution and background worker on two independent DB connections produce exactly one intellig…
+447 | /     import asyncio
+448 | |     from app.db.session import async_session_factory
+    | |____________________________________________________^
+449 |
+450 |       mock_redis, _ = _create_mock_redis_stream_bus()
+    |
+help: Organize imports
+    |
+447 |     import asyncio
+448 +
+449 |     from app.db.session import async_session_factory
+    |
+
+Found 27 errors.
+[*] 5 fixable with the `--fix` option.
+Ruff exit: 1

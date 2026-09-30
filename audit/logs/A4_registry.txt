@@ -1,0 +1,75 @@
+import logging
+from typing import Any, Callable, Dict, List, Optional
+
+logger = logging.getLogger(__name__)
+
+
+class AdapterRegistry:
+    """Singleton registry for discovering and managing data ingestion adapters."""
+
+    def __init__(self) -> None:
+        self._adapters: Dict[str, Any] = {}
+        self._factories: Dict[str, Callable[[], Any]] = {}
+
+    def register(self, adapter: Any) -> None:
+        """Register an instantiated adapter."""
+        code = adapter.source_code.upper()
+        self._adapters[code] = adapter
+        logger.info(f"Registered ingestion adapter: {code} ({adapter.source_name})")
+
+    def register_factory(self, source_code: str, factory: Callable[[], Any]) -> None:
+        """Register an adapter factory for lazy instantiation."""
+        self._factories[source_code.upper()] = factory
+
+    def get(self, source_code: str) -> Optional[Any]:
+        """Retrieve an adapter by source code."""
+        code = source_code.upper()
+        if code in self._adapters:
+            return self._adapters[code]
+        if code in self._factories:
+            instance = self._factories[code]()
+            self._adapters[code] = instance
+            return instance
+        return None
+
+    def list_adapters(self) -> List[Any]:
+        """List all active registered adapters, instantiating factories if needed."""
+        for code in list(self._factories.keys()):
+            if code not in self._adapters:
+                self.get(code)
+        return list(self._adapters.values())
+    def register(self, adapter: Any) -> None:
+        """Register an instantiated adapter."""
+        code = adapter.source_code.upper()
+        self._adapters[code] = adapter
+        logger.info(f"Registered ingestion adapter: {code} ({adapter.source_name})")
+
+    def register_factory(self, source_code: str, factory: Callable[[], Any]) -> None:
+        """Register an adapter factory for lazy instantiation."""
+        self._factories[source_code.upper()] = factory
+
+    def get(self, source_code: str) -> Optional[Any]:
+        """Retrieve an adapter by source code."""
+        code = source_code.upper()
+        if code in self._adapters:
+            return self._adapters[code]
+        if code in self._factories:
+            instance = self._factories[code]()
+            self._adapters[code] = instance
+            return instance
+        return None
+
+    def list_adapters(self) -> List[Any]:
+        """List all active registered adapters, instantiating factories if needed."""
+        for code in list(self._factories.keys()):
+            if code not in self._adapters:
+                self.get(code)
+        return list(self._adapters.values())
+
+    def clear(self) -> None:
+        """Clear registered adapters (useful for testing)."""
+        self._adapters.clear()
+        self._factories.clear()
+
+
+adapter_registry = AdapterRegistry()

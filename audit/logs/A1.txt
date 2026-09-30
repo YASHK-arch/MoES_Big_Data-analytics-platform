@@ -1,0 +1,2 @@
+Pytest (default DB 0): 407 passed, 1 skipped in 188.80s; Pytest (Redis DB 5): HANG/DEADLOCK at test 34 (AsyncRedisClient.connect re-entrant lock on SELECT 5)
+Ruff: 27 errors

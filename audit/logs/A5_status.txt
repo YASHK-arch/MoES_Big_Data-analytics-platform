@@ -1,0 +1,8 @@
+GET /api/v1/verification/queue without auth: 401
+POST /api/v1/verification/c57dccdc-2cff-4186-849c-f948d143e13c/verify without auth: 401
+POST /api/v1/verification/c57dccdc-2cff-4186-849c-f948d143e13c/reject without auth: 401
+back-end/app/core/security.py:9:import jwt
+back-end/app/core/security.py:59:    encoded_jwt = jwt.encode(to_encode, settings.SECRET_KEY, algorithm=ALGORITHM)
+back-end/app/core/security.py:60:    return encoded_jwt
+back-end/app/core/security.py:109:        payload = jwt.decode(token, settings.SECRET_KEY, algorithms=[ALGORITHM])
+back-end/app/core/security.py:111:    except jwt.ExpiredSignatureError:

@@ -1,0 +1,4 @@
+PNG status: 201
+MP4 status: 201
+EXE as JPG status: 400
+16MB file status: 400
