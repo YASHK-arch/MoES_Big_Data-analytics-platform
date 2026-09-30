@@ -62,11 +62,9 @@ async def main() -> int:
     logger.info("Initializing standalone RealtimeOutboxWorker process...")
     worker = RealtimeOutboxWorker()
 
+    _hb_task = asyncio.ensure_future(heartbeat_loop("outbox", stop_event))
     try:
-        await asyncio.gather(
-            heartbeat_loop("outbox", stop_event),
-            worker.run_loop(stop_event=stop_event),
-        )
+        await worker.run_loop(stop_event=stop_event)
         return 0
     except asyncio.CancelledError:
         logger.info("Worker process task cancelled")
@@ -75,6 +73,8 @@ async def main() -> int:
         logger.critical("Fatal error in RealtimeOutboxWorker process: %s", e, exc_info=True)
         return 1
     finally:
+        stop_event.set()
+        _hb_task.cancel()
         logger.info("Closing database engine and Redis connection pools...")
         try:
             await redis_client.close()
