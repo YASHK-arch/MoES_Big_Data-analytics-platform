@@ -53,6 +53,7 @@ The **National Weather Big Data Analytics Platform (SIH26069)** solves this gap 
   - Duplicate detection and spatial-temporal clustering ($R \le 2.5\text{ km}$, $\Delta T \le 120\text{ min}$). — **IMPLEMENTED**
   - Explainable credibility scoring ($0.0000$ to $0.9800$) with transparent component breakdown. — **IMPLEMENTED**
   - Meteorological physical corroboration: model-based physical corroboration (Open-Meteo); station-based IMD corroboration pending credentials. — **IMPLEMENTED** (Model-based via Open-Meteo; station-based IMD AWS pending credentials).
+  - Image Forensics & Reused-Image Detection (S2-lite): Pure deterministic perceptual hashing (pHash DCT-II, dHash) for cross-incident image reuse detection; safe EXIF extraction with IST timezone handling and consistency checks against declared incident time/location; weak credibility adjustment capped at $\pm 0.05$ that never alters verification status (Product Rules P1–P7). — **IMPLEMENTED**
 - **Centralized Data Storage**: PostgreSQL 16 + PostGIS unified repository with spatial GiST indexing and MinIO binary media storage. — **IMPLEMENTED**
 - **Real-Time Interactive Dashboard**:
   - Dynamic Map Explorer displaying live events with Leaflet and bounded GeoJSON layers. — **IMPLEMENTED**

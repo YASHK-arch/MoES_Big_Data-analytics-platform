@@ -1,0 +1,11 @@
+=== GIT DIFF STAT FOR DOCS AND README ===
+ README.md                | 1 +
+ docs/PRD.md              | 1 +
+ docs/PROJECT_PROGRESS.md | 5 +++--
+ 3 files changed, 5 insertions(+), 2 deletions(-)
+=== GIT STATUS ===
+ M README.md
+ M docs/PRD.md
+ M docs/PROJECT_PROGRESS.md
+?? docs/S2_IMAGE_FORENSICS.md
+?? logs/S2_12.log
