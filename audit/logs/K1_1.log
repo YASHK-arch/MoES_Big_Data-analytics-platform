@@ -1,0 +1,7 @@
+$ git status -s
+?? audit/logs/K1_1.log
+$ git log --oneline -1 -- back-end/alembic/versions/20260930_0016_add_evidence_is_test_fixture.py back-end/tests/conftest.py back-end/tests/test_admin_endpoints.py
+95ed134 fix(k0): make backend tests repeatable and record audit
+NOT DONE: the K0 ruff, test-isolation, and R3 test changes are already in published commit 95ed134; splitting that commit would rewrite shared history.
+$ git status -s (after item commit)
+ M audit/logs/K1_1.log
