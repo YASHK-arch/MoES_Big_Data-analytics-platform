@@ -2,11 +2,11 @@
 main
 
 === GIT LOG --ONELINE -5 ===
+ea625b2 S1: record Item 5 merge log
 4646f6e S1: audit scripts, event labeling, and gate verification logs
 86ae421 S1-16: documentation, PRD alignment, and project progress update
 72fab4d S1-15: evaluation protocol template, replay script, and controls
 d9ab741 S1-14: quality gates verification and frozen code integrity check
-2c81a0c S1-13: prometheus observability metrics and failure recovery drills
 
 === GIT STATUS -S ===
-?? logs/A_5.log
+ M logs/A_5.log
