@@ -63,6 +63,7 @@ export const LiveMapPage: React.FC = () => {
     hazard: 'ALL',
     state: 'ALL',
     status: 'ALL',
+    hideDemo: false,
   });
 
   const [selectedPoint, setSelectedPoint] = useState<MapIncidentPoint | null>(null);
@@ -96,12 +97,13 @@ export const LiveMapPage: React.FC = () => {
   }, [filters.state, currentLocation, isDefault]);
 
   const geoParams = useMemo(() => {
-    const p: { status?: string; category?: string; hours_ago?: number } = {};
+    const p: { status?: string; category?: string; hours_ago?: number; hide_demo?: boolean } = {};
     if (filters.hazard !== 'ALL') p.category = filters.hazard;
     if (filters.status !== 'ALL') p.status = filters.status;
     if (geoHoursAgo) p.hours_ago = geoHoursAgo;
+    if (filters.hideDemo) p.hide_demo = true;
     return p;
-  }, [filters.hazard, filters.status, geoHoursAgo]);
+  }, [filters.hazard, filters.status, filters.hideDemo, geoHoursAgo]);
 
   // Fetch GeoJSON map points using canonical incidentKeys.geo
   const {

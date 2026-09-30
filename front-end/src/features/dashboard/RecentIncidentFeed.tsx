@@ -87,6 +87,14 @@ export const RecentIncidentFeed: React.FC<RecentIncidentFeedProps> = ({
                     <span className={`rounded px-1.5 py-0.2 text-[9px] font-extrabold ${verificationStyle.bgClass}`}>
                       {verificationStyle.label}
                     </span>
+                    {report.is_demo && (
+                      <span
+                        className="rounded bg-amber-100 text-amber-800 border border-amber-300 px-1.5 py-0.2 text-[9px] font-extrabold uppercase tracking-wider"
+                        data-testid="demo-badge"
+                      >
+                        DEMO
+                      </span>
+                    )}
                   </div>
                   <span className="text-[10px] font-medium text-slate-400">
                     {formatRelativeTime(report.occurred_at || report.created_at)}

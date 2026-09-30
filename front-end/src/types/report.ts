@@ -71,6 +71,7 @@ export interface ReportDetailData {
   verification_status: string;
   credibility_score: number;
   credibility_reason?: string | null;
+  is_demo?: boolean;
   media: MediaDetail[];
   verification_history?: VerificationEventDetail[];
   created_at: string;
@@ -95,6 +96,7 @@ export interface ReportListQueryParams {
   to_date?: string;
   min_credibility?: number;
   bbox?: string;
+  hide_demo?: boolean;
 }
 
 export interface ReportListResponse {

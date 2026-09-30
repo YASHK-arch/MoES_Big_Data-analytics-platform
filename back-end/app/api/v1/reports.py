@@ -113,6 +113,7 @@ def _serialize_report(report: WeatherReport) -> ReportDetailData:
         processing_status=report.processing_status,
         verification_status=report.verification_status,
         credibility_score=report.credibility_score,
+        is_demo=getattr(report, "is_demo", False),
         media=media_items,
         verification_history=history_items,
         created_at=report.created_at,
@@ -233,7 +234,9 @@ async def submit_citizen_report(
 async def list_reports(
     page: int = Query(default=1, ge=1, description="Page number starting at 1"),
     page_size: int = Query(default=20, ge=1, le=100, description="Records per page (max 100)"),
-    limit: Optional[int] = Query(None, ge=1, le=100, description="Records per page (alias for page_size)"),
+    limit: Optional[int] = Query(
+        None, ge=1, le=100, description="Records per page (alias for page_size)"
+    ),
     category: Optional[str] = Query(None, description="Event category code"),
     severity: Optional[SeverityType] = Query(None, description="Severity level"),
     status_filter: Optional[str] = Query(
@@ -247,6 +250,10 @@ async def list_reports(
     bbox: Optional[str] = Query(
         None,
         description="Bounding box in min_lon,min_lat,max_lon,max_lat format",
+    ),
+    hide_demo: bool = Query(
+        default=False,
+        description="Exclude demo/simulated incident records",
     ),
     db: AsyncSession = Depends(get_db),
 ) -> ReportListResponse:
@@ -325,6 +332,7 @@ async def list_reports(
         to_date=to_date,
         min_credibility=min_credibility,
         bbox=parsed_bbox,
+        hide_demo=hide_demo,
     )
 
     # 4. Serialize data

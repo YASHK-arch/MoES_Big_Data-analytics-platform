@@ -39,7 +39,11 @@ def create_cached_geojson_response(request: Request, geojson_data: Any) -> Respo
     if_none_match = request.headers.get("if-none-match")
     if if_none_match:
         client_etags = [e.strip() for e in if_none_match.split(",")]
-        if etag in client_etags or etag.strip('"') in [e.strip('"') for e in client_etags] or "*" in client_etags:
+        if (
+            etag in client_etags
+            or etag.strip('"') in [e.strip('"') for e in client_etags]
+            or "*" in client_etags
+        ):
             return Response(
                 status_code=status.HTTP_304_NOT_MODIFIED,
                 headers=headers,
@@ -79,9 +83,8 @@ async def get_geo_incidents(
     hours_ago: Optional[int] = Query(
         default=24, ge=1, le=720, description="Hours window (optional; omit for all-time)"
     ),
-    limit: Optional[int] = Query(
-        default=500, ge=1, le=500, description="Max incidents to return"
-    ),
+    limit: Optional[int] = Query(default=500, ge=1, le=500, description="Max incidents to return"),
+    hide_demo: bool = Query(default=False, description="Exclude demo/simulated incident records"),
     db: AsyncSession = Depends(get_db),
 ) -> Any:
     """Retrieve GeoJSON FeatureCollection bounded by PostGIS viewport or national overview."""
@@ -147,6 +150,7 @@ async def get_geo_incidents(
         "category": category,
         "hours_ago": hours_ago,
         "limit": limit or 500,
+        "hide_demo": hide_demo,
     }
 
     async def _compute():
@@ -157,6 +161,7 @@ async def get_geo_incidents(
             category=category,
             hours_ago=hours_ago,
             limit=limit or 500,
+            hide_demo=hide_demo,
         )
         return orjson.dumps(res.model_dump(mode="json")).decode("utf-8")
 
@@ -182,7 +187,9 @@ async def get_nearby_geo_incidents(
     lat: float = Query(..., ge=-90.0, le=90.0, description="Center latitude"),
     lng: float = Query(..., ge=-180.0, le=180.0, description="Center longitude"),
     radius_km: float = Query(default=25.0, ge=1.0, le=500.0, description="Proximity radius in km"),
-    status_filter: Optional[str] = Query(None, alias="status", description="Verification status filter"),
+    status_filter: Optional[str] = Query(
+        None, alias="status", description="Verification status filter"
+    ),
     db: AsyncSession = Depends(get_db),
 ) -> Any:
     """Retrieve GeoJSON FeatureCollection bounded by PostGIS distance radius for citizen dashboard."""

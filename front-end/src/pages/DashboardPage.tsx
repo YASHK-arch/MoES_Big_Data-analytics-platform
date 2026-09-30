@@ -35,6 +35,7 @@ export const DashboardPage: React.FC = () => {
     hazard: 'ALL',
     region: 'ALL',
     status: 'ALL',
+    hideDemo: false,
   });
 
   const [selectedReport, setSelectedReport] = useState<MapIncidentPoint | null>(null);
@@ -62,6 +63,9 @@ export const DashboardPage: React.FC = () => {
     }
     if (effectiveBbox) {
       params.bbox = effectiveBbox;
+    }
+    if (filters.hideDemo) {
+      params.hide_demo = true;
     }
     return params;
   }, [filters, effectiveBbox]);
@@ -91,12 +95,13 @@ export const DashboardPage: React.FC = () => {
   }, [filters.timeRange]);
 
   const geoParams = useMemo(() => {
-    const p: { status?: string; category?: string; hours_ago?: number } = {};
+    const p: { status?: string; category?: string; hours_ago?: number; hide_demo?: boolean } = {};
     if (filters.hazard !== 'ALL') p.category = filters.hazard;
     if (filters.status !== 'ALL') p.status = filters.status;
     if (geoHoursAgo) p.hours_ago = geoHoursAgo;
+    if (filters.hideDemo) p.hide_demo = true;
     return p;
-  }, [filters.hazard, filters.status, geoHoursAgo]);
+  }, [filters.hazard, filters.status, filters.hideDemo, geoHoursAgo]);
 
   // Fetch GeoJSON FeatureCollection for situational map markers (single bounded request)
   const {
@@ -148,6 +153,9 @@ export const DashboardPage: React.FC = () => {
     }
     if (effectiveBbox) {
       params.bbox = effectiveBbox;
+    }
+    if (filters.hideDemo) {
+      params.hide_demo = true;
     }
 
     return params;

@@ -253,6 +253,11 @@ export const NationalMapPage: React.FC = () => {
                           <span className="rounded bg-slate-100 px-1.5 py-0.5 text-[10px] font-bold text-slate-700 uppercase">
                             {feat.properties.category_code}
                           </span>
+                          {feat.properties.is_demo && (
+                            <span className="rounded bg-amber-100 px-1.5 py-0.5 text-[10px] font-extrabold text-amber-800 uppercase border border-amber-300 ml-1">
+                              DEMO
+                            </span>
+                          )}
                           <h4 className="font-bold text-slate-900">{feat.properties.title}</h4>
                           <p className="text-slate-500 text-[11px]">{feat.properties.location_name || 'India Area'}</p>
                           {feat.properties.credibility_reason && (

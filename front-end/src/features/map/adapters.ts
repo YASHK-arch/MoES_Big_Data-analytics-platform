@@ -20,6 +20,7 @@ export interface MapIncidentPoint {
   };
   credibility_score?: number | null;
   readiness?: string | null;
+  is_demo?: boolean;
 }
 
 /**
@@ -57,5 +58,6 @@ export function geoJSONToMapPoints(
       },
       credibility_score: f.properties.credibility_score,
       readiness: f.properties.readiness,
+      is_demo: f.properties.is_demo,
     }));
 }

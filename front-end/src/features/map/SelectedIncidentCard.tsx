@@ -117,6 +117,18 @@ export const SelectedIncidentCard: React.FC<SelectedIncidentCardProps> = ({
           </div>
         )}
 
+        {/* Demo Badge */}
+        {Boolean('is_demo' in report && report.is_demo) && (
+          <div className="absolute top-3 left-3 z-10">
+            <span
+              className="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-extrabold uppercase shadow-md bg-amber-500 text-white"
+              data-testid="demo-badge"
+            >
+              DEMO
+            </span>
+          </div>
+        )}
+
         {/* Verification Status Pill */}
         <div className="absolute top-3 right-3 z-10">
           <span

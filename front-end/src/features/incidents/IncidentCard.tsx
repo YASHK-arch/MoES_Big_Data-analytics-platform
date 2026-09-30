@@ -62,6 +62,14 @@ export const IncidentCard: React.FC<IncidentCardProps> = ({
           >
             {verificationStyle.label}
           </span>
+          {incident.is_demo && (
+            <span
+              className="inline-flex items-center rounded-lg px-2 py-0.5 text-[10px] font-extrabold uppercase bg-amber-100 text-amber-800 border border-amber-300"
+              data-testid="demo-badge"
+            >
+              DEMO
+            </span>
+          )}
         </div>
 
         <div className="flex items-center space-x-1 text-[11px] font-medium text-slate-400">

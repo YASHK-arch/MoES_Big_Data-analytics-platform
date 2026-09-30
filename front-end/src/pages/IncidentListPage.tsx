@@ -53,6 +53,7 @@ export const IncidentListPage: React.FC = () => {
     if (filters.verification_status !== 'ALL') p.verification_status = filters.verification_status;
     if (filters.readiness !== 'ALL') p.readiness = filters.readiness;
     if (filters.min_credibility !== undefined) p.min_credibility = filters.min_credibility;
+    if (filters.hide_demo) p.hide_demo = true;
     return p;
   }, [filters, page]);
 

@@ -147,6 +147,7 @@ class IncidentQueryService:
         bbox: Optional[Tuple[float, float, float, float]] = None,
         sort_by: str = "occurred_at",
         sort_order: str = "desc",
+        hide_demo: bool = False,
     ) -> Tuple[List[IncidentSummaryResponse], int, int, bool, bool]:
         """List and filter weather incidents with bounded deterministic pagination."""
         stmt = select(WeatherReport).options(
@@ -156,6 +157,9 @@ class IncidentQueryService:
         count_stmt = select(func.count(WeatherReport.id))
 
         filters: List[Any] = []
+
+        if hide_demo:
+            filters.append(WeatherReport.is_demo.is_(False))
 
         if category:
             clean_cat = category.strip().upper()
@@ -250,6 +254,7 @@ class IncidentQueryService:
                 credibility_reason=r.credibility_reason,
                 credibility_explanation=r.credibility_explanation,
                 readiness=self._extract_readiness(r),
+                is_demo=getattr(r, "is_demo", False),
                 media_count=len(r.media) if r.media else 0,
                 created_at=r.created_at,
             )
@@ -341,7 +346,9 @@ class IncidentQueryService:
         neg_drivers: List[str] = []
         flags: List[str] = []
         if report.credibility_explanation and isinstance(report.credibility_explanation, dict):
-            cred_exp = report.credibility_explanation.get("explanation_text") or report.credibility_explanation.get("explanation")
+            cred_exp = report.credibility_explanation.get(
+                "explanation_text"
+            ) or report.credibility_explanation.get("explanation")
             pos_drivers = report.credibility_explanation.get("positive_drivers") or []
             neg_drivers = report.credibility_explanation.get("negative_drivers") or []
             flags = report.credibility_explanation.get("uncertainty_flags") or []
@@ -392,6 +399,7 @@ class IncidentQueryService:
                 verification=ver_resp,
                 intelligence_status=intel_resp,
                 summaries=counts,
+                is_demo=getattr(report, "is_demo", False),
                 media=media_items,
                 created_at=report.created_at,
             )
@@ -434,6 +442,7 @@ class IncidentQueryService:
             verification=ver_resp,
             intelligence_status=intel_resp,
             summaries=counts,
+            is_demo=getattr(report, "is_demo", False),
             media=media_items,
             created_at=report.created_at,
             verification_history=history_items,
@@ -907,6 +916,7 @@ class IncidentQueryService:
                 credibility_reason=r.credibility_reason,
                 credibility_explanation=r.credibility_explanation,
                 readiness=self._extract_readiness(r),
+                is_demo=getattr(r, "is_demo", False),
                 media_count=len(r.media) if r.media else 0,
                 created_at=r.created_at,
             )
@@ -923,6 +933,7 @@ class IncidentQueryService:
         category: Optional[str] = None,
         hours_ago: Optional[int] = 24,
         limit: int = 500,
+        hide_demo: bool = False,
     ) -> GeoJSONFeatureCollection:
         """Fetch GeoJSON FeatureCollection bounded by PostGIS viewport or nationwide overview."""
         stmt = (
@@ -930,6 +941,9 @@ class IncidentQueryService:
             .options(selectinload(WeatherReport.category))
             .where(WeatherReport.geom.isnot(None))
         )
+
+        if hide_demo:
+            stmt = stmt.where(WeatherReport.is_demo.is_(False))
 
         if bbox is not None:
             min_lon, min_lat, max_lon, max_lat = bbox
@@ -950,7 +964,9 @@ class IncidentQueryService:
                 WeatherReport.occurred_at >= func.now() - func.make_interval(0, 0, 0, 0, hours_ago)
             )
 
-        stmt = stmt.order_by(WeatherReport.occurred_at.desc().nullslast(), WeatherReport.created_at.desc()).limit(limit)
+        stmt = stmt.order_by(
+            WeatherReport.occurred_at.desc().nullslast(), WeatherReport.created_at.desc()
+        ).limit(limit)
         res = await session.execute(stmt)
         reports = res.scalars().all()
 
@@ -971,6 +987,7 @@ class IncidentQueryService:
                         verification_status=r.verification_status,
                         occurred_at=r.occurred_at.isoformat(),
                         location_name=r.location_name,
+                        is_demo=getattr(r, "is_demo", False),
                     ),
                 )
             )
@@ -1007,9 +1024,13 @@ class IncidentQueryService:
         from_date: Optional[datetime] = None,
         to_date: Optional[datetime] = None,
         bbox: Optional[Tuple[float, float, float, float]] = None,
+        hide_demo: bool = False,
     ) -> List[Any]:
         """Build shared parameterized SQL filter clauses for aggregations."""
         filters: List[Any] = []
+
+        if hide_demo:
+            filters.append(WeatherReport.is_demo.is_(False))
 
         if category and category.strip().upper() != "ALL":
             clean_cat = category.strip().upper()
@@ -1053,6 +1074,7 @@ class IncidentQueryService:
         from_date: Optional[datetime] = None,
         to_date: Optional[datetime] = None,
         bbox: Optional[Tuple[float, float, float, float]] = None,
+        hide_demo: bool = False,
     ) -> DashboardSummaryData:
         """Compute high-efficiency SQL summary metrics for Dashboard and Analytics."""
         effective_from = self._parse_time_range(time_range, from_date)
@@ -1063,6 +1085,7 @@ class IncidentQueryService:
             from_date=effective_from,
             to_date=to_date,
             bbox=bbox,
+            hide_demo=hide_demo,
         )
 
         twenty_four_hours_ago = datetime.now(timezone.utc) - timedelta(hours=24)

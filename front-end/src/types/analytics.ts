@@ -47,6 +47,7 @@ export interface DashboardSummaryQueryParams {
   severity?: string;
   status?: string;
   bbox?: string;
+  hide_demo?: boolean;
 }
 
 export interface AnalyticsTrendBucket {

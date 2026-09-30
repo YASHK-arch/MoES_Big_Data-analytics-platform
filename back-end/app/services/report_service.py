@@ -248,6 +248,10 @@ class ReportService:
             occurred_time = payload.occurred_at or datetime.now(timezone.utc)
 
             # 4. Instantiate WeatherReport entity
+            is_demo = bool(
+                (payload.title and payload.title.startswith("[DEMO]"))
+                or (tracking_id and tracking_id.startswith("DEMO-"))
+            )
             report = WeatherReport(
                 id=report_id,
                 tracking_id=tracking_id,
@@ -266,6 +270,7 @@ class ReportService:
                 processing_status="QUEUED",
                 verification_status="PENDING",
                 credibility_score=0.0,
+                is_demo=is_demo,
             )
 
             session.add(report)
@@ -298,7 +303,9 @@ class ReportService:
             try:
                 from app.orchestration.incident_pipeline import incident_pipeline
 
-                await incident_pipeline.execute_pipeline(db=session, incident_id=report.id, commit=True)
+                await incident_pipeline.execute_pipeline(
+                    db=session, incident_id=report.id, commit=True
+                )
                 await session.refresh(report)
             except Exception as pipe_err:
                 logger.warning(
@@ -360,6 +367,7 @@ class ReportService:
         to_date: Optional[datetime] = None,
         min_credibility: Optional[float] = None,
         bbox: Optional[Tuple[float, float, float, float]] = None,
+        hide_demo: bool = False,
     ) -> Tuple[List[WeatherReport], int, int, bool, bool]:
         """Query and filter weather reports with PostGIS spatial bounds and pagination."""
         stmt = select(WeatherReport).options(
@@ -369,7 +377,10 @@ class ReportService:
         )
         count_stmt = select(func.count(WeatherReport.id))
 
-        filters = []
+        filters: List[Any] = []
+
+        if hide_demo:
+            filters.append(WeatherReport.is_demo.is_(False))
 
         if category:
             clean_cat = category.strip().upper()
@@ -415,7 +426,10 @@ class ReportService:
         # 1. Total records count
         if not filters:
             now_mono = time.monotonic()
-            if _UNFILTERED_COUNT_CACHE["expires_at"] > now_mono and _UNFILTERED_COUNT_CACHE["count"] > 0:
+            if (
+                _UNFILTERED_COUNT_CACHE["expires_at"] > now_mono
+                and _UNFILTERED_COUNT_CACHE["count"] > 0
+            ):
                 total_records = int(_UNFILTERED_COUNT_CACHE["count"])
             else:
                 count_res = await session.execute(count_stmt)
@@ -638,6 +652,10 @@ class ReportService:
         report_id = uuid.uuid4()
         tracking_id = self.generate_tracking_id()
         point_geom = WKTElement(f"POINT({event.longitude} {event.latitude})", srid=4326)
+        is_demo = bool(
+            (event.title and event.title.startswith("[DEMO]"))
+            or (tracking_id and tracking_id.startswith("DEMO-"))
+        )
 
         report = WeatherReport(
             id=report_id,
@@ -658,6 +676,7 @@ class ReportService:
             verification_status="PENDING",
             credibility_score=0.0,
             raw_payload=event.raw_payload,
+            is_demo=is_demo,
         )
         session.add(report)
         await self._maybe_create_ndma_forecast(session, event)

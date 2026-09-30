@@ -151,6 +151,14 @@ export const IncidentDetailPage: React.FC = () => {
                     >
                       {verificationStyle?.label}
                     </span>
+                    {incident.is_demo && (
+                      <span
+                        className="inline-flex items-center rounded-lg px-2.5 py-1 text-xs font-extrabold uppercase bg-amber-100 text-amber-800 border border-amber-300"
+                        data-testid="demo-badge"
+                      >
+                        DEMO
+                      </span>
+                    )}
                   </div>
 
                   <span

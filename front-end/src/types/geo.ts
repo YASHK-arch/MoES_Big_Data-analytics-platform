@@ -17,6 +17,7 @@ export interface GeoJSONIncidentProperties {
   readiness?: string | null;
   occurred_at: string | null;
   location_name?: string | null;
+  is_demo?: boolean;
 }
 
 export interface GeoJSONIncidentFeature {

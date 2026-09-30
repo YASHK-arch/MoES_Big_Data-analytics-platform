@@ -9,6 +9,7 @@ export interface DashboardFilterState {
   hazard: string;
   region: string;
   status: string;
+  hideDemo?: boolean;
 }
 
 interface DashboardFiltersProps {
@@ -104,8 +105,19 @@ export const DashboardFilters: React.FC<DashboardFiltersProps> = ({
           </div>
         </div>
 
-        {/* Right: Refresh Data Button */}
-        <div className="flex items-center justify-end">
+        {/* Right: Toggle & Refresh Data Button */}
+        <div className="flex items-center justify-end space-x-3">
+          <label className="flex items-center space-x-2 text-xs font-semibold text-slate-700 cursor-pointer select-none">
+            <input
+              type="checkbox"
+              checked={Boolean(filters.hideDemo)}
+              onChange={(e) => onChange({ ...filters, hideDemo: e.target.checked })}
+              className="rounded border-slate-300 text-blue-600 focus:ring-blue-500 h-4 w-4"
+              data-testid="hide-demo-toggle"
+            />
+            <span>Hide Demo Data</span>
+          </label>
+
           <button
             type="button"
             onClick={onRefresh}

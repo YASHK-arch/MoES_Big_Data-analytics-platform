@@ -180,3 +180,21 @@ npm run lint
 npx vitest run
 npm run build
 ```
+
+---
+
+## 7. Live vs. Simulated (Demo) Data
+
+To provide a fully deterministic and compelling evaluation environment during Hackathon presentations while ensuring production readiness, the platform strictly segregates live real-world data from simulated test fixtures:
+
+- **Database Flag & Indexing**: The `weather_reports` table includes a dedicated, indexed boolean column `is_demo` (Alembic revision `0017_report_is_demo`).
+- **Automatic Classification & Backfill**: Any incident seeded with the `[DEMO]` title prefix or a `DEMO-` tracking identifier is automatically flagged with `is_demo = true`. Real citizen submissions and operational telemetry default to `is_demo = false`.
+- **Visible Cues**: An amber **DEMO** badge is prominently rendered across the UI:
+  - Situational Awareness Dashboard (recent incident feed)
+  - Interactive Leaflet Map (marker popups and selected incident inspector)
+  - Unified Incident Cards and Incident Detail Hero
+- **"Hide Demo Data" Toggle**:
+  - Available on the Dashboard, Live Map, and Incident Directory filter bars.
+  - **Default**: `OFF` in the demo stack (`docker-compose.demo.yml`) so evaluators immediately see active scenario fixtures.
+  - **Live Filter**: Toggling to `ON` immediately filters out all simulated demo reports, showing only authentic citizen reports and verified field feeds.
+- **REST & Geospatial Filtering**: All query endpoints (`/api/v1/incidents`, `/api/v1/reports`, `/api/v1/geo/incidents`, `/api/v1/dashboard/summary`) accept `?hide_demo=true` for SQL-level filtering without client-side overhead.

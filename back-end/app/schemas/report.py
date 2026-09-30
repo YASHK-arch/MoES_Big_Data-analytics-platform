@@ -190,6 +190,7 @@ class ReportDetailData(BaseModel):
     verification_status: str
     credibility_score: float = 0.0
     credibility_reason: Optional[str] = None
+    is_demo: bool = False
     media: List[MediaDetail] = []
     verification_history: List[VerificationEventDetail] = []
     created_at: datetime

@@ -71,6 +71,7 @@ export interface IncidentSummary {
   credibility_reason?: string | null;
   credibility_explanation?: Record<string, unknown> | null;
   readiness: OverallReadiness;
+  is_demo?: boolean;
   media_count: number;
   created_at: string;
 }
@@ -88,6 +89,7 @@ export interface IncidentDetailPublic {
   verification: IncidentVerificationSummary;
   intelligence_status: IncidentIntelligenceSummary;
   summaries: IncidentCorroborationCounts;
+  is_demo?: boolean;
   media: IncidentMedia[];
   created_at: string;
 }
@@ -111,4 +113,5 @@ export interface IncidentListQueryParams {
   bbox?: string;
   sort_by?: 'occurred_at' | 'credibility_score' | 'created_at' | string;
   sort_order?: 'asc' | 'desc' | string;
+  hide_demo?: boolean;
 }

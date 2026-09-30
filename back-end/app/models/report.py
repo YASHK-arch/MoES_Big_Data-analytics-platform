@@ -5,6 +5,7 @@ from typing import TYPE_CHECKING, Any, Dict, List, Optional
 from geoalchemy2 import Geometry
 from sqlalchemy import (
     ARRAY,
+    Boolean,
     DateTime,
     Float,
     ForeignKey,
@@ -130,6 +131,13 @@ class WeatherReport(Base):
         JSONB,
         nullable=True,
     )
+    is_demo: Mapped[bool] = mapped_column(
+        Boolean,
+        default=False,
+        server_default=func.false(),
+        nullable=False,
+        index=True,
+    )
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True),
         server_default=func.now(),
@@ -153,9 +161,13 @@ class WeatherReport(Base):
             if score is not None and score >= 0.80:
                 return f"High machine credibility ({(score * 100):.0f}%) based on authoritative source."
             elif score is not None and score >= 0.50:
-                return f"Moderate machine credibility ({(score * 100):.0f}%) based on baseline intake."
+                return (
+                    f"Moderate machine credibility ({(score * 100):.0f}%) based on baseline intake."
+                )
             elif score is not None and score > 0.0:
-                return f"Low machine credibility ({(score * 100):.0f}%); uncorroborated intake report."
+                return (
+                    f"Low machine credibility ({(score * 100):.0f}%); uncorroborated intake report."
+                )
             return "Pending machine credibility evaluation."
 
         pos = expl.get("positive_drivers") or []

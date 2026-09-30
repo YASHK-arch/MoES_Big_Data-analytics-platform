@@ -44,6 +44,7 @@ export const incidentApi = {
     if (params.bbox) searchParams.append('bbox', params.bbox);
     if (params.sort_by) searchParams.append('sort_by', params.sort_by);
     if (params.sort_order) searchParams.append('sort_order', params.sort_order);
+    if (params.hide_demo !== undefined) searchParams.append('hide_demo', params.hide_demo ? 'true' : 'false');
 
     const query = searchParams.toString();
     return apiClient<ApiResponse<IncidentSummary[]>>(`/incidents${query ? `?${query}` : ''}`, { signal });
@@ -141,7 +142,7 @@ export const incidentApi = {
    */
   async getGeoIncidents(
     bbox?: string,
-    params: { status?: string; category?: string; hours_ago?: number } = {},
+    params: { status?: string; category?: string; hours_ago?: number; hide_demo?: boolean } = {},
     signal?: AbortSignal
   ): Promise<GeoJSONFeatureCollection> {
     const searchParams = new URLSearchParams();
@@ -149,6 +150,7 @@ export const incidentApi = {
     if (params.status && params.status !== 'ALL') searchParams.append('status', params.status);
     if (params.category && params.category !== 'ALL') searchParams.append('category', params.category);
     if (params.hours_ago) searchParams.append('hours_ago', params.hours_ago.toString());
+    if (params.hide_demo !== undefined) searchParams.append('hide_demo', params.hide_demo ? 'true' : 'false');
 
     const query = searchParams.toString();
     return apiClient<GeoJSONFeatureCollection>(`/geo/incidents${query ? `?${query}` : ''}`, { signal });

@@ -101,6 +101,7 @@ async def get_dashboard_summary(
     bbox: Optional[str] = Query(
         None, description="Bounding box in min_lon,min_lat,max_lon,max_lat format"
     ),
+    hide_demo: bool = Query(default=False, description="Exclude demo/simulated incident records"),
     db: AsyncSession = Depends(get_db),
 ) -> DashboardSummaryResponse:
     """Retrieve SQL-aggregated summary metrics for dashboard situational awareness."""
@@ -141,6 +142,7 @@ async def get_dashboard_summary(
         "severity": severity,
         "status": status_filter,
         "bbox": bbox,
+        "hide_demo": hide_demo,
     }
 
     async def _compute():
@@ -151,6 +153,7 @@ async def get_dashboard_summary(
             severity=severity,
             verification_status=status_filter,
             bbox=parsed_bbox,
+            hide_demo=hide_demo,
         )
         return data.model_dump(mode="json")
 

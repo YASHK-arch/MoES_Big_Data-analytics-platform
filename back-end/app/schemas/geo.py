@@ -35,6 +35,7 @@ class GeoJSONIncidentProperties(BaseModel):
     verification_status: str
     occurred_at: str
     location_name: Optional[str] = None
+    is_demo: bool = False
 
 
 class GeoJSONIncidentFeature(BaseModel):

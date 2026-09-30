@@ -69,6 +69,10 @@ async def list_incidents(
         pattern="^(asc|desc)$",
         description="Sort direction",
     ),
+    hide_demo: bool = Query(
+        default=False,
+        description="Exclude demo/simulated incident records",
+    ),
     db: AsyncSession = Depends(get_db),
 ) -> IncidentListResponse:
     """List weather incident summaries."""
@@ -158,6 +162,7 @@ async def list_incidents(
         bbox=parsed_bbox,
         sort_by=sort_by,
         sort_order=sort_order,
+        hide_demo=hide_demo,
     )
 
     return IncidentListResponse(

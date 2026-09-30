@@ -10,6 +10,7 @@ export interface IncidentFilterState {
   verification_status: string;
   readiness: string;
   min_credibility?: number;
+  hide_demo?: boolean;
 }
 
 interface IncidentFiltersProps {
@@ -67,7 +68,7 @@ export const IncidentFilters: React.FC<IncidentFiltersProps> = ({
   onReset,
   totalRecords,
 }) => {
-  const handleChange = (key: keyof IncidentFilterState, value: string | number | undefined) => {
+  const handleChange = (key: keyof IncidentFilterState, value: string | number | boolean | undefined) => {
     onChange({
       ...filters,
       [key]: value,
@@ -80,7 +81,8 @@ export const IncidentFilters: React.FC<IncidentFiltersProps> = ({
     filters.severity !== 'ALL' ||
     filters.verification_status !== 'ALL' ||
     filters.readiness !== 'ALL' ||
-    filters.min_credibility !== undefined;
+    filters.min_credibility !== undefined ||
+    filters.hide_demo;
 
   return (
     <div className="rounded-2xl border border-slate-200 bg-white p-4 sm:p-5 shadow-2xs space-y-4">
@@ -99,6 +101,17 @@ export const IncidentFilters: React.FC<IncidentFiltersProps> = ({
         </div>
 
         <div className="flex items-center space-x-2">
+          <label className="flex items-center space-x-1.5 rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-xs font-semibold text-slate-700 cursor-pointer select-none">
+            <input
+              type="checkbox"
+              checked={Boolean(filters.hide_demo)}
+              onChange={(e) => handleChange('hide_demo', e.target.checked)}
+              className="rounded border-slate-300 text-blue-600 focus:ring-blue-500 h-3.5 w-3.5"
+              data-testid="list-hide-demo-toggle"
+            />
+            <span>Hide Demo</span>
+          </label>
+
           {totalRecords !== undefined && (
             <span className="text-xs font-bold text-slate-500 bg-slate-50 px-3 py-2 rounded-xl border border-slate-200">
               {totalRecords} Found

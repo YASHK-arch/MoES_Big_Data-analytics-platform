@@ -17,6 +17,7 @@ export const dashboardApi = {
     if (params.severity && params.severity !== 'ALL') searchParams.append('severity', params.severity);
     if (params.status && params.status !== 'ALL') searchParams.append('status', params.status);
     if (params.bbox) searchParams.append('bbox', params.bbox);
+    if (params.hide_demo !== undefined) searchParams.append('hide_demo', params.hide_demo ? 'true' : 'false');
 
     const query = searchParams.toString();
     return apiClient<ApiResponse<DashboardSummaryData>>(`/dashboard/summary${query ? `?${query}` : ''}`, { signal });
