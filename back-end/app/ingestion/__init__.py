@@ -14,6 +14,7 @@ from app.ingestion.ndma_adapter import NDMASachetAdapter
 from app.ingestion.normalizer import EventNormalizer
 from app.ingestion.open_meteo_adapter import OpenMeteoAdapter
 from app.ingestion.registry import AdapterRegistry, adapter_registry
+from app.ingestion.rss_adapter import RSSNewsAdapter
 from app.ingestion.schemas import (
     NormalizedEvidenceEvent,
     NormalizedIngestionEvent,
@@ -31,6 +32,8 @@ adapter_registry.register_factory("MASTODON_PUBLIC", lambda: MastodonSocialAdapt
 adapter_registry.register_factory("OPEN_METEO", lambda: OpenMeteoAdapter())
 adapter_registry.register_factory("GDACS_FEED", lambda: GDACSAlertAdapter())
 adapter_registry.register_factory("DEMO_FEED", lambda: DemoSeedAdapter())
+# Phase 3 / Round 9b: RSS News Adapter
+adapter_registry.register_factory("RSS_NEWS", lambda: RSSNewsAdapter())
 
 __all__ = [
     "BaseIngestionAdapter",
@@ -42,6 +45,7 @@ __all__ = [
     "MastodonSocialAdapter",
     "OpenMeteoAdapter",
     "GDACSAlertAdapter",
+    "RSSNewsAdapter",
     "EventNormalizer",
     "RawIngestionEvent",
     "NormalizedIngestionEvent",
