@@ -6,7 +6,6 @@ O2 spec:
   GET /health/workers — lists each worker up/down from Redis heartbeat keys (TTL 30s)
 """
 
-import time
 from datetime import datetime, timezone
 from typing import Any, Dict
 

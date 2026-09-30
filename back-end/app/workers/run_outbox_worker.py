@@ -14,9 +14,8 @@ import sys
 from app.core.config import settings
 from app.core.redis import redis_client
 from app.db.session import engine
-from app.workers.outbox_worker import RealtimeOutboxWorker
 from app.workers.heartbeat import heartbeat_loop
-
+from app.workers.outbox_worker import RealtimeOutboxWorker
 
 logging.basicConfig(
     level=logging.INFO,

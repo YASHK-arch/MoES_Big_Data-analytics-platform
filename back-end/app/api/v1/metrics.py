@@ -14,7 +14,7 @@ No Prometheus server or Grafana container required.
 import asyncio
 import logging
 import time
-from typing import Any, Dict, Optional
+from typing import Any
 
 from fastapi import APIRouter, Request, Response
 from prometheus_client import (

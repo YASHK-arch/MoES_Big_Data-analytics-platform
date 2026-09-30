@@ -1,6 +1,7 @@
 import json
 import logging
 import re
+import xml.etree.ElementTree as std_ET
 from datetime import datetime, timezone
 from typing import Any, Dict, List, Optional, Tuple, Union
 
@@ -196,7 +197,7 @@ class NDMASachetAdapter(BaseIngestionAdapter):
             return tag.split("}", 1)[1]
         return tag
 
-    def _element_to_dict(self, elem: ET.Element) -> Dict[str, Any]:
+    def _element_to_dict(self, elem: std_ET.Element) -> Dict[str, Any]:
         """Convert an XML element and its immediate children into a flattened dictionary."""
         data: Dict[str, Any] = {}
         for child in elem:

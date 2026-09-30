@@ -38,13 +38,20 @@ else
   echo "[demo-up] Using existing $ENV_FILE"
 fi
 
-# ── Start the stack ───────────────────────────────────────────────────────────
+# ── Build and start the stack ──────────────────────────────────────────────────
+echo "[demo-up] Building demo stack images..."
+docker compose \
+  -f "$COMPOSE_FILE" \
+  --env-file "$ENV_FILE" \
+  --project-name sih-demo \
+  build
+
 echo "[demo-up] Starting demo stack..."
 docker compose \
   -f "$COMPOSE_FILE" \
   --env-file "$ENV_FILE" \
   --project-name sih-demo \
-  up -d --build "$@"
+  up -d "$@"
 
 echo "[demo-up] Stack started. Web UI: http://localhost:8080"
 echo "[demo-up] Run: docker compose -f docker-compose.demo.yml -p sih-demo logs -f"

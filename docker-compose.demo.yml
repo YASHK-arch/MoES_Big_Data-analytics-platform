@@ -102,7 +102,7 @@ services:
 
   # Create the media bucket once MinIO is ready
   minio-init:
-    image: minio/mc:latest
+    image: minio/minio:latest
     depends_on:
       minio:
         condition: service_healthy
@@ -140,6 +140,9 @@ services:
 
   # ── API server ─────────────────────────────────────────────────────────────
   api:
+    build:
+      context: ./back-end
+      dockerfile: Dockerfile
     image: sih-backend:latest
     restart: unless-stopped
     environment: *api-env

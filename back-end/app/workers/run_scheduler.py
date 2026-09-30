@@ -27,7 +27,6 @@ from app.services.retention_service import retention_service
 from app.services.stream_service import stream_service
 from app.workers.heartbeat import heartbeat_loop
 
-
 logging.basicConfig(
     level=logging.INFO,
     format="%(asctime)s [%(levelname)s] %(name)s: %(message)s",

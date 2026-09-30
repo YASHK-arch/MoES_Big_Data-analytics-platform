@@ -19,13 +19,14 @@ that a regular (locking) CREATE INDEX is acceptable at migration time.
 Revision identifiers, used by Alembic.
 """
 
+import sqlalchemy as sa
+
+from alembic import op
+
 revision = "0015_geo_sort_index"
 down_revision = "0014_backfill_categories"
 branch_labels = None
 depends_on = None
-
-from alembic import op
-import sqlalchemy as sa
 
 
 def upgrade() -> None:

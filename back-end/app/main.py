@@ -10,6 +10,7 @@ from fastapi.responses import JSONResponse, ORJSONResponse
 from starlette.middleware.gzip import GZipMiddleware
 
 from app.api.v1.events import broadcaster
+from app.api.v1.health import router as health_router
 from app.api.v1.metrics import record_request_metric
 from app.api.v1.router import api_v1_router
 from app.core.config import settings
@@ -98,6 +99,9 @@ def create_application() -> FastAPI:
                 },
             },
         )
+
+    # Register Root Health endpoints (/health, /ready)
+    app.include_router(health_router)
 
     # Register API v1 routes
     app.include_router(api_v1_router, prefix=settings.API_V1_STR)

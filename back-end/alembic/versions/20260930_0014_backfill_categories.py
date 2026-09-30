@@ -6,7 +6,9 @@ Create Date: 2026-09-30 11:00:00.000000
 """
 
 import uuid
+
 import sqlalchemy as sa
+
 from alembic import op
 
 # revision identifiers, used by Alembic.

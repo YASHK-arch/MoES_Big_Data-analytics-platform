@@ -197,8 +197,12 @@ class Settings(BaseSettings):
     def validate_production_guards(self) -> "Settings":
         """Enforce strict security guards when running in production environment."""
         if self.ENVIRONMENT.lower() == "production":
-            if self.SECRET_KEY == "default-insecure-dev-secret-key-replace-in-production":
-                raise ValueError("SECRET_KEY must not use default insecure value in production environment.")
+            if (
+                self.SECRET_KEY == "default-insecure-dev-secret-key-replace-in-production"
+                or len(self.SECRET_KEY) < 32
+                or self.SECRET_KEY.lower() in {"secret", "changeme", "password", "weak", "insecure"}
+            ):
+                raise ValueError("SECRET_KEY must be a secure key with at least 32 characters in production.")
             if self.DEBUG is True:
                 raise ValueError("DEBUG must be False in production environment.")
             if "*" in self.ALLOWED_ORIGINS:

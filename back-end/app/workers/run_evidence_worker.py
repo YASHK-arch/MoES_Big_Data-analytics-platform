@@ -16,7 +16,6 @@ from app.db.session import engine
 from app.workers.evidence_worker import evidence_worker
 from app.workers.heartbeat import heartbeat_loop
 
-
 logging.basicConfig(
     level=logging.INFO,
     format="%(asctime)s [%(levelname)s] %(name)s: %(message)s",

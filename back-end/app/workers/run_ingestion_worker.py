@@ -13,9 +13,8 @@ import sys
 
 from app.core.redis import redis_client
 from app.db.session import engine
-from app.workers.ingestion_worker import ingestion_worker
 from app.workers.heartbeat import heartbeat_loop
-
+from app.workers.ingestion_worker import ingestion_worker
 
 logging.basicConfig(
     level=logging.INFO,

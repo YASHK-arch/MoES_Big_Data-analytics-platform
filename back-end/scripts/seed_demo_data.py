@@ -379,6 +379,83 @@ async def seed_forecast_advisories(session: AsyncSession) -> None:
     print("✅ Seeded 4 active forecast advisories.")
 
 
+async def seed_bulk_demo_reports(session: AsyncSession, count: int = 500) -> None:
+    """Seed ~500 weather reports clearly flagged as demo data."""
+    import random
+
+    from sqlalchemy import func
+
+    # Check if demo reports already seeded
+    existing_count = await session.scalar(
+        select(func.count(WeatherReport.id)).where(WeatherReport.title.like("[DEMO]%"))
+    )
+    if existing_count and existing_count >= count:
+        print(f"✅ Demo reports already present ({existing_count} reports).")
+        return
+
+    # Fetch source & categories
+    src_res = await session.execute(select(Source).where(Source.source_type == "CITIZEN"))
+    source = src_res.scalar_one_or_none()
+    if not source:
+        source = Source(
+            id=uuid.uuid4(),
+            source_code="CITIZEN_PORTAL",
+            name="Public Citizen Reports",
+            source_type="CITIZEN",
+            base_trust_score=0.75,
+            is_active=True,
+        )
+        session.add(source)
+        await session.flush()
+
+    cat_res = await session.execute(select(EventCategory))
+    categories = cat_res.scalars().all()
+    if not categories:
+        print("⚠️ No categories found to link reports.")
+        return
+
+    sample_locations = [
+        (28.6139, 77.2090, "New Delhi"), (19.0760, 72.8777, "Mumbai"),
+        (22.5726, 88.3639, "Kolkata"), (13.0827, 80.2707, "Chennai"),
+        (12.9716, 77.5946, "Bengaluru"), (17.3850, 78.4867, "Hyderabad"),
+        (26.9124, 75.7873, "Jaipur"), (23.0225, 72.5714, "Ahmedabad"),
+        (11.0168, 76.9558, "Coimbatore"), (25.5941, 85.1376, "Patna"),
+    ]
+    sample_severities = ["LOW", "MODERATE", "SEVERE", "CRITICAL"]
+
+    now = datetime.now(timezone.utc)
+    for i in range(1, count + 1):
+        lat, lng, city = random.choice(sample_locations)
+        cat = categories[i % len(categories)]
+        sev = sample_severities[i % len(sample_severities)]
+        r_lat = lat + random.uniform(-0.3, 0.3)
+        r_lng = lng + random.uniform(-0.3, 0.3)
+        geom = WKTElement(f"POINT({r_lng} {r_lat})", srid=4326)
+
+        report = WeatherReport(
+            id=uuid.uuid4(),
+            tracking_id=f"DEMO-RPT-{i:04d}",
+            source_id=source.id,
+            category_id=cat.id,
+            reported_category=cat.category_code,
+            severity=sev,
+            title=f"[DEMO] {cat.title} event near {city} #{i}",
+            description=f"Demo data for SIH evaluation. Category: {cat.category_code}. Severity: {sev}. Auto-generated report #{i}.",
+            location_name=f"{city} District",
+            latitude=r_lat,
+            longitude=r_lng,
+            geom=geom,
+            occurred_at=now - timedelta(hours=random.randint(1, 48)),
+            processing_status="COMPLETED",
+            verification_status="VERIFIED" if i % 3 == 0 else "PENDING",
+            credibility_score=round(random.uniform(0.55, 0.95), 2),
+        )
+        session.add(report)
+
+    await session.commit()
+    print(f"✅ Seeded {count} demo weather reports flagged as [DEMO].")
+
+
 async def main() -> None:
     print("🌱 Running National Weather Platform Database Seeder...")
     async with async_session_factory() as session:
@@ -386,6 +463,7 @@ async def main() -> None:
         await seed_relief_centers(session)
         await seed_active_incidents(session)
         await seed_forecast_advisories(session)
+        await seed_bulk_demo_reports(session, count=500)
     print("🚀 All demo data seeded successfully!")
 
 

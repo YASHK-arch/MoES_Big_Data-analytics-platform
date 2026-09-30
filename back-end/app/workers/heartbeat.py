@@ -7,7 +7,6 @@ with a 30 s TTL. The compose HEALTHCHECK tests file age < 60 s.
 
 import asyncio
 import logging
-import os
 import time
 
 from app.core.redis import redis_client
