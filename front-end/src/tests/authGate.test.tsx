@@ -52,10 +52,12 @@ afterEach(() => {
 });
 
 describe("AuthGate root route", () => {
-  it("renders the login page when unauthenticated", () => {
+  it("renders the login page when unauthenticated", async () => {
     const view = renderAuthGate(false);
 
-    expect(view.getByTestId("login-page")).toBeTruthy();
+    await waitFor(() => {
+      expect(view.getByTestId("login-page")).toBeTruthy();
+    });
     expect(view.getByTestId("location").textContent).toBe("/");
   });
 
