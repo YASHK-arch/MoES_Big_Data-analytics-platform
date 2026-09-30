@@ -1,0 +1,23 @@
+=== AUDIT DB EVIDENCE RECONCILIATION ===
+Database: weather_platform_audit
+
+--- Evidence Count by publisher_domain (Top 15) ---
+  example.com: 10000
+  timesofindia.indiatimes.com: 1
+  www.thehindu.com: 1
+
+--- Totals ---
+Total rows: 10002
+Total with is_test_fixture = true: 10000
+Non-fixture rows: 2
+
+--- Non-Fixture Rows Details ---
+  ID: d7f6ef93-d038-42be-a053-4b609183775a | Domain: www.thehindu.com | Title: SRM-A.P. features in THE World University Rankings 2027 | CreatedAt: 2026-09-30 18:08:51.191989+00:00 | is_test_fixture: False
+  ID: 6d0ddd1b-af7b-4f32-9e97-9ef7970a47ec | Domain: timesofindia.indiatimes.com | Title: Upanishads to Mahabharata: NCERT explains roots of national, SC mottos | CreatedAt: 2026-09-30 18:09:08.401018+00:00 | is_test_fixture: False
+
+--- Origin of Real Domains ---
+Earlier samples with real domains (timesofindia.indiatimes.com, www.thehindu.com) came from live RSS feeds fetched during ingestion adapter runs and stored into weather_platform_audit.public.evidence_items.
+The 10,000 example.com rows were generated as synthetic test fixtures (is_test_fixture = true) for benchmark / evidence linking load testing.
+
+--- Metrics Computed on Synthetic Rows ---
+Section G3 evidence linking comprehensive audit metrics (3,765 uncapped links, 1,768 capped links across 200 incidents, 73.5% hitting 10-cap) and C2 precision table (0.0% precision across 100 sample pairs) were evaluated against the 10,000 synthetic test fixture rows.
