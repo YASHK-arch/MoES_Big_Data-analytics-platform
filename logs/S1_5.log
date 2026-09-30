@@ -1,0 +1,76 @@
+============================= test session starts ==============================
+platform darwin -- Python 3.14.0, pytest-8.4.2, pluggy-1.6.0 -- /Users/akshatjain/Documents/SIH/back-end/.venv/bin/python3.14
+cachedir: .pytest_cache
+Using --randomly-seed=1769655434
+rootdir: /Users/akshatjain/Documents/SIH/back-end
+configfile: pyproject.toml
+plugins: randomly-5.0.0, cov-4.1.0, anyio-4.14.2, asyncio-0.26.0
+asyncio: mode=Mode.AUTO, asyncio_default_fixture_loop_scope=None, asyncio_default_test_loop_scope=function
+collecting ... collected 18 items
+
+tests/test_physical_corroboration_logic.py::TestPhysicalCorroborationLogic::test_missing_data_returns_neutral PASSED [  5%]
+tests/test_physical_corroboration_logic.py::TestPhysicalCorroborationLogic::test_thunderstorm_and_hailstorm_support PASSED [ 11%]
+tests/test_physical_corroboration_logic.py::TestPhysicalCorroborationLogic::test_urban_flood_never_contradicts PASSED [ 16%]
+tests/test_physical_corroboration_logic.py::TestPhysicalCorroborationLogic::test_cyclone_storm_support_and_contradict PASSED [ 22%]
+tests/test_physical_corroboration_logic.py::TestPhysicalCorroborationLogic::test_contribution_cap_enforced PASSED [ 27%]
+tests/test_physical_corroboration_logic.py::TestPhysicalCorroborationLogic::test_model_contradict_disabled_by_default PASSED [ 33%]
+tests/test_physical_corroboration_logic.py::TestPhysicalCorroborationLogic::test_timezone_handling_ist_vs_utc PASSED [ 38%]
+tests/test_physical_corroboration_logic.py::TestPhysicalCorroborationLogic::test_flood_waterlogging_never_contradicts PASSED [ 44%]
+tests/test_physical_corroboration_logic.py::TestPhysicalCorroborationLogic::test_fog_support_and_contradict PASSED [ 50%]
+tests/test_physical_corroboration_logic.py::TestPhysicalCorroborationLogic::test_strong_wind_support_and_contradict PASSED [ 55%]
+tests/test_physical_corroboration_logic.py::TestPhysicalCorroborationLogic::test_landslide_support_and_neutral PASSED [ 61%]
+tests/test_physical_corroboration_logic.py::TestPhysicalCorroborationLogic::test_heatwave_support_and_contradict PASSED [ 66%]
+tests/test_physical_corroboration_logic.py::TestPhysicalCorroborationLogic::test_stale_observation_returns_neutral_stale PASSED [ 72%]
+tests/test_physical_corroboration_logic.py::TestPhysicalCorroborationLogic::test_dust_storm_support_and_contradict PASSED [ 77%]
+tests/test_physical_corroboration_logic.py::TestPhysicalCorroborationLogic::test_too_far_observation_returns_neutral_too_far PASSED [ 83%]
+tests/test_physical_corroboration_logic.py::TestPhysicalCorroborationLogic::test_grid_hour_cache_key_generation PASSED [ 88%]
+tests/test_physical_corroboration_logic.py::TestPhysicalCorroborationLogic::test_station_vs_model_weighting PASSED [ 94%]
+tests/test_physical_corroboration_logic.py::TestPhysicalCorroborationLogic::test_heavy_rainfall_support_and_contradict PASSED [100%]
+
+=============================== warnings summary ===============================
+tests/test_physical_corroboration_logic.py::TestPhysicalCorroborationLogic::test_missing_data_returns_neutral
+  /Users/akshatjain/Documents/SIH/back-end/.venv/lib/python3.14/site-packages/pytest_asyncio/plugin.py:1216: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+    return asyncio.get_event_loop_policy()
+
+tests/test_physical_corroboration_logic.py: 19 warnings
+  /Users/akshatjain/Documents/SIH/back-end/.venv/lib/python3.14/site-packages/pytest_asyncio/plugin.py:772: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+    old_loop_policy = asyncio.get_event_loop_policy()
+
+tests/test_physical_corroboration_logic.py: 19 warnings
+  /Users/akshatjain/Documents/SIH/back-end/.venv/lib/python3.14/site-packages/pytest_asyncio/plugin.py:777: DeprecationWarning: 'asyncio.set_event_loop_policy' is deprecated and slated for removal in Python 3.16
+    asyncio.set_event_loop_policy(policy)
+
+tests/test_physical_corroboration_logic.py: 19 warnings
+  /Users/akshatjain/Documents/SIH/back-end/.venv/lib/python3.14/site-packages/pytest_asyncio/plugin.py:1183: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+    loop = asyncio.get_event_loop_policy().new_event_loop()
+
+tests/test_physical_corroboration_logic.py: 18 warnings
+  /Users/akshatjain/Documents/SIH/back-end/.venv/lib/python3.14/site-packages/pytest_asyncio/plugin.py:874: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+    _restore_event_loop_policy(asyncio.get_event_loop_policy()),
+
+tests/test_physical_corroboration_logic.py: 18 warnings
+  /Users/akshatjain/Documents/SIH/back-end/.venv/lib/python3.14/site-packages/pytest_asyncio/plugin.py:889: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+    policy = asyncio.get_event_loop_policy()
+
+tests/test_physical_corroboration_logic.py: 30 warnings
+  /Users/akshatjain/Documents/SIH/back-end/.venv/lib/python3.14/site-packages/pydantic/main.py:263: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+    validated_self = self.__pydantic_validator__.validate_python(data, self_instance=self)
+
+tests/test_physical_corroboration_logic.py: 19 warnings
+  /Users/akshatjain/Documents/SIH/back-end/.venv/lib/python3.14/site-packages/pytest_asyncio/plugin.py:794: DeprecationWarning: 'asyncio.set_event_loop_policy' is deprecated and slated for removal in Python 3.16
+    asyncio.set_event_loop_policy(old_loop_policy)
+
+tests/test_physical_corroboration_logic.py: 18 warnings
+  /Users/akshatjain/Documents/SIH/back-end/.venv/lib/python3.14/site-packages/pytest_asyncio/plugin.py:942: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+    policy = asyncio.get_event_loop_policy()
+
+tests/test_physical_corroboration_logic.py: 18 warnings
+  /Users/akshatjain/Documents/SIH/back-end/.venv/lib/python3.14/site-packages/pytest_asyncio/plugin.py:966: DeprecationWarning: 'asyncio.set_event_loop_policy' is deprecated and slated for removal in Python 3.16
+    asyncio.set_event_loop_policy(previous_policy)
+
+tests/test_physical_corroboration_logic.py: 18 warnings
+  /Users/akshatjain/Documents/SIH/back-end/.venv/lib/python3.14/site-packages/pytest_asyncio/plugin.py:978: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+    policy = asyncio.get_event_loop_policy()
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+======================= 18 passed, 197 warnings in 2.12s =======================
