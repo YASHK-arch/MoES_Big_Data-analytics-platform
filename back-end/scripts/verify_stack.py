@@ -12,11 +12,11 @@ BACKEND_DIR = Path(__file__).resolve().parent.parent
 if str(BACKEND_DIR) not in sys.path:
     sys.path.insert(0, str(BACKEND_DIR))
 
-from app.db.session import async_session_factory
-from app.orchestration.triggers import on_incident_ingested
-from app.schemas.report import CitizenReportCreate
-from app.services.report_service import report_service
-from app.services.retention_service import retention_service
+from app.db.session import async_session_factory  # noqa: E402
+from app.orchestration.triggers import on_incident_ingested  # noqa: E402
+from app.schemas.report import CitizenReportCreate  # noqa: E402
+from app.services.report_service import report_service  # noqa: E402
+from app.services.retention_service import retention_service  # noqa: E402
 
 logging.basicConfig(
     level=logging.INFO,

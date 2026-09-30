@@ -10,9 +10,9 @@ from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_asyn
 from app.core.config import settings
 
 settings.DB_DISABLE_POOL = True
-from app.core.security import create_access_token, get_password_hash
-from app.main import app
-from app.models.user import User
+from app.core.security import create_access_token, get_password_hash  # noqa: E402
+from app.main import app  # noqa: E402
+from app.models.user import User  # noqa: E402
 
 
 @pytest_asyncio.fixture
