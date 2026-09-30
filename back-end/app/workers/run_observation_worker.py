@@ -14,6 +14,8 @@ import sys
 from app.core.redis import redis_client
 from app.db.session import engine
 from app.workers.observation_worker import observation_worker
+from app.workers.heartbeat import heartbeat_loop
+
 
 logging.basicConfig(
     level=logging.INFO,
@@ -53,7 +55,10 @@ async def main() -> int:
     logger.info("Initializing standalone ObservationWorker process...")
 
     try:
-        await observation_worker.run_loop(stop_event=stop_event)
+        await asyncio.gather(
+            heartbeat_loop("observation", stop_event),
+            observation_worker.run_loop(stop_event=stop_event),
+        )
         return 0
     except asyncio.CancelledError:
         logger.info("Worker process task cancelled")

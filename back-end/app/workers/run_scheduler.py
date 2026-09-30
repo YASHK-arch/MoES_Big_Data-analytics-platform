@@ -25,6 +25,8 @@ from app.ingestion.schemas import (
 )
 from app.services.retention_service import retention_service
 from app.services.stream_service import stream_service
+from app.workers.heartbeat import heartbeat_loop
+
 
 logging.basicConfig(
     level=logging.INFO,
@@ -127,6 +129,7 @@ async def trigger_retention_cycle(dry_run: bool = False) -> None:
 async def main() -> int:
     """Run the Ingestion Scheduler standalone process with graceful signal handling."""
     stop_event = asyncio.Event()
+    _hb_task = asyncio.ensure_future(heartbeat_loop("scheduler", stop_event))
     loop = asyncio.get_running_loop()
 
     def _make_signal_callback(s: int):

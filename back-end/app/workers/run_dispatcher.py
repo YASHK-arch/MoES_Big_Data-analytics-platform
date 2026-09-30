@@ -15,6 +15,8 @@ import sys
 from app.core.redis import redis_client
 from app.db.session import engine
 from app.orchestration.dispatcher import orchestration_dispatcher
+from app.workers.heartbeat import heartbeat_loop
+
 
 logging.basicConfig(
     level=logging.INFO,
@@ -36,6 +38,7 @@ def _handle_signal(sig: int, stop_event: asyncio.Event) -> None:
 async def main() -> int:
     """Run the OrchestrationDispatcher standalone process with graceful signal handling."""
     stop_event = asyncio.Event()
+    _hb_task = asyncio.ensure_future(heartbeat_loop("dispatcher", stop_event))
     loop = asyncio.get_running_loop()
 
     def _make_signal_callback(s: int):

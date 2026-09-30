@@ -547,6 +547,11 @@ class AsyncRedisClient:
         res = await self._execute_raw("EXPIRE", key, str(seconds))
         return int(res) if res is not None else 0
 
+    async def ttl(self, key: str) -> int:
+        """Return time-to-live for key in seconds. -2 if not exists, -1 if no expiry."""
+        res = await self._execute_raw("TTL", key)
+        return int(res) if res is not None else -2
+
     async def get(self, key: str) -> Optional[str]:
         """Get value of key."""
         res = await self._execute_raw("GET", key)
@@ -572,5 +577,50 @@ class AsyncRedisClient:
         res = await self._execute_raw(*args)
         return res is not None and (res == "OK" or res is True or res == 1)
 
+    async def keys(self, pattern: str = "*") -> List[str]:
+        """Return list of keys matching pattern (use sparingly — O(N))."""
+        res = await self._execute_raw("KEYS", pattern)
+        if not res:
+            return []
+        return [k.decode("utf-8") if isinstance(k, bytes) else str(k) for k in res]
+
+    async def xinfo_groups(self, stream: str) -> List[Dict[str, Any]]:
+        """Return XINFO GROUPS for a stream as a list of dicts."""
+        try:
+            res = await self._execute_raw("XINFO", "GROUPS", stream)
+        except Exception:
+            return []
+        if not res:
+            return []
+        groups = []
+        for entry in res:
+            # RESP2 returns flat list [field, value, field, value, ...]
+            if isinstance(entry, (list, tuple)):
+                d: Dict[str, Any] = {}
+                it = iter(entry)
+                for k in it:
+                    v = next(it, None)
+                    k_str = k.decode("utf-8") if isinstance(k, bytes) else str(k)
+                    d[k_str] = v.decode("utf-8") if isinstance(v, bytes) else v
+                groups.append(d)
+        return groups
+
+    async def xlen(self, stream: str) -> int:
+        """Return the number of entries in a stream."""
+        try:
+            res = await self._execute_raw("XLEN", stream)
+            return int(res) if res is not None else 0
+        except Exception:
+            return 0
+
+    async def llen(self, key: str) -> int:
+        """Return the length of a list."""
+        try:
+            res = await self._execute_raw("LLEN", key)
+            return int(res) if res is not None else 0
+        except Exception:
+            return 0
+
 
 redis_client = AsyncRedisClient()
+

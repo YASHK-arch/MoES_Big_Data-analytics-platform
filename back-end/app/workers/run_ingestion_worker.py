@@ -14,6 +14,8 @@ import sys
 from app.core.redis import redis_client
 from app.db.session import engine
 from app.workers.ingestion_worker import ingestion_worker
+from app.workers.heartbeat import heartbeat_loop
+
 
 logging.basicConfig(
     level=logging.INFO,
@@ -53,7 +55,10 @@ async def main() -> int:
     logger.info("Initializing standalone IngestionWorker process...")
 
     try:
-        await ingestion_worker.run_loop(stop_event=stop_event)
+        await asyncio.gather(
+            heartbeat_loop("ingestion", stop_event),
+            ingestion_worker.run_loop(stop_event=stop_event),
+        )
         return 0
     except asyncio.CancelledError:
         logger.info("Worker process task cancelled")
