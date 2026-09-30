@@ -48,3 +48,4 @@ pyrefly.toml
 # Scratch & temporary test artifacts
 scratch/
 back-end/scratch/
+.env.demo

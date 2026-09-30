@@ -1,0 +1,296 @@
+# docker-compose.demo.yml — Isolated demo stack for SIH26069
+# Project name: sih-demo (set via --project-name or COMPOSE_PROJECT_NAME)
+# Run with: scripts/demo-up.sh
+# Ports exposed: only :8080 (web). Postgres, Redis, MinIO are internal.
+#
+# DB connection budget (max_connections=100, target <=70):
+#   api          2 workers × (pool=3 + overflow=2) = 10
+#   6 workers    6 × (pool=1 + overflow=1)         = 12
+#   migrate      1 × 1                              =  1
+#   ─────────────────────────────────────────────────────
+#   Total                                           = 23  ✓
+#   (Local dev today: uvicorn 4 workers × (10+20)  = 120 > 100 ← known issue)
+
+name: sih-demo
+
+x-api-env: &api-env
+  DATABASE_URL: postgresql+asyncpg://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}
+  REDIS_URL: redis://redis:6379/0
+  S3_ENDPOINT_URL: http://minio:9000
+  S3_ACCESS_KEY: ${MINIO_ROOT_USER}
+  S3_SECRET_KEY: ${MINIO_ROOT_PASSWORD}
+  S3_BUCKET_NAME: ${S3_BUCKET_NAME:-weather-media}
+  SECRET_KEY: ${SECRET_KEY}
+  ENVIRONMENT: ${ENVIRONMENT:-production}
+  DEBUG: ${DEBUG:-false}
+  ALLOWED_ORIGINS: ${ALLOWED_ORIGINS:-http://localhost:8080}
+  TRUSTED_PROXY_COUNT: "1"
+  DB_POOL_SIZE: "3"
+  DB_MAX_OVERFLOW: "2"
+
+x-worker-env: &worker-env
+  <<: *api-env
+  DB_POOL_SIZE: "1"
+  DB_MAX_OVERFLOW: "1"
+
+x-worker-healthcheck: &worker-healthcheck
+  test: ["CMD-SHELL", "test $(( $(date +%s) - $(stat -c %Y /tmp/heartbeat 2>/dev/null || echo 0) )) -lt 60"]
+  interval: 30s
+  timeout: 10s
+  retries: 3
+  start_period: 20s
+
+services:
+  # ── Infrastructure ───────────────────────────────────────────────────────────
+  postgres:
+    image: postgis/postgis:16-3.4-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-weather_demo}
+      POSTGRES_USER: ${POSTGRES_USER:-weather_demo}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    command: >
+      postgres
+        -c max_connections=100
+        -c shared_buffers=256MB
+    volumes:
+      - demo_postgres:/var/lib/postgresql/data
+    networks:
+      - demo_net
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-weather_demo} -d ${POSTGRES_DB:-weather_demo}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 15s
+    mem_limit: 512m
+
+  redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+    command: ["redis-server", "--appendonly", "yes", "--maxmemory", "128mb", "--maxmemory-policy", "allkeys-lru"]
+    volumes:
+      - demo_redis:/data
+    networks:
+      - demo_net
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 5s
+    mem_limit: 192m
+
+  minio:
+    image: minio/minio:latest
+    restart: unless-stopped
+    command: ["server", "/data", "--console-address", ":9001"]
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD}
+    volumes:
+      - demo_minio:/data
+    networks:
+      - demo_net
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 15s
+    mem_limit: 256m
+
+  # Create the media bucket once MinIO is ready
+  minio-init:
+    image: minio/mc:latest
+    depends_on:
+      minio:
+        condition: service_healthy
+    networks:
+      - demo_net
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD}
+      S3_BUCKET_NAME: ${S3_BUCKET_NAME:-weather-media}
+    entrypoint: >
+      /bin/sh -c "
+        mc alias set local http://minio:9000 $$MINIO_ROOT_USER $$MINIO_ROOT_PASSWORD &&
+        mc mb --ignore-existing local/$$S3_BUCKET_NAME &&
+        mc anonymous set download local/$$S3_BUCKET_NAME
+      "
+    restart: on-failure
+
+  # ── Database migration (one-shot) ─────────────────────────────────────────
+  migrate:
+    build:
+      context: ./back-end
+      dockerfile: Dockerfile
+    image: sih-backend:latest
+    command: ["alembic", "upgrade", "head"]
+    environment:
+      <<: *api-env
+      DB_POOL_SIZE: "1"
+      DB_MAX_OVERFLOW: "0"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - demo_net
+    restart: on-failure
+
+  # ── API server ─────────────────────────────────────────────────────────────
+  api:
+    image: sih-backend:latest
+    restart: unless-stopped
+    environment: *api-env
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      migrate:
+        condition: service_completed_successfully
+    networks:
+      - demo_net
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:8000/health || exit 1"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
+    mem_limit: 384m
+
+  # ── Background workers ─────────────────────────────────────────────────────
+  worker-outbox:
+    image: sih-backend:latest
+    command: ["python", "-m", "app.workers.run_outbox_worker"]
+    restart: unless-stopped
+    environment: *worker-env
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      migrate:
+        condition: service_completed_successfully
+    networks:
+      - demo_net
+    healthcheck: *worker-healthcheck
+    mem_limit: 192m
+
+  worker-dispatcher:
+    image: sih-backend:latest
+    command: ["python", "-m", "app.workers.run_dispatcher"]
+    restart: unless-stopped
+    environment: *worker-env
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      migrate:
+        condition: service_completed_successfully
+    networks:
+      - demo_net
+    healthcheck: *worker-healthcheck
+    mem_limit: 192m
+
+  worker-ingestion:
+    image: sih-backend:latest
+    command: ["python", "-m", "app.workers.run_ingestion_worker"]
+    restart: unless-stopped
+    environment: *worker-env
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      migrate:
+        condition: service_completed_successfully
+    networks:
+      - demo_net
+    healthcheck: *worker-healthcheck
+    mem_limit: 192m
+
+  worker-observation:
+    image: sih-backend:latest
+    command: ["python", "-m", "app.workers.run_observation_worker"]
+    restart: unless-stopped
+    environment: *worker-env
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      migrate:
+        condition: service_completed_successfully
+    networks:
+      - demo_net
+    healthcheck: *worker-healthcheck
+    mem_limit: 192m
+
+  worker-evidence:
+    image: sih-backend:latest
+    command: ["python", "-m", "app.workers.run_evidence_worker"]
+    restart: unless-stopped
+    environment: *worker-env
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      migrate:
+        condition: service_completed_successfully
+    networks:
+      - demo_net
+    healthcheck: *worker-healthcheck
+    mem_limit: 192m
+
+  worker-scheduler:
+    image: sih-backend:latest
+    command: ["python", "-m", "app.workers.run_scheduler"]
+    restart: unless-stopped
+    environment: *worker-env
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      migrate:
+        condition: service_completed_successfully
+    networks:
+      - demo_net
+    healthcheck: *worker-healthcheck
+    mem_limit: 128m
+
+  # ── Frontend (nginx + SPA) ─────────────────────────────────────────────────
+  web:
+    build:
+      context: ./front-end
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    ports:
+      - "8080:80"
+    depends_on:
+      api:
+        condition: service_healthy
+    networks:
+      - demo_net
+    mem_limit: 64m
+
+  # ── Optional: OSRM routing (disabled by default, enable with --profile routing)
+  osrm:
+    image: osrm/osrm-backend:latest
+    profiles: ["routing"]
+    networks:
+      - demo_net
+    mem_limit: 1g
+
+volumes:
+  demo_postgres:
+  demo_redis:
+  demo_minio:
+
+networks:
+  demo_net:
+    driver: bridge
