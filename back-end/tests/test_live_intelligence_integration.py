@@ -1,6 +1,7 @@
 """End-to-end integration proof for live intelligence orchestration and pipeline execution."""
 
 import json
+import uuid
 from typing import Any, Dict, List, Tuple
 from unittest.mock import AsyncMock, MagicMock
 
@@ -9,8 +10,11 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.redis import AsyncRedisClient
+from app.models.observation import WeatherObservation
 from app.models.outbox import RealtimeOutbox
 from app.models.report import WeatherReport
+from app.models.source import Source
+from app.models.verification import VerificationEvent
 from app.orchestration.dispatcher import OrchestrationDispatcher
 from app.orchestration.events import (
     OrchestrationEvent,
@@ -19,11 +23,6 @@ from app.orchestration.events import (
     StageName,
     StageOutcome,
 )
-import uuid
-from datetime import datetime, timezone
-from app.models.observation import WeatherObservation
-from app.models.source import Source
-from app.models.verification import VerificationEvent
 from app.orchestration.incident_pipeline import incident_pipeline
 from app.orchestration.triggers import on_incident_ingested, on_observation_ingested
 from app.schemas.report import CitizenReportCreate
@@ -445,6 +444,7 @@ async def test_new_report_joining_completed_incident_cluster_updates_score(db_se
 async def test_concurrent_inline_and_worker_pipeline_atomic_idempotency(db_session: AsyncSession) -> None:
     """Proves that concurrent inline execution and background worker on two independent DB connections produce exactly one intelligence_ready outbox event and 0 duplicate audit rows."""
     import asyncio
+
     from app.db.session import async_session_factory
 
     mock_redis, _ = _create_mock_redis_stream_bus()

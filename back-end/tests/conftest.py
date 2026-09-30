@@ -1,4 +1,5 @@
 import os
+
 os.environ["DB_DISABLE_POOL"] = "true"
 
 import pytest_asyncio

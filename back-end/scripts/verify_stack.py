@@ -2,11 +2,11 @@
 
 import asyncio
 import logging
-from pathlib import Path
 import subprocess
 import sys
 import uuid
 from datetime import datetime, timezone
+from pathlib import Path
 
 BACKEND_DIR = Path(__file__).resolve().parent.parent
 if str(BACKEND_DIR) not in sys.path:
