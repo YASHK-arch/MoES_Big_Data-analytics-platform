@@ -202,6 +202,13 @@ INDIAN_CITIES: Dict[str, Dict[str, Any]] = {
         "lat": 20.2961,
         "lon": 85.8245,
     },
+    "cuttack": {
+        "city": "Cuttack",
+        "district": "Cuttack",
+        "state": "Odisha",
+        "lat": 20.4625,
+        "lon": 85.8830,
+    },
     "yadgir": {
         "city": "Yadgir",
         "district": "Yadgir",
