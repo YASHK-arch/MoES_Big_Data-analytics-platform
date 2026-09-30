@@ -11,6 +11,7 @@ import { VerificationPipelineCard } from '@/features/tracking/VerificationPipeli
 import { TrustScoreCard } from '@/features/tracking/TrustScoreCard';
 import { LocationCard } from '@/features/tracking/LocationCard';
 import { SubmittedEvidenceCard } from '@/features/tracking/SubmittedEvidenceCard';
+import { PhysicalCorroborationCard } from '@/features/reports/components/PhysicalCorroborationCard';
 
 export const TrackReportPage: React.FC = () => {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -126,9 +127,10 @@ export const TrackReportPage: React.FC = () => {
                   <VerificationPipelineCard report={report} />
                 </div>
 
-                {/* Right Column: Trust Score, Location & Evidence */}
+                {/* Right Column: Trust Score, Physical Corroboration, Location & Evidence */}
                 <div className="space-y-6 lg:col-span-1">
                   <TrustScoreCard report={report} />
+                  <PhysicalCorroborationCard corroboration={report.physical_corroboration} />
                   <LocationCard location={report.location} />
                   <SubmittedEvidenceCard media={report.media} />
                 </div>

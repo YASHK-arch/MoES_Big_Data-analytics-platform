@@ -58,6 +58,33 @@ export interface MediaDetail {
   sha256_hash: string;
 }
 
+export interface PhysicalCorroborationItem {
+  id?: string;
+  variable: string;
+  observed_value?: number | null;
+  unit: string;
+  source: string;
+  source_type: 'STATION' | 'MODEL' | string;
+  station_or_grid_id?: string | null;
+  distance_km?: number | null;
+  time_gap_hours?: number | null;
+  verdict: 'SUPPORTS' | 'CONTRADICTS' | 'NEUTRAL' | string;
+  weight: number;
+  contribution: number;
+  provider_status: string;
+  observation_time?: string | null;
+  explanation?: string | null;
+  is_simulated: boolean;
+}
+
+export interface PhysicalCorroborationBlock {
+  overall_verdict: 'SUPPORTS' | 'CONTRADICTS' | 'NEUTRAL' | string;
+  overall_provider_status: string;
+  total_contribution: number;
+  items: PhysicalCorroborationItem[];
+  is_simulated: boolean;
+}
+
 export interface ReportDetailData {
   id: string;
   tracking_id: string;
@@ -74,6 +101,8 @@ export interface ReportDetailData {
   is_demo?: boolean;
   media: MediaDetail[];
   verification_history?: VerificationEventDetail[];
+  physical_corroboration?: PhysicalCorroborationBlock | null;
+  physical_verdict?: string | null;
   created_at: string;
 }
 

@@ -1,0 +1,51 @@
+================================================================================
+S1 PHYSICAL CORROBORATION: HINDI (hi.json) STRINGS FOR NATIVE REVIEW
+================================================================================
+Generated: 2026-10-01
+Scope: front-end/src/i18n/locales/hi.json (physicalCorroboration section)
+
+The following Hindi meteorological and analytical UI strings were generated and should
+be reviewed by a native Hindi-speaking disaster communications / IMD specialist:
+
+1. Key: physicalCorroboration.title
+   En: "Physical Weather Corroboration"
+   Hi: "भौतिक मौसम सत्यापन"
+   Note: Alternative could be "भौतिक मौसम संपुष्टि" (Sampushti).
+
+2. Key: physicalCorroboration.subtitle
+   En: "Independent atmospheric observations corroborated against numerical models and weather stations"
+   Hi: "संख्यात्मक मॉडल और मौसम केंद्रों से सत्यापित स्वतंत्र वायुमंडलीय प्रेक्षण"
+   Note: Verify natural phrasing for official emergency dashboards.
+
+3. Key: physicalCorroboration.verdictSupports
+   En: "SUPPORTS"
+   Hi: "पुष्ट करता है"
+   Note: Standard NDMA/IMD terminology for positive verification.
+
+4. Key: physicalCorroboration.verdictContradicts
+   En: "CONTRADICTS"
+   Hi: "विरोधाभास"
+   Note: Conveys divergence between citizen report and physical sensor baseline.
+
+5. Key: physicalCorroboration.verdictNeutral
+   En: "NEUTRAL"
+   Hi: "तटस्थ"
+   Note: Inconclusive or no data available.
+
+6. Key: physicalCorroboration.sourceStation
+   En: "STATION"
+   Hi: "मौसम केंद्र"
+
+7. Key: physicalCorroboration.sourceModel
+   En: "MODEL"
+   Hi: "मॉडल"
+
+8. Key: physicalCorroboration.sourceSimulated
+   En: "SIMULATED"
+   Hi: "सिम्युलेटेड"
+   Note: Alternative: "सिम्युलेटेड / नकली डेटा" for non-technical users.
+
+9. Key: physicalCorroboration.simulatedNotice
+   En: "Demo Simulation: Uses mock deterministic atmospheric observations for live drill demonstration"
+   Hi: "डेमो सिमुलेशन: लाइव ड्रिल प्रदर्शन के लिए मॉक वायुमंडलीय प्रेक्षणों का उपयोग"
+================================================================================

@@ -1,0 +1,47 @@
+{
+  "nav": {
+    "home": "Home",
+    "citizenArea": "Citizen Area",
+    "nationalMap": "National Map",
+    "incidents": "Incidents",
+    "dashboard": "Dashboard",
+    "liveMap": "Live Map",
+    "reportWeather": "Report Weather Event",
+    "trackReport": "Track Report",
+    "analytics": "Analytics",
+    "verificationQueue": "Verification Queue",
+    "login": "Operator Access",
+    "logout": "Logout"
+  },
+  "citizen": {
+    "title": "My Area Citizen Dashboard",
+    "subtitle": "Hyper-local weather risk overview & emergency route blockage check around your location",
+    "activeHazards": "Active Hazards Nearby",
+    "nearestHazard": "Nearest Incident",
+    "peakSeverity": "Peak Severity",
+    "areaSafetyStatus": "Public Safety Status",
+    "pathClear": "Path Clear",
+    "pathAffected": "Path Affected",
+    "reliefCenters": "Nearby Relief Centers & Evacuation Shelters",
+    "emergencyContacts": "Emergency Helplines & SOS Quick Dial"
+  },
+  "physicalCorroboration": {
+    "title": "Physical Weather Corroboration",
+    "subtitle": "Independent atmospheric observations corroborated against numerical models and weather stations",
+    "observed": "Observed Value",
+    "distance": "Distance",
+    "timeGap": "Time Difference",
+    "source": "Source",
+    "verdict": "Verdict",
+    "verdictSupports": "SUPPORTS",
+    "verdictContradicts": "CONTRADICTS",
+    "verdictNeutral": "NEUTRAL",
+    "sourceStation": "STATION",
+    "sourceModel": "MODEL",
+    "sourceSimulated": "SIMULATED",
+    "contribution": "Score Impact",
+    "providerStatus": "Provider Status",
+    "noData": "No physical observations available for this incident window",
+    "simulatedNotice": "Demo Simulation: Uses mock deterministic atmospheric observations for live drill demonstration"
+  }
+}
