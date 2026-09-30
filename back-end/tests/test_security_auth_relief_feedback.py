@@ -1,6 +1,7 @@
 """Unit tests for Security Auth, Relief Center Locator, and Community Feedback API endpoints."""
 
 import uuid
+from datetime import datetime, timezone
 
 import pytest
 from httpx import ASGITransport, AsyncClient
@@ -109,16 +110,29 @@ async def test_community_feedback_vote_endpoint():
         if not report:
             src_res = await session.execute(select(Source).limit(1))
             src = src_res.scalar_one_or_none()
-            src_id = src.id if src else None
+            if not src:
+                src = Source(
+                    source_code=f"SRC_VOTE_{uuid.uuid4().hex[:8]}",
+                    name="Vote Test Source",
+                    source_type="CITIZEN_REPORT",
+                    base_trust_score=0.60,
+                    is_active=True,
+                )
+                session.add(src)
+                await session.flush()
+            src_id = src.id
 
             report = WeatherReport(
                 tracking_id=f"RPT-VOTE-{uuid.uuid4().hex[:8]}",
                 source_id=src_id,
                 title="Heavy Rain Voting Test",
+                reported_category="HEAVY_RAINFALL",
                 severity="MODERATE",
                 verification_status="VERIFIED",
                 latitude=12.9716,
                 longitude=77.5946,
+                geom="SRID=4326;POINT(77.5946 12.9716)",
+                occurred_at=datetime.now(timezone.utc),
             )
             session.add(report)
             await session.commit()

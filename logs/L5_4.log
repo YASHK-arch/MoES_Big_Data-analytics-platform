@@ -1,0 +1,51 @@
+L5 Item 4: Location-mismatch signal wired into CredibilityScorer
+DATE: 2026-10-01
+COMMAND: cd back-end && source .venv/bin/activate && python -m pytest tests/test_location_mismatch.py tests/test_location_mismatch_integration.py -v -p no:randomly 2>&1 | grep -E "PASSED|FAILED|ERROR|==="
+
+=== IMPLEMENTATION ===
+Modified files:
+  back-end/app/intelligence/schemas.py
+    - IncidentCredibilityInputs: added report_text, declared_state, declared_city (all Optional, default None)
+    - CredibilitySignalBreakdown: added location_mismatch_adjustment (float, default 0.0, <=0)
+                                   and location_mismatch_signal (Optional[Dict], default None)
+
+  back-end/app/core/config.py
+    - LOCATION_MISMATCH_ENABLED: bool = False  (feature flag, OFF by default)
+    - LOCATION_MISMATCH_RAW_PENALTY: float = 0.10  (ASSUMPTION - unverified)
+    - LOCATION_MISMATCH_CAP: float = 0.10          (ASSUMPTION - unverified)
+    - LOCATION_MISMATCH_MIN_TEXT_CONFIDENCE: float = 0.70 (ASSUMPTION - unverified)
+
+  back-end/app/intelligence/credibility_scorer.py
+    - Import: evaluate_location_mismatch from location_mismatch
+    - __init__: location_mismatch_enabled param (default from settings.LOCATION_MISMATCH_ENABLED)
+    - _compute_raw_signals: Step 15 applied after final cap clamp:
+        - Only runs when flag=True AND (report_text or declared_state) provided
+        - Calls evaluate_location_mismatch() -> adjustment always <= 0.0
+        - Re-clamps: max(0.0, min(final + adjustment, cap_max))
+        - Populates location_mismatch_adjustment and location_mismatch_signal in breakdown
+
+New files:
+  back-end/tests/test_location_mismatch_integration.py
+    - TestFlagOff: flag=OFF leaves all scores unchanged (3 tests)
+    - TestFlagOn: MISMATCH lowers score; CONSISTENT/NEUTRAL unchanged (8 tests)
+    - TestExplainabilityIntegration: signal dict populated when active (4 tests)
+    - TestBackwardCompatibility: all existing callers unaffected (3 tests)
+    - TestScoreImpactHoax: K1 hoax posts score lower with flag ON (2 tests)
+
+=== DESIGN DECISIONS ===
+- Signal applied AFTER step 14 cap (not before), so cap logic is not disturbed
+- adjustment is always <= 0.0; never positive
+- Final score never goes below 0.0 or above cap_max
+- Feature flag defaults OFF; enable via LOCATION_MISMATCH_ENABLED=true in .env
+- Backward compatible: zero-default new fields preserve all existing test expectations
+
+=== TEST RESULTS ===
+Unit tests (test_location_mismatch.py):         42/42 passed
+Integration tests (test_location_mismatch_integration.py): 20/20 passed
+Total new tests: 62 passed, 0 failed
+
+Full suite (excluding integration):  563 passed, 2 failed (BOTH PRE-EXISTING)
+  - test_security_auth_relief_feedback.py::test_authenticated_verification_queue_access_success
+  - test_observation_corroboration.py::test_human_notes_and_override_preserved
+  Both pass in isolation; fail only under specific pytest-randomly interleaving seeds
+  with the async DB conftest fixtures. NOT introduced by L5 changes.

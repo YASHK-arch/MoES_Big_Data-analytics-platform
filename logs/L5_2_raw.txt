@@ -1,0 +1,238 @@
+L5 Item 2: Resolver Capability Probe
+======================================================================
+
+--- 1. FOREIGN PLACE NAMES (in FOREIGN_LOCATIONS gazetteer) ---
+
+  [foreign:kathmandu]
+  text       : 'Massive flooding reported in Kathmandu area'
+  status     : RESOLVED
+  place_name : Kathmandu
+  state      : None
+  country    : Nepal
+  confidence : 0.9
+  method     : NLP_ENTITY_RESOLUTION
+  provider   : foreign_gazetteer
+  metadata   : {'foreign_entity': 'kathmandu'}
+
+  [foreign:dhaka]
+  text       : 'Massive flooding reported in Dhaka area'
+  status     : RESOLVED
+  place_name : Dhaka
+  state      : None
+  country    : Bangladesh
+  confidence : 0.9
+  method     : NLP_ENTITY_RESOLUTION
+  provider   : foreign_gazetteer
+  metadata   : {'foreign_entity': 'dhaka'}
+
+  [foreign:colombo]
+  text       : 'Massive flooding reported in Colombo area'
+  status     : RESOLVED
+  place_name : Colombo
+  state      : None
+  country    : Sri Lanka
+  confidence : 0.9
+  method     : NLP_ENTITY_RESOLUTION
+  provider   : foreign_gazetteer
+  metadata   : {'foreign_entity': 'colombo'}
+
+  [foreign:nepal]
+  text       : 'Massive flooding reported in Nepal area'
+  status     : RESOLVED
+  place_name : Nepal
+  state      : None
+  country    : Nepal
+  confidence : 0.0
+  method     : NLP_ENTITY_RESOLUTION
+  provider   : foreign_gazetteer
+  metadata   : {'foreign_entity': 'nepal'}
+
+  [foreign:bangladesh]
+  text       : 'Massive flooding reported in Bangladesh area'
+  status     : RESOLVED
+  place_name : Bangladesh
+  state      : None
+  country    : Bangladesh
+  confidence : 0.0
+  method     : NLP_ENTITY_RESOLUTION
+  provider   : foreign_gazetteer
+  metadata   : {'foreign_entity': 'bangladesh'}
+
+  [foreign:berlin]
+  text       : 'Massive flooding reported in Berlin area'
+  status     : RESOLVED
+  place_name : Berlin
+  state      : None
+  country    : Germany
+  confidence : 0.9
+  method     : NLP_ENTITY_RESOLUTION
+  provider   : foreign_gazetteer
+  metadata   : {'foreign_entity': 'berlin'}
+
+--- 2. FOREIGN PLACE NOT IN GAZETTEER ---
+
+  [unknown-foreign:London]
+  text       : 'Disaster relief needed in London'
+  status     : UNRESOLVED
+  place_name : None
+  state      : None
+  country    : India
+  confidence : 0.0
+  method     : NLP_ENTITY_RESOLUTION
+  provider   : internal_gazetteer
+  metadata   : {'reason': 'No geographic entity mentions recognized in text'}
+
+  [unknown-foreign:Beijing]
+  text       : 'Disaster relief needed in Beijing'
+  status     : UNRESOLVED
+  place_name : None
+  state      : None
+  country    : India
+  confidence : 0.0
+  method     : NLP_ENTITY_RESOLUTION
+  provider   : internal_gazetteer
+  metadata   : {'reason': 'No geographic entity mentions recognized in text'}
+
+  [unknown-foreign:Islamabad]
+  text       : 'Disaster relief needed in Islamabad'
+  status     : UNRESOLVED
+  place_name : None
+  state      : None
+  country    : India
+  confidence : 0.0
+  method     : NLP_ENTITY_RESOLUTION
+  provider   : internal_gazetteer
+  metadata   : {'reason': 'No geographic entity mentions recognized in text'}
+
+  [unknown-foreign:Kabul]
+  text       : 'Disaster relief needed in Kabul'
+  status     : UNRESOLVED
+  place_name : None
+  state      : None
+  country    : India
+  confidence : 0.0
+  method     : NLP_ENTITY_RESOLUTION
+  provider   : internal_gazetteer
+  metadata   : {'reason': 'No geographic entity mentions recognized in text'}
+
+  [unknown-foreign:Bangkok]
+  text       : 'Disaster relief needed in Bangkok'
+  status     : UNRESOLVED
+  place_name : None
+  state      : None
+  country    : India
+  confidence : 0.0
+  method     : NLP_ENTITY_RESOLUTION
+  provider   : internal_gazetteer
+  metadata   : {'reason': 'No geographic entity mentions recognized in text'}
+
+  [unknown-foreign:Paris]
+  text       : 'Disaster relief needed in Paris'
+  status     : UNRESOLVED
+  place_name : None
+  state      : None
+  country    : India
+  confidence : 0.0
+  method     : NLP_ENTITY_RESOLUTION
+  provider   : internal_gazetteer
+  metadata   : {'reason': 'No geographic entity mentions recognized in text'}
+
+--- 3. MULTI-PLACE POST (declared state is one of the text states) ---
+
+  [multi-place-ok-state-in-text]
+  text       : 'Heavy rain affects Mumbai and Chennai — Maharashtra and Tamil Nadu on alert'
+  status     : RESOLVED
+  place_name : Mumbai, Maharashtra
+  state      : Maharashtra
+  country    : India
+  confidence : 0.95
+  method     : EXACT_ADMIN_MATCH
+  provider   : internal_gazetteer
+  metadata   : {'state_context_matched': True}
+
+  [multi-place-ok-city-in-decl-state]
+  text       : 'Floods in Guwahati and Shillong; Assam government responds'
+  status     : RESOLVED
+  place_name : Guwahati, Assam
+  state      : Assam
+  country    : India
+  confidence : 0.95
+  method     : EXACT_ADMIN_MATCH
+  provider   : internal_gazetteer
+  metadata   : {'state_context_matched': True}
+
+  [multi-place-ok-resolver-picks-first]
+  text       : 'Flooding in Bengaluru and Pune; Karnataka more severely hit'
+  status     : RESOLVED
+  place_name : Bengaluru, Karnataka
+  state      : Karnataka
+  country    : India
+  confidence : 0.95
+  method     : EXACT_ADMIN_MATCH
+  provider   : internal_gazetteer
+  metadata   : {'state_context_matched': True}
+
+  [multi-place-mismatch]
+  text       : 'Heavy rains in Nepal and Kathmandu region; no Indian states mentioned'
+  status     : RESOLVED
+  place_name : Nepal
+  state      : None
+  country    : Nepal
+  confidence : 0.0
+  method     : NLP_ENTITY_RESOLUTION
+  provider   : foreign_gazetteer
+  metadata   : {'foreign_entity': 'nepal'}
+
+--- 4. ALIAS HANDLING ---
+  alias='bombay'        -> city='Mumbai'                  canonical='Mumbai'             OK=True
+  alias='bangalore'     -> city='Bengaluru'               canonical='Bengaluru'          OK=True
+  alias='madras'        -> city='Chennai'                 canonical='Chennai'            OK=True
+  alias='calcutta'      -> city='Kolkata'                 canonical='Kolkata'            OK=True
+  alias='allahabad'     -> city='Prayagraj'               canonical='Prayagraj'          OK=True
+  alias='trivandrum'    -> city='Thiruvananthapuram'      canonical='Thiruvananthapuram' OK=True
+  alias='vizag'         -> city='Visakhapatnam'           canonical='Visakhapatnam'      OK=True
+  alias='baroda'        -> city='Vadodara'                canonical='Vadodara'           OK=True
+  alias='poona'         -> city='Pune'                    canonical='Pune'               OK=True
+  alias='cochin'        -> city='Kochi'                   canonical='Kochi'              OK=True
+  alias='gurgaon'       -> city='Gurugram'                canonical='Gurugram'           OK=True
+  alias='banaras'       -> city='Varanasi'                canonical='Varanasi'           OK=True
+  alias='kashi'         -> city='Varanasi'                canonical='Varanasi'           OK=True
+
+--- 5. DEVANAGARI / HINGLISH (NOT in gazetteer) ---
+  Mumbai in Devanagari: status=UNRESOLVED, place=None
+  Delhi in Devanagari: status=UNRESOLVED, place=None
+  Bengaluru in Devanagari: status=UNRESOLVED, place=None
+  Hinglish for Delhi: status=UNRESOLVED, place=None
+  Hinglish for Mumbai: status=UNRESOLVED, place=None
+
+--- 6. FOREIGN_LOCATIONS GAZETTEER CONTENTS ---
+  Total entries: 10
+  key='nepal'              country='Nepal'         lat=None lon=None
+  key='bangladesh'         country='Bangladesh'    lat=None lon=None
+  key='sri lanka'          country='Sri Lanka'     lat=None lon=None
+  key='germany'            country='Germany'       lat=None lon=None
+  key='kathmandu'          country='Nepal'         lat=27.7172 lon=85.324
+  key='pokhara'            country='Nepal'         lat=28.2096 lon=83.9856
+  key='rasuwa'             country='Nepal'         lat=28.1458 lon=85.2974
+  key='dhaka'              country='Bangladesh'    lat=23.8103 lon=90.4125
+  key='colombo'            country='Sri Lanka'     lat=6.9271 lon=79.8612
+  key='berlin'             country='Germany'       lat=52.52 lon=13.405
+
+--- 7. GAPS IDENTIFIED ---
+  a) Devanagari script: NOT supported. Resolver uses ASCII lowercase matching.
+     Hinglish variants (Dilli, Bambai): NOT in gazetteer.
+  b) Many neighbouring countries/capitals missing from FOREIGN_LOCATIONS:
+     MISSING: Pakistan / Islamabad / Karachi / Lahore
+     MISSING: China / Beijing / Kunming (shares border with India)
+     MISSING: Myanmar / Naypyidaw / Yangon
+     MISSING: Afghanistan / Kabul
+     MISSING: Bhutan / Thimphu
+     MISSING: Maldives / Male
+  c) Germany/Berlin in gazetteer — likely test artifact; retained as-is.
+  d) Multi-place: resolver returns FIRST matched entity. For mismatch detection,
+     we need ALL entities to check if declared state is among them (P2).
+     The existing resolver.resolve() only returns ONE result.
+     The extractor.extract_entities() returns ALL — we will use the extractor directly.
+  e) Ambiguous places (Rajpur, Bilaspur, Rampur, Aurangabad): resolver returns
+     AMBIGUOUS status with confidence=0.0 when no context disambiguates.
+     For mismatch detection, ambiguous -> NEUTRAL (P1 applies).

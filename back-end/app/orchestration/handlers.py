@@ -359,15 +359,38 @@ class ObservationStageHandler:
         t0 = time.perf_counter()
         try:
             results = await self.corroboration.evaluate_and_corroborate(db=db, incident=report)
+
+            # S1: Physical weather corroboration (gated behind feature flag)
+            phys_verdict = None
+            try:
+                from app.intelligence.physical_corroboration.service import (
+                    physical_corroboration_service,
+                )
+
+                phys_record = await physical_corroboration_service.corroborate_incident(
+                    db=db, report=report
+                )
+                if phys_record is not None:
+                    phys_verdict = phys_record.verdict
+                    physical_corroboration_service.stage_corroboration_event(
+                        db=db, report=report, record=phys_record
+                    )
+            except Exception as p_err:
+                logger.warning(
+                    "Physical corroboration failed non-fatally for report %s: %s",
+                    report.id,
+                    p_err,
+                )
+
             duration_ms = round((time.perf_counter() - t0) * 1000, 2)
 
             outcome = (
                 StageOutcome.SUCCESS_WITH_RESULTS
-                if len(results) > 0
+                if len(results) > 0 or phys_verdict is not None
                 else StageOutcome.SUCCESS_WITH_NO_MATCH
             )
 
-            fp_payload = f"{report.id}|{len(results)}"
+            fp_payload = f"{report.id}|{len(results)}|{phys_verdict}"
             fp = hashlib.sha256(fp_payload.encode("utf-8")).hexdigest()
 
             return StageExecutionResult(
@@ -378,6 +401,7 @@ class ObservationStageHandler:
                 results_summary={
                     "corroborations_count": len(results),
                     "relationships": [r.relationship_type.value for r in results],
+                    "physical_verdict": phys_verdict,
                 },
             )
         except Exception as e:

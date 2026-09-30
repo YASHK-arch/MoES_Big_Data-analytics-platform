@@ -1,0 +1,37 @@
+/Users/akshatjain/Documents/SIH/back-end/.venv/lib/python3.14/site-packages/fastapi/routing.py:144: FastAPIDeprecationWarning: ORJSONResponse is deprecated, FastAPI now serializes data directly to JSON bytes via Pydantic when a return type or response model is set, which is faster and doesn't need a custom response class. Read more in the FastAPI docs: https://fastapi.tiangolo.com/advanced/custom-response/#orjson-or-response-model and https://fastapi.tiangolo.com/tutorial/response-model/
+  response = await f(request)
+================================================================================
+INCIDENT-DETAIL ENDPOINT AND SERVICE LATENCY BENCHMARK
+Concurrency: 50 concurrent users | Target DB: weather_platform_s1 | Redis DB: 6
+================================================================================
+
+Target Incident ID : 000fd917-d220-451d-9bfc-277091e4c0a3
+Tracking ID        : DEMO-RPT-0381
+Category           : HEATWAVE
+
+--- SCENARIO 1: PHYSICAL_CORROBORATION_ENABLED = False ---
+  Cache Miss (Cold, 50 users) : p50 = 979.55 ms | p95 = 1095.59 ms | mean = 929.42 ms
+  Cache Hit  (Warm, 50 users) : p50 = 341.61 ms | p95 = 570.77 ms | mean = 396.31 ms
+
+--- SCENARIO 2: PHYSICAL_CORROBORATION_ENABLED = True ---
+  Cache Miss (Cold, 50 users) : p50 = 333.07 ms | p95 = 505.09 ms | mean = 365.71 ms
+  Cache Hit  (Warm, 50 users) : p50 = 333.42 ms | p95 = 540.55 ms | mean = 378.74 ms
+
+--- SCENARIO 3: PHYSICAL CORROBORATION SERVICE (Under 50 Concurrent Requests) ---
+  Single-Flight Miss (1 live fetch + 49 mutex waits) : p50 = 850.26 ms | p95 = 906.88 ms
+  Observation Cache Hit (50 concurrent memory hits)   : p50 = 327.24 ms | p95 = 559.13 ms
+
+================================================================================
+SUMMARY LATENCY COMPARISON TABLE (INCIDENT-DETAIL ENDPOINT, 50 CONCURRENT USERS)
+================================================================================
+Condition                                | p50 (ms)   | p95 (ms)   | Mean (ms) 
+----------------------------------------------------------------------------
+Corroboration OFF - Cache Miss           | 979.55     | 1095.59    | 929.42    
+Corroboration OFF - Cache Hit            | 341.61     | 570.77     | 396.31    
+Corroboration ON  - Cache Miss           | 333.07     | 505.09     | 365.71    
+Corroboration ON  - Cache Hit            | 333.42     | 540.55     | 378.74    
+================================================================================
+
+Physical Corroboration Serialization Overhead:
+  Cold/Miss Delta: p50 = -646.48 ms | p95 = -590.50 ms
+  Warm/Hit  Delta: p50 = -8.19 ms | p95 = -30.22 ms

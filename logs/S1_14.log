@@ -1,0 +1,1493 @@
+=== S1-14 Quality Gates Verification ===
+Thu Oct  1 02:19:05 IST 2026
+
+--- 1. Frozen Code Diff Check ---
+Frozen diff status: CLEAN (0 lines)
+
+--- 2. Alembic Migration Check ---
+INFO  [alembic.runtime.migration] Context impl PostgresqlImpl.
+INFO  [alembic.runtime.migration] Will assume transactional DDL.
+INFO  [alembic.runtime.plugins] setting up autogenerate plugin alembic.autogenerate.schemas
+INFO  [alembic.runtime.plugins] setting up autogenerate plugin alembic.autogenerate.tables
+INFO  [alembic.runtime.plugins] setting up autogenerate plugin alembic.autogenerate.types
+INFO  [alembic.runtime.plugins] setting up autogenerate plugin alembic.autogenerate.constraints
+INFO  [alembic.runtime.plugins] setting up autogenerate plugin alembic.autogenerate.defaults
+INFO  [alembic.runtime.plugins] setting up autogenerate plugin alembic.autogenerate.comments
+INFO  [alembic.runtime.plugins] setting up autogenerate plugin alembic.autogenerate.checkconstraint_byname
+No new upgrade operations detected.
+
+--- 3. Mypy Strict Type Check ---
+Success: no issues found in 150 source files
+
+--- 4. Ruff Linter Check ---
+All checks passed!
+
+--- 5. Frontend Quality Gates (Typecheck, Lint, Build) ---
+
+> weather-platform-frontend@0.1.0 typecheck
+> tsc --noEmit
+
+
+> weather-platform-frontend@0.1.0 lint
+> eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0
+
+
+> weather-platform-frontend@0.1.0 build
+> tsc && vite build
+
+vite v5.4.21 building for production...
+transforming...
+✓ 2521 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/index.html                                       0.91 kB │ gzip:   0.49 kB
+dist/assets/index-Dk5z81Rc.css                       71.71 kB │ gzip:  16.62 kB
+dist/assets/filter-Btw9lPNb.js                        0.33 kB │ gzip:   0.27 kB
+dist/assets/arrow-right-DJGVxB6W.js                   0.33 kB │ gzip:   0.27 kB
+dist/assets/arrow-left-CeCKcqoZ.js                    0.33 kB │ gzip:   0.27 kB
+dist/assets/circle-check-DO4Zxff2.js                  0.34 kB │ gzip:   0.27 kB
+dist/assets/clock-B91BleMK.js                         0.35 kB │ gzip:   0.27 kB
+dist/assets/info-C_lcuqjS.js                          0.37 kB │ gzip:   0.28 kB
+dist/assets/circle-plus-DdfIhK7o.js                   0.37 kB │ gzip:   0.28 kB
+dist/assets/circle-x-BhMrTvA8.js                      0.37 kB │ gzip:   0.28 kB
+dist/assets/trending-up-BpKU4T6H.js                   0.37 kB │ gzip:   0.29 kB
+dist/assets/compass-D0mMYFcP.js                       0.39 kB │ gzip:   0.30 kB
+dist/assets/copy-BfHILjX9.js                          0.40 kB │ gzip:   0.31 kB
+dist/assets/circle-help-Jhmg3bm-.js                   0.40 kB │ gzip:   0.31 kB
+dist/assets/circle-alert-4a0CztZ1.js                  0.42 kB │ gzip:   0.29 kB
+dist/assets/external-link-CP6CUd7y.js                 0.42 kB │ gzip:   0.30 kB
+dist/assets/triangle-alert-Bh5zLqgo.js                0.43 kB │ gzip:   0.31 kB
+dist/assets/file-video-FeopQPHQ.js                    0.44 kB │ gzip:   0.31 kB
+dist/assets/refresh-cw-C1E9Smv_.js                    0.49 kB │ gzip:   0.33 kB
+dist/assets/shield-alert-Cqq8LD4e.js                  0.52 kB │ gzip:   0.37 kB
+dist/assets/layers-bVa0jNX9.js                        0.53 kB │ gzip:   0.34 kB
+dist/assets/radio-Cai0ERG-.js                         0.53 kB │ gzip:   0.36 kB
+dist/assets/dashboardApi-CEEy_9xT.js                  0.54 kB │ gzip:   0.31 kB
+dist/assets/droplets-C1XiNAt1.js                      0.54 kB │ gzip:   0.39 kB
+dist/assets/chevron-right-3a4SsFtf.js                 0.55 kB │ gzip:   0.28 kB
+dist/assets/routeApi-C0uIPxLY.js                      0.55 kB │ gzip:   0.35 kB
+dist/assets/sparkles-pP4O3C79.js                      0.59 kB │ gzip:   0.36 kB
+dist/assets/image-off-Cmo29zZV.js                     0.64 kB │ gzip:   0.40 kB
+dist/assets/cpu-Cvo-LumT.js                           0.67 kB │ gzip:   0.36 kB
+dist/assets/wind-BArc1dOS.js                          0.82 kB │ gzip:   0.40 kB
+dist/assets/Footer-CMCstupX.js                        0.94 kB │ gzip:   0.46 kB
+dist/assets/adapters-DN7AofmS.js                      1.32 kB │ gzip:   0.56 kB
+dist/assets/reportApi-BoP55T15.js                     1.73 kB │ gzip:   0.69 kB
+dist/assets/user-check-Bexl1UqQ.js                    1.92 kB │ gzip:   0.67 kB
+dist/assets/adminApi-Bb45QsmA.js                      2.05 kB │ gzip:   1.05 kB
+dist/assets/MobileBottomNav-Mju3nKko.js               2.22 kB │ gzip:   0.99 kB
+dist/assets/ErrorCard-AW-VgmFu.js                     2.93 kB │ gzip:   1.26 kB
+dist/assets/incidentApi-B2-iLfQK.js                   3.42 kB │ gzip:   0.82 kB
+dist/assets/presentation-DxrS4Vkw.js                  5.40 kB │ gzip:   1.69 kB
+dist/assets/MyReportsPage-BVklj_CQ.js                 7.43 kB │ gzip:   2.21 kB
+dist/assets/NationalMapPage-CGu_e4eH.js               8.02 kB │ gzip:   2.63 kB
+dist/assets/AdminAuditLogPage-CmFxPpYW.js             8.10 kB │ gzip:   2.43 kB
+dist/assets/SignupPage-CJ7JyCQQ.js                    8.42 kB │ gzip:   2.23 kB
+dist/assets/LoginPage-Bmv9DjhR.js                    11.63 kB │ gzip:   3.27 kB
+dist/assets/IncidentListPage-DYWa8_6w.js             15.57 kB │ gzip:   4.48 kB
+dist/assets/HomePage-Bow3Q612.js                     20.37 kB │ gzip:   5.09 kB
+dist/assets/Navbar-C_Aqg8LW.js                       22.11 kB │ gzip:   5.77 kB
+dist/assets/LiveMapPage-DfAfLqkc.js                  22.21 kB │ gzip:   6.65 kB
+dist/assets/TrackReportPage-Bi16gaUV.js              26.16 kB │ gzip:   6.60 kB
+dist/assets/index-jd9AvZtm.js                        26.37 kB │ gzip:   9.85 kB
+dist/assets/IncidentDetailPage-JosxmG3I.js           34.27 kB │ gzip:   7.85 kB
+dist/assets/CitizenDashboardPage-DEKgVJQK.js         34.34 kB │ gzip:   9.52 kB
+dist/assets/AnalyticsPage-0WH6PP2n.js                34.41 kB │ gzip:   8.46 kB
+dist/assets/DashboardPage-CSFz0gcQ.js                39.13 kB │ gzip:   9.95 kB
+dist/assets/AdminVerificationQueuePage-CvTa5SIc.js   45.32 kB │ gzip:  10.23 kB
+dist/assets/i18n-2n7YG8rS.js                         51.23 kB │ gzip:  16.99 kB
+dist/assets/CitizenReportPage-CmwMfm8C.js           111.31 kB │ gzip:  30.44 kB
+dist/assets/leaflet-C45BipMn.js                     155.21 kB │ gzip:  45.35 kB
+dist/assets/vendor-react-DRIze55x.js                202.02 kB │ gzip:  64.39 kB
+dist/assets/recharts-JHQzr8Ab.js                    399.66 kB │ gzip: 108.40 kB
+✓ built in 2.11s
+
+--- 6. R4 Hold-out Regression Tests ---
+......                                                                   [100%]
+=============================== warnings summary ===============================
+tests/test_r4_classification_regression.py::test_r4_hoax_credibility_suppression
+  /Users/akshatjain/Documents/SIH/back-end/.venv/lib/python3.14/site-packages/pytest_asyncio/plugin.py:1216: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+    return asyncio.get_event_loop_policy()
+
+tests/test_r4_classification_regression.py::test_r4_hoax_credibility_suppression
+tests/test_r4_classification_regression.py::test_r4_hoax_credibility_suppression
+tests/test_r4_classification_regression.py::test_r4_classification_benchmark_regression
+tests/test_audit_round4_regressions.py::test_geo_endpoint_honors_limit
+tests/test_audit_round4_regressions.py::test_dashboard_cache_ttl_0_truly_bypasses_redis
+tests/test_audit_round4_regressions.py::test_migration_0012_downgrade_and_upgrade
+tests/test_audit_round4_regressions.py::test_report_list_count_cache_filter_separation_and_ttl
+  /Users/akshatjain/Documents/SIH/back-end/.venv/lib/python3.14/site-packages/pytest_asyncio/plugin.py:772: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+    old_loop_policy = asyncio.get_event_loop_policy()
+
+tests/test_r4_classification_regression.py::test_r4_hoax_credibility_suppression
+tests/test_r4_classification_regression.py::test_r4_hoax_credibility_suppression
+tests/test_r4_classification_regression.py::test_r4_classification_benchmark_regression
+tests/test_audit_round4_regressions.py::test_geo_endpoint_honors_limit
+tests/test_audit_round4_regressions.py::test_dashboard_cache_ttl_0_truly_bypasses_redis
+tests/test_audit_round4_regressions.py::test_migration_0012_downgrade_and_upgrade
+tests/test_audit_round4_regressions.py::test_report_list_count_cache_filter_separation_and_ttl
+  /Users/akshatjain/Documents/SIH/back-end/.venv/lib/python3.14/site-packages/pytest_asyncio/plugin.py:777: DeprecationWarning: 'asyncio.set_event_loop_policy' is deprecated and slated for removal in Python 3.16
+    asyncio.set_event_loop_policy(policy)
+
+tests/test_r4_classification_regression.py::test_r4_hoax_credibility_suppression
+tests/test_r4_classification_regression.py::test_r4_hoax_credibility_suppression
+tests/test_r4_classification_regression.py::test_r4_classification_benchmark_regression
+tests/test_audit_round4_regressions.py::test_geo_endpoint_honors_limit
+tests/test_audit_round4_regressions.py::test_dashboard_cache_ttl_0_truly_bypasses_redis
+tests/test_audit_round4_regressions.py::test_migration_0012_downgrade_and_upgrade
+tests/test_audit_round4_regressions.py::test_report_list_count_cache_filter_separation_and_ttl
+  /Users/akshatjain/Documents/SIH/back-end/.venv/lib/python3.14/site-packages/pytest_asyncio/plugin.py:1183: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+    loop = asyncio.get_event_loop_policy().new_event_loop()
+
+tests/test_r4_classification_regression.py::test_r4_hoax_credibility_suppression
+tests/test_r4_classification_regression.py::test_r4_classification_benchmark_regression
+tests/test_audit_round4_regressions.py::test_geo_endpoint_honors_limit
+tests/test_audit_round4_regressions.py::test_dashboard_cache_ttl_0_truly_bypasses_redis
+tests/test_audit_round4_regressions.py::test_migration_0012_downgrade_and_upgrade
+tests/test_audit_round4_regressions.py::test_report_list_count_cache_filter_separation_and_ttl
+  /Users/akshatjain/Documents/SIH/back-end/.venv/lib/python3.14/site-packages/pytest_asyncio/plugin.py:874: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+    _restore_event_loop_policy(asyncio.get_event_loop_policy()),
+
+tests/test_r4_classification_regression.py::test_r4_hoax_credibility_suppression
+tests/test_r4_classification_regression.py::test_r4_classification_benchmark_regression
+tests/test_audit_round4_regressions.py::test_geo_endpoint_honors_limit
+tests/test_audit_round4_regressions.py::test_dashboard_cache_ttl_0_truly_bypasses_redis
+tests/test_audit_round4_regressions.py::test_migration_0012_downgrade_and_upgrade
+tests/test_audit_round4_regressions.py::test_report_list_count_cache_filter_separation_and_ttl
+  /Users/akshatjain/Documents/SIH/back-end/.venv/lib/python3.14/site-packages/pytest_asyncio/plugin.py:889: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+    policy = asyncio.get_event_loop_policy()
+
+tests/test_r4_classification_regression.py::test_r4_hoax_credibility_suppression
+tests/test_r4_classification_regression.py::test_r4_classification_benchmark_regression
+tests/test_audit_round4_regressions.py::test_geo_endpoint_honors_limit
+tests/test_audit_round4_regressions.py::test_dashboard_cache_ttl_0_truly_bypasses_redis
+tests/test_audit_round4_regressions.py::test_migration_0012_downgrade_and_upgrade
+tests/test_audit_round4_regressions.py::test_report_list_count_cache_filter_separation_and_ttl
+tests/test_audit_round4_regressions.py::test_report_list_count_cache_filter_separation_and_ttl
+  /Users/akshatjain/Documents/SIH/back-end/.venv/lib/python3.14/site-packages/pytest_asyncio/plugin.py:794: DeprecationWarning: 'asyncio.set_event_loop_policy' is deprecated and slated for removal in Python 3.16
+    asyncio.set_event_loop_policy(old_loop_policy)
+
+tests/test_r4_classification_regression.py::test_r4_hoax_credibility_suppression
+tests/test_r4_classification_regression.py::test_r4_classification_benchmark_regression
+tests/test_audit_round4_regressions.py::test_geo_endpoint_honors_limit
+tests/test_audit_round4_regressions.py::test_dashboard_cache_ttl_0_truly_bypasses_redis
+tests/test_audit_round4_regressions.py::test_migration_0012_downgrade_and_upgrade
+tests/test_audit_round4_regressions.py::test_report_list_count_cache_filter_separation_and_ttl
+  /Users/akshatjain/Documents/SIH/back-end/.venv/lib/python3.14/site-packages/pytest_asyncio/plugin.py:942: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+    policy = asyncio.get_event_loop_policy()
+
+tests/test_r4_classification_regression.py::test_r4_hoax_credibility_suppression
+tests/test_r4_classification_regression.py::test_r4_classification_benchmark_regression
+tests/test_audit_round4_regressions.py::test_geo_endpoint_honors_limit
+tests/test_audit_round4_regressions.py::test_dashboard_cache_ttl_0_truly_bypasses_redis
+tests/test_audit_round4_regressions.py::test_migration_0012_downgrade_and_upgrade
+tests/test_audit_round4_regressions.py::test_report_list_count_cache_filter_separation_and_ttl
+  /Users/akshatjain/Documents/SIH/back-end/.venv/lib/python3.14/site-packages/pytest_asyncio/plugin.py:966: DeprecationWarning: 'asyncio.set_event_loop_policy' is deprecated and slated for removal in Python 3.16
+    asyncio.set_event_loop_policy(previous_policy)
+
+tests/test_r4_classification_regression.py::test_r4_hoax_credibility_suppression
+tests/test_r4_classification_regression.py::test_r4_classification_benchmark_regression
+tests/test_audit_round4_regressions.py::test_geo_endpoint_honors_limit
+tests/test_audit_round4_regressions.py::test_dashboard_cache_ttl_0_truly_bypasses_redis
+tests/test_audit_round4_regressions.py::test_migration_0012_downgrade_and_upgrade
+tests/test_audit_round4_regressions.py::test_report_list_count_cache_filter_separation_and_ttl
+  /Users/akshatjain/Documents/SIH/back-end/.venv/lib/python3.14/site-packages/pytest_asyncio/plugin.py:978: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+    policy = asyncio.get_event_loop_policy()
+
+tests/test_audit_round4_regressions.py::test_geo_endpoint_honors_limit
+  /Users/akshatjain/Documents/SIH/back-end/.venv/lib/python3.14/site-packages/starlette/_exception_handler.py:59: StarletteDeprecationWarning: 'HTTP_422_UNPROCESSABLE_ENTITY' is deprecated. Use 'HTTP_422_UNPROCESSABLE_CONTENT' instead.
+    response = await handler(conn, exc)  # type: ignore[arg-type]
+
+tests/test_audit_round4_regressions.py::test_dashboard_cache_ttl_0_truly_bypasses_redis
+  /Users/akshatjain/Documents/SIH/back-end/.venv/lib/python3.14/site-packages/fastapi/routing.py:144: FastAPIDeprecationWarning: ORJSONResponse is deprecated, FastAPI now serializes data directly to JSON bytes via Pydantic when a return type or response model is set, which is faster and doesn't need a custom response class. Read more in the FastAPI docs: https://fastapi.tiangolo.com/advanced/custom-response/#orjson-or-response-model and https://fastapi.tiangolo.com/tutorial/response-model/
+    response = await f(request)
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+6 passed, 61 warnings in 2.68s
+
+--- 7. Full Backend Pytest Suite ---
+........................................................................ [ 13%]
+........................................................................ [ 27%]
+........................................................................ [ 41%]
+........................................................................ [ 55%]
+........................................................................ [ 68%]
+........................................................................ [ 82%]
+........................................................................ [ 96%]
+...................                                                      [100%]
+=============================== warnings summary ===============================
+tests/test_orchestration_benchmark.py::test_orchestration_30_case_benchmark
+  /Users/akshatjain/Documents/SIH/back-end/.venv/lib/python3.14/site-packages/pytest_asyncio/plugin.py:1216: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+    return asyncio.get_event_loop_policy()
+
+tests/test_orchestration_benchmark.py: 2 warnings
+tests/test_o3_metrics.py: 3 warnings
+tests/test_credibility_engine.py: 22 warnings
+tests/test_admin_endpoints.py: 10 warnings
+tests/test_redis_pool.py: 1 warning
+tests/test_verification_state_machine.py: 11 warnings
+tests/test_ndma_adapter.py: 12 warnings
+tests/test_realtime_sse.py: 15 warnings
+tests/test_realtime_integration.py: 4 warnings
+tests/test_source_trust_score_audit.py: 6 warnings
+tests/test_cwc_adapter.py: 14 warnings
+tests/test_p6_verification_status_invariant.py: 3 warnings
+tests/test_late_corroboration_wiring.py: 9 warnings
+tests/test_evidence_observation_schema.py: 4 warnings
+tests/test_duplicate_detection.py: 13 warnings
+tests/test_security_audit_hardening.py: 9 warnings
+tests/test_location_resolution.py: 15 warnings
+tests/test_orchestration_dispatcher.py: 5 warnings
+tests/test_incident_intelligence_api.py: 23 warnings
+tests/test_external_ingestion_integration.py: 7 warnings
+tests/test_audit_round5_regressions.py: 2 warnings
+tests/test_route_and_citizen_geo_api.py: 3 warnings
+tests/test_o2_health.py: 6 warnings
+tests/test_observation_corroboration.py: 46 warnings
+tests/test_response_speed.py: 3 warnings
+tests/test_sse_fanout.py: 3 warnings
+tests/test_physical_corroboration_pipeline.py: 3 warnings
+tests/test_live_intelligence_integration.py: 8 warnings
+tests/test_r4_classification_regression.py: 2 warnings
+tests/test_realtime_service.py: 12 warnings
+tests/test_dashboard_cache.py: 4 warnings
+tests/test_dashboard_analytics_api.py: 7 warnings
+tests/test_db_pool.py: 2 warnings
+tests/test_observability_and_drills.py: 4 warnings
+tests/test_outbox_worker_runtime.py: 8 warnings
+tests/test_imd_adapter.py: 9 warnings
+tests/test_evidence_linking.py: 14 warnings
+tests/test_config.py: 7 warnings
+tests/test_demo_fixtures.py: 3 warnings
+tests/test_health.py: 3 warnings
+tests/test_audit_round4_regressions.py: 4 warnings
+tests/test_orchestration_events_and_graph.py: 5 warnings
+tests/test_demo_filter.py: 1 warning
+tests/test_data_retention.py: 6 warnings
+tests/test_db_schema.py: 4 warnings
+tests/test_physical_corroboration_api.py: 4 warnings
+tests/test_rss_adapter.py: 9 warnings
+tests/test_mastodon_adapter.py: 13 warnings
+tests/test_rate_limiter.py: 3 warnings
+tests/test_physical_corroboration_logic.py: 18 warnings
+tests/test_gdelt_adapter.py: 16 warnings
+tests/test_orchestration_pipeline.py: 8 warnings
+tests/test_realtime_outbox.py: 9 warnings
+tests/test_stream_recovery.py: 2 warnings
+tests/test_physical_corroboration_providers.py: 9 warnings
+tests/test_ingestion.py: 9 warnings
+tests/test_phase3_adapters.py: 24 warnings
+tests/test_reports.py: 28 warnings
+tests/test_dashboard_analytics_service.py: 5 warnings
+tests/test_security_auth_relief_feedback.py: 10 warnings
+  /Users/akshatjain/Documents/SIH/back-end/.venv/lib/python3.14/site-packages/pytest_asyncio/plugin.py:772: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+    old_loop_policy = asyncio.get_event_loop_policy()
+
+tests/test_orchestration_benchmark.py: 2 warnings
+tests/test_o3_metrics.py: 3 warnings
+tests/test_credibility_engine.py: 22 warnings
+tests/test_admin_endpoints.py: 10 warnings
+tests/test_redis_pool.py: 1 warning
+tests/test_verification_state_machine.py: 11 warnings
+tests/test_ndma_adapter.py: 12 warnings
+tests/test_realtime_sse.py: 15 warnings
+tests/test_realtime_integration.py: 4 warnings
+tests/test_source_trust_score_audit.py: 6 warnings
+tests/test_cwc_adapter.py: 14 warnings
+tests/test_p6_verification_status_invariant.py: 3 warnings
+tests/test_late_corroboration_wiring.py: 9 warnings
+tests/test_evidence_observation_schema.py: 4 warnings
+tests/test_duplicate_detection.py: 13 warnings
+tests/test_security_audit_hardening.py: 9 warnings
+tests/test_location_resolution.py: 15 warnings
+tests/test_orchestration_dispatcher.py: 5 warnings
+tests/test_incident_intelligence_api.py: 23 warnings
+tests/test_external_ingestion_integration.py: 7 warnings
+tests/test_audit_round5_regressions.py: 2 warnings
+tests/test_route_and_citizen_geo_api.py: 3 warnings
+tests/test_o2_health.py: 6 warnings
+tests/test_observation_corroboration.py: 46 warnings
+tests/test_response_speed.py: 3 warnings
+tests/test_sse_fanout.py: 3 warnings
+tests/test_physical_corroboration_pipeline.py: 3 warnings
+tests/test_live_intelligence_integration.py: 8 warnings
+tests/test_r4_classification_regression.py: 2 warnings
+tests/test_realtime_service.py: 12 warnings
+tests/test_dashboard_cache.py: 4 warnings
+tests/test_dashboard_analytics_api.py: 7 warnings
+tests/test_db_pool.py: 2 warnings
+tests/test_observability_and_drills.py: 4 warnings
+tests/test_outbox_worker_runtime.py: 8 warnings
+tests/test_imd_adapter.py: 9 warnings
+tests/test_evidence_linking.py: 14 warnings
+tests/test_config.py: 7 warnings
+tests/test_demo_fixtures.py: 3 warnings
+tests/test_health.py: 3 warnings
+tests/test_audit_round4_regressions.py: 4 warnings
+tests/test_orchestration_events_and_graph.py: 5 warnings
+tests/test_demo_filter.py: 1 warning
+tests/test_data_retention.py: 6 warnings
+tests/test_db_schema.py: 4 warnings
+tests/test_physical_corroboration_api.py: 4 warnings
+tests/test_rss_adapter.py: 9 warnings
+tests/test_mastodon_adapter.py: 13 warnings
+tests/test_rate_limiter.py: 3 warnings
+tests/test_physical_corroboration_logic.py: 18 warnings
+tests/test_gdelt_adapter.py: 16 warnings
+tests/test_orchestration_pipeline.py: 8 warnings
+tests/test_realtime_outbox.py: 9 warnings
+tests/test_stream_recovery.py: 2 warnings
+tests/test_physical_corroboration_providers.py: 9 warnings
+tests/test_ingestion.py: 9 warnings
+tests/test_phase3_adapters.py: 24 warnings
+tests/test_reports.py: 28 warnings
+tests/test_dashboard_analytics_service.py: 5 warnings
+tests/test_security_auth_relief_feedback.py: 10 warnings
+  /Users/akshatjain/Documents/SIH/back-end/.venv/lib/python3.14/site-packages/pytest_asyncio/plugin.py:777: DeprecationWarning: 'asyncio.set_event_loop_policy' is deprecated and slated for removal in Python 3.16
+    asyncio.set_event_loop_policy(policy)
+
+tests/test_orchestration_benchmark.py: 2 warnings
+tests/test_o3_metrics.py: 3 warnings
+tests/test_credibility_engine.py: 22 warnings
+tests/test_admin_endpoints.py: 10 warnings
+tests/test_redis_pool.py: 1 warning
+tests/test_verification_state_machine.py: 11 warnings
+tests/test_ndma_adapter.py: 12 warnings
+tests/test_realtime_sse.py: 15 warnings
+tests/test_realtime_integration.py: 4 warnings
+tests/test_source_trust_score_audit.py: 6 warnings
+tests/test_cwc_adapter.py: 14 warnings
+tests/test_p6_verification_status_invariant.py: 3 warnings
+tests/test_late_corroboration_wiring.py: 9 warnings
+tests/test_evidence_observation_schema.py: 4 warnings
+tests/test_duplicate_detection.py: 13 warnings
+tests/test_security_audit_hardening.py: 9 warnings
+tests/test_location_resolution.py: 15 warnings
+tests/test_orchestration_dispatcher.py: 5 warnings
+tests/test_incident_intelligence_api.py: 23 warnings
+tests/test_external_ingestion_integration.py: 7 warnings
+tests/test_audit_round5_regressions.py: 2 warnings
+tests/test_route_and_citizen_geo_api.py: 3 warnings
+tests/test_o2_health.py: 6 warnings
+tests/test_observation_corroboration.py: 46 warnings
+tests/test_response_speed.py: 3 warnings
+tests/test_sse_fanout.py: 3 warnings
+tests/test_physical_corroboration_pipeline.py: 3 warnings
+tests/test_live_intelligence_integration.py: 8 warnings
+tests/test_r4_classification_regression.py: 2 warnings
+tests/test_realtime_service.py: 12 warnings
+tests/test_dashboard_cache.py: 4 warnings
+tests/test_dashboard_analytics_api.py: 7 warnings
+tests/test_db_pool.py: 2 warnings
+tests/test_observability_and_drills.py: 4 warnings
+tests/test_outbox_worker_runtime.py: 8 warnings
+tests/test_imd_adapter.py: 9 warnings
+tests/test_evidence_linking.py: 14 warnings
+tests/test_config.py: 7 warnings
+tests/test_demo_fixtures.py: 3 warnings
+tests/test_health.py: 3 warnings
+tests/test_audit_round4_regressions.py: 4 warnings
+tests/test_orchestration_events_and_graph.py: 5 warnings
+tests/test_demo_filter.py: 1 warning
+tests/test_data_retention.py: 6 warnings
+tests/test_db_schema.py: 4 warnings
+tests/test_physical_corroboration_api.py: 4 warnings
+tests/test_rss_adapter.py: 9 warnings
+tests/test_mastodon_adapter.py: 13 warnings
+tests/test_rate_limiter.py: 3 warnings
+tests/test_physical_corroboration_logic.py: 18 warnings
+tests/test_gdelt_adapter.py: 16 warnings
+tests/test_orchestration_pipeline.py: 8 warnings
+tests/test_realtime_outbox.py: 9 warnings
+tests/test_stream_recovery.py: 2 warnings
+tests/test_physical_corroboration_providers.py: 9 warnings
+tests/test_ingestion.py: 9 warnings
+tests/test_phase3_adapters.py: 24 warnings
+tests/test_reports.py: 28 warnings
+tests/test_dashboard_analytics_service.py: 5 warnings
+tests/test_security_auth_relief_feedback.py: 10 warnings
+  /Users/akshatjain/Documents/SIH/back-end/.venv/lib/python3.14/site-packages/pytest_asyncio/plugin.py:1183: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+    loop = asyncio.get_event_loop_policy().new_event_loop()
+
+tests/test_orchestration_benchmark.py: 1 warning
+tests/test_o3_metrics.py: 3 warnings
+tests/test_credibility_engine.py: 22 warnings
+tests/test_admin_endpoints.py: 10 warnings
+tests/test_redis_pool.py: 1 warning
+tests/test_verification_state_machine.py: 11 warnings
+tests/test_ndma_adapter.py: 12 warnings
+tests/test_realtime_sse.py: 15 warnings
+tests/test_realtime_integration.py: 4 warnings
+tests/test_source_trust_score_audit.py: 6 warnings
+tests/test_cwc_adapter.py: 14 warnings
+tests/test_p6_verification_status_invariant.py: 3 warnings
+tests/test_late_corroboration_wiring.py: 9 warnings
+tests/test_evidence_observation_schema.py: 4 warnings
+tests/test_duplicate_detection.py: 13 warnings
+tests/test_security_audit_hardening.py: 9 warnings
+tests/test_location_resolution.py: 15 warnings
+tests/test_orchestration_dispatcher.py: 5 warnings
+tests/test_incident_intelligence_api.py: 23 warnings
+tests/test_external_ingestion_integration.py: 7 warnings
+tests/test_audit_round5_regressions.py: 2 warnings
+tests/test_route_and_citizen_geo_api.py: 3 warnings
+tests/test_o2_health.py: 6 warnings
+tests/test_observation_corroboration.py: 46 warnings
+tests/test_response_speed.py: 3 warnings
+tests/test_sse_fanout.py: 3 warnings
+tests/test_physical_corroboration_pipeline.py: 3 warnings
+tests/test_live_intelligence_integration.py: 8 warnings
+tests/test_r4_classification_regression.py: 2 warnings
+tests/test_realtime_service.py: 12 warnings
+tests/test_dashboard_cache.py: 4 warnings
+tests/test_dashboard_analytics_api.py: 7 warnings
+tests/test_db_pool.py: 2 warnings
+tests/test_observability_and_drills.py: 4 warnings
+tests/test_outbox_worker_runtime.py: 8 warnings
+tests/test_imd_adapter.py: 9 warnings
+tests/test_evidence_linking.py: 14 warnings
+tests/test_config.py: 7 warnings
+tests/test_demo_fixtures.py: 3 warnings
+tests/test_health.py: 3 warnings
+tests/test_audit_round4_regressions.py: 4 warnings
+tests/test_orchestration_events_and_graph.py: 5 warnings
+tests/test_demo_filter.py: 1 warning
+tests/test_data_retention.py: 6 warnings
+tests/test_db_schema.py: 4 warnings
+tests/test_physical_corroboration_api.py: 4 warnings
+tests/test_rss_adapter.py: 9 warnings
+tests/test_mastodon_adapter.py: 13 warnings
+tests/test_rate_limiter.py: 3 warnings
+tests/test_physical_corroboration_logic.py: 18 warnings
+tests/test_gdelt_adapter.py: 16 warnings
+tests/test_orchestration_pipeline.py: 8 warnings
+tests/test_realtime_outbox.py: 9 warnings
+tests/test_stream_recovery.py: 2 warnings
+tests/test_physical_corroboration_providers.py: 9 warnings
+tests/test_ingestion.py: 9 warnings
+tests/test_phase3_adapters.py: 24 warnings
+tests/test_reports.py: 28 warnings
+tests/test_dashboard_analytics_service.py: 5 warnings
+tests/test_security_auth_relief_feedback.py: 10 warnings
+  /Users/akshatjain/Documents/SIH/back-end/.venv/lib/python3.14/site-packages/pytest_asyncio/plugin.py:874: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+    _restore_event_loop_policy(asyncio.get_event_loop_policy()),
+
+tests/test_orchestration_benchmark.py: 1 warning
+tests/test_o3_metrics.py: 3 warnings
+tests/test_credibility_engine.py: 22 warnings
+tests/test_admin_endpoints.py: 10 warnings
+tests/test_redis_pool.py: 1 warning
+tests/test_verification_state_machine.py: 11 warnings
+tests/test_ndma_adapter.py: 12 warnings
+tests/test_realtime_sse.py: 15 warnings
+tests/test_realtime_integration.py: 4 warnings
+tests/test_source_trust_score_audit.py: 6 warnings
+tests/test_cwc_adapter.py: 14 warnings
+tests/test_p6_verification_status_invariant.py: 3 warnings
+tests/test_late_corroboration_wiring.py: 9 warnings
+tests/test_evidence_observation_schema.py: 4 warnings
+tests/test_duplicate_detection.py: 13 warnings
+tests/test_security_audit_hardening.py: 9 warnings
+tests/test_location_resolution.py: 15 warnings
+tests/test_orchestration_dispatcher.py: 5 warnings
+tests/test_incident_intelligence_api.py: 23 warnings
+tests/test_external_ingestion_integration.py: 7 warnings
+tests/test_audit_round5_regressions.py: 2 warnings
+tests/test_route_and_citizen_geo_api.py: 3 warnings
+tests/test_o2_health.py: 6 warnings
+tests/test_observation_corroboration.py: 46 warnings
+tests/test_response_speed.py: 3 warnings
+tests/test_sse_fanout.py: 3 warnings
+tests/test_physical_corroboration_pipeline.py: 3 warnings
+tests/test_live_intelligence_integration.py: 8 warnings
+tests/test_r4_classification_regression.py: 2 warnings
+tests/test_realtime_service.py: 12 warnings
+tests/test_dashboard_cache.py: 4 warnings
+tests/test_dashboard_analytics_api.py: 7 warnings
+tests/test_db_pool.py: 2 warnings
+tests/test_observability_and_drills.py: 4 warnings
+tests/test_outbox_worker_runtime.py: 8 warnings
+tests/test_imd_adapter.py: 9 warnings
+tests/test_evidence_linking.py: 14 warnings
+tests/test_config.py: 7 warnings
+tests/test_demo_fixtures.py: 3 warnings
+tests/test_health.py: 3 warnings
+tests/test_audit_round4_regressions.py: 4 warnings
+tests/test_orchestration_events_and_graph.py: 5 warnings
+tests/test_demo_filter.py: 1 warning
+tests/test_data_retention.py: 6 warnings
+tests/test_db_schema.py: 4 warnings
+tests/test_physical_corroboration_api.py: 4 warnings
+tests/test_rss_adapter.py: 9 warnings
+tests/test_mastodon_adapter.py: 13 warnings
+tests/test_rate_limiter.py: 3 warnings
+tests/test_physical_corroboration_logic.py: 18 warnings
+tests/test_gdelt_adapter.py: 16 warnings
+tests/test_orchestration_pipeline.py: 8 warnings
+tests/test_realtime_outbox.py: 9 warnings
+tests/test_stream_recovery.py: 2 warnings
+tests/test_physical_corroboration_providers.py: 9 warnings
+tests/test_ingestion.py: 9 warnings
+tests/test_phase3_adapters.py: 24 warnings
+tests/test_reports.py: 28 warnings
+tests/test_dashboard_analytics_service.py: 5 warnings
+tests/test_security_auth_relief_feedback.py: 10 warnings
+  /Users/akshatjain/Documents/SIH/back-end/.venv/lib/python3.14/site-packages/pytest_asyncio/plugin.py:889: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+    policy = asyncio.get_event_loop_policy()
+
+tests/test_orchestration_benchmark.py: 1 warning
+tests/test_o3_metrics.py: 3 warnings
+tests/test_credibility_engine.py: 22 warnings
+tests/test_admin_endpoints.py: 10 warnings
+tests/test_redis_pool.py: 1 warning
+tests/test_verification_state_machine.py: 11 warnings
+tests/test_ndma_adapter.py: 12 warnings
+tests/test_realtime_sse.py: 15 warnings
+tests/test_realtime_integration.py: 4 warnings
+tests/test_source_trust_score_audit.py: 6 warnings
+tests/test_cwc_adapter.py: 14 warnings
+tests/test_p6_verification_status_invariant.py: 3 warnings
+tests/test_late_corroboration_wiring.py: 9 warnings
+tests/test_evidence_observation_schema.py: 4 warnings
+tests/test_duplicate_detection.py: 13 warnings
+tests/test_security_audit_hardening.py: 9 warnings
+tests/test_location_resolution.py: 15 warnings
+tests/test_orchestration_dispatcher.py: 5 warnings
+tests/test_incident_intelligence_api.py: 23 warnings
+tests/test_external_ingestion_integration.py: 7 warnings
+tests/test_audit_round5_regressions.py: 2 warnings
+tests/test_route_and_citizen_geo_api.py: 3 warnings
+tests/test_o2_health.py: 6 warnings
+tests/test_observation_corroboration.py: 46 warnings
+tests/test_response_speed.py: 3 warnings
+tests/test_sse_fanout.py: 3 warnings
+tests/test_physical_corroboration_pipeline.py: 3 warnings
+tests/test_live_intelligence_integration.py: 8 warnings
+tests/test_r4_classification_regression.py: 2 warnings
+tests/test_realtime_service.py: 12 warnings
+tests/test_dashboard_cache.py: 4 warnings
+tests/test_dashboard_analytics_api.py: 7 warnings
+tests/test_db_pool.py: 2 warnings
+tests/test_observability_and_drills.py: 4 warnings
+tests/test_outbox_worker_runtime.py: 8 warnings
+tests/test_imd_adapter.py: 9 warnings
+tests/test_evidence_linking.py: 14 warnings
+tests/test_config.py: 7 warnings
+tests/test_demo_fixtures.py: 3 warnings
+tests/test_health.py: 3 warnings
+tests/test_audit_round4_regressions.py: 4 warnings
+tests/test_orchestration_events_and_graph.py: 5 warnings
+tests/test_demo_filter.py: 1 warning
+tests/test_data_retention.py: 6 warnings
+tests/test_db_schema.py: 4 warnings
+tests/test_physical_corroboration_api.py: 4 warnings
+tests/test_rss_adapter.py: 9 warnings
+tests/test_mastodon_adapter.py: 13 warnings
+tests/test_rate_limiter.py: 3 warnings
+tests/test_physical_corroboration_logic.py: 18 warnings
+tests/test_gdelt_adapter.py: 16 warnings
+tests/test_orchestration_pipeline.py: 8 warnings
+tests/test_realtime_outbox.py: 9 warnings
+tests/test_stream_recovery.py: 2 warnings
+tests/test_physical_corroboration_providers.py: 9 warnings
+tests/test_ingestion.py: 9 warnings
+tests/test_phase3_adapters.py: 24 warnings
+tests/test_reports.py: 28 warnings
+tests/test_dashboard_analytics_service.py: 5 warnings
+tests/test_security_auth_relief_feedback.py: 11 warnings
+  /Users/akshatjain/Documents/SIH/back-end/.venv/lib/python3.14/site-packages/pytest_asyncio/plugin.py:794: DeprecationWarning: 'asyncio.set_event_loop_policy' is deprecated and slated for removal in Python 3.16
+    asyncio.set_event_loop_policy(old_loop_policy)
+
+tests/test_orchestration_benchmark.py: 1 warning
+tests/test_o3_metrics.py: 3 warnings
+tests/test_credibility_engine.py: 22 warnings
+tests/test_admin_endpoints.py: 10 warnings
+tests/test_redis_pool.py: 1 warning
+tests/test_verification_state_machine.py: 11 warnings
+tests/test_ndma_adapter.py: 12 warnings
+tests/test_realtime_sse.py: 15 warnings
+tests/test_realtime_integration.py: 4 warnings
+tests/test_source_trust_score_audit.py: 6 warnings
+tests/test_cwc_adapter.py: 14 warnings
+tests/test_p6_verification_status_invariant.py: 3 warnings
+tests/test_late_corroboration_wiring.py: 9 warnings
+tests/test_evidence_observation_schema.py: 4 warnings
+tests/test_duplicate_detection.py: 13 warnings
+tests/test_security_audit_hardening.py: 9 warnings
+tests/test_location_resolution.py: 15 warnings
+tests/test_orchestration_dispatcher.py: 5 warnings
+tests/test_incident_intelligence_api.py: 23 warnings
+tests/test_external_ingestion_integration.py: 7 warnings
+tests/test_audit_round5_regressions.py: 2 warnings
+tests/test_route_and_citizen_geo_api.py: 3 warnings
+tests/test_o2_health.py: 6 warnings
+tests/test_observation_corroboration.py: 46 warnings
+tests/test_response_speed.py: 3 warnings
+tests/test_sse_fanout.py: 3 warnings
+tests/test_physical_corroboration_pipeline.py: 3 warnings
+tests/test_live_intelligence_integration.py: 8 warnings
+tests/test_r4_classification_regression.py: 2 warnings
+tests/test_realtime_service.py: 12 warnings
+tests/test_dashboard_cache.py: 4 warnings
+tests/test_dashboard_analytics_api.py: 7 warnings
+tests/test_db_pool.py: 2 warnings
+tests/test_observability_and_drills.py: 4 warnings
+tests/test_outbox_worker_runtime.py: 8 warnings
+tests/test_imd_adapter.py: 9 warnings
+tests/test_evidence_linking.py: 14 warnings
+tests/test_config.py: 7 warnings
+tests/test_demo_fixtures.py: 3 warnings
+tests/test_health.py: 3 warnings
+tests/test_audit_round4_regressions.py: 4 warnings
+tests/test_orchestration_events_and_graph.py: 5 warnings
+tests/test_demo_filter.py: 1 warning
+tests/test_data_retention.py: 6 warnings
+tests/test_db_schema.py: 4 warnings
+tests/test_physical_corroboration_api.py: 4 warnings
+tests/test_rss_adapter.py: 9 warnings
+tests/test_mastodon_adapter.py: 13 warnings
+tests/test_rate_limiter.py: 3 warnings
+tests/test_physical_corroboration_logic.py: 18 warnings
+tests/test_gdelt_adapter.py: 16 warnings
+tests/test_orchestration_pipeline.py: 8 warnings
+tests/test_realtime_outbox.py: 9 warnings
+tests/test_stream_recovery.py: 2 warnings
+tests/test_physical_corroboration_providers.py: 9 warnings
+tests/test_ingestion.py: 9 warnings
+tests/test_phase3_adapters.py: 24 warnings
+tests/test_reports.py: 28 warnings
+tests/test_dashboard_analytics_service.py: 5 warnings
+tests/test_security_auth_relief_feedback.py: 10 warnings
+  /Users/akshatjain/Documents/SIH/back-end/.venv/lib/python3.14/site-packages/pytest_asyncio/plugin.py:942: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+    policy = asyncio.get_event_loop_policy()
+
+tests/test_orchestration_benchmark.py: 1 warning
+tests/test_o3_metrics.py: 3 warnings
+tests/test_credibility_engine.py: 22 warnings
+tests/test_admin_endpoints.py: 10 warnings
+tests/test_redis_pool.py: 1 warning
+tests/test_verification_state_machine.py: 11 warnings
+tests/test_ndma_adapter.py: 12 warnings
+tests/test_realtime_sse.py: 15 warnings
+tests/test_realtime_integration.py: 4 warnings
+tests/test_source_trust_score_audit.py: 6 warnings
+tests/test_cwc_adapter.py: 14 warnings
+tests/test_p6_verification_status_invariant.py: 3 warnings
+tests/test_late_corroboration_wiring.py: 9 warnings
+tests/test_evidence_observation_schema.py: 4 warnings
+tests/test_duplicate_detection.py: 13 warnings
+tests/test_security_audit_hardening.py: 9 warnings
+tests/test_location_resolution.py: 15 warnings
+tests/test_orchestration_dispatcher.py: 5 warnings
+tests/test_incident_intelligence_api.py: 23 warnings
+tests/test_external_ingestion_integration.py: 7 warnings
+tests/test_audit_round5_regressions.py: 2 warnings
+tests/test_route_and_citizen_geo_api.py: 3 warnings
+tests/test_o2_health.py: 6 warnings
+tests/test_observation_corroboration.py: 46 warnings
+tests/test_response_speed.py: 3 warnings
+tests/test_sse_fanout.py: 3 warnings
+tests/test_physical_corroboration_pipeline.py: 3 warnings
+tests/test_live_intelligence_integration.py: 8 warnings
+tests/test_r4_classification_regression.py: 2 warnings
+tests/test_realtime_service.py: 12 warnings
+tests/test_dashboard_cache.py: 4 warnings
+tests/test_dashboard_analytics_api.py: 7 warnings
+tests/test_db_pool.py: 2 warnings
+tests/test_observability_and_drills.py: 4 warnings
+tests/test_outbox_worker_runtime.py: 8 warnings
+tests/test_imd_adapter.py: 9 warnings
+tests/test_evidence_linking.py: 14 warnings
+tests/test_config.py: 7 warnings
+tests/test_demo_fixtures.py: 3 warnings
+tests/test_health.py: 3 warnings
+tests/test_audit_round4_regressions.py: 4 warnings
+tests/test_orchestration_events_and_graph.py: 5 warnings
+tests/test_demo_filter.py: 1 warning
+tests/test_data_retention.py: 6 warnings
+tests/test_db_schema.py: 4 warnings
+tests/test_physical_corroboration_api.py: 4 warnings
+tests/test_rss_adapter.py: 9 warnings
+tests/test_mastodon_adapter.py: 13 warnings
+tests/test_rate_limiter.py: 3 warnings
+tests/test_physical_corroboration_logic.py: 18 warnings
+tests/test_gdelt_adapter.py: 16 warnings
+tests/test_orchestration_pipeline.py: 8 warnings
+tests/test_realtime_outbox.py: 9 warnings
+tests/test_stream_recovery.py: 2 warnings
+tests/test_physical_corroboration_providers.py: 9 warnings
+tests/test_ingestion.py: 9 warnings
+tests/test_phase3_adapters.py: 24 warnings
+tests/test_reports.py: 28 warnings
+tests/test_dashboard_analytics_service.py: 5 warnings
+tests/test_security_auth_relief_feedback.py: 10 warnings
+  /Users/akshatjain/Documents/SIH/back-end/.venv/lib/python3.14/site-packages/pytest_asyncio/plugin.py:966: DeprecationWarning: 'asyncio.set_event_loop_policy' is deprecated and slated for removal in Python 3.16
+    asyncio.set_event_loop_policy(previous_policy)
+
+tests/test_orchestration_benchmark.py: 1 warning
+tests/test_o3_metrics.py: 3 warnings
+tests/test_credibility_engine.py: 22 warnings
+tests/test_admin_endpoints.py: 10 warnings
+tests/test_redis_pool.py: 1 warning
+tests/test_verification_state_machine.py: 11 warnings
+tests/test_ndma_adapter.py: 12 warnings
+tests/test_realtime_sse.py: 15 warnings
+tests/test_realtime_integration.py: 4 warnings
+tests/test_source_trust_score_audit.py: 6 warnings
+tests/test_cwc_adapter.py: 14 warnings
+tests/test_p6_verification_status_invariant.py: 3 warnings
+tests/test_late_corroboration_wiring.py: 9 warnings
+tests/test_evidence_observation_schema.py: 4 warnings
+tests/test_duplicate_detection.py: 13 warnings
+tests/test_security_audit_hardening.py: 9 warnings
+tests/test_location_resolution.py: 15 warnings
+tests/test_orchestration_dispatcher.py: 5 warnings
+tests/test_incident_intelligence_api.py: 23 warnings
+tests/test_external_ingestion_integration.py: 7 warnings
+tests/test_audit_round5_regressions.py: 2 warnings
+tests/test_route_and_citizen_geo_api.py: 3 warnings
+tests/test_o2_health.py: 6 warnings
+tests/test_observation_corroboration.py: 46 warnings
+tests/test_response_speed.py: 3 warnings
+tests/test_sse_fanout.py: 3 warnings
+tests/test_physical_corroboration_pipeline.py: 3 warnings
+tests/test_live_intelligence_integration.py: 8 warnings
+tests/test_r4_classification_regression.py: 2 warnings
+tests/test_realtime_service.py: 12 warnings
+tests/test_dashboard_cache.py: 4 warnings
+tests/test_dashboard_analytics_api.py: 7 warnings
+tests/test_db_pool.py: 2 warnings
+tests/test_observability_and_drills.py: 4 warnings
+tests/test_outbox_worker_runtime.py: 8 warnings
+tests/test_imd_adapter.py: 9 warnings
+tests/test_evidence_linking.py: 14 warnings
+tests/test_config.py: 7 warnings
+tests/test_demo_fixtures.py: 3 warnings
+tests/test_health.py: 3 warnings
+tests/test_audit_round4_regressions.py: 4 warnings
+tests/test_orchestration_events_and_graph.py: 5 warnings
+tests/test_demo_filter.py: 1 warning
+tests/test_data_retention.py: 6 warnings
+tests/test_db_schema.py: 4 warnings
+tests/test_physical_corroboration_api.py: 4 warnings
+tests/test_rss_adapter.py: 9 warnings
+tests/test_mastodon_adapter.py: 13 warnings
+tests/test_rate_limiter.py: 3 warnings
+tests/test_physical_corroboration_logic.py: 18 warnings
+tests/test_gdelt_adapter.py: 16 warnings
+tests/test_orchestration_pipeline.py: 8 warnings
+tests/test_realtime_outbox.py: 9 warnings
+tests/test_stream_recovery.py: 2 warnings
+tests/test_physical_corroboration_providers.py: 9 warnings
+tests/test_ingestion.py: 9 warnings
+tests/test_phase3_adapters.py: 24 warnings
+tests/test_reports.py: 28 warnings
+tests/test_dashboard_analytics_service.py: 5 warnings
+tests/test_security_auth_relief_feedback.py: 10 warnings
+  /Users/akshatjain/Documents/SIH/back-end/.venv/lib/python3.14/site-packages/pytest_asyncio/plugin.py:978: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+    policy = asyncio.get_event_loop_policy()
+
+tests/test_o3_metrics.py: 1 warning
+tests/test_admin_endpoints.py: 2 warnings
+tests/test_verification_state_machine.py: 5 warnings
+tests/test_incident_intelligence_api.py: 17 warnings
+tests/test_route_and_citizen_geo_api.py: 1 warning
+tests/test_o2_health.py: 2 warnings
+tests/test_dashboard_cache.py: 1 warning
+tests/test_dashboard_analytics_api.py: 4 warnings
+tests/test_demo_fixtures.py: 1 warning
+tests/test_health.py: 2 warnings
+tests/test_audit_round4_regressions.py: 1 warning
+tests/test_demo_filter.py: 1 warning
+tests/test_physical_corroboration_api.py: 4 warnings
+tests/test_reports.py: 20 warnings
+tests/test_security_auth_relief_feedback.py: 7 warnings
+  /Users/akshatjain/Documents/SIH/back-end/.venv/lib/python3.14/site-packages/fastapi/routing.py:144: FastAPIDeprecationWarning: ORJSONResponse is deprecated, FastAPI now serializes data directly to JSON bytes via Pydantic when a return type or response model is set, which is faster and doesn't need a custom response class. Read more in the FastAPI docs: https://fastapi.tiangolo.com/advanced/custom-response/#orjson-or-response-model and https://fastapi.tiangolo.com/tutorial/response-model/
+    response = await f(request)
+
+tests/test_admin_endpoints.py::TestAdminEndpoints::test_export_limits_enforced_422
+tests/test_admin_endpoints.py::TestAdminEndpoints::test_bulk_verification_limit_enforced_422
+tests/test_incident_intelligence_api.py::test_no_duplicate_citizen_intake_route
+tests/test_audit_round4_regressions.py::test_geo_endpoint_honors_limit
+tests/test_reports.py::test_submit_report_missing_title
+  /Users/akshatjain/Documents/SIH/back-end/.venv/lib/python3.14/site-packages/starlette/_exception_handler.py:59: StarletteDeprecationWarning: 'HTTP_422_UNPROCESSABLE_ENTITY' is deprecated. Use 'HTTP_422_UNPROCESSABLE_CONTENT' instead.
+    response = await handler(conn, exc)  # type: ignore[arg-type]
+
+tests/test_incident_intelligence_api.py::test_geo_incidents_valid_bbox_and_safety_checks
+tests/test_dashboard_analytics_api.py::test_analytics_trends_api_validation_errors
+tests/test_dashboard_analytics_api.py::test_dashboard_summary_api_validation_errors
+tests/test_dashboard_analytics_api.py::test_analytics_regional_api_validation_errors
+tests/test_reports.py::test_submit_report_invalid_latitude
+tests/test_reports.py::test_get_report_malformed_id_returns_422
+tests/test_reports.py::test_list_reports_invalid_date_range
+tests/test_reports.py::test_list_reports_invalid_bbox
+tests/test_reports.py::test_submit_report_invalid_longitude
+  /Users/akshatjain/Documents/SIH/back-end/.venv/lib/python3.14/site-packages/fastapi/routing.py:352: StarletteDeprecationWarning: 'HTTP_422_UNPROCESSABLE_ENTITY' is deprecated. Use 'HTTP_422_UNPROCESSABLE_CONTENT' instead.
+    return await dependant.call(**values)
+
+tests/test_physical_corroboration_pipeline.py: 10 warnings
+tests/test_observability_and_drills.py: 77 warnings
+tests/test_demo_fixtures.py: 2 warnings
+tests/test_physical_corroboration_api.py: 1 warning
+tests/test_physical_corroboration_logic.py: 30 warnings
+  /Users/akshatjain/Documents/SIH/back-end/.venv/lib/python3.14/site-packages/pydantic/main.py:263: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+    validated_self = self.__pydantic_validator__.validate_python(data, self_instance=self)
+
+tests/test_dashboard_analytics_api.py::test_analytics_trends_api_validation_errors
+  /Users/akshatjain/Documents/SIH/back-end/app/api/v1/analytics.py:145: StarletteDeprecationWarning: 'HTTP_422_UNPROCESSABLE_ENTITY' is deprecated. Use 'HTTP_422_UNPROCESSABLE_CONTENT' instead.
+    parsed_bbox = _parse_bbox(bbox)
+
+tests/test_dashboard_analytics_api.py::test_dashboard_summary_api_validation_errors
+  /Users/akshatjain/Documents/SIH/back-end/app/api/v1/dashboard.py:137: StarletteDeprecationWarning: 'HTTP_422_UNPROCESSABLE_ENTITY' is deprecated. Use 'HTTP_422_UNPROCESSABLE_CONTENT' instead.
+    parsed_bbox = _parse_bbox(bbox)
+
+tests/test_dashboard_analytics_api.py::test_analytics_regional_api_validation_errors
+  /Users/akshatjain/Documents/SIH/back-end/app/api/v1/analytics.py:231: StarletteDeprecationWarning: 'HTTP_422_UNPROCESSABLE_ENTITY' is deprecated. Use 'HTTP_422_UNPROCESSABLE_CONTENT' instead.
+    parsed_bbox = _parse_bbox(bbox)
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+523 passed, 4918 warnings in 115.19s (0:01:55)
+
+--- 8. Randomized Pytest Suite (Seed 42) ---
+........................................................................ [ 13%]
+........................................................................ [ 27%]
+........................................................................ [ 41%]
+........................................................................ [ 55%]
+........................................................................ [ 68%]
+........................................................................ [ 82%]
+........................................................................ [ 96%]
+...................                                                      [100%]
+=============================== warnings summary ===============================
+tests/test_dashboard_cache.py::test_api_dashboard_summary_caching
+  /Users/akshatjain/Documents/SIH/back-end/.venv/lib/python3.14/site-packages/pytest_asyncio/plugin.py:1216: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+    return asyncio.get_event_loop_policy()
+
+tests/test_dashboard_cache.py: 5 warnings
+tests/test_security_auth_relief_feedback.py: 10 warnings
+tests/test_response_speed.py: 3 warnings
+tests/test_dashboard_analytics_service.py: 5 warnings
+tests/test_orchestration_pipeline.py: 8 warnings
+tests/test_observability_and_drills.py: 4 warnings
+tests/test_rate_limiter.py: 3 warnings
+tests/test_o2_health.py: 6 warnings
+tests/test_cwc_adapter.py: 14 warnings
+tests/test_late_corroboration_wiring.py: 9 warnings
+tests/test_audit_round4_regressions.py: 4 warnings
+tests/test_orchestration_events_and_graph.py: 5 warnings
+tests/test_physical_corroboration_providers.py: 9 warnings
+tests/test_physical_corroboration_api.py: 4 warnings
+tests/test_incident_intelligence_api.py: 23 warnings
+tests/test_credibility_engine.py: 22 warnings
+tests/test_phase3_adapters.py: 24 warnings
+tests/test_observation_corroboration.py: 46 warnings
+tests/test_orchestration_benchmark.py: 1 warning
+tests/test_live_intelligence_integration.py: 8 warnings
+tests/test_route_and_citizen_geo_api.py: 3 warnings
+tests/test_realtime_outbox.py: 9 warnings
+tests/test_stream_recovery.py: 2 warnings
+tests/test_evidence_linking.py: 14 warnings
+tests/test_redis_pool.py: 1 warning
+tests/test_imd_adapter.py: 9 warnings
+tests/test_duplicate_detection.py: 13 warnings
+tests/test_db_schema.py: 4 warnings
+tests/test_physical_corroboration_pipeline.py: 3 warnings
+tests/test_verification_state_machine.py: 11 warnings
+tests/test_gdelt_adapter.py: 16 warnings
+tests/test_o3_metrics.py: 3 warnings
+tests/test_p6_verification_status_invariant.py: 3 warnings
+tests/test_source_trust_score_audit.py: 6 warnings
+tests/test_admin_endpoints.py: 10 warnings
+tests/test_r4_classification_regression.py: 2 warnings
+tests/test_data_retention.py: 6 warnings
+tests/test_realtime_service.py: 12 warnings
+tests/test_ingestion.py: 9 warnings
+tests/test_reports.py: 28 warnings
+tests/test_evidence_observation_schema.py: 4 warnings
+tests/test_security_audit_hardening.py: 9 warnings
+tests/test_physical_corroboration_logic.py: 18 warnings
+tests/test_orchestration_dispatcher.py: 5 warnings
+tests/test_demo_fixtures.py: 3 warnings
+tests/test_external_ingestion_integration.py: 7 warnings
+tests/test_db_pool.py: 2 warnings
+tests/test_realtime_integration.py: 4 warnings
+tests/test_audit_round5_regressions.py: 2 warnings
+tests/test_health.py: 3 warnings
+tests/test_outbox_worker_runtime.py: 8 warnings
+tests/test_demo_filter.py: 1 warning
+tests/test_realtime_sse.py: 15 warnings
+tests/test_dashboard_analytics_api.py: 7 warnings
+tests/test_sse_fanout.py: 3 warnings
+tests/test_ndma_adapter.py: 12 warnings
+tests/test_config.py: 7 warnings
+tests/test_location_resolution.py: 15 warnings
+tests/test_rss_adapter.py: 9 warnings
+tests/test_mastodon_adapter.py: 13 warnings
+  /Users/akshatjain/Documents/SIH/back-end/.venv/lib/python3.14/site-packages/pytest_asyncio/plugin.py:772: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+    old_loop_policy = asyncio.get_event_loop_policy()
+
+tests/test_dashboard_cache.py: 5 warnings
+tests/test_security_auth_relief_feedback.py: 10 warnings
+tests/test_response_speed.py: 3 warnings
+tests/test_dashboard_analytics_service.py: 5 warnings
+tests/test_orchestration_pipeline.py: 8 warnings
+tests/test_observability_and_drills.py: 4 warnings
+tests/test_rate_limiter.py: 3 warnings
+tests/test_o2_health.py: 6 warnings
+tests/test_cwc_adapter.py: 14 warnings
+tests/test_late_corroboration_wiring.py: 9 warnings
+tests/test_audit_round4_regressions.py: 4 warnings
+tests/test_orchestration_events_and_graph.py: 5 warnings
+tests/test_physical_corroboration_providers.py: 9 warnings
+tests/test_physical_corroboration_api.py: 4 warnings
+tests/test_incident_intelligence_api.py: 23 warnings
+tests/test_credibility_engine.py: 22 warnings
+tests/test_phase3_adapters.py: 24 warnings
+tests/test_observation_corroboration.py: 46 warnings
+tests/test_orchestration_benchmark.py: 1 warning
+tests/test_live_intelligence_integration.py: 8 warnings
+tests/test_route_and_citizen_geo_api.py: 3 warnings
+tests/test_realtime_outbox.py: 9 warnings
+tests/test_stream_recovery.py: 2 warnings
+tests/test_evidence_linking.py: 14 warnings
+tests/test_redis_pool.py: 1 warning
+tests/test_imd_adapter.py: 9 warnings
+tests/test_duplicate_detection.py: 13 warnings
+tests/test_db_schema.py: 4 warnings
+tests/test_physical_corroboration_pipeline.py: 3 warnings
+tests/test_verification_state_machine.py: 11 warnings
+tests/test_gdelt_adapter.py: 16 warnings
+tests/test_o3_metrics.py: 3 warnings
+tests/test_p6_verification_status_invariant.py: 3 warnings
+tests/test_source_trust_score_audit.py: 6 warnings
+tests/test_admin_endpoints.py: 10 warnings
+tests/test_r4_classification_regression.py: 2 warnings
+tests/test_data_retention.py: 6 warnings
+tests/test_realtime_service.py: 12 warnings
+tests/test_ingestion.py: 9 warnings
+tests/test_reports.py: 28 warnings
+tests/test_evidence_observation_schema.py: 4 warnings
+tests/test_security_audit_hardening.py: 9 warnings
+tests/test_physical_corroboration_logic.py: 18 warnings
+tests/test_orchestration_dispatcher.py: 5 warnings
+tests/test_demo_fixtures.py: 3 warnings
+tests/test_external_ingestion_integration.py: 7 warnings
+tests/test_db_pool.py: 2 warnings
+tests/test_realtime_integration.py: 4 warnings
+tests/test_audit_round5_regressions.py: 2 warnings
+tests/test_health.py: 3 warnings
+tests/test_outbox_worker_runtime.py: 8 warnings
+tests/test_demo_filter.py: 1 warning
+tests/test_realtime_sse.py: 15 warnings
+tests/test_dashboard_analytics_api.py: 7 warnings
+tests/test_sse_fanout.py: 3 warnings
+tests/test_ndma_adapter.py: 12 warnings
+tests/test_config.py: 7 warnings
+tests/test_location_resolution.py: 15 warnings
+tests/test_rss_adapter.py: 9 warnings
+tests/test_mastodon_adapter.py: 13 warnings
+  /Users/akshatjain/Documents/SIH/back-end/.venv/lib/python3.14/site-packages/pytest_asyncio/plugin.py:777: DeprecationWarning: 'asyncio.set_event_loop_policy' is deprecated and slated for removal in Python 3.16
+    asyncio.set_event_loop_policy(policy)
+
+tests/test_dashboard_cache.py: 5 warnings
+tests/test_security_auth_relief_feedback.py: 10 warnings
+tests/test_response_speed.py: 3 warnings
+tests/test_dashboard_analytics_service.py: 5 warnings
+tests/test_orchestration_pipeline.py: 8 warnings
+tests/test_observability_and_drills.py: 4 warnings
+tests/test_rate_limiter.py: 3 warnings
+tests/test_o2_health.py: 6 warnings
+tests/test_cwc_adapter.py: 14 warnings
+tests/test_late_corroboration_wiring.py: 9 warnings
+tests/test_audit_round4_regressions.py: 4 warnings
+tests/test_orchestration_events_and_graph.py: 5 warnings
+tests/test_physical_corroboration_providers.py: 9 warnings
+tests/test_physical_corroboration_api.py: 4 warnings
+tests/test_incident_intelligence_api.py: 23 warnings
+tests/test_credibility_engine.py: 22 warnings
+tests/test_phase3_adapters.py: 24 warnings
+tests/test_observation_corroboration.py: 46 warnings
+tests/test_orchestration_benchmark.py: 1 warning
+tests/test_live_intelligence_integration.py: 8 warnings
+tests/test_route_and_citizen_geo_api.py: 3 warnings
+tests/test_realtime_outbox.py: 9 warnings
+tests/test_stream_recovery.py: 2 warnings
+tests/test_evidence_linking.py: 14 warnings
+tests/test_redis_pool.py: 1 warning
+tests/test_imd_adapter.py: 9 warnings
+tests/test_duplicate_detection.py: 13 warnings
+tests/test_db_schema.py: 4 warnings
+tests/test_physical_corroboration_pipeline.py: 3 warnings
+tests/test_verification_state_machine.py: 11 warnings
+tests/test_gdelt_adapter.py: 16 warnings
+tests/test_o3_metrics.py: 3 warnings
+tests/test_p6_verification_status_invariant.py: 3 warnings
+tests/test_source_trust_score_audit.py: 6 warnings
+tests/test_admin_endpoints.py: 10 warnings
+tests/test_r4_classification_regression.py: 2 warnings
+tests/test_data_retention.py: 6 warnings
+tests/test_realtime_service.py: 12 warnings
+tests/test_ingestion.py: 9 warnings
+tests/test_reports.py: 28 warnings
+tests/test_evidence_observation_schema.py: 4 warnings
+tests/test_security_audit_hardening.py: 9 warnings
+tests/test_physical_corroboration_logic.py: 18 warnings
+tests/test_orchestration_dispatcher.py: 5 warnings
+tests/test_demo_fixtures.py: 3 warnings
+tests/test_external_ingestion_integration.py: 7 warnings
+tests/test_db_pool.py: 2 warnings
+tests/test_realtime_integration.py: 4 warnings
+tests/test_audit_round5_regressions.py: 2 warnings
+tests/test_health.py: 3 warnings
+tests/test_outbox_worker_runtime.py: 8 warnings
+tests/test_demo_filter.py: 1 warning
+tests/test_realtime_sse.py: 15 warnings
+tests/test_dashboard_analytics_api.py: 7 warnings
+tests/test_sse_fanout.py: 3 warnings
+tests/test_ndma_adapter.py: 12 warnings
+tests/test_config.py: 7 warnings
+tests/test_location_resolution.py: 15 warnings
+tests/test_rss_adapter.py: 9 warnings
+tests/test_mastodon_adapter.py: 13 warnings
+  /Users/akshatjain/Documents/SIH/back-end/.venv/lib/python3.14/site-packages/pytest_asyncio/plugin.py:1183: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+    loop = asyncio.get_event_loop_policy().new_event_loop()
+
+tests/test_dashboard_cache.py: 4 warnings
+tests/test_security_auth_relief_feedback.py: 10 warnings
+tests/test_response_speed.py: 3 warnings
+tests/test_dashboard_analytics_service.py: 5 warnings
+tests/test_orchestration_pipeline.py: 8 warnings
+tests/test_observability_and_drills.py: 4 warnings
+tests/test_rate_limiter.py: 3 warnings
+tests/test_o2_health.py: 6 warnings
+tests/test_cwc_adapter.py: 14 warnings
+tests/test_late_corroboration_wiring.py: 9 warnings
+tests/test_audit_round4_regressions.py: 4 warnings
+tests/test_orchestration_events_and_graph.py: 5 warnings
+tests/test_physical_corroboration_providers.py: 9 warnings
+tests/test_physical_corroboration_api.py: 4 warnings
+tests/test_incident_intelligence_api.py: 23 warnings
+tests/test_credibility_engine.py: 22 warnings
+tests/test_phase3_adapters.py: 24 warnings
+tests/test_observation_corroboration.py: 46 warnings
+tests/test_orchestration_benchmark.py: 1 warning
+tests/test_live_intelligence_integration.py: 8 warnings
+tests/test_route_and_citizen_geo_api.py: 3 warnings
+tests/test_realtime_outbox.py: 9 warnings
+tests/test_stream_recovery.py: 2 warnings
+tests/test_evidence_linking.py: 14 warnings
+tests/test_redis_pool.py: 1 warning
+tests/test_imd_adapter.py: 9 warnings
+tests/test_duplicate_detection.py: 13 warnings
+tests/test_db_schema.py: 4 warnings
+tests/test_physical_corroboration_pipeline.py: 3 warnings
+tests/test_verification_state_machine.py: 11 warnings
+tests/test_gdelt_adapter.py: 16 warnings
+tests/test_o3_metrics.py: 3 warnings
+tests/test_p6_verification_status_invariant.py: 3 warnings
+tests/test_source_trust_score_audit.py: 6 warnings
+tests/test_admin_endpoints.py: 10 warnings
+tests/test_r4_classification_regression.py: 2 warnings
+tests/test_data_retention.py: 6 warnings
+tests/test_realtime_service.py: 12 warnings
+tests/test_ingestion.py: 9 warnings
+tests/test_reports.py: 28 warnings
+tests/test_evidence_observation_schema.py: 4 warnings
+tests/test_security_audit_hardening.py: 9 warnings
+tests/test_physical_corroboration_logic.py: 18 warnings
+tests/test_orchestration_dispatcher.py: 5 warnings
+tests/test_demo_fixtures.py: 3 warnings
+tests/test_external_ingestion_integration.py: 7 warnings
+tests/test_db_pool.py: 2 warnings
+tests/test_realtime_integration.py: 4 warnings
+tests/test_audit_round5_regressions.py: 2 warnings
+tests/test_health.py: 3 warnings
+tests/test_outbox_worker_runtime.py: 8 warnings
+tests/test_demo_filter.py: 1 warning
+tests/test_realtime_sse.py: 15 warnings
+tests/test_dashboard_analytics_api.py: 7 warnings
+tests/test_sse_fanout.py: 3 warnings
+tests/test_ndma_adapter.py: 12 warnings
+tests/test_config.py: 7 warnings
+tests/test_location_resolution.py: 15 warnings
+tests/test_rss_adapter.py: 9 warnings
+tests/test_mastodon_adapter.py: 13 warnings
+  /Users/akshatjain/Documents/SIH/back-end/.venv/lib/python3.14/site-packages/pytest_asyncio/plugin.py:874: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+    _restore_event_loop_policy(asyncio.get_event_loop_policy()),
+
+tests/test_dashboard_cache.py: 4 warnings
+tests/test_security_auth_relief_feedback.py: 10 warnings
+tests/test_response_speed.py: 3 warnings
+tests/test_dashboard_analytics_service.py: 5 warnings
+tests/test_orchestration_pipeline.py: 8 warnings
+tests/test_observability_and_drills.py: 4 warnings
+tests/test_rate_limiter.py: 3 warnings
+tests/test_o2_health.py: 6 warnings
+tests/test_cwc_adapter.py: 14 warnings
+tests/test_late_corroboration_wiring.py: 9 warnings
+tests/test_audit_round4_regressions.py: 4 warnings
+tests/test_orchestration_events_and_graph.py: 5 warnings
+tests/test_physical_corroboration_providers.py: 9 warnings
+tests/test_physical_corroboration_api.py: 4 warnings
+tests/test_incident_intelligence_api.py: 23 warnings
+tests/test_credibility_engine.py: 22 warnings
+tests/test_phase3_adapters.py: 24 warnings
+tests/test_observation_corroboration.py: 46 warnings
+tests/test_orchestration_benchmark.py: 1 warning
+tests/test_live_intelligence_integration.py: 8 warnings
+tests/test_route_and_citizen_geo_api.py: 3 warnings
+tests/test_realtime_outbox.py: 9 warnings
+tests/test_stream_recovery.py: 2 warnings
+tests/test_evidence_linking.py: 14 warnings
+tests/test_redis_pool.py: 1 warning
+tests/test_imd_adapter.py: 9 warnings
+tests/test_duplicate_detection.py: 13 warnings
+tests/test_db_schema.py: 4 warnings
+tests/test_physical_corroboration_pipeline.py: 3 warnings
+tests/test_verification_state_machine.py: 11 warnings
+tests/test_gdelt_adapter.py: 16 warnings
+tests/test_o3_metrics.py: 3 warnings
+tests/test_p6_verification_status_invariant.py: 3 warnings
+tests/test_source_trust_score_audit.py: 6 warnings
+tests/test_admin_endpoints.py: 10 warnings
+tests/test_r4_classification_regression.py: 2 warnings
+tests/test_data_retention.py: 6 warnings
+tests/test_realtime_service.py: 12 warnings
+tests/test_ingestion.py: 9 warnings
+tests/test_reports.py: 28 warnings
+tests/test_evidence_observation_schema.py: 4 warnings
+tests/test_security_audit_hardening.py: 9 warnings
+tests/test_physical_corroboration_logic.py: 18 warnings
+tests/test_orchestration_dispatcher.py: 5 warnings
+tests/test_demo_fixtures.py: 3 warnings
+tests/test_external_ingestion_integration.py: 7 warnings
+tests/test_db_pool.py: 2 warnings
+tests/test_realtime_integration.py: 4 warnings
+tests/test_audit_round5_regressions.py: 2 warnings
+tests/test_health.py: 3 warnings
+tests/test_outbox_worker_runtime.py: 8 warnings
+tests/test_demo_filter.py: 1 warning
+tests/test_realtime_sse.py: 15 warnings
+tests/test_dashboard_analytics_api.py: 7 warnings
+tests/test_sse_fanout.py: 3 warnings
+tests/test_ndma_adapter.py: 12 warnings
+tests/test_config.py: 7 warnings
+tests/test_location_resolution.py: 15 warnings
+tests/test_rss_adapter.py: 9 warnings
+tests/test_mastodon_adapter.py: 13 warnings
+  /Users/akshatjain/Documents/SIH/back-end/.venv/lib/python3.14/site-packages/pytest_asyncio/plugin.py:889: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+    policy = asyncio.get_event_loop_policy()
+
+tests/test_dashboard_cache.py: 1 warning
+tests/test_security_auth_relief_feedback.py: 7 warnings
+tests/test_o2_health.py: 2 warnings
+tests/test_audit_round4_regressions.py: 1 warning
+tests/test_physical_corroboration_api.py: 4 warnings
+tests/test_incident_intelligence_api.py: 17 warnings
+tests/test_route_and_citizen_geo_api.py: 1 warning
+tests/test_verification_state_machine.py: 5 warnings
+tests/test_o3_metrics.py: 1 warning
+tests/test_admin_endpoints.py: 2 warnings
+tests/test_reports.py: 20 warnings
+tests/test_demo_fixtures.py: 1 warning
+tests/test_health.py: 2 warnings
+tests/test_demo_filter.py: 1 warning
+tests/test_dashboard_analytics_api.py: 4 warnings
+  /Users/akshatjain/Documents/SIH/back-end/.venv/lib/python3.14/site-packages/fastapi/routing.py:144: FastAPIDeprecationWarning: ORJSONResponse is deprecated, FastAPI now serializes data directly to JSON bytes via Pydantic when a return type or response model is set, which is faster and doesn't need a custom response class. Read more in the FastAPI docs: https://fastapi.tiangolo.com/advanced/custom-response/#orjson-or-response-model and https://fastapi.tiangolo.com/tutorial/response-model/
+    response = await f(request)
+
+tests/test_dashboard_cache.py: 4 warnings
+tests/test_security_auth_relief_feedback.py: 10 warnings
+tests/test_response_speed.py: 3 warnings
+tests/test_dashboard_analytics_service.py: 5 warnings
+tests/test_orchestration_pipeline.py: 8 warnings
+tests/test_observability_and_drills.py: 4 warnings
+tests/test_rate_limiter.py: 3 warnings
+tests/test_o2_health.py: 6 warnings
+tests/test_cwc_adapter.py: 14 warnings
+tests/test_late_corroboration_wiring.py: 9 warnings
+tests/test_audit_round4_regressions.py: 4 warnings
+tests/test_orchestration_events_and_graph.py: 5 warnings
+tests/test_physical_corroboration_providers.py: 9 warnings
+tests/test_physical_corroboration_api.py: 4 warnings
+tests/test_incident_intelligence_api.py: 23 warnings
+tests/test_credibility_engine.py: 22 warnings
+tests/test_phase3_adapters.py: 24 warnings
+tests/test_observation_corroboration.py: 46 warnings
+tests/test_orchestration_benchmark.py: 1 warning
+tests/test_live_intelligence_integration.py: 8 warnings
+tests/test_route_and_citizen_geo_api.py: 3 warnings
+tests/test_realtime_outbox.py: 9 warnings
+tests/test_stream_recovery.py: 2 warnings
+tests/test_evidence_linking.py: 14 warnings
+tests/test_redis_pool.py: 1 warning
+tests/test_imd_adapter.py: 9 warnings
+tests/test_duplicate_detection.py: 13 warnings
+tests/test_db_schema.py: 4 warnings
+tests/test_physical_corroboration_pipeline.py: 3 warnings
+tests/test_verification_state_machine.py: 11 warnings
+tests/test_gdelt_adapter.py: 16 warnings
+tests/test_o3_metrics.py: 3 warnings
+tests/test_p6_verification_status_invariant.py: 3 warnings
+tests/test_source_trust_score_audit.py: 6 warnings
+tests/test_admin_endpoints.py: 10 warnings
+tests/test_r4_classification_regression.py: 2 warnings
+tests/test_data_retention.py: 6 warnings
+tests/test_realtime_service.py: 12 warnings
+tests/test_ingestion.py: 9 warnings
+tests/test_reports.py: 28 warnings
+tests/test_evidence_observation_schema.py: 4 warnings
+tests/test_security_audit_hardening.py: 9 warnings
+tests/test_physical_corroboration_logic.py: 18 warnings
+tests/test_orchestration_dispatcher.py: 5 warnings
+tests/test_demo_fixtures.py: 3 warnings
+tests/test_external_ingestion_integration.py: 7 warnings
+tests/test_db_pool.py: 2 warnings
+tests/test_realtime_integration.py: 4 warnings
+tests/test_audit_round5_regressions.py: 2 warnings
+tests/test_health.py: 3 warnings
+tests/test_outbox_worker_runtime.py: 8 warnings
+tests/test_demo_filter.py: 1 warning
+tests/test_realtime_sse.py: 15 warnings
+tests/test_dashboard_analytics_api.py: 7 warnings
+tests/test_sse_fanout.py: 3 warnings
+tests/test_ndma_adapter.py: 12 warnings
+tests/test_config.py: 7 warnings
+tests/test_location_resolution.py: 15 warnings
+tests/test_rss_adapter.py: 9 warnings
+tests/test_mastodon_adapter.py: 14 warnings
+  /Users/akshatjain/Documents/SIH/back-end/.venv/lib/python3.14/site-packages/pytest_asyncio/plugin.py:794: DeprecationWarning: 'asyncio.set_event_loop_policy' is deprecated and slated for removal in Python 3.16
+    asyncio.set_event_loop_policy(old_loop_policy)
+
+tests/test_dashboard_cache.py: 4 warnings
+tests/test_security_auth_relief_feedback.py: 10 warnings
+tests/test_response_speed.py: 3 warnings
+tests/test_dashboard_analytics_service.py: 5 warnings
+tests/test_orchestration_pipeline.py: 8 warnings
+tests/test_observability_and_drills.py: 4 warnings
+tests/test_rate_limiter.py: 3 warnings
+tests/test_o2_health.py: 6 warnings
+tests/test_cwc_adapter.py: 14 warnings
+tests/test_late_corroboration_wiring.py: 9 warnings
+tests/test_audit_round4_regressions.py: 4 warnings
+tests/test_orchestration_events_and_graph.py: 5 warnings
+tests/test_physical_corroboration_providers.py: 9 warnings
+tests/test_physical_corroboration_api.py: 4 warnings
+tests/test_incident_intelligence_api.py: 23 warnings
+tests/test_credibility_engine.py: 22 warnings
+tests/test_phase3_adapters.py: 24 warnings
+tests/test_observation_corroboration.py: 46 warnings
+tests/test_orchestration_benchmark.py: 1 warning
+tests/test_live_intelligence_integration.py: 8 warnings
+tests/test_route_and_citizen_geo_api.py: 3 warnings
+tests/test_realtime_outbox.py: 9 warnings
+tests/test_stream_recovery.py: 2 warnings
+tests/test_evidence_linking.py: 14 warnings
+tests/test_redis_pool.py: 1 warning
+tests/test_imd_adapter.py: 9 warnings
+tests/test_duplicate_detection.py: 13 warnings
+tests/test_db_schema.py: 4 warnings
+tests/test_physical_corroboration_pipeline.py: 3 warnings
+tests/test_verification_state_machine.py: 11 warnings
+tests/test_gdelt_adapter.py: 16 warnings
+tests/test_o3_metrics.py: 3 warnings
+tests/test_p6_verification_status_invariant.py: 3 warnings
+tests/test_source_trust_score_audit.py: 6 warnings
+tests/test_admin_endpoints.py: 10 warnings
+tests/test_r4_classification_regression.py: 2 warnings
+tests/test_data_retention.py: 6 warnings
+tests/test_realtime_service.py: 12 warnings
+tests/test_ingestion.py: 9 warnings
+tests/test_reports.py: 28 warnings
+tests/test_evidence_observation_schema.py: 4 warnings
+tests/test_security_audit_hardening.py: 9 warnings
+tests/test_physical_corroboration_logic.py: 18 warnings
+tests/test_orchestration_dispatcher.py: 5 warnings
+tests/test_demo_fixtures.py: 3 warnings
+tests/test_external_ingestion_integration.py: 7 warnings
+tests/test_db_pool.py: 2 warnings
+tests/test_realtime_integration.py: 4 warnings
+tests/test_audit_round5_regressions.py: 2 warnings
+tests/test_health.py: 3 warnings
+tests/test_outbox_worker_runtime.py: 8 warnings
+tests/test_demo_filter.py: 1 warning
+tests/test_realtime_sse.py: 15 warnings
+tests/test_dashboard_analytics_api.py: 7 warnings
+tests/test_sse_fanout.py: 3 warnings
+tests/test_ndma_adapter.py: 12 warnings
+tests/test_config.py: 7 warnings
+tests/test_location_resolution.py: 15 warnings
+tests/test_rss_adapter.py: 9 warnings
+tests/test_mastodon_adapter.py: 13 warnings
+  /Users/akshatjain/Documents/SIH/back-end/.venv/lib/python3.14/site-packages/pytest_asyncio/plugin.py:942: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+    policy = asyncio.get_event_loop_policy()
+
+tests/test_dashboard_cache.py: 4 warnings
+tests/test_security_auth_relief_feedback.py: 10 warnings
+tests/test_response_speed.py: 3 warnings
+tests/test_dashboard_analytics_service.py: 5 warnings
+tests/test_orchestration_pipeline.py: 8 warnings
+tests/test_observability_and_drills.py: 4 warnings
+tests/test_rate_limiter.py: 3 warnings
+tests/test_o2_health.py: 6 warnings
+tests/test_cwc_adapter.py: 14 warnings
+tests/test_late_corroboration_wiring.py: 9 warnings
+tests/test_audit_round4_regressions.py: 4 warnings
+tests/test_orchestration_events_and_graph.py: 5 warnings
+tests/test_physical_corroboration_providers.py: 9 warnings
+tests/test_physical_corroboration_api.py: 4 warnings
+tests/test_incident_intelligence_api.py: 23 warnings
+tests/test_credibility_engine.py: 22 warnings
+tests/test_phase3_adapters.py: 24 warnings
+tests/test_observation_corroboration.py: 46 warnings
+tests/test_orchestration_benchmark.py: 1 warning
+tests/test_live_intelligence_integration.py: 8 warnings
+tests/test_route_and_citizen_geo_api.py: 3 warnings
+tests/test_realtime_outbox.py: 9 warnings
+tests/test_stream_recovery.py: 2 warnings
+tests/test_evidence_linking.py: 14 warnings
+tests/test_redis_pool.py: 1 warning
+tests/test_imd_adapter.py: 9 warnings
+tests/test_duplicate_detection.py: 13 warnings
+tests/test_db_schema.py: 4 warnings
+tests/test_physical_corroboration_pipeline.py: 3 warnings
+tests/test_verification_state_machine.py: 11 warnings
+tests/test_gdelt_adapter.py: 16 warnings
+tests/test_o3_metrics.py: 3 warnings
+tests/test_p6_verification_status_invariant.py: 3 warnings
+tests/test_source_trust_score_audit.py: 6 warnings
+tests/test_admin_endpoints.py: 10 warnings
+tests/test_r4_classification_regression.py: 2 warnings
+tests/test_data_retention.py: 6 warnings
+tests/test_realtime_service.py: 12 warnings
+tests/test_ingestion.py: 9 warnings
+tests/test_reports.py: 28 warnings
+tests/test_evidence_observation_schema.py: 4 warnings
+tests/test_security_audit_hardening.py: 9 warnings
+tests/test_physical_corroboration_logic.py: 18 warnings
+tests/test_orchestration_dispatcher.py: 5 warnings
+tests/test_demo_fixtures.py: 3 warnings
+tests/test_external_ingestion_integration.py: 7 warnings
+tests/test_db_pool.py: 2 warnings
+tests/test_realtime_integration.py: 4 warnings
+tests/test_audit_round5_regressions.py: 2 warnings
+tests/test_health.py: 3 warnings
+tests/test_outbox_worker_runtime.py: 8 warnings
+tests/test_demo_filter.py: 1 warning
+tests/test_realtime_sse.py: 15 warnings
+tests/test_dashboard_analytics_api.py: 7 warnings
+tests/test_sse_fanout.py: 3 warnings
+tests/test_ndma_adapter.py: 12 warnings
+tests/test_config.py: 7 warnings
+tests/test_location_resolution.py: 15 warnings
+tests/test_rss_adapter.py: 9 warnings
+tests/test_mastodon_adapter.py: 13 warnings
+  /Users/akshatjain/Documents/SIH/back-end/.venv/lib/python3.14/site-packages/pytest_asyncio/plugin.py:966: DeprecationWarning: 'asyncio.set_event_loop_policy' is deprecated and slated for removal in Python 3.16
+    asyncio.set_event_loop_policy(previous_policy)
+
+tests/test_dashboard_cache.py: 4 warnings
+tests/test_security_auth_relief_feedback.py: 10 warnings
+tests/test_response_speed.py: 3 warnings
+tests/test_dashboard_analytics_service.py: 5 warnings
+tests/test_orchestration_pipeline.py: 8 warnings
+tests/test_observability_and_drills.py: 4 warnings
+tests/test_rate_limiter.py: 3 warnings
+tests/test_o2_health.py: 6 warnings
+tests/test_cwc_adapter.py: 14 warnings
+tests/test_late_corroboration_wiring.py: 9 warnings
+tests/test_audit_round4_regressions.py: 4 warnings
+tests/test_orchestration_events_and_graph.py: 5 warnings
+tests/test_physical_corroboration_providers.py: 9 warnings
+tests/test_physical_corroboration_api.py: 4 warnings
+tests/test_incident_intelligence_api.py: 23 warnings
+tests/test_credibility_engine.py: 22 warnings
+tests/test_phase3_adapters.py: 24 warnings
+tests/test_observation_corroboration.py: 46 warnings
+tests/test_orchestration_benchmark.py: 1 warning
+tests/test_live_intelligence_integration.py: 8 warnings
+tests/test_route_and_citizen_geo_api.py: 3 warnings
+tests/test_realtime_outbox.py: 9 warnings
+tests/test_stream_recovery.py: 2 warnings
+tests/test_evidence_linking.py: 14 warnings
+tests/test_redis_pool.py: 1 warning
+tests/test_imd_adapter.py: 9 warnings
+tests/test_duplicate_detection.py: 13 warnings
+tests/test_db_schema.py: 4 warnings
+tests/test_physical_corroboration_pipeline.py: 3 warnings
+tests/test_verification_state_machine.py: 11 warnings
+tests/test_gdelt_adapter.py: 16 warnings
+tests/test_o3_metrics.py: 3 warnings
+tests/test_p6_verification_status_invariant.py: 3 warnings
+tests/test_source_trust_score_audit.py: 6 warnings
+tests/test_admin_endpoints.py: 10 warnings
+tests/test_r4_classification_regression.py: 2 warnings
+tests/test_data_retention.py: 6 warnings
+tests/test_realtime_service.py: 12 warnings
+tests/test_ingestion.py: 9 warnings
+tests/test_reports.py: 28 warnings
+tests/test_evidence_observation_schema.py: 4 warnings
+tests/test_security_audit_hardening.py: 9 warnings
+tests/test_physical_corroboration_logic.py: 18 warnings
+tests/test_orchestration_dispatcher.py: 5 warnings
+tests/test_demo_fixtures.py: 3 warnings
+tests/test_external_ingestion_integration.py: 7 warnings
+tests/test_db_pool.py: 2 warnings
+tests/test_realtime_integration.py: 4 warnings
+tests/test_audit_round5_regressions.py: 2 warnings
+tests/test_health.py: 3 warnings
+tests/test_outbox_worker_runtime.py: 8 warnings
+tests/test_demo_filter.py: 1 warning
+tests/test_realtime_sse.py: 15 warnings
+tests/test_dashboard_analytics_api.py: 7 warnings
+tests/test_sse_fanout.py: 3 warnings
+tests/test_ndma_adapter.py: 12 warnings
+tests/test_config.py: 7 warnings
+tests/test_location_resolution.py: 15 warnings
+tests/test_rss_adapter.py: 9 warnings
+tests/test_mastodon_adapter.py: 13 warnings
+  /Users/akshatjain/Documents/SIH/back-end/.venv/lib/python3.14/site-packages/pytest_asyncio/plugin.py:978: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+    policy = asyncio.get_event_loop_policy()
+
+tests/test_observability_and_drills.py: 77 warnings
+tests/test_physical_corroboration_api.py: 1 warning
+tests/test_physical_corroboration_pipeline.py: 10 warnings
+tests/test_physical_corroboration_logic.py: 30 warnings
+tests/test_demo_fixtures.py: 2 warnings
+  /Users/akshatjain/Documents/SIH/back-end/.venv/lib/python3.14/site-packages/pydantic/main.py:263: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+    validated_self = self.__pydantic_validator__.validate_python(data, self_instance=self)
+
+tests/test_audit_round4_regressions.py::test_geo_endpoint_honors_limit
+tests/test_incident_intelligence_api.py::test_no_duplicate_citizen_intake_route
+tests/test_admin_endpoints.py::TestAdminEndpoints::test_export_limits_enforced_422
+tests/test_admin_endpoints.py::TestAdminEndpoints::test_bulk_verification_limit_enforced_422
+tests/test_reports.py::test_submit_report_missing_title
+  /Users/akshatjain/Documents/SIH/back-end/.venv/lib/python3.14/site-packages/starlette/_exception_handler.py:59: StarletteDeprecationWarning: 'HTTP_422_UNPROCESSABLE_ENTITY' is deprecated. Use 'HTTP_422_UNPROCESSABLE_CONTENT' instead.
+    response = await handler(conn, exc)  # type: ignore[arg-type]
+
+tests/test_incident_intelligence_api.py::test_geo_incidents_valid_bbox_and_safety_checks
+tests/test_reports.py::test_list_reports_invalid_bbox
+tests/test_reports.py::test_submit_report_invalid_latitude
+tests/test_reports.py::test_list_reports_invalid_date_range
+tests/test_reports.py::test_submit_report_invalid_longitude
+tests/test_reports.py::test_get_report_malformed_id_returns_422
+tests/test_dashboard_analytics_api.py::test_dashboard_summary_api_validation_errors
+tests/test_dashboard_analytics_api.py::test_analytics_trends_api_validation_errors
+tests/test_dashboard_analytics_api.py::test_analytics_regional_api_validation_errors
+  /Users/akshatjain/Documents/SIH/back-end/.venv/lib/python3.14/site-packages/fastapi/routing.py:352: StarletteDeprecationWarning: 'HTTP_422_UNPROCESSABLE_ENTITY' is deprecated. Use 'HTTP_422_UNPROCESSABLE_CONTENT' instead.
+    return await dependant.call(**values)
+
+tests/test_dashboard_analytics_api.py::test_dashboard_summary_api_validation_errors
+  /Users/akshatjain/Documents/SIH/back-end/app/api/v1/dashboard.py:137: StarletteDeprecationWarning: 'HTTP_422_UNPROCESSABLE_ENTITY' is deprecated. Use 'HTTP_422_UNPROCESSABLE_CONTENT' instead.
+    parsed_bbox = _parse_bbox(bbox)
+
+tests/test_dashboard_analytics_api.py::test_analytics_trends_api_validation_errors
+  /Users/akshatjain/Documents/SIH/back-end/app/api/v1/analytics.py:145: StarletteDeprecationWarning: 'HTTP_422_UNPROCESSABLE_ENTITY' is deprecated. Use 'HTTP_422_UNPROCESSABLE_CONTENT' instead.
+    parsed_bbox = _parse_bbox(bbox)
+
+tests/test_dashboard_analytics_api.py::test_analytics_regional_api_validation_errors
+  /Users/akshatjain/Documents/SIH/back-end/app/api/v1/analytics.py:231: StarletteDeprecationWarning: 'HTTP_422_UNPROCESSABLE_ENTITY' is deprecated. Use 'HTTP_422_UNPROCESSABLE_CONTENT' instead.
+    parsed_bbox = _parse_bbox(bbox)
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+523 passed, 4918 warnings in 112.06s (0:01:52)
+
+=== ALL S1-14 QUALITY GATES COMPLETED ===
+Thu Oct  1 02:23:08 IST 2026

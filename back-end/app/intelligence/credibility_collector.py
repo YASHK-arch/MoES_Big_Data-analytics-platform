@@ -15,6 +15,7 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
+from app.core.config import settings
 from app.intelligence.schemas import (
     ContradictionInput,
     DigitalEvidenceGroupInput,
@@ -279,6 +280,42 @@ class CredibilityCollector:
             stn_bucket.max_score = max(stn_bucket.max_score, score)
             stn_bucket.rel_w = max(stn_bucket.rel_w, rel_w)
             stn_bucket.points_count = max(stn_bucket.points_count, points)
+
+        # 5b. S1 Physical Weather Corroborations
+        try:
+            from app.models.corroboration import IncidentPhysicalCorroboration
+
+            phys_stmt = select(IncidentPhysicalCorroboration).where(
+                IncidentPhysicalCorroboration.incident_id == incident_id
+            )
+            phys_res = await db.execute(phys_stmt)
+            for pcorr in phys_res.scalars().all():
+                phys_key = f"{pcorr.source}_{pcorr.station_or_grid_id or 'grid'}_{pcorr.variable}"
+                score = float(pcorr.weight) if pcorr.weight > 0 else 0.60
+                if pcorr.verdict == "SUPPORTS":
+                    rel_w = 1.00 if pcorr.source_type == "STATION" else 0.60
+                    p_bucket = station_map[phys_key]
+                    p_bucket.max_score = max(p_bucket.max_score, score)
+                    p_bucket.rel_w = max(p_bucket.rel_w, rel_w)
+                    p_bucket.points_count = 1
+                elif pcorr.verdict == "CONTRADICTS":
+                    if pcorr.source_type == "STATION" or getattr(
+                        settings, "PHYSICAL_CORROBORATION_ALLOW_MODEL_CONTRADICTS", False
+                    ):
+                        contradiction_inputs.append(
+                            ContradictionInput(
+                                signal_source_key=f"phys_{phys_key}",
+                                contradiction_score=score,
+                                is_diagnostic=True,
+                                is_physical_sensor=True,
+                            )
+                        )
+        except Exception as p_err:
+            logger.warning(
+                "Error collecting physical corroborations for %s: %s",
+                incident_id,
+                p_err,
+            )
 
         observation_stations: List[PhysicalStationInput] = []
         for skey, sdata in station_map.items():

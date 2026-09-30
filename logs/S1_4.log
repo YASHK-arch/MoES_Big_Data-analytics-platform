@@ -1,0 +1,36 @@
+=== S1-4: DESIGN DOCUMENTATION AUDIT ===
+Design document created at docs/S1_PHYSICAL_CORROBORATION.md
+
+1. Canonical Category Mapping (13 Real Enums from Code):
+   - HEAVY_RAINFALL -> precipitation (mm/24h, mm/1h) -> IMD SOP Ch. 3
+   - FLOOD_WATERLOGGING -> precipitation, water_level_m -> P3 (NEVER CONTRADICTS)
+   - URBAN_FLOOD -> precipitation (mm/1h, mm/3h) -> P3 (NEVER CONTRADICTS)
+   - THUNDERSTORM_LIGHTNING -> weather_code, precipitation -> WMO-No. 8
+   - CYCLONE_STORM -> wind_speed, wind_gusts, surface_pressure -> IMD Cyclone Criteria
+   - STRONG_WIND -> wind_speed, wind_gusts -> Beaufort Force 7 / IMD
+   - DUST_STORM -> visibility, wind_gusts -> WMO-No. 8 / IMD
+   - FOG -> visibility, relative_humidity -> IMD Fog Standards
+   - HEATWAVE -> temperature_2m max daily -> IMD Heatwave Criteria
+   - HAILSTORM -> weather_code WMO -> WMO-No. 8
+   - LANDSLIDE -> 72h precipitation -> ASSUMPTION - unverified
+   - DROUGHT -> NOT APPLICABLE (NEUTRAL)
+   - OTHER -> NOT APPLICABLE (NEUTRAL)
+
+2. Threshold Verification vs Assumptions:
+   - Heavy rain (64.5 - 115.5 mm / 24h): CITED (IMD Standard Operating Procedure)
+   - Very heavy rain (115.6 - 204.4 mm / 24h): CITED (IMD Standard Operating Procedure)
+   - Extremely heavy rain (>= 204.5 mm / 24h): CITED (IMD Standard Operating Procedure)
+   - Heatwave (>= 40.0 C departure >= 4.5 C or >= 45.0 C absolute): CITED (IMD NWFC)
+   - Dense fog (visibility 50 - 200 m, very dense < 50 m): CITED (IMD Aviation Weather Services)
+   - Dust storm (visibility < 1000 m, gusts >= 40 km/h): CITED (WMO-No. 8 / IMD)
+   - Strong wind (sustained >= 50 km/h, gale >= 62 km/h): CITED (WMO Beaufort Scale / IMD)
+   - Distance limits: 25 km station, 20 km model: ASSUMPTION - unverified
+   - Time windows: 24h rain/flood, 3h wind/fog/dust: ASSUMPTION - unverified
+   - Source weights: STATION 1.0, MODEL 0.6: ASSUMPTION - unverified
+   - Total physical cap: 0.10: ASSUMPTION - unverified
+
+3. Cache & Failure Architecture:
+   - Key: cache:weather:physical:{lat_grid_0.25}:{lon_grid_0.25}:{date_hour}
+   - TTL: 86400s (24h)
+   - Single-flight mutex lock in Redis to avoid thundering herds.
+   - Provider failure -> NEUTRAL with recorded provider_status (TIMEOUT, 429, etc.); never downgrades or rejects.

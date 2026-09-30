@@ -1,0 +1,56 @@
+=== S1-16 Documentation & PRD Alignment Verification ===
+Thu Oct  1 02:28:27 IST 2026
+
+--- Git Diff Stat on Documentation ---
+ README.md                         |  1 +
+ docs/PRD.md                       |  2 +-
+ docs/PROJECT_PROGRESS.md          |  5 +++--
+ docs/S1_PHYSICAL_CORROBORATION.md | 11 +++++++++++
+ 4 files changed, 16 insertions(+), 3 deletions(-)
+
+--- Lines Changed in docs/PROJECT_PROGRESS.md ---
+      30
+
+--- Verification of PRD Precision ---
++  - Meteorological physical corroboration: model-based physical corroboration (Open-Meteo); station-based IMD corroboration pending credentials. — **IMPLEMENTED** (Model-based via Open-Meteo; station-based IMD AWS pending credentials).
+
+--- Verification of Section 8 in docs/S1_PHYSICAL_CORROBORATION.md ---
+## 7. Failure Semantics & Circuit Breaker (P2)
+
+When an external provider fails:
+1. **Timeout ($> 5.0\text{s}$)**: Log warning, record `provider_status = "TIMEOUT"`, return verdict `NEUTRAL`.
+2. **HTTP 429 / 5xx**: Increment exponential backoff circuit breaker ($10\text{s}, 30\text{s}, 60\text{s}, 300\text{s}$). Return verdict `NEUTRAL` with `provider_status = "PROVIDER_RATE_LIMITED"`.
+3. **Empty / Corrupt Response**: Log error, return verdict `NEUTRAL` with `provider_status = "MALFORMED_DATA"`.
+4. **Zero Incident Rejection**: An outage **never** assigns a negative penalty or modifies verification status.
+
+---
+
+## 8. Limitations & Operational Boundaries
+
+1. **Model Grid Resolution**: Open-Meteo provides numerical weather reanalysis and forecast models at $\sim 0.25^\circ \approx 25\text{ km}$ spatial grid resolution. Hyper-local convective phenomena (such as micro-bursts, isolated cloudbursts, and localized hail swaths $< 5\text{ km}$) may not be resolved in the model grid. Consequently, `PHYSICAL_ALLOW_MODEL_CONTRADICTS=False` is strictly maintained so that model data can support or remain neutral, but never contradict a citizen report.
+2. **Pending IMD AWS Credentials**: Direct physical station corroboration against IMD Automatic Weather Station networks is implemented as a production-ready pluggable slot (`ImdSlotWeatherProvider`), pending official institutional API key provisioning from MoES.
+3. **Dual-Station / Human Ground-Truth Calibration Required**: Ground-truth precision, recall, and F1 accuracy are stamped `ACCURACY: NOT MEASURED` until an official ground-truth dataset annotation campaign with dual-station calibration is executed.
+4. **Flood Safety Asymmetry (P3)**: Urban flood and waterlogging can occur in the absence of local rainfall due to upstream reservoir release, storm water drain failure, high tide blockages, or breached embankments. In accordance with Product Rule P3, absence of rain never contradicts flooding.
+5. **Human Verification Invariant (P6)**: Algorithmic corroboration produces credibility score adjustments only ($0.0000$ to $0.9800$), and is strictly prohibited from mutating `verification_status` (`PENDING`, `UNDER_REVIEW`, `VERIFIED`, `REJECTED`, `DUPLICATE`).
+
+
+--- Git Commit History on s1-physical-corroboration ---
+72fab4d S1-15: evaluation protocol template, replay script, and controls
+d9ab741 S1-14: quality gates verification and frozen code integrity check
+2c81a0c S1-13: prometheus observability metrics and failure recovery drills
+74e91bd S1-12: deterministic demo fixture provider and simulated observation labeling
+36e4465 S1-11: frontend PhysicalCorroborationCard component, i18n, and UI tests
+c23ebba S1-10: incident detail and list API schemas with physical corroboration
+7f26c0f S1-9: physical corroboration credibility integration with total cap and P6 invariant test
+3072d20 S1-8: pipeline observation stage integration, idempotent persistence, and outage recovery
+63f067f S1-7: migration 0019 creating incident_physical_corroboration table and indexes
+5efc047 S1-6: abstract provider interface, Open-Meteo adapter, IMD disabled slot, and single-flight cache
+2b50292 S1-5: pure physical corroboration evaluation logic and unit tests
+0a9d13a S1-4: physical corroboration design document and threshold justification
+8e5c30d S1-3: base-rate analysis across Indian regions and seasons
+30b41b1 S1-2: data reality audit and live Open-Meteo call
+fc69340 S1-1: code map and baseline credibility snapshot
+1cbcc3e docs: add manual testing and visual verification guide
+
+=== ALL S1-16 DOCUMENTATION UPDATES VERIFIED ===
+Thu Oct  1 02:28:27 IST 2026

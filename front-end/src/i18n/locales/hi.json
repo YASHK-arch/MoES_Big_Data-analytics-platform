@@ -1,0 +1,47 @@
+{
+  "nav": {
+    "home": "मुख्य पृष्ठ",
+    "citizenArea": "नागरिक क्षेत्र",
+    "nationalMap": "राष्ट्रीय मानचित्र",
+    "incidents": "आपदा घटनाएं",
+    "dashboard": "डैशबोर्ड",
+    "liveMap": "लाइव मैप",
+    "reportWeather": "घटना की रिपोर्ट करें",
+    "trackReport": "रिपोर्ट ट्रैक करें",
+    "analytics": "विश्लेषण",
+    "verificationQueue": "सत्यापन कतार",
+    "login": "ऑपरेटर पहुंच",
+    "logout": "लॉगआउट"
+  },
+  "citizen": {
+    "title": "मेरा क्षेत्र नागरिक डैशबोर्ड",
+    "subtitle": "आपके स्थान के आसपास हाइपर-लोकल मौसम जोखिम अवलोकन और मार्ग अवरोध जांच",
+    "activeHazards": "आसपास सक्रिय खतरे",
+    "nearestHazard": "निकटतम घटना",
+    "peakSeverity": "सर्वोच्च गंभीरता",
+    "areaSafetyStatus": "जन सुरक्षा स्थिति",
+    "pathClear": "मार्ग सुरक्षित है",
+    "pathAffected": "मार्ग प्रभावित है",
+    "reliefCenters": "आसपास के राहत शिविर और अस्पताल",
+    "emergencyContacts": "आपत्कालीन हेल्पलाइन नंबर"
+  },
+  "physicalCorroboration": {
+    "title": "भौतिक मौसम सत्यापन",
+    "subtitle": "संख्यात्मक मॉडल और मौसम केंद्रों से सत्यापित स्वतंत्र वायुमंडलीय प्रेक्षण",
+    "observed": "प्रेक्षित मान",
+    "distance": "दूरी",
+    "timeGap": "समयांतराल",
+    "source": "स्रोत",
+    "verdict": "निर्णय",
+    "verdictSupports": "पुष्ट करता है",
+    "verdictContradicts": "विरोधाभास",
+    "verdictNeutral": "तटस्थ",
+    "sourceStation": "मौसम केंद्र",
+    "sourceModel": "मॉडल",
+    "sourceSimulated": "सिम्युलेटेड",
+    "contribution": "स्कोर प्रभाव",
+    "providerStatus": "प्रदाता स्थिति",
+    "noData": "इस घटना अवधि के लिए कोई भौतिक मौसम प्रेक्षण उपलब्ध नहीं है",
+    "simulatedNotice": "डेमो सिमुलेशन: लाइव ड्रिल प्रदर्शन के लिए मॉक वायुमंडलीय प्रेक्षणों का उपयोग"
+  }
+}

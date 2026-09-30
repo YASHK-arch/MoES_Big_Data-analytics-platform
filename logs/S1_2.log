@@ -1,0 +1,55 @@
+=== S1-2: DATA REALITY AUDIT ===
+
+--- 1. Live Open-Meteo Call ---
+URL: https://api.open-meteo.com/v1/forecast
+Location: New Delhi (Lat: 28.6139, Lon: 77.2090)
+Variables requested: precipitation,temperature_2m,wind_speed_10m,wind_gusts_10m,visibility,weather_code,relative_humidity_2m,surface_pressure
+HTTP Status: 200
+
+--- Response Headers (Rate Limit & Terms) ---
+  date: Wed, 30 Sep 2026 19:46:18 GMT
+  content-type: application/json; charset=utf-8
+
+--- Raw Response Keys ---
+Top-level keys: ['latitude', 'longitude', 'generationtime_ms', 'utc_offset_seconds', 'timezone', 'timezone_abbreviation', 'elevation', 'hourly_units', 'hourly']
+
+--- Variables and Units Returned by Open-Meteo ---
+  time: iso8601
+  precipitation: mm
+  temperature_2m: °C
+  wind_speed_10m: km/h
+  wind_gusts_10m: km/h
+  visibility: m
+  weather_code: wmo code
+  relative_humidity_2m: %
+  surface_pressure: hPa
+
+Sample Observation at index 12 (2026-09-30T12:00):
+  time = 2026-09-30T12:00 iso8601
+  precipitation = 0.0 mm
+  temperature_2m = 32.0 °C
+  wind_speed_10m = 14.2 km/h
+  wind_gusts_10m = 34.2 km/h
+  visibility = 11260.0 m
+  weather_code = 0 wmo code
+  relative_humidity_2m = 47 %
+  surface_pressure = 987.9 hPa
+
+--- Terms of Use & Rate Limit Summary from Provider ---
+Open-Meteo API Terms: Free for non-commercial and open research use with attribution.
+Rate limits: Up to 10,000 daily API calls per IP without API key; up to 5,000 calls per hour.
+Spatial resolution: ~0.25 degrees (~11 km - 25 km depending on numerical model e.g., GFS / ECMWF).
+Time resolution: Hourly (1-hour discrete intervals).
+
+--- 2. Source-Variable Matrix ---
+| Variable | Open-Meteo | IMD AWS (Mock) | CWC NWDP | Units | Time Res | Spatial Res | Source Type | Persisted in weather_observations |
+|---|---|---|---|---|---|---|---|---|
+| precipitation / rainfall | AVAILABLE | AVAILABLE | NOT AVAILABLE | mm | 1h | 0.25 deg (OM) / Point (IMD) | MODEL (OM) / STATION (IMD) | YES (rainfall_mm) |
+| temperature_2m | AVAILABLE | AVAILABLE | NOT AVAILABLE | deg C | 1h | 0.25 deg (OM) / Point (IMD) | MODEL (OM) / STATION (IMD) | YES (temperature_c) |
+| wind_speed_10m | AVAILABLE | AVAILABLE | NOT AVAILABLE | km/h | 1h | 0.25 deg (OM) / Point (IMD) | MODEL (OM) / STATION (IMD) | YES (wind_speed_kmh) |
+| wind_gusts_10m | AVAILABLE | NOT AVAILABLE | NOT AVAILABLE | km/h | 1h | 0.25 deg (OM) | MODEL (OM) | YES (raw_metrics->wind_gusts_kmh) |
+| visibility | AVAILABLE | NOT AVAILABLE | NOT AVAILABLE | meters | 1h | 0.25 deg (OM) | MODEL (OM) | YES (raw_metrics->visibility_m) |
+| weather_code | AVAILABLE | NOT AVAILABLE | NOT AVAILABLE | WMO code | 1h | 0.25 deg (OM) | MODEL (OM) | YES (raw_metrics->weather_code) |
+| relative_humidity | AVAILABLE | AVAILABLE | NOT AVAILABLE | % | 1h | 0.25 deg (OM) / Point (IMD) | MODEL (OM) / STATION (IMD) | YES (humidity_pct) |
+| surface_pressure | AVAILABLE | AVAILABLE | NOT AVAILABLE | hPa | 1h | 0.25 deg (OM) / Point (IMD) | MODEL (OM) / STATION (IMD) | YES (pressure_hpa) |
+| water_level | NOT AVAILABLE | NOT AVAILABLE | AVAILABLE | meters | Variable (daily/hourly) | Point (Gauge site) | STATION (CWC) | YES (water_level_m) |

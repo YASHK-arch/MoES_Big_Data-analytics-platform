@@ -10,6 +10,7 @@ import math
 from typing import Optional, Set
 
 from app.core.config import settings
+from app.intelligence.location_mismatch import evaluate_location_mismatch
 from app.intelligence.schemas import (
     CredibilitySignalBreakdown,
     DigitalEvidenceGroupInput,
@@ -43,6 +44,8 @@ class CredibilityScorer:
         cap_single_provenance: Optional[float] = None,
         cap_physical_only: Optional[float] = None,
         cap_max_machine: Optional[float] = None,
+        total_physical_cap: Optional[float] = None,
+        location_mismatch_enabled: Optional[bool] = None,
     ) -> None:
         self.quality_floor = (
             quality_floor_factor
@@ -108,6 +111,12 @@ class CredibilityScorer:
         self.cap_max = (
             cap_max_machine if cap_max_machine is not None else settings.CREDIBILITY_CAP_MAX_MACHINE
         )
+        self.total_physical_cap = total_physical_cap
+        self.location_mismatch_enabled = (
+            location_mismatch_enabled
+            if location_mismatch_enabled is not None
+            else getattr(settings, "LOCATION_MISMATCH_ENABLED", False)
+        )
 
     def _compute_raw_signals(
         self,
@@ -157,7 +166,15 @@ class CredibilityScorer:
             for stn in inputs.observation_stations:
                 y_v = min(1.0, stn.corroboration_score * stn.relationship_weight)
                 prod_o *= 1.0 - 0.60 * y_v
-            s_observation = max(0.0, min(1.0, 1.0 - prod_o))
+            raw_s_observation = max(0.0, min(1.0, 1.0 - prod_o))
+            # P5: Total physical credibility contribution capped by config when enabled
+            if self.total_physical_cap is not None:
+                s_observation = min(self.total_physical_cap, raw_s_observation)
+            elif getattr(settings, "PHYSICAL_CORROBORATION_ENABLED", False):
+                cap = getattr(settings, "PHYSICAL_CORROBORATION_TOTAL_CAP", 0.10)
+                s_observation = min(cap, raw_s_observation)
+            else:
+                s_observation = raw_s_observation
         else:
             s_observation = 0.0
 
@@ -228,6 +245,31 @@ class CredibilityScorer:
         # 14. Final Score (Clamped strictly to [0.0000, 0.9800])
         final_score = round(max(0.0000, min(c_penalized, applicable_cap, self.cap_max)), 4)
 
+        # 15. Location-Mismatch Signal (L5) — applied after cap, only when flag enabled
+        lm_adjustment: float = 0.0
+        lm_signal_dict = None
+        if (
+            self.location_mismatch_enabled
+            and (inputs.report_text or inputs.declared_state)
+        ):
+            penalty = getattr(settings, "LOCATION_MISMATCH_RAW_PENALTY", 0.10)
+            cap_lm = getattr(settings, "LOCATION_MISMATCH_CAP", 0.10)
+            min_conf = getattr(settings, "LOCATION_MISMATCH_MIN_TEXT_CONFIDENCE", 0.70)
+            lm_result = evaluate_location_mismatch(
+                report_text=inputs.report_text,
+                declared_state=inputs.declared_state,
+                declared_city=inputs.declared_city,
+                penalty=penalty,
+                cap=cap_lm,
+                min_text_confidence=min_conf,
+            )
+            lm_adjustment = lm_result.adjustment  # always <= 0.0
+            lm_signal_dict = lm_result.as_explain_dict()
+            # Re-clamp: never goes below 0.0 and never positive
+            final_score = round(
+                max(0.0000, min(final_score + lm_adjustment, self.cap_max)), 4
+            )
+
         return CredibilitySignalBreakdown(
             source_prior=round(s_prior, 4),
             report_quality_score=round(s_quality, 4),
@@ -243,6 +285,8 @@ class CredibilityScorer:
             penalized_score=round(c_penalized, 4),
             applied_cap=round(applicable_cap, 4),
             final_credibility_score=final_score,
+            location_mismatch_adjustment=round(lm_adjustment, 4),
+            location_mismatch_signal=lm_signal_dict,
         )
 
     @staticmethod

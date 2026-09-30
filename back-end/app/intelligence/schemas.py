@@ -478,6 +478,21 @@ class IncidentCredibilityInputs(BaseModel):
     negative_contradictions: List[ContradictionInput] = Field(
         default_factory=list, description="Diagnostic contradictory signals."
     )
+    # ── Location-mismatch signal inputs (L5) ──────────────────────────────────
+    # Optional: if provided and signal flag enabled, the location-mismatch signal
+    # applies a weak negative adjustment to the final score.
+    report_text: Optional[str] = Field(
+        default=None,
+        description="Free-text incident description used for location-mismatch detection.",
+    )
+    declared_state: Optional[str] = Field(
+        default=None,
+        description="Reporter's declared state (from submission form) for mismatch check.",
+    )
+    declared_city: Optional[str] = Field(
+        default=None,
+        description="Reporter's declared city for mismatch check (optional).",
+    )
 
 
 class CredibilitySignalBreakdown(BaseModel):
@@ -518,6 +533,23 @@ class CredibilitySignalBreakdown(BaseModel):
     applied_cap: float = Field(..., ge=0.0, le=1.0, description="Policy upper bound cap.")
     final_credibility_score: float = Field(
         ..., ge=0.0, le=0.98, description="Final clamped machine credibility score."
+    )
+    # ── Location-mismatch signal (L5) ─────────────────────────────────────────
+    # Populated only when the signal flag is enabled AND report_text/declared_state
+    # are provided. Defaults preserve backward compatibility with all existing tests.
+    location_mismatch_adjustment: float = Field(
+        default=0.0,
+        ge=-1.0,
+        le=0.0,
+        description=(
+            "Adjustment applied by location-mismatch signal (<= 0.0). "
+            "0.0 when signal disabled, NEUTRAL, or CONSISTENT. "
+            "ASSUMPTION - unverified: penalty/cap per location_mismatch_config.py."
+        ),
+    )
+    location_mismatch_signal: Optional[Dict[str, Any]] = Field(
+        default=None,
+        description="Explainable location-mismatch signal breakdown dict (when active).",
     )
 
 

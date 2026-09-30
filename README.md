@@ -94,6 +94,7 @@ The platform bridges the gap between high-altitude meteorological observations (
 | **Phase 17: Live GDELT & Mastodon Integration** | Genuine live HTTP ingestion from GDELT DOC 2.0 and Mastodon public hashtag timelines; persistence to `evidence_items` and intelligence corroboration. | **COMPLETED & VERIFIED** |
 | **Phase 18: NDMA/CWC Live Proof & Duplicate Truth** | Live HTTP verification of NDMA SACHET and CWC NWDP feeds; verified domain-boosted TF-IDF vectorizer (`sparse_tfidf_ngram_v1`) duplicate path. | **COMPLETED & VERIFIED** |
 | **Phase 19: Round 9b — Classification, Demo, RSS, Admin** | R4: 60-post multilingual fog/dust/wind regression (≥85%); R5: `is_demo` migration + DB filter + DEMO badge + hide-demo toggle; R2: RSS adapter with URL-hash dedupe, place→state resolution; R3: streamed CSV/GeoJSON export (50k), atomic bulk verify/reject (100 ids), audit-log viewer. Tests: 475 passed. | **COMPLETED & VERIFIED** |
+| **S1: Physical Weather Corroboration** | Model-based physical corroboration (Open-Meteo archive/forecast, 15-min cache, pure evaluator, credibility integration with physical component, explainable cards in English/Hindi, Prometheus observability, failure drills, 523 tests passed). Station-based IMD AWS corroboration pending credentials. | **COMPLETED & VERIFIED** |
 | **Production Auth & Supervision** | Institutional JWT/RBAC authentication and multi-worker process supervision (`systemd`/Kubernetes). | *Deferred Production Hardening* |
 
 ---

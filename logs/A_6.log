@@ -1,0 +1,36 @@
+=== ITEM 6: DEMO STACK ENABLE ===
+File: docker-compose.demo.yml (x-api-env anchor)
+PHYSICAL_CORROBORATION_ENABLED: "true"
+PHYSICAL_CORROBORATION_DEMO_FIXTURE_ENABLED: ${PHYSICAL_CORROBORATION_DEMO_FIXTURE_ENABLED:-false}
+Provider selection order (from service.py:52-60): DEMO_FIXTURE_ENABLED=true -> fixture; else live OpenMeteoProvider.
+Code default in config.py:190: PHYSICAL_CORROBORATION_ENABLED: bool = False  (unchanged)
+Demo compose overrides to true; fixture opt-in only via env var (default false).
+
+=== ITEM 7: REALTIME SSE EVENT WIRING ===
+RealtimeEventType.INCIDENT_PHYSICAL_CORROBORATION_COMPLETED = "incident.physical_corroboration_completed"
+Added to: back-end/app/schemas/realtime.py:26
+Event staged in: back-end/app/intelligence/physical_corroboration/service.py:214 stage_corroboration_event()
+Called by:
+  back-end/app/orchestration/triggers.py:222
+  back-end/app/orchestration/handlers.py:375
+Outbox worker (outbox_worker.py:89): non-orchestration events published to REALTIME_STREAM_NAME
+SSE broadcaster (events.py:100): RealtimeEventType(fields["event_type"]) -- enum lookup now resolves "incident.physical_corroboration_completed"
+
+=== ITEM 7: ENUM IMPORT CHECK ===
+from app.schemas.realtime import RealtimeEventType
+RealtimeEventType("incident.physical_corroboration_completed").value = "incident.physical_corroboration_completed"
+EXIT: 0
+
+=== ITEM 7: PIPELINE TESTS ===
+pytest tests/test_physical_corroboration_pipeline.py tests/test_physical_corroboration_api.py -x -q
+7 passed, 83 warnings in 3.00s
+
+=== ITEM 8: DOCS SENTENCE ===
+docs/PRD.md:55 (grep confirmed):
+"Meteorological physical corroboration: model-based physical corroboration (Open-Meteo); station-based IMD corroboration pending credentials. — IMPLEMENTED"
+DONE.
+
+=== REPORT SERVICE FIX (Item 6 residual) ===
+back-end/app/services/report_service.py:313: added `await session.rollback()` before deferred warning
+back-end/app/services/report_service.py:317-322: re-fetch report after rollback to avoid detached instance error
+

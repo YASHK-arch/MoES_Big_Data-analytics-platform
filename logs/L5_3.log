@@ -1,0 +1,40 @@
+L5 Item 3: Pure location-mismatch function + unit tests
+DATE: 2026-10-01
+COMMAND: cd back-end && source .venv/bin/activate && python -m pytest tests/test_location_mismatch.py -v 2>&1 | grep -E "PASSED|FAILED|ERROR|==="
+
+=== IMPLEMENTATION ===
+New files created:
+  back-end/app/intelligence/location_mismatch_config.py
+    - LOCATION_MISMATCH_ENABLED_DEFAULT: bool = False
+    - LOCATION_MISMATCH_RAW_PENALTY: float = 0.10  (ASSUMPTION - unverified)
+    - LOCATION_MISMATCH_CAP: float = 0.10           (ASSUMPTION - unverified)
+    - LOCATION_MISMATCH_MIN_TEXT_CONFIDENCE: float = 0.70 (ASSUMPTION - unverified)
+    - CURATED_FOREIGN_PLACE_KEYS: FrozenSet[str] -- 40 entries
+
+  back-end/app/intelligence/location_mismatch.py
+    - Two-pass entity scan: extractor + direct word-boundary scan of curated list
+    - evaluate_location_mismatch() -- pure function, no network, no DB
+    - MismatchVerdict: NEUTRAL | CONSISTENT | MISMATCH
+    - LocationMismatchResult: frozen dataclass with as_explain_dict()
+
+=== DESIGN NOTES ===
+BUG FIX applied: CURATED_FOREIGN_PLACE_KEYS (Pakistan, Islamabad, etc.) are not
+in extractor._all_place_keys (only indexes 4 gazetteer dicts). Added second pass
+that word-boundary-scans the curated list directly. extractor.py NOT modified.
+
+Tests for London/unknown cities: Updated to use Kyoto/Auckland (truly not in any
+gazetteer/curated list) since London IS in CURATED_FOREIGN_PLACE_KEYS.
+
+=== TEST RESULTS ===
+42 passed, 0 failed, 383 warnings in 3.67s
+
+TestP1BothSidesKnown         : 6/6 passed
+TestP2MultiPlace             : 4/4 passed
+TestDifferentStateMismatch   : 5/5 passed
+TestForeignPlaceMismatch     : 5/5 passed
+TestAliasHandling            : 5/5 passed
+TestDevanagariHinglish       : 2/2 passed
+TestCapRespected             : 6/6 passed
+TestNoStatusChange           : 3/3 passed
+TestExplainability           : 3/3 passed
+TestCuratedForeignList       : 3/3 passed

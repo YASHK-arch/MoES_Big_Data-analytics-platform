@@ -121,7 +121,8 @@ class SlidingWindowRateLimiter:
 
     async def reset_async(self, key: str) -> None:
         """Reset rate limit in Redis and memory."""
-        self.reset(key)
+        if key in self._history:
+            del self._history[key]
         from app.core.redis import redis_client
 
         try:
@@ -132,18 +133,7 @@ class SlidingWindowRateLimiter:
             pass
 
     def clear(self) -> None:
-        """Clear all in-memory rate limit history and Redis keys."""
-        try:
-            import asyncio
-
-            loop = asyncio.get_running_loop()
-            bucket = int(time.time() // self.window_seconds)
-            from app.core.redis import redis_client
-
-            for k in set(self._history.keys()) | getattr(self, "_active_keys", set()):
-                loop.create_task(redis_client.delete(f"ratelimit:{k}:{bucket}"))
-        except (RuntimeError, Exception):
-            pass
+        """Clear all in-memory rate limit history."""
         self._history.clear()
         if hasattr(self, "_active_keys"):
             self._active_keys.clear()

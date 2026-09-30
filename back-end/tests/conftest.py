@@ -171,21 +171,15 @@ async def api_client():
 
 
 async def _clear_limiter_async(limiter) -> None:
-    limiter.clear()
     try:
-        import time
-
         from app.core.redis import redis_client
 
-        bucket = int(time.time() // limiter.window_seconds)
-        keys = [
-            f"ratelimit:{k}:{bucket}"
-            for k in (set(limiter._history.keys()) | getattr(limiter, "_active_keys", set()))
-        ]
-        if keys:
-            await redis_client.delete(*keys)
+        rate_keys = await redis_client.keys("ratelimit:*")
+        if rate_keys:
+            await redis_client.delete(*rate_keys)
     except Exception:
         pass
+    limiter.clear()
     if hasattr(limiter, "_active_keys"):
         limiter._active_keys.clear()
 

@@ -24,6 +24,10 @@ from app.core.rate_limiter import get_client_ip, report_rate_limiter
 from app.db.session import get_db
 from app.models.report import WeatherReport
 from app.models.user import User
+from app.schemas.physical_corroboration import (
+    PhysicalCorroborationBlock,
+    PhysicalCorroborationItem,
+)
 from app.schemas.report import (
     CategoryDetail,
     CitizenReportCreate,
@@ -94,6 +98,69 @@ def _serialize_report(report: WeatherReport) -> ReportDetailData:
                 )
             )
 
+    physical_block: Optional[PhysicalCorroborationBlock] = None
+    physical_verdict: Optional[str] = None
+    if getattr(report, "physical_corroborations", None):
+        items: List[PhysicalCorroborationItem] = []
+        total_contrib = 0.0
+        has_supports = False
+        has_contradicts = False
+        any_simulated = False
+        provider_statuses = set()
+
+        for c in report.physical_corroborations:
+            items.append(
+                PhysicalCorroborationItem(
+                    id=c.id,
+                    variable=c.variable,
+                    observed_value=c.observed_value,
+                    unit=c.unit,
+                    source=c.source,
+                    source_type=c.source_type,
+                    station_or_grid_id=c.station_or_grid_id,
+                    distance_km=c.distance_km,
+                    time_gap_hours=c.time_gap_h,
+                    verdict=c.verdict,
+                    weight=c.weight,
+                    contribution=c.contribution,
+                    provider_status=c.provider_status,
+                    observation_time=c.observation_time,
+                    explanation=c.explanation,
+                    is_simulated=c.is_simulated,
+                )
+            )
+            total_contrib += c.contribution or 0.0
+            if c.is_simulated:
+                any_simulated = True
+            if c.verdict == "SUPPORTS":
+                has_supports = True
+            elif c.verdict == "CONTRADICTS":
+                has_contradicts = True
+            provider_statuses.add(c.provider_status)
+
+        if has_contradicts:
+            overall_verdict = "CONTRADICTS"
+        elif has_supports:
+            overall_verdict = "SUPPORTS"
+        else:
+            overall_verdict = "NEUTRAL"
+
+        if not provider_statuses or provider_statuses == {"OK"}:
+            overall_status = "OK"
+        elif "OK" in provider_statuses:
+            overall_status = "DEGRADED"
+        else:
+            overall_status = list(provider_statuses)[0] if len(provider_statuses) == 1 else "FAILED"
+
+        physical_block = PhysicalCorroborationBlock(
+            overall_verdict=overall_verdict,
+            overall_provider_status=overall_status,
+            total_contribution=round(total_contrib, 4),
+            items=items,
+            is_simulated=any_simulated,
+        )
+        physical_verdict = overall_verdict
+
     return ReportDetailData(
         id=report.id,
         tracking_id=report.tracking_id,
@@ -116,6 +183,8 @@ def _serialize_report(report: WeatherReport) -> ReportDetailData:
         is_demo=getattr(report, "is_demo", False),
         media=media_items,
         verification_history=history_items,
+        physical_corroboration=physical_block,
+        physical_verdict=physical_verdict,
         created_at=report.created_at,
     )
 

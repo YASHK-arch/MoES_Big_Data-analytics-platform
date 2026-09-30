@@ -1,0 +1,53 @@
+=== 1. Upgrade Head ===
+INFO  [alembic.runtime.migration] Context impl PostgresqlImpl.
+INFO  [alembic.runtime.migration] Will assume transactional DDL.
+=== 2. Downgrade -1 ===
+INFO  [alembic.runtime.migration] Context impl PostgresqlImpl.
+INFO  [alembic.runtime.migration] Will assume transactional DDL.
+INFO  [alembic.runtime.migration] Running downgrade 0019_physical_corroboration -> 0018_archive_metadata, create incident_physical_corroboration table
+=== 3. Upgrade Head ===
+INFO  [alembic.runtime.migration] Context impl PostgresqlImpl.
+INFO  [alembic.runtime.migration] Will assume transactional DDL.
+INFO  [alembic.runtime.migration] Running upgrade 0018_archive_metadata -> 0019_physical_corroboration, create incident_physical_corroboration table
+=== 4. Alembic Check ===
+INFO  [alembic.runtime.migration] Context impl PostgresqlImpl.
+INFO  [alembic.runtime.migration] Will assume transactional DDL.
+INFO  [alembic.runtime.plugins] setting up autogenerate plugin alembic.autogenerate.schemas
+INFO  [alembic.runtime.plugins] setting up autogenerate plugin alembic.autogenerate.tables
+INFO  [alembic.runtime.plugins] setting up autogenerate plugin alembic.autogenerate.types
+INFO  [alembic.runtime.plugins] setting up autogenerate plugin alembic.autogenerate.constraints
+INFO  [alembic.runtime.plugins] setting up autogenerate plugin alembic.autogenerate.defaults
+INFO  [alembic.runtime.plugins] setting up autogenerate plugin alembic.autogenerate.comments
+INFO  [alembic.runtime.plugins] setting up autogenerate plugin alembic.autogenerate.checkconstraint_byname
+No new upgrade operations detected.
+=== 5. Schema verification via PostgreSQL ===
+                         Table "public.incident_physical_corroboration"
+       Column       |           Type           | Collation | Nullable |         Default         
+--------------------+--------------------------+-----------+----------+-------------------------
+ id                 | uuid                     |           | not null | gen_random_uuid()
+ incident_id        | uuid                     |           | not null | 
+ variable           | character varying(50)    |           | not null | 
+ observed_value     | double precision         |           |          | 
+ unit               | character varying(20)    |           | not null | 
+ source             | character varying(50)    |           | not null | 
+ source_type        | character varying(20)    |           | not null | 
+ station_or_grid_id | character varying(100)   |           |          | 
+ distance_km        | double precision         |           |          | 
+ time_gap_h         | double precision         |           |          | 
+ verdict            | character varying(20)    |           | not null | 
+ weight             | double precision         |           | not null | 0.0
+ contribution       | double precision         |           | not null | 0.0
+ provider_status    | character varying(50)    |           | not null | 'OK'::character varying
+ observation_time   | timestamp with time zone |           | not null | 
+ computed_at        | timestamp with time zone |           | not null | now()
+ explanation        | text                     |           |          | 
+ is_simulated       | boolean                  |           | not null | false
+Indexes:
+    "pk_incident_physical_corroboration" PRIMARY KEY, btree (id)
+    "idx_physical_corrob_incident_id" btree (incident_id)
+    "idx_physical_corrob_source_time" btree (source, observation_time)
+    "idx_physical_corrob_verdict" btree (verdict)
+    "uq_physical_corrob_incident_var_source_time" UNIQUE CONSTRAINT, btree (incident_id, variable, source, observation_time)
+Foreign-key constraints:
+    "fk_physical_corrob_incident_id" FOREIGN KEY (incident_id) REFERENCES weather_reports(id) ON DELETE CASCADE
+

@@ -1,0 +1,87 @@
+Loaded 200 baseline incidents from audit/s1_baseline_credibility.json.
+
+==========================================================================================
+S1 PHYSICAL CORROBORATION SENSITIVITY ANALYSIS ON 200 BASELINE INCIDENTS
+==========================================================================================
+
+--- TOTAL PHYSICAL CAP = 0.05 ---
+Overall Mean Delta: +-0.0490 | Max Delta: +0.2066 | Min Delta: -0.3200 | Cross 0.45: 0 incidents
+Category                  | Count  | Mean Delta   | Max Delta   
+-----------------------------------------------------------------
+CYCLONE_STORM             | 19     | +-0.0022     | +0.1766     
+DROUGHT                   | 18     | +-0.0467     | +0.1000     
+DUST_STORM                | 15     | +-0.0813     | +0.0900     
+FLOOD_WATERLOGGING        | 12     | +-0.0883     | +0.0900     
+FOG                       | 23     | +0.0285      | +0.2066     
+HAILSTORM                 | 21     | +-0.1238     | +0.0900     
+HEATWAVE                  | 17     | +0.0248      | +0.1866     
+HEAVY_RAINFALL            | 13     | +-0.0619     | +0.1166     
+LANDSLIDE                 | 17     | +-0.0947     | +0.0900     
+OTHER                     | 13     | +-0.1400     | +0.0900     
+STRONG_WIND               | 12     | +-0.0084     | +0.1466     
+THUNDERSTORM_LIGHTNING    | 9      | +-0.0689     | +0.1000     
+URBAN_FLOOD               | 11     | +-0.0143     | +0.1366     
+
+--- TOTAL PHYSICAL CAP = 0.10 ---
+Overall Mean Delta: +-0.0459 | Max Delta: +0.2132 | Min Delta: -0.3200 | Cross 0.45: 0 incidents
+Category                  | Count  | Mean Delta   | Max Delta   
+-----------------------------------------------------------------
+CYCLONE_STORM             | 19     | +0.0041      | +0.1832     
+DROUGHT                   | 18     | +-0.0467     | +0.1000     
+DUST_STORM                | 15     | +-0.0813     | +0.0900     
+FLOOD_WATERLOGGING        | 12     | +-0.0883     | +0.0900     
+FOG                       | 23     | +0.0347      | +0.2132     
+HAILSTORM                 | 21     | +-0.1238     | +0.0900     
+HEATWAVE                  | 17     | +0.0314      | +0.1932     
+HEAVY_RAINFALL            | 13     | +-0.0553     | +0.1232     
+LANDSLIDE                 | 17     | +-0.0947     | +0.0900     
+OTHER                     | 13     | +-0.1400     | +0.0900     
+STRONG_WIND               | 12     | +-0.0018     | +0.1532     
+THUNDERSTORM_LIGHTNING    | 9      | +-0.0689     | +0.1000     
+URBAN_FLOOD               | 11     | +-0.0077     | +0.1432     
+
+--- TOTAL PHYSICAL CAP = 0.15 ---
+Overall Mean Delta: +-0.0428 | Max Delta: +0.2199 | Min Delta: -0.3200 | Cross 0.45: 0 incidents
+Category                  | Count  | Mean Delta   | Max Delta   
+-----------------------------------------------------------------
+CYCLONE_STORM             | 19     | +0.0104      | +0.1899     
+DROUGHT                   | 18     | +-0.0467     | +0.1000     
+DUST_STORM                | 15     | +-0.0813     | +0.0900     
+FLOOD_WATERLOGGING        | 12     | +-0.0883     | +0.0900     
+FOG                       | 23     | +0.0408      | +0.2199     
+HAILSTORM                 | 21     | +-0.1238     | +0.0900     
+HEATWAVE                  | 17     | +0.0381      | +0.1999     
+HEAVY_RAINFALL            | 13     | +-0.0486     | +0.1299     
+LANDSLIDE                 | 17     | +-0.0947     | +0.0900     
+OTHER                     | 13     | +-0.1400     | +0.0900     
+STRONG_WIND               | 12     | +0.0049      | +0.1599     
+THUNDERSTORM_LIGHTNING    | 9      | +-0.0689     | +0.1000     
+URBAN_FLOOD               | 11     | +-0.0010     | +0.1499     
+
+==========================================================================================
+K1 HOAX VS GENUINE POSTS EVALUATION UNDER S1
+==========================================================================================
+
+--- HOAX POSTS (Without vs With Physical Corroboration) ---
+HOAX: Old video: 2017 Florida hurricane reused as Mumb | Base: 0.2850 -> With Phys Contradiction: 0.1365 (Delta: -0.1485)
+HOAX: Old video: 2019 viral clip claimed as Dehradun c | Base: 0.2850 -> With Phys Contradiction: 0.1365 (Delta: -0.1485)
+HOAX: Recycled 2015 Chennai flood clip shared on Whats | Base: 0.2850 -> With Phys Contradiction: 0.1365 (Delta: -0.1485)
+HOAX: Archived 2020 Bihar bridge collapse circulated a | Base: 0.2850 -> With Phys Contradiction: 0.1365 (Delta: -0.1485)
+HOAX: 2004 Tsunami footage shared as Gujarat storm sur | Base: 0.2850 -> With Phys Contradiction: 0.1365 (Delta: -0.1485)
+HOAX: Oklahoma tornado footage claimed as Bengaluru ai | Base: 0.4175 -> With Phys Contradiction: 0.1925 (Delta: -0.2250)
+HOAX: Indonesia volcano ash claimed as Jaipur dust sto | Base: 0.4175 -> With Phys Contradiction: 0.1925 (Delta: -0.2250)
+HOAX: Chicago winter blizzard claimed as Marine Drive  | Base: 0.4175 -> With Phys Contradiction: 0.1925 (Delta: -0.2250)
+HOAX: Phoenix Arizona haboob claimed as Delhi sandstor | Base: 0.4175 -> With Phys Contradiction: 0.1925 (Delta: -0.2250)
+HOAX: NYC subway flood video claimed as Kolkata subway | Base: 0.4175 -> With Phys Contradiction: 0.1925 (Delta: -0.2250)
+
+--- GENUINE CONTROL POSTS (Without vs With Physical Support) ---
+GENUINE: Mumbai coast citizen check-in: cyclone winds and | Base: 0.5000 -> With Phys Support: 0.5265 (Delta: +0.0265)
+GENUINE: Dehradun neighbourhood report: intense rainwater | Base: 0.5000 -> With Phys Support: 0.5265 (Delta: +0.0265)
+GENUINE: Chennai resident note: fresh waterlogging has co | Base: 0.5000 -> With Phys Support: 0.5265 (Delta: +0.0265)
+GENUINE: Bihar local report: floodwater overtopping appro | Base: 0.5000 -> With Phys Support: 0.5265 (Delta: +0.0265)
+GENUINE: Gujarat coast resident report: cyclone-driven su | Base: 0.5000 -> With Phys Support: 0.5265 (Delta: +0.0265)
+GENUINE: Bengaluru airport witness describes storm winds  | Base: 0.5000 -> With Phys Support: 0.5265 (Delta: +0.0265)
+GENUINE: Jaipur resident reports dust storm rolling over  | Base: 0.5000 -> With Phys Support: 0.5265 (Delta: +0.0265)
+GENUINE: Mumbai Marine Drive reports strong gusts         | Base: 0.5000 -> With Phys Support: 0.5265 (Delta: +0.0265)
+GENUINE: Delhi resident reports severe dust storm near ri | Base: 0.5000 -> With Phys Support: 0.5265 (Delta: +0.0265)
+GENUINE: Kolkata commuter reports heavy rain flooding sub | Base: 0.5000 -> With Phys Support: 0.5265 (Delta: +0.0265)
