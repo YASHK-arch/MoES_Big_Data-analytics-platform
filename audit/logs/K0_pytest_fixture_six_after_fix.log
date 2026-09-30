@@ -1,0 +1,103 @@
+......                                                                   [100%]Task was destroyed but it is pending!
+task: <Task pending name='Task-33' coro=<AsyncRedisClient.delete() running at /Users/akshatjain/Documents/SIH/back-end/app/core/redis.py:537> wait_for=<Future pending cb=[Task.task_wakeup()]>>
+
+=============================== warnings summary ===============================
+tests/test_dashboard_analytics_service.py::test_regional_distribution_classification_and_token_safety
+  /Users/akshatjain/Documents/SIH/back-end/.venv/lib/python3.14/site-packages/pytest_asyncio/plugin.py:1216: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+    return asyncio.get_event_loop_policy()
+
+tests/test_dashboard_analytics_service.py::test_regional_distribution_classification_and_token_safety
+tests/test_dashboard_analytics_service.py::test_regional_distribution_classification_and_token_safety
+tests/test_reports.py::test_get_report_privacy_no_internal_leak
+tests/test_route_and_citizen_geo_api.py::test_route_corridor_check_with_intersecting_hazard
+tests/test_security_auth_relief_feedback.py::test_authenticated_verification_queue_access_success
+tests/test_security_auth_relief_feedback.py::test_nearby_relief_centers_endpoint
+tests/test_security_auth_relief_feedback.py::test_community_feedback_vote_endpoint
+  /Users/akshatjain/Documents/SIH/back-end/.venv/lib/python3.14/site-packages/pytest_asyncio/plugin.py:772: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+    old_loop_policy = asyncio.get_event_loop_policy()
+
+tests/test_dashboard_analytics_service.py::test_regional_distribution_classification_and_token_safety
+tests/test_dashboard_analytics_service.py::test_regional_distribution_classification_and_token_safety
+tests/test_reports.py::test_get_report_privacy_no_internal_leak
+tests/test_route_and_citizen_geo_api.py::test_route_corridor_check_with_intersecting_hazard
+tests/test_security_auth_relief_feedback.py::test_authenticated_verification_queue_access_success
+tests/test_security_auth_relief_feedback.py::test_nearby_relief_centers_endpoint
+tests/test_security_auth_relief_feedback.py::test_community_feedback_vote_endpoint
+  /Users/akshatjain/Documents/SIH/back-end/.venv/lib/python3.14/site-packages/pytest_asyncio/plugin.py:777: DeprecationWarning: 'asyncio.set_event_loop_policy' is deprecated and slated for removal in Python 3.16
+    asyncio.set_event_loop_policy(policy)
+
+tests/test_dashboard_analytics_service.py::test_regional_distribution_classification_and_token_safety
+tests/test_dashboard_analytics_service.py::test_regional_distribution_classification_and_token_safety
+tests/test_reports.py::test_get_report_privacy_no_internal_leak
+tests/test_route_and_citizen_geo_api.py::test_route_corridor_check_with_intersecting_hazard
+tests/test_security_auth_relief_feedback.py::test_authenticated_verification_queue_access_success
+tests/test_security_auth_relief_feedback.py::test_nearby_relief_centers_endpoint
+tests/test_security_auth_relief_feedback.py::test_community_feedback_vote_endpoint
+  /Users/akshatjain/Documents/SIH/back-end/.venv/lib/python3.14/site-packages/pytest_asyncio/plugin.py:1183: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+    loop = asyncio.get_event_loop_policy().new_event_loop()
+
+tests/test_dashboard_analytics_service.py::test_regional_distribution_classification_and_token_safety
+tests/test_reports.py::test_get_report_privacy_no_internal_leak
+tests/test_route_and_citizen_geo_api.py::test_route_corridor_check_with_intersecting_hazard
+tests/test_security_auth_relief_feedback.py::test_authenticated_verification_queue_access_success
+tests/test_security_auth_relief_feedback.py::test_nearby_relief_centers_endpoint
+tests/test_security_auth_relief_feedback.py::test_community_feedback_vote_endpoint
+  /Users/akshatjain/Documents/SIH/back-end/.venv/lib/python3.14/site-packages/pytest_asyncio/plugin.py:874: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+    _restore_event_loop_policy(asyncio.get_event_loop_policy()),
+
+tests/test_dashboard_analytics_service.py::test_regional_distribution_classification_and_token_safety
+tests/test_reports.py::test_get_report_privacy_no_internal_leak
+tests/test_route_and_citizen_geo_api.py::test_route_corridor_check_with_intersecting_hazard
+tests/test_security_auth_relief_feedback.py::test_authenticated_verification_queue_access_success
+tests/test_security_auth_relief_feedback.py::test_nearby_relief_centers_endpoint
+tests/test_security_auth_relief_feedback.py::test_community_feedback_vote_endpoint
+  /Users/akshatjain/Documents/SIH/back-end/.venv/lib/python3.14/site-packages/pytest_asyncio/plugin.py:889: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+    policy = asyncio.get_event_loop_policy()
+
+tests/test_dashboard_analytics_service.py::test_regional_distribution_classification_and_token_safety
+tests/test_reports.py::test_get_report_privacy_no_internal_leak
+tests/test_route_and_citizen_geo_api.py::test_route_corridor_check_with_intersecting_hazard
+tests/test_security_auth_relief_feedback.py::test_authenticated_verification_queue_access_success
+tests/test_security_auth_relief_feedback.py::test_nearby_relief_centers_endpoint
+tests/test_security_auth_relief_feedback.py::test_community_feedback_vote_endpoint
+tests/test_security_auth_relief_feedback.py::test_community_feedback_vote_endpoint
+  /Users/akshatjain/Documents/SIH/back-end/.venv/lib/python3.14/site-packages/pytest_asyncio/plugin.py:794: DeprecationWarning: 'asyncio.set_event_loop_policy' is deprecated and slated for removal in Python 3.16
+    asyncio.set_event_loop_policy(old_loop_policy)
+
+tests/test_dashboard_analytics_service.py::test_regional_distribution_classification_and_token_safety
+tests/test_reports.py::test_get_report_privacy_no_internal_leak
+tests/test_route_and_citizen_geo_api.py::test_route_corridor_check_with_intersecting_hazard
+tests/test_security_auth_relief_feedback.py::test_authenticated_verification_queue_access_success
+tests/test_security_auth_relief_feedback.py::test_nearby_relief_centers_endpoint
+tests/test_security_auth_relief_feedback.py::test_community_feedback_vote_endpoint
+  /Users/akshatjain/Documents/SIH/back-end/.venv/lib/python3.14/site-packages/pytest_asyncio/plugin.py:942: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+    policy = asyncio.get_event_loop_policy()
+
+tests/test_dashboard_analytics_service.py::test_regional_distribution_classification_and_token_safety
+tests/test_reports.py::test_get_report_privacy_no_internal_leak
+tests/test_route_and_citizen_geo_api.py::test_route_corridor_check_with_intersecting_hazard
+tests/test_security_auth_relief_feedback.py::test_authenticated_verification_queue_access_success
+tests/test_security_auth_relief_feedback.py::test_nearby_relief_centers_endpoint
+tests/test_security_auth_relief_feedback.py::test_community_feedback_vote_endpoint
+  /Users/akshatjain/Documents/SIH/back-end/.venv/lib/python3.14/site-packages/pytest_asyncio/plugin.py:966: DeprecationWarning: 'asyncio.set_event_loop_policy' is deprecated and slated for removal in Python 3.16
+    asyncio.set_event_loop_policy(previous_policy)
+
+tests/test_dashboard_analytics_service.py::test_regional_distribution_classification_and_token_safety
+tests/test_reports.py::test_get_report_privacy_no_internal_leak
+tests/test_route_and_citizen_geo_api.py::test_route_corridor_check_with_intersecting_hazard
+tests/test_security_auth_relief_feedback.py::test_authenticated_verification_queue_access_success
+tests/test_security_auth_relief_feedback.py::test_nearby_relief_centers_endpoint
+tests/test_security_auth_relief_feedback.py::test_community_feedback_vote_endpoint
+  /Users/akshatjain/Documents/SIH/back-end/.venv/lib/python3.14/site-packages/pytest_asyncio/plugin.py:978: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+    policy = asyncio.get_event_loop_policy()
+
+tests/test_reports.py::test_get_report_privacy_no_internal_leak
+tests/test_route_and_citizen_geo_api.py::test_route_corridor_check_with_intersecting_hazard
+tests/test_security_auth_relief_feedback.py::test_authenticated_verification_queue_access_success
+tests/test_security_auth_relief_feedback.py::test_nearby_relief_centers_endpoint
+tests/test_security_auth_relief_feedback.py::test_community_feedback_vote_endpoint
+  /Users/akshatjain/Documents/SIH/back-end/.venv/lib/python3.14/site-packages/fastapi/routing.py:144: FastAPIDeprecationWarning: ORJSONResponse is deprecated, FastAPI now serializes data directly to JSON bytes via Pydantic when a return type or response model is set, which is faster and doesn't need a custom response class. Read more in the FastAPI docs: https://fastapi.tiangolo.com/advanced/custom-response/#orjson-or-response-model and https://fastapi.tiangolo.com/tutorial/response-model/
+    response = await f(request)
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+6 passed, 64 warnings in 3.99s

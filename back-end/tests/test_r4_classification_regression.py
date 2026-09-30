@@ -3,7 +3,6 @@ in English and Hinglish/Hindi (Devanagari and Roman script).
 """
 
 import uuid
-import pytest
 
 from app.ingestion.normalizer import EventNormalizer
 from app.intelligence.category_rules import classify_text_category

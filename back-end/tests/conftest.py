@@ -4,7 +4,8 @@ os.environ["DB_DISABLE_POOL"] = "true"
 
 import pytest_asyncio
 from httpx import ASGITransport, AsyncClient
-from sqlalchemy import pool, select
+from sqlalchemy import pool, select, text
+from sqlalchemy.engine import make_url
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
 
 TEST_DB_URL = os.environ.get(
@@ -49,8 +50,83 @@ async def db_session():
     await test_engine.dispose()
 
 
+@pytest_asyncio.fixture(scope="session", autouse=True)
+async def clean_test_database():
+    expected_database = make_url(TEST_DB_URL).database
+    test_engine = create_async_engine(TEST_DB_URL, poolclass=pool.NullPool)
+    session_factory = async_sessionmaker(
+        bind=test_engine,
+        class_=AsyncSession,
+        expire_on_commit=False,
+    )
+    async with test_engine.begin() as connection:
+        actual_database = await connection.scalar(text("SELECT current_database()"))
+        if actual_database != expected_database:
+            raise RuntimeError("Refusing to clean a database other than TEST_DATABASE_URL")
+
+        tables = await connection.scalars(
+            text(
+                "SELECT quote_ident(tablename) FROM pg_tables "
+                "WHERE schemaname = 'public' AND tablename NOT IN "
+                "('alembic_version', 'spatial_ref_sys', 'geometry_columns', "
+                "'geography_columns', 'raster_columns', 'raster_overviews') "
+                "ORDER BY tablename"
+            )
+        )
+        table_names = list(tables)
+        if table_names:
+            await connection.execute(
+                text("TRUNCATE TABLE " + ", ".join(table_names) + " RESTART IDENTITY CASCADE")
+            )
+
+    from app.models.category import EventCategory
+    from app.models.source import Source
+    from scripts.seed_demo_data import seed_relief_centers, seed_users
+
+    async with session_factory() as session:
+        session.add_all(
+            [
+                EventCategory(
+                    category_code=code,
+                    title=title,
+                    severity_default=severity,
+                    color_hex=color,
+                    icon_name=icon,
+                )
+                for code, title, severity, color, icon in (
+                    ("CYCLONE_STORM", "Cyclone & Storm", "SEVERE", "#7c3aed", "wind"),
+                    ("DROUGHT", "Drought Condition", "MODERATE", "#d97706", "sun"),
+                    ("DUST_STORM", "Dust Storm", "HIGH", "#a16207", "sparkles"),
+                    ("FLOOD_WATERLOGGING", "Flooding & Waterlogging", "HIGH", "#3b82f6", "droplets"),
+                    ("FOG", "Dense Fog", "MODERATE", "#64748b", "cloud-fog"),
+                    ("HAILSTORM", "Hailstorm", "HIGH", "#06b6d4", "cloud-hail"),
+                    ("HEATWAVE", "Heatwave", "HIGH", "#ef4444", "thermometer-sun"),
+                    ("HEAVY_RAINFALL", "Heavy Rainfall", "HIGH", "#2563eb", "cloud-rain"),
+                    ("LANDSLIDE", "Landslide & Mudslip", "SEVERE", "#b45309", "mountain"),
+                    ("OTHER", "Other Weather Hazard", "LOW", "#6b7280", "alert-triangle"),
+                    ("STRONG_WIND", "Strong Wind & Gale", "HIGH", "#0d9488", "wind"),
+                    ("THUNDERSTORM_LIGHTNING", "Thunderstorm & Lightning", "HIGH", "#eab308", "zap"),
+                    ("URBAN_FLOOD", "Urban Inundation", "HIGH", "#0284c7", "waves"),
+                )
+            ]
+        )
+        session.add(
+            Source(
+                source_code="CITIZEN_WEB",
+                name="Citizen Web Portal",
+                source_type="CITIZEN_REPORT",
+                base_trust_score=0.6,
+                is_active=True,
+            )
+        )
+        await session.commit()
+        await seed_users(session)
+        await seed_relief_centers(session)
+    await test_engine.dispose()
+
+
 @pytest_asyncio.fixture(autouse=True)
-async def seed_test_operator(db_session: AsyncSession):
+async def seed_test_operator(db_session: AsyncSession, clean_test_database: None):
     """Ensure the default operator user exists in DB for test cases."""
     stmt = select(User).where(User.email == "operator@weather-platform.gov.in")
     res = await db_session.execute(stmt)

@@ -1,0 +1,257 @@
+F.....                                                                   [100%]Task was destroyed but it is pending!
+task: <Task pending name='Task-33' coro=<AsyncRedisClient.delete() running at /Users/akshatjain/Documents/SIH/back-end/app/core/redis.py:537> wait_for=<Future pending cb=[Task.task_wakeup()]>>
+
+=================================== FAILURES ===================================
+__________ test_regional_distribution_classification_and_token_safety __________
+
+db_session = <sqlalchemy.ext.asyncio.session.AsyncSession object at 0x110dde850>
+
+    @pytest.mark.asyncio
+    async def test_regional_distribution_classification_and_token_safety(
+        db_session: AsyncSession,
+    ) -> None:
+        """Test classification rules: token safety, city names, spatial fallback, and OTHER fallback."""
+        # Ensure a data source exists
+        source_res = await db_session.execute(select(Source).limit(1))
+        source = source_res.scalar_one_or_none()
+        if not source:
+            source = Source(
+                id=uuid.uuid4(),
+                source_code="TEST_REGIONAL_SRC",
+                source_type="CITIZEN",
+                name="Test Intake Source",
+                base_trust_score=0.5,
+                is_active=True,
+            )
+            db_session.add(source)
+            await db_session.flush()
+    
+        now = datetime.now(timezone.utc)
+        tag = f"REG-TEST-{uuid.uuid4().hex[:6].upper()}"
+    
+        reports = [
+            # 1. Known city match: Pune -> MH
+            WeatherReport(
+                id=uuid.uuid4(),
+                tracking_id=f"{tag}-MH1",
+                source_id=source.id,
+                severity="HIGH",
+                title=f"Pune Test {tag}",
+                location_name="Shivajinagar, Pune",
+                latitude=18.5204,
+                longitude=73.8567,
+                geom="SRID=4326;POINT(73.8567 18.5204)",
+                occurred_at=now - timedelta(hours=1),
+                verification_status="VERIFIED",
+                processing_status="COMPLETED",
+            ),
+            # 2. Known city match: Chennai -> TN
+            WeatherReport(
+                id=uuid.uuid4(),
+                tracking_id=f"{tag}-TN1",
+                source_id=source.id,
+                severity="MODERATE",
+                title=f"Chennai Test {tag}",
+                location_name="T. Nagar, Chennai",
+                latitude=13.0418,
+                longitude=80.2341,
+                geom="SRID=4326;POINT(80.2341 13.0418)",
+                occurred_at=now - timedelta(hours=2),
+                verification_status="VERIFIED",
+                processing_status="COMPLETED",
+            ),
+            # 3. Token safety: 'Vasai Road' contains 'as' but must NOT match Assam (AS),
+            # matches MH via Mumbai token or spatial bbox
+            WeatherReport(
+                id=uuid.uuid4(),
+                tracking_id=f"{tag}-MH2",
+                source_id=source.id,
+                severity="LOW",
+                title=f"Vasai Test {tag}",
+                location_name="Vasai Road, Mumbai",
+                latitude=19.38,
+                longitude=72.83,
+                geom="SRID=4326;POINT(72.83 19.38)",
+                occurred_at=now - timedelta(hours=3),
+                verification_status="PENDING",
+                processing_status="COMPLETED",
+            ),
+            # 4. Null location_name: Spatial fallback to Delhi NCR (DL)
+            WeatherReport(
+                id=uuid.uuid4(),
+                tracking_id=f"{tag}-DL1",
+                source_id=source.id,
+                severity="SEVERE",
+                title=f"Delhi GPS Test {tag}",
+                location_name=None,
+                latitude=28.6139,
+                longitude=77.2090,
+                geom="SRID=4326;POINT(77.2090 28.6139)",
+                occurred_at=now - timedelta(hours=4),
+                verification_status="VERIFIED",
+                processing_status="COMPLETED",
+            ),
+            # 5. Null location_name: Spatial fallback to Bengaluru (KA)
+            WeatherReport(
+                id=uuid.uuid4(),
+                tracking_id=f"{tag}-KA1",
+                source_id=source.id,
+                severity="HIGH",
+                title=f"Bengaluru GPS Test {tag}",
+                location_name=None,
+                latitude=12.9716,
+                longitude=77.5946,
+                geom="SRID=4326;POINT(77.5946 12.9716)",
+                occurred_at=now - timedelta(hours=5),
+                verification_status="UNDER_REVIEW",
+                processing_status="COMPLETED",
+            ),
+            # 6. Unmatched location name outside India -> OTHER
+            WeatherReport(
+                id=uuid.uuid4(),
+                tracking_id=f"{tag}-OTH1",
+                source_id=source.id,
+                severity="LOW",
+                title=f"Unknown Test {tag}",
+                location_name="Mid-Atlantic Buoy Station",
+                latitude=0.0,
+                longitude=0.0,
+                geom="SRID=4326;POINT(0.0 0.0)",
+                occurred_at=now - timedelta(hours=6),
+                verification_status="PENDING",
+                processing_status="COMPLETED",
+            ),
+        ]
+    
+        db_session.add_all(reports)
+        await db_session.flush()
+    
+        res = await incident_query_service.get_regional_distribution(
+            session=db_session,
+            time_range="24h",
+        )
+    
+        assert res.total_classified >= 6
+        code_map = {r.region_code: r for r in res.regions}
+    
+        assert "MH" in code_map
+        assert code_map["MH"].count >= 2
+        assert code_map["MH"].region_name == "Maharashtra"
+    
+        assert "TN" in code_map
+        assert code_map["TN"].count >= 1
+        assert code_map["TN"].region_name == "Tamil Nadu"
+    
+        assert "DL" in code_map
+        assert code_map["DL"].count >= 1
+        assert code_map["DL"].region_name == "Delhi NCR"
+    
+>       assert "KA" in code_map
+E       AssertionError: assert 'KA' in {'DL': RegionalDistributionItem(region_code='DL', region_name='Delhi NCR', count=1, percentage=17), 'MH': RegionalDist...=1, percentage=17), 'TN': RegionalDistributionItem(region_code='TN', region_name='Tamil Nadu', count=2, percentage=33)}
+
+tests/test_dashboard_analytics_service.py:499: AssertionError
+---------------------------- Captured stdout setup -----------------------------
+✅ Seeded Admin, Operator, and Citizen accounts.
+✅ Seeded 6 Metropolitan Relief Shelters.
+=============================== warnings summary ===============================
+tests/test_dashboard_analytics_service.py::test_regional_distribution_classification_and_token_safety
+  /Users/akshatjain/Documents/SIH/back-end/.venv/lib/python3.14/site-packages/pytest_asyncio/plugin.py:1216: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+    return asyncio.get_event_loop_policy()
+
+tests/test_dashboard_analytics_service.py::test_regional_distribution_classification_and_token_safety
+tests/test_dashboard_analytics_service.py::test_regional_distribution_classification_and_token_safety
+tests/test_reports.py::test_get_report_privacy_no_internal_leak
+tests/test_route_and_citizen_geo_api.py::test_route_corridor_check_with_intersecting_hazard
+tests/test_security_auth_relief_feedback.py::test_authenticated_verification_queue_access_success
+tests/test_security_auth_relief_feedback.py::test_nearby_relief_centers_endpoint
+tests/test_security_auth_relief_feedback.py::test_community_feedback_vote_endpoint
+  /Users/akshatjain/Documents/SIH/back-end/.venv/lib/python3.14/site-packages/pytest_asyncio/plugin.py:772: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+    old_loop_policy = asyncio.get_event_loop_policy()
+
+tests/test_dashboard_analytics_service.py::test_regional_distribution_classification_and_token_safety
+tests/test_dashboard_analytics_service.py::test_regional_distribution_classification_and_token_safety
+tests/test_reports.py::test_get_report_privacy_no_internal_leak
+tests/test_route_and_citizen_geo_api.py::test_route_corridor_check_with_intersecting_hazard
+tests/test_security_auth_relief_feedback.py::test_authenticated_verification_queue_access_success
+tests/test_security_auth_relief_feedback.py::test_nearby_relief_centers_endpoint
+tests/test_security_auth_relief_feedback.py::test_community_feedback_vote_endpoint
+  /Users/akshatjain/Documents/SIH/back-end/.venv/lib/python3.14/site-packages/pytest_asyncio/plugin.py:777: DeprecationWarning: 'asyncio.set_event_loop_policy' is deprecated and slated for removal in Python 3.16
+    asyncio.set_event_loop_policy(policy)
+
+tests/test_dashboard_analytics_service.py::test_regional_distribution_classification_and_token_safety
+tests/test_dashboard_analytics_service.py::test_regional_distribution_classification_and_token_safety
+tests/test_reports.py::test_get_report_privacy_no_internal_leak
+tests/test_route_and_citizen_geo_api.py::test_route_corridor_check_with_intersecting_hazard
+tests/test_security_auth_relief_feedback.py::test_authenticated_verification_queue_access_success
+tests/test_security_auth_relief_feedback.py::test_nearby_relief_centers_endpoint
+tests/test_security_auth_relief_feedback.py::test_community_feedback_vote_endpoint
+  /Users/akshatjain/Documents/SIH/back-end/.venv/lib/python3.14/site-packages/pytest_asyncio/plugin.py:1183: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+    loop = asyncio.get_event_loop_policy().new_event_loop()
+
+tests/test_dashboard_analytics_service.py::test_regional_distribution_classification_and_token_safety
+tests/test_reports.py::test_get_report_privacy_no_internal_leak
+tests/test_route_and_citizen_geo_api.py::test_route_corridor_check_with_intersecting_hazard
+tests/test_security_auth_relief_feedback.py::test_authenticated_verification_queue_access_success
+tests/test_security_auth_relief_feedback.py::test_nearby_relief_centers_endpoint
+tests/test_security_auth_relief_feedback.py::test_community_feedback_vote_endpoint
+  /Users/akshatjain/Documents/SIH/back-end/.venv/lib/python3.14/site-packages/pytest_asyncio/plugin.py:874: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+    _restore_event_loop_policy(asyncio.get_event_loop_policy()),
+
+tests/test_dashboard_analytics_service.py::test_regional_distribution_classification_and_token_safety
+tests/test_reports.py::test_get_report_privacy_no_internal_leak
+tests/test_route_and_citizen_geo_api.py::test_route_corridor_check_with_intersecting_hazard
+tests/test_security_auth_relief_feedback.py::test_authenticated_verification_queue_access_success
+tests/test_security_auth_relief_feedback.py::test_nearby_relief_centers_endpoint
+tests/test_security_auth_relief_feedback.py::test_community_feedback_vote_endpoint
+  /Users/akshatjain/Documents/SIH/back-end/.venv/lib/python3.14/site-packages/pytest_asyncio/plugin.py:889: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+    policy = asyncio.get_event_loop_policy()
+
+tests/test_dashboard_analytics_service.py::test_regional_distribution_classification_and_token_safety
+tests/test_reports.py::test_get_report_privacy_no_internal_leak
+tests/test_route_and_citizen_geo_api.py::test_route_corridor_check_with_intersecting_hazard
+tests/test_security_auth_relief_feedback.py::test_authenticated_verification_queue_access_success
+tests/test_security_auth_relief_feedback.py::test_nearby_relief_centers_endpoint
+tests/test_security_auth_relief_feedback.py::test_community_feedback_vote_endpoint
+tests/test_security_auth_relief_feedback.py::test_community_feedback_vote_endpoint
+  /Users/akshatjain/Documents/SIH/back-end/.venv/lib/python3.14/site-packages/pytest_asyncio/plugin.py:794: DeprecationWarning: 'asyncio.set_event_loop_policy' is deprecated and slated for removal in Python 3.16
+    asyncio.set_event_loop_policy(old_loop_policy)
+
+tests/test_dashboard_analytics_service.py::test_regional_distribution_classification_and_token_safety
+tests/test_reports.py::test_get_report_privacy_no_internal_leak
+tests/test_route_and_citizen_geo_api.py::test_route_corridor_check_with_intersecting_hazard
+tests/test_security_auth_relief_feedback.py::test_authenticated_verification_queue_access_success
+tests/test_security_auth_relief_feedback.py::test_nearby_relief_centers_endpoint
+tests/test_security_auth_relief_feedback.py::test_community_feedback_vote_endpoint
+  /Users/akshatjain/Documents/SIH/back-end/.venv/lib/python3.14/site-packages/pytest_asyncio/plugin.py:942: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+    policy = asyncio.get_event_loop_policy()
+
+tests/test_dashboard_analytics_service.py::test_regional_distribution_classification_and_token_safety
+tests/test_reports.py::test_get_report_privacy_no_internal_leak
+tests/test_route_and_citizen_geo_api.py::test_route_corridor_check_with_intersecting_hazard
+tests/test_security_auth_relief_feedback.py::test_authenticated_verification_queue_access_success
+tests/test_security_auth_relief_feedback.py::test_nearby_relief_centers_endpoint
+tests/test_security_auth_relief_feedback.py::test_community_feedback_vote_endpoint
+  /Users/akshatjain/Documents/SIH/back-end/.venv/lib/python3.14/site-packages/pytest_asyncio/plugin.py:966: DeprecationWarning: 'asyncio.set_event_loop_policy' is deprecated and slated for removal in Python 3.16
+    asyncio.set_event_loop_policy(previous_policy)
+
+tests/test_dashboard_analytics_service.py::test_regional_distribution_classification_and_token_safety
+tests/test_reports.py::test_get_report_privacy_no_internal_leak
+tests/test_route_and_citizen_geo_api.py::test_route_corridor_check_with_intersecting_hazard
+tests/test_security_auth_relief_feedback.py::test_authenticated_verification_queue_access_success
+tests/test_security_auth_relief_feedback.py::test_nearby_relief_centers_endpoint
+tests/test_security_auth_relief_feedback.py::test_community_feedback_vote_endpoint
+  /Users/akshatjain/Documents/SIH/back-end/.venv/lib/python3.14/site-packages/pytest_asyncio/plugin.py:978: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+    policy = asyncio.get_event_loop_policy()
+
+tests/test_reports.py::test_get_report_privacy_no_internal_leak
+tests/test_route_and_citizen_geo_api.py::test_route_corridor_check_with_intersecting_hazard
+tests/test_security_auth_relief_feedback.py::test_authenticated_verification_queue_access_success
+tests/test_security_auth_relief_feedback.py::test_nearby_relief_centers_endpoint
+tests/test_security_auth_relief_feedback.py::test_community_feedback_vote_endpoint
+  /Users/akshatjain/Documents/SIH/back-end/.venv/lib/python3.14/site-packages/fastapi/routing.py:144: FastAPIDeprecationWarning: ORJSONResponse is deprecated, FastAPI now serializes data directly to JSON bytes via Pydantic when a return type or response model is set, which is faster and doesn't need a custom response class. Read more in the FastAPI docs: https://fastapi.tiangolo.com/advanced/custom-response/#orjson-or-response-model and https://fastapi.tiangolo.com/tutorial/response-model/
+    response = await f(request)
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED tests/test_dashboard_analytics_service.py::test_regional_distribution_classification_and_token_safety
+1 failed, 5 passed, 64 warnings in 6.88s

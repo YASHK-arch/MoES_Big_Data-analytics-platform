@@ -234,16 +234,45 @@ class TestAdminEndpoints:
         outbox_row = outbox_res.scalar_one()
         assert outbox_row.status == "PENDING"
 
-        from app.core.redis import redis_client
+        from unittest.mock import AsyncMock, MagicMock
+
+        from app.api.v1.events import broadcaster, get_redis_client
+        from app.core.redis import AsyncRedisClient, redis_client
 
         stream_entries = await redis_client.xrevrange(
             "stream:weather:realtime", max_id="+", min_id="-", count=100
         )
-        assert any(
-            entry[1].get("event_id") == str(outbox_row.event_id)
-            and entry[1].get("event_type") == "report.verification_changed"
-            for entry in stream_entries
+        matching_entry = next(
+            (
+                entry
+                for entry in stream_entries
+                if entry[1].get("event_id") == str(outbox_row.event_id)
+                and entry[1].get("event_type") == "report.verification_changed"
+            ),
+            None,
         )
+        assert matching_entry is not None
+
+        sse_redis = MagicMock(spec=AsyncRedisClient)
+        sse_redis.connect = AsyncMock()
+        sse_redis.close = AsyncMock()
+        sse_redis.xrange = AsyncMock(side_effect=[[('0-0', {})], [matching_entry]])
+        sse_redis.xread = AsyncMock(side_effect=ConnectionError("End SSE test stream"))
+        app.dependency_overrides[get_redis_client] = lambda: sse_redis
+        try:
+            async with AsyncClient(
+                transport=ASGITransport(app=app), base_url="http://testserver"
+            ) as sse_client:
+                async with sse_client.stream(
+                    "GET", "/api/v1/events/stream", headers={"Last-Event-ID": "0-0"}
+                ) as sse_response:
+                    assert sse_response.status_code == 200
+                    sse_lines = [line async for line in sse_response.aiter_lines()]
+            assert f"id: {matching_entry[0]}" in sse_lines
+            assert "event: report.verification_changed" in sse_lines
+        finally:
+            app.dependency_overrides.pop(get_redis_client, None)
+            await broadcaster.stop()
 
         res_logs = await api_client.get("/api/v1/admin/audit-logs?action=BULK_VERIFY")
         assert res_logs.status_code == 200

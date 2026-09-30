@@ -345,16 +345,19 @@ async def test_observation_joining_completed_incident_updates_score(db_session: 
     mock_redis, _ = _create_mock_redis_stream_bus()
     mock_realtime = RealtimeService(client=mock_redis)
     report_svc = ReportService(realtime_svc=mock_realtime)
+    uid = uuid.uuid4().hex[:8]
+    latitude = 23.4567 + int(uid[:4], 16) / 65535 * 0.2
+    longitude = 85.6789 + int(uid[4:], 16) / 65535 * 0.2
 
     # 1. Create and ingest initial citizen report at isolated location
     payload = CitizenReportCreate(
-        latitude=23.4567,
-        longitude=85.6789,
+        latitude=latitude,
+        longitude=longitude,
         category_code="FLOOD_WATERLOGGING",
         severity="HIGH",
-        title="Sudden Flash Flood on Isolated Road",
+        title=f"Sudden Flash Flood on Isolated Road {uid}",
         description="Rapid water accumulation on roadway causing traffic halt.",
-        location_name="Isolated Valley Road, Jharkhand",
+        location_name=f"Isolated Valley Road {uid}, Jharkhand",
     )
     report, _ = await report_svc.create_citizen_report(session=db_session, payload=payload)
     state_initial = await on_incident_ingested(db=db_session, incident_id=report.id, commit=True)
@@ -365,7 +368,6 @@ async def test_observation_joining_completed_incident_updates_score(db_session: 
     initial_score = float(report.credibility_score or 0.0)
 
     # 2. Ingest matching physical observation
-    uid = uuid.uuid4().hex[:8]
     obs_source = Source(
         source_code=f"CWC_SENSOR_{uid}",
         name="CWC Hydrological Monitoring",

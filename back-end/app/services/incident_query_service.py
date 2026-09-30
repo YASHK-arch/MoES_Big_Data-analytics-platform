@@ -1532,15 +1532,15 @@ class IncidentQueryService:
             ),
             (
                 func.ST_Contains(
-                    func.ST_MakeEnvelope(76.2, 8.0, 80.3, 13.5, 4326), WeatherReport.geom
-                ),
-                "TN",
-            ),
-            (
-                func.ST_Contains(
                     func.ST_MakeEnvelope(74.0, 11.5, 78.6, 18.5, 4326), WeatherReport.geom
                 ),
                 "KA",
+            ),
+            (
+                func.ST_Contains(
+                    func.ST_MakeEnvelope(76.2, 8.0, 80.3, 13.5, 4326), WeatherReport.geom
+                ),
+                "TN",
             ),
             (
                 func.ST_Contains(

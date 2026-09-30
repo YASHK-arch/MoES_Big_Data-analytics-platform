@@ -1,0 +1,8 @@
+K0 data.gov.in catalog check (2026-09-30)
+Queries: title=rainfall; title=weather; title=dust storm.
+Observed: the catalog contains weather-related historical datasets; it is inaccurate to claim there are no weather datasets. Search results include rainfall records and past dust-storm event totals.
+Candidates:
+1. Daily District-wise Rainfall Data (catalog search candidate; resource page extraction failed, so API availability is NOT VERIFIED).
+2. State-wise Details of the Number of Dust Storm Events from 2017 to 2021 (published 2023-05-02; resource page says Sourced Webservices/APIs: NA).
+3. Station-wise Details of the Number of Dust Storm Events Observed from 2020 to 2022 (published 2023-12-26; resource page says Sourced Webservices/APIs: NA).
+Conclusion: weather-related datasets do exist. The searches did not verify a current live weather-observation feed or stable API contract. Local DATA_GOV_API_KEY is absent, so authenticated API access was not attempted.

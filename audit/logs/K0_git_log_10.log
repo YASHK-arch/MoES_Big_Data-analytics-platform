@@ -1,0 +1,10 @@
+69f75ab Fix bulk verification outbox transaction and document status
+b4a74c9 docs: synchronize all MD files with Round 9b state (R2 RSS, R3 Admin, R4 Classification, R5 Demo, R1 data.gov)
+ee8e17d feat(admin): operator-only CSV/GeoJSON export, atomic bulk verify/reject, audit-log table + viewer, frontend buttons (R3)
+7ce9624 feat(ingestion): implement Indian weather RSS news adapter with L1 gate spatial resolution (R2)
+7babb02 feat(demo): add is_demo flag, backend filtering, frontend badges, and toggle (R5)
+4c1ad25 feat(intelligence): add multilingual keyword classification and R4 regression test
+0efd479 test(audit): add Round 9a evaluation scripts and logs
+bf8f344 docs: update PROJECT_PROGRESS.md for Round 9a
+f84587d fix(db): ensure migration 0016 revision length and idempotency
+22e7667 fix(gazetteer): add Cuttack to Indian cities dictionary

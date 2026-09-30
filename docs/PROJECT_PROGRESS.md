@@ -33,7 +33,7 @@
 
 | Requirement | Status | Notes / next action |
 |---|---|---|
-| Collect from social media, public datasets, APIs, citizen reports | 🟡 | 8 adapters + 1 demo. Catalog searches found static weather datasets, but inspected pages say sourced APIs NA and the portal API catalog showed 0 APIs. No current data.gov.in adapter. No X/Bluesky/Telegram/YouTube. |
+| Collect from social media, public datasets, APIs, citizen reports | 🟡 | 8 adapters + 1 demo. data.gov.in searches found historical rainfall/dust-storm datasets; dust pages say sourced APIs NA; rainfall API availability is unverified. No current data.gov.in adapter. No X/Bluesky/Telegram/YouTube. |
 | Posts with `#IMD` and weather hashtags | ✅ | `imd` added to Mastodon hashtag defaults (F6). |
 | Metadata: time, city, state, GPS, photos, videos, category | ✅ | Photos/video accepted (A8). Magic-byte validation works. |
 | Categories incl. fog, dust storm, strong wind | ✅ | R4: 60-post regression suite (fog/dust/wind EN+HI) ≥ 85% accuracy; hoax credibility < 0.45 verified. |
@@ -252,7 +252,7 @@ Keep your edits to this file under 40 lines. In your final reply, only state "PR
 | 2026-09-30 | Re-audit round 6 (G1–G5, 100k rows) | G1 test isolation (weather_platform_test); G2 geo p50 104.2ms cached (4w)/156.1ms (1w), uncached 487.5ms; G3 bench 100% prec/rec; G5 migration 0013 dropped 2 dup idxs, 20k COPY +26.7% (1237ms) | G1–G5 complete; zero duplicate indexes in DB |
 | 2026-09-30 | Round 8 Deployability (O1–O5, V1–V6) | Web :8080 SPA; API :8000; 11 containers healthy; memory 1097 MiB (< 3.5GB); smoke 10/10 cats + rate limit 429 + SSE pass; prod 404 docs; redis 20s stop 503->200 without api restart; down/up persist 623 rpts; main chunk 24.66 kB | Fully deployed, isolated demo compose stack verified |
 | 2026-09-30 | Round 8b Verification | 452/452 pytest pass; ruff 0; mypy 0; alembic 0015; P0(c) p1 0.19ms / p500 8.01ms; H1 6 backfilled; H2 delta 0.0435 / max 0.1742; H3 prec 5.9%/10.3%/13.3%; scheduler 256m, api 512m; conn budget 23 | All Round 8b checks verified |
-| 2026-09-30 | K0 Round 9 verification (R1–R5, L4) | R4 60/60; new holdout 25/30 (83.3%; dust 7/10); RSS 280 entries / 120 normalized / 42 city-state / 12 articles and 505 candidate pairs; L4 10,000/10,000 fixtures | RSS 3 feeds HTTP 200, 2 HTTP 404; dev Alembic 0017, audit 0015; backend 475 pass / 1 unrelated failure |
+| 2026-09-30 | K0 Round 9 verification (R1–R5, L4) | R4 60/60; holdout 25/30 (83.3%; dust 7/10); RSS 120 normalized / 33 city-state / 8 items and 357 accepted candidate links; 10/10 hoaxes <0.45; L4 10,000/10,000 | RSS 3 feeds HTTP 200, 2 HTTP 404; dev/test/audit Alembic 0017; audit 0016/0017 round-trip passed; pytest 476/0 three consecutive runs |
 
 ---
 
@@ -267,7 +267,7 @@ Keep your edits to this file under 40 lines. In your final reply, only state "PR
 | 2026-09-30 | E1–E5 | `276f106`, `9e33220`, `9052ca5`, `a553fd3` | Round 5: precision tightening, honest B4 load test, unused geo property drop, Redis pool audit & reconnect, 18-index analysis | BE 442 pass; FE 177 pass; tsc 0 errors; ruff clean |
 | 2026-09-30 | G1–G5 | `current` | Round 6: test DB isolation, geo Redis byte caching (compresslevel=4), evidence linking analysis, migration 0013 dropping duplicate indexes | BE 442 pass; FE 177 pass; tsc 0 errors; ruff clean |
 | 2026-09-30 | O1–O3, O5, V | `d605aa6..b31931a` | Round 8 deployability: Docker multi-stage images, health/ready, metrics Prometheus, React.lazy/chunks, smoke & failure acceptance | BE 442 pass; FE 177 pass; tsc clean; ruff clean |
-| 2026-09-30 | R3, R1–R5, L4 | _working tree_ | Bulk verify/reject now shares commit=False state/event/outbox logic; K0 audited live feeds, classification holdout, data.gov catalog, and evidence fixtures | R3 8 pass; BE 475 pass / 1 fail; mypy app clean |
+| 2026-09-30 | R3, R1–R5, L4 | _working tree_ | Bulk verify/reject emits outbox/SSE event; test DB resets once per session with seeded reference rows; region precedence fixed | R3 SSE regression passes; BE 476/0 ×3; Ruff/mypy clean; format 62 files; Alembic check drift |
 
 ---
 
@@ -305,9 +305,9 @@ Keep your edits to this file under 40 lines. In your final reply, only state "PR
 | 28 | L4 test marker: is_test_fixture column added (mig 0016); 10k fixture items tagged in audit DB | Low | — | ✅ (Round 9a) |
 | 29 | R1 catalog claim: weather-related static datasets exist; inspected rainfall/dust records have no sourced API, and portal API catalog showed 0 APIs | Medium | — | 🔎 |
 | 30 | R2 live RSS: IMD and NDTV feed URLs returned 404; descriptions and expanded raw_payload metadata are persisted without a summary length cap | Medium | — | 🔎 |
-| 31 | R4 unseen 30-post holdout scored 83.3%; dust storm was 7/10 despite 60-post set at 100%; no later rule edits after benchmark commit | High | — | 🔎 |
-| 32 | Audit DB remains Alembic 0015 while dev is 0017; no migration applied during K0 | Medium | — | 🔎 |
-| 33 | Full backend suite: 475 pass / 1 fail; `test_observation_joining_completed_incident_updates_score` fails at 0.82 before and after, including isolated run | Medium | — | 🔎 |
+| 31 | R4 unseen 30-post holdout scored 25/30 (83.3%; dust storm 7/10); no rule edits after benchmark commit; genuine-control dataset absent | High | — | 🔎 |
+| 32 | `alembic check` still detects archive/PostGIS schema drift; AUDIT migration 0015→0017→0016→0017 succeeds | Medium | — | 🔎 |
+| 33 | Test DB is truncated once per session and seeded; observation test uses unique location; full suite 476/0 three consecutive runs | Medium | — | ✅ |
 
 ---
 

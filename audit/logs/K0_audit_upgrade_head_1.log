@@ -1,0 +1,4 @@
+INFO  [alembic.runtime.migration] Context impl PostgresqlImpl.
+INFO  [alembic.runtime.migration] Will assume transactional DDL.
+INFO  [alembic.runtime.migration] Running upgrade 0015_geo_sort_index -> 0016_evidence_test_fixture, Add is_test_fixture column to evidence_items.
+INFO  [alembic.runtime.migration] Running upgrade 0016_evidence_test_fixture -> 0017_report_is_demo, Add is_demo column to weather_reports with backfill and index.

@@ -1,0 +1,48 @@
+ M back-end/alembic/versions/20260930_0016_add_evidence_is_test_fixture.py
+ M back-end/app/services/incident_query_service.py
+ M back-end/tests/conftest.py
+ M back-end/tests/test_admin_endpoints.py
+ M back-end/tests/test_live_intelligence_integration.py
+ M back-end/tests/test_r4_classification_regression.py
+ M docs/PROJECT_PROGRESS.md
+?? audit/logs/K0_alembic_audit_current.log
+?? audit/logs/K0_alembic_check_final.log
+?? audit/logs/K0_alembic_check_initial.log
+?? audit/logs/K0_alembic_dev_current.log
+?? audit/logs/K0_alembic_test_current.log
+?? audit/logs/K0_audit_downgrade_1.log
+?? audit/logs/K0_audit_upgrade_head_1.log
+?? audit/logs/K0_audit_upgrade_head_2.log
+?? audit/logs/K0_bulk_sse_and_observation.log
+?? audit/logs/K0_bulk_sse_final.log
+?? audit/logs/K0_data_gov_search.log
+?? audit/logs/K0_evidence_domain_counts.log
+?? audit/logs/K0_format_after_fix.log
+?? audit/logs/K0_format_final.log
+?? audit/logs/K0_format_initial.log
+?? audit/logs/K0_git_log_10.log
+?? audit/logs/K0_git_status.log
+?? audit/logs/K0_mypy_after_fix.log
+?? audit/logs/K0_mypy_final.log
+?? audit/logs/K0_mypy_initial.log
+?? audit/logs/K0_observation_after_truncate.log
+?? audit/logs/K0_observation_alone_initial.log
+?? audit/logs/K0_observation_alone_pretruncate.log
+?? audit/logs/K0_observation_hermetic_1.log
+?? audit/logs/K0_observation_hermetic_2.log
+?? audit/logs/K0_observation_repeat_1.log
+?? audit/logs/K0_observation_repeat_2.log
+?? audit/logs/K0_pytest_baseline.log
+?? audit/logs/K0_pytest_final_1.log
+?? audit/logs/K0_pytest_final_2.log
+?? audit/logs/K0_pytest_final_3.log
+?? audit/logs/K0_pytest_fixture_six.log
+?? audit/logs/K0_pytest_fixture_six_after_fix.log
+?? audit/logs/K0_pytest_run1.log
+?? audit/logs/K0_pytest_run2.log
+?? audit/logs/K0_pytest_run3.log
+?? audit/logs/K0_r4_hoax_scores.log
+?? audit/logs/K0_rss_live_once.log
+?? audit/logs/K0_ruff_after_fix.log
+?? audit/logs/K0_ruff_final.log
+?? audit/logs/K0_ruff_initial.log

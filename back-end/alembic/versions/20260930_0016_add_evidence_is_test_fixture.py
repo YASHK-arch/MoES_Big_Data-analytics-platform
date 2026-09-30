@@ -5,8 +5,9 @@ Revises: 0015_geo_sort_index
 Create Date: 2026-09-30 16:26:00
 """
 
-from alembic import op
 import sqlalchemy as sa
+
+from alembic import op
 
 revision = "0016_evidence_test_fixture"
 down_revision = "0015_geo_sort_index"

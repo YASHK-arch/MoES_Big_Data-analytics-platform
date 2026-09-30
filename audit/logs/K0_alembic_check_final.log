@@ -1,0 +1,812 @@
+INFO  [alembic.runtime.migration] Context impl PostgresqlImpl.
+INFO  [alembic.runtime.migration] Will assume transactional DDL.
+INFO  [alembic.runtime.plugins] setting up autogenerate plugin alembic.autogenerate.schemas
+INFO  [alembic.runtime.plugins] setting up autogenerate plugin alembic.autogenerate.tables
+INFO  [alembic.runtime.plugins] setting up autogenerate plugin alembic.autogenerate.types
+INFO  [alembic.runtime.plugins] setting up autogenerate plugin alembic.autogenerate.constraints
+INFO  [alembic.runtime.plugins] setting up autogenerate plugin alembic.autogenerate.defaults
+INFO  [alembic.runtime.plugins] setting up autogenerate plugin alembic.autogenerate.comments
+INFO  [alembic.runtime.plugins] setting up autogenerate plugin alembic.autogenerate.checkconstraint_byname
+INFO  [alembic.ddl.postgresql] Detected sequence named 'addr_gid_seq' as owned by integer column 'addr(gid)', assuming SERIAL and omitting
+INFO  [alembic.autogenerate.compare.constraints] Detected removed index 'idx_tiger_addr_tlid_statefp' on 'addr'
+INFO  [alembic.autogenerate.compare.constraints] Detected removed index 'idx_tiger_addr_zip' on 'addr'
+INFO  [alembic.autogenerate.compare.tables] Detected removed table 'addr'
+INFO  [alembic.ddl.postgresql] Detected sequence named 'bg_gid_seq' as owned by integer column 'bg(gid)', assuming SERIAL and omitting
+INFO  [alembic.autogenerate.compare.tables] Detected removed table 'bg'
+INFO  [alembic.autogenerate.compare.tables] Detected removed table 'zip_lookup_base'
+INFO  [alembic.ddl.postgresql] Detected sequence named 'state_gid_seq' as owned by integer column 'state(gid)', assuming SERIAL and omitting
+INFO  [alembic.autogenerate.compare.constraints] Detected removed index 'idx_tiger_state_the_geom_gist' on 'state'
+INFO  [alembic.autogenerate.compare.tables] Detected removed table 'state'
+INFO  [alembic.autogenerate.compare.tables] Detected removed table 'zip_lookup_all'
+INFO  [alembic.ddl.postgresql] Detected sequence named 'zcta5_gid_seq' as owned by integer column 'zcta5(gid)', assuming SERIAL and omitting
+INFO  [alembic.autogenerate.compare.tables] Detected removed table 'zcta5'
+INFO  [alembic.ddl.postgresql] Detected sequence named 'county_gid_seq' as owned by integer column 'county(gid)', assuming SERIAL and omitting
+INFO  [alembic.autogenerate.compare.constraints] Detected removed index 'idx_tiger_county' on 'county'
+INFO  [alembic.autogenerate.compare.tables] Detected removed table 'county'
+INFO  [alembic.ddl.postgresql] Detected sequence named 'featnames_gid_seq' as owned by integer column 'featnames(gid)', assuming SERIAL and omitting
+INFO  [alembic.autogenerate.compare.constraints] Detected removed index 'idx_tiger_featnames_lname' on 'featnames'
+INFO  [alembic.autogenerate.compare.constraints] Detected removed index 'idx_tiger_featnames_snd_name' on 'featnames'
+INFO  [alembic.autogenerate.compare.constraints] Detected removed index 'idx_tiger_featnames_tlid_statefp' on 'featnames'
+INFO  [alembic.autogenerate.compare.tables] Detected removed table 'featnames'
+INFO  [alembic.autogenerate.compare.tables] Detected removed table 'geocode_settings'
+INFO  [alembic.autogenerate.compare.tables] Detected removed table 'zip_lookup'
+INFO  [alembic.autogenerate.compare.tables] Detected removed table 'loader_variables'
+INFO  [alembic.ddl.postgresql] Detected sequence named 'pagc_gaz_id_seq' as owned by integer column 'pagc_gaz(id)', assuming SERIAL and omitting
+INFO  [alembic.autogenerate.compare.tables] Detected removed table 'pagc_gaz'
+INFO  [alembic.autogenerate.compare.tables] Detected removed table 'layer'
+INFO  [alembic.autogenerate.compare.tables] Detected removed table 'zip_state'
+INFO  [alembic.ddl.postgresql] Detected sequence named 'tract_gid_seq' as owned by integer column 'tract(gid)', assuming SERIAL and omitting
+INFO  [alembic.autogenerate.compare.tables] Detected removed table 'tract'
+INFO  [alembic.autogenerate.compare.constraints] Detected removed index 'countysub_lookup_name_idx' on 'countysub_lookup'
+INFO  [alembic.autogenerate.compare.constraints] Detected removed index 'countysub_lookup_state_idx' on 'countysub_lookup'
+INFO  [alembic.autogenerate.compare.tables] Detected removed table 'countysub_lookup'
+INFO  [alembic.autogenerate.compare.constraints] Detected removed index 'street_type_lookup_abbrev_idx' on 'street_type_lookup'
+INFO  [alembic.autogenerate.compare.tables] Detected removed table 'street_type_lookup'
+INFO  [alembic.autogenerate.compare.tables] Detected removed table 'state_lookup'
+INFO  [alembic.ddl.postgresql] Detected sequence named 'topology_id_seq' as owned by integer column 'topology(id)', assuming SERIAL and omitting
+INFO  [alembic.autogenerate.compare.tables] Detected removed table 'topology'
+INFO  [alembic.autogenerate.compare.constraints] Detected removed index 'place_lookup_name_idx' on 'place_lookup'
+INFO  [alembic.autogenerate.compare.constraints] Detected removed index 'place_lookup_state_idx' on 'place_lookup'
+INFO  [alembic.autogenerate.compare.tables] Detected removed table 'place_lookup'
+INFO  [alembic.ddl.postgresql] Detected sequence named 'tabblock_gid_seq' as owned by integer column 'tabblock(gid)', assuming SERIAL and omitting
+INFO  [alembic.autogenerate.compare.tables] Detected removed table 'tabblock'
+INFO  [alembic.autogenerate.compare.tables] Detected removed table 'geocode_settings_default'
+INFO  [alembic.autogenerate.compare.tables] Detected removed table 'loader_lookuptables'
+INFO  [alembic.ddl.postgresql] Detected sequence named 'addrfeat_gid_seq' as owned by integer column 'addrfeat(gid)', assuming SERIAL and omitting
+INFO  [alembic.autogenerate.compare.constraints] Detected removed index 'idx_addrfeat_geom_gist' on 'addrfeat'
+INFO  [alembic.autogenerate.compare.constraints] Detected removed index 'idx_addrfeat_tlid' on 'addrfeat'
+INFO  [alembic.autogenerate.compare.constraints] Detected removed index 'idx_addrfeat_zipl' on 'addrfeat'
+INFO  [alembic.autogenerate.compare.constraints] Detected removed index 'idx_addrfeat_zipr' on 'addrfeat'
+INFO  [alembic.autogenerate.compare.tables] Detected removed table 'addrfeat'
+INFO  [alembic.ddl.postgresql] Detected sequence named 'pagc_lex_id_seq' as owned by integer column 'pagc_lex(id)', assuming SERIAL and omitting
+INFO  [alembic.autogenerate.compare.tables] Detected removed table 'pagc_lex'
+INFO  [alembic.autogenerate.compare.tables] Detected removed table 'zip_state_loc'
+INFO  [alembic.ddl.postgresql] Detected sequence named 'edges_gid_seq' as owned by integer column 'edges(gid)', assuming SERIAL and omitting
+INFO  [alembic.autogenerate.compare.constraints] Detected removed index 'idx_edges_tlid' on 'edges'
+INFO  [alembic.autogenerate.compare.constraints] Detected removed index 'idx_tiger_edges_countyfp' on 'edges'
+INFO  [alembic.autogenerate.compare.constraints] Detected removed index 'idx_tiger_edges_the_geom_gist' on 'edges'
+INFO  [alembic.autogenerate.compare.tables] Detected removed table 'edges'
+INFO  [alembic.ddl.postgresql] Detected sequence named 'cousub_gid_seq' as owned by integer column 'cousub(gid)', assuming SERIAL and omitting
+INFO  [alembic.autogenerate.compare.constraints] Detected removed index 'tige_cousub_the_geom_gist' on 'cousub'
+INFO  [alembic.autogenerate.compare.tables] Detected removed table 'cousub'
+INFO  [alembic.autogenerate.compare.tables] Detected removed table 'tabblock20'
+INFO  [alembic.ddl.postgresql] Detected sequence named 'place_gid_seq' as owned by integer column 'place(gid)', assuming SERIAL and omitting
+INFO  [alembic.autogenerate.compare.constraints] Detected removed index 'tiger_place_the_geom_gist' on 'place'
+INFO  [alembic.autogenerate.compare.tables] Detected removed table 'place'
+INFO  [alembic.ddl.postgresql] Detected sequence named 'pagc_rules_id_seq' as owned by integer column 'pagc_rules(id)', assuming SERIAL and omitting
+INFO  [alembic.autogenerate.compare.tables] Detected removed table 'pagc_rules'
+INFO  [alembic.autogenerate.compare.tables] Detected removed table 'loader_platform'
+INFO  [alembic.ddl.postgresql] Detected sequence named 'faces_gid_seq' as owned by integer column 'faces(gid)', assuming SERIAL and omitting
+INFO  [alembic.autogenerate.compare.constraints] Detected removed index 'idx_tiger_faces_countyfp' on 'faces'
+INFO  [alembic.autogenerate.compare.constraints] Detected removed index 'idx_tiger_faces_tfid' on 'faces'
+INFO  [alembic.autogenerate.compare.constraints] Detected removed index 'tiger_faces_the_geom_gist' on 'faces'
+INFO  [alembic.autogenerate.compare.tables] Detected removed table 'faces'
+INFO  [alembic.autogenerate.compare.constraints] Detected removed index 'direction_lookup_abbrev_idx' on 'direction_lookup'
+INFO  [alembic.autogenerate.compare.tables] Detected removed table 'direction_lookup'
+INFO  [alembic.autogenerate.compare.constraints] Detected removed index 'secondary_unit_lookup_abbrev_idx' on 'secondary_unit_lookup'
+INFO  [alembic.autogenerate.compare.tables] Detected removed table 'secondary_unit_lookup'
+INFO  [alembic.autogenerate.compare.constraints] Detected removed index 'county_lookup_name_idx' on 'county_lookup'
+INFO  [alembic.autogenerate.compare.constraints] Detected removed index 'county_lookup_state_idx' on 'county_lookup'
+INFO  [alembic.autogenerate.compare.tables] Detected removed table 'county_lookup'
+INFO  [alembic.autogenerate.compare.constraints] Detected removed index 'idx_forecast_advisories_hazard' on 'forecast_advisories'
+INFO  [alembic.autogenerate.compare.constraints] Detected removed index 'idx_forecast_advisories_source' on 'forecast_advisories'
+INFO  [alembic.autogenerate.compare.constraints] Detected added index 'ix_forecast_advisories_hazard_type' on '('hazard_type',)'
+INFO  [alembic.autogenerate.compare.constraints] Detected added index 'ix_forecast_advisories_source_code' on '('source_code',)'
+INFO  [alembic.autogenerate.compare.constraints] Detected added index 'ix_forecast_advisories_valid_from' on '('valid_from',)'
+INFO  [alembic.autogenerate.compare.constraints] Detected added index 'ix_forecast_advisories_valid_until' on '('valid_until',)'
+INFO  [alembic.autogenerate.compare.constraints] Detected removed index 'idx_feedback_report_id' on 'incident_feedback'
+INFO  [alembic.autogenerate.compare.constraints] Detected removed index 'idx_feedback_user_id' on 'incident_feedback'
+INFO  [alembic.autogenerate.compare.constraints] Detected added index 'ix_incident_feedback_report_id' on '('report_id',)'
+INFO  [alembic.autogenerate.compare.constraints] Detected added index 'ix_incident_feedback_user_id' on '('user_id',)'
+INFO  [alembic.autogenerate.compare.constraints] Detected removed index 'idx_realtime_outbox_created_at' on 'realtime_outbox'
+INFO  [alembic.autogenerate.compare.constraints] Detected removed index 'idx_realtime_outbox_entity_id' on 'realtime_outbox'
+INFO  [alembic.autogenerate.compare.constraints] Detected removed index 'idx_realtime_outbox_event_id' on 'realtime_outbox'
+INFO  [alembic.autogenerate.compare.constraints] Detected removed index 'idx_realtime_outbox_event_type' on 'realtime_outbox'
+INFO  [alembic.autogenerate.compare.constraints] Detected removed index 'idx_realtime_outbox_status' on 'realtime_outbox'
+INFO  [alembic.autogenerate.compare.constraints] Detected removed unique constraint 'realtime_outbox_event_id_key' on 'realtime_outbox'
+INFO  [alembic.autogenerate.compare.constraints] Detected added index 'ix_realtime_outbox_created_at' on '('created_at',)'
+INFO  [alembic.autogenerate.compare.constraints] Detected added index 'ix_realtime_outbox_entity_id' on '('entity_id',)'
+INFO  [alembic.autogenerate.compare.constraints] Detected added index 'ix_realtime_outbox_event_id' on '('event_id',)'
+INFO  [alembic.autogenerate.compare.constraints] Detected added index 'ix_realtime_outbox_event_type' on '('event_type',)'
+INFO  [alembic.autogenerate.compare.constraints] Detected added index 'ix_realtime_outbox_next_retry_at' on '('next_retry_at',)'
+INFO  [alembic.autogenerate.compare.constraints] Detected added index 'ix_realtime_outbox_status' on '('status',)'
+INFO  [alembic.autogenerate.compare.constraints] Detected removed index 'idx_relief_centers_active' on 'relief_centers'
+INFO  [alembic.autogenerate.compare.constraints] Detected removed index 'idx_relief_centers_district' on 'relief_centers'
+INFO  [alembic.autogenerate.compare.constraints] Detected removed index 'idx_relief_centers_name' on 'relief_centers'
+INFO  [alembic.autogenerate.compare.constraints] Detected removed index 'idx_relief_centers_state' on 'relief_centers'
+INFO  [alembic.autogenerate.compare.constraints] Detected added index 'ix_relief_centers_district_name' on '('district_name',)'
+INFO  [alembic.autogenerate.compare.constraints] Detected added index 'ix_relief_centers_is_active' on '('is_active',)'
+INFO  [alembic.autogenerate.compare.constraints] Detected added index 'ix_relief_centers_name' on '('name',)'
+INFO  [alembic.autogenerate.compare.constraints] Detected added index 'ix_relief_centers_state_name' on '('state_name',)'
+INFO  [alembic.autogenerate.compare.constraints] Detected removed unique constraint 'users_email_key' on 'users'
+INFO  [alembic.autogenerate.compare.constraints] Detected removed index 'idx_weather_reports_cat_occ' on 'weather_reports'
+INFO  [alembic.autogenerate.compare.constraints] Detected removed index 'idx_weather_reports_dashboard_summary' on 'weather_reports'
+INFO  [alembic.autogenerate.compare.constraints] Detected removed index 'idx_weather_reports_geo_sort' on 'weather_reports'
+INFO  [alembic.autogenerate.compare.constraints] Detected removed index 'idx_weather_reports_sev_occ' on 'weather_reports'
+INFO  [alembic.autogenerate.compare.constraints] Detected removed index 'idx_weather_reports_summary_cov' on 'weather_reports'
+INFO  [alembic.autogenerate.compare.constraints] Detected removed index 'idx_weather_reports_user_id' on 'weather_reports'
+INFO  [alembic.autogenerate.compare.constraints] Detected removed unique constraint 'weather_reports_tracking_id_key' on 'weather_reports'
+INFO  [alembic.autogenerate.compare.constraints] Detected added index 'ix_weather_reports_credibility_score' on '('credibility_score',)'
+INFO  [alembic.autogenerate.compare.constraints] Detected added index 'ix_weather_reports_tracking_id' on '('tracking_id',)'
+INFO  [alembic.autogenerate.compare.constraints] Detected added index 'ix_weather_reports_user_id' on '('user_id',)'
+INFO  [alembic.autogenerate.compare.constraints] Detected removed index 'idx_weather_reports_archive_archived_at' on 'weather_reports_archive'
+INFO  [alembic.autogenerate.compare.constraints] Detected removed index 'idx_weather_reports_archive_occurred_at' on 'weather_reports_archive'
+INFO  [alembic.autogenerate.compare.constraints] Detected removed index 'idx_weather_reports_archive_tracking_id' on 'weather_reports_archive'
+INFO  [alembic.autogenerate.compare.constraints] Detected changed index 'idx_weather_reports_archive_credibility' on 'weather_reports_archive': expression #1 'credibility_score' to 'credibility_score DESC'
+INFO  [alembic.autogenerate.compare.constraints] Detected changed index 'idx_weather_reports_archive_status_time' on 'weather_reports_archive': expression #2 'occurred_at' to 'occurred_at DESC'
+INFO  [alembic.autogenerate.compare.constraints] Detected added index 'ix_weather_reports_archive_archived_at' on '('archived_at',)'
+INFO  [alembic.autogenerate.compare.constraints] Detected added index 'ix_weather_reports_archive_credibility_score' on '('credibility_score',)'
+INFO  [alembic.autogenerate.compare.constraints] Detected added index 'ix_weather_reports_archive_external_id' on '('external_id',)'
+INFO  [alembic.autogenerate.compare.constraints] Detected added index 'ix_weather_reports_archive_occurred_at' on '('occurred_at',)'
+INFO  [alembic.autogenerate.compare.constraints] Detected added index 'ix_weather_reports_archive_tracking_id' on '('tracking_id',)'
+INFO  [alembic.autogenerate.compare.constraints] Detected added index 'ix_weather_reports_archive_verification_status' on '('verification_status',)'
+ERROR [alembic.util.messaging] New upgrade operations detected: [('remove_index', Index('idx_tiger_addr_tlid_statefp', Column('tlid', BIGINT(), table=<addr>), Column('statefp', VARCHAR(length=2), table=<addr>))), ('remove_index', Index('idx_tiger_addr_zip', Column('zip', VARCHAR(length=5), table=<addr>))), ('remove_table', Table('addr', MetaData(), Column('gid', INTEGER(), table=<addr>, primary_key=True, nullable=False), Column('tlid', BIGINT(), table=<addr>), Column('fromhn', VARCHAR(length=12), table=<addr>), Column('tohn', VARCHAR(length=12), table=<addr>), Column('side', VARCHAR(length=1), table=<addr>), Column('zip', VARCHAR(length=5), table=<addr>), Column('plus4', VARCHAR(length=4), table=<addr>), Column('fromtyp', VARCHAR(length=1), table=<addr>), Column('totyp', VARCHAR(length=1), table=<addr>), Column('fromarmid', INTEGER(), table=<addr>), Column('toarmid', INTEGER(), table=<addr>), Column('arid', VARCHAR(length=22), table=<addr>), Column('mtfcc', VARCHAR(length=5), table=<addr>), Column('statefp', VARCHAR(length=2), table=<addr>), schema=None)), ('remove_table', Table('bg', MetaData(), Column('gid', INTEGER(), table=<bg>, nullable=False), Column('statefp', VARCHAR(length=2), table=<bg>), Column('countyfp', VARCHAR(length=3), table=<bg>), Column('tractce', VARCHAR(length=6), table=<bg>), Column('blkgrpce', VARCHAR(length=1), table=<bg>), Column('bg_id', VARCHAR(length=12), table=<bg>, primary_key=True, nullable=False), Column('namelsad', VARCHAR(length=13), table=<bg>), Column('mtfcc', VARCHAR(length=5), table=<bg>), Column('funcstat', VARCHAR(length=1), table=<bg>), Column('aland', DOUBLE_PRECISION(precision=53), table=<bg>), Column('awater', DOUBLE_PRECISION(precision=53), table=<bg>), Column('intptlat', VARCHAR(length=11), table=<bg>), Column('intptlon', VARCHAR(length=12), table=<bg>), Column('the_geom', Geometry(dimension=2, spatial_index=False, from_text='ST_GeomFromEWKT', name='geometry', _spatial_index_reflected=True), table=<bg>), schema=None)), ('remove_table', Table('zip_lookup_base', MetaData(), Column('zip', VARCHAR(length=5), table=<zip_lookup_base>, primary_key=True, nullable=False), Column('state', VARCHAR(length=40), table=<zip_lookup_base>), Column('county', VARCHAR(length=90), table=<zip_lookup_base>), Column('city', VARCHAR(length=90), table=<zip_lookup_base>), Column('statefp', VARCHAR(length=2), table=<zip_lookup_base>), schema=None)), ('remove_index', Index('idx_tiger_state_the_geom_gist', Column('the_geom', Geometry(dimension=2, from_text='ST_GeomFromEWKT', name='geometry', _spatial_index_reflected=True), table=<state>))), ('remove_table', Table('state', MetaData(), Column('gid', INTEGER(), table=<state>, nullable=False), Column('region', VARCHAR(length=2), table=<state>), Column('division', VARCHAR(length=2), table=<state>), Column('statefp', VARCHAR(length=2), table=<state>, primary_key=True, nullable=False), Column('statens', VARCHAR(length=8), table=<state>), Column('stusps', VARCHAR(length=2), table=<state>, nullable=False), Column('name', VARCHAR(length=100), table=<state>), Column('lsad', VARCHAR(length=2), table=<state>), Column('mtfcc', VARCHAR(length=5), table=<state>), Column('funcstat', VARCHAR(length=1), table=<state>), Column('aland', BIGINT(), table=<state>), Column('awater', BIGINT(), table=<state>), Column('intptlat', VARCHAR(length=11), table=<state>), Column('intptlon', VARCHAR(length=12), table=<state>), Column('the_geom', Geometry(dimension=2, from_text='ST_GeomFromEWKT', name='geometry', _spatial_index_reflected=True), table=<state>), schema=None)), ('remove_table', Table('zip_lookup_all', MetaData(), Column('zip', INTEGER(), table=<zip_lookup_all>), Column('st_code', INTEGER(), table=<zip_lookup_all>), Column('state', VARCHAR(length=2), table=<zip_lookup_all>), Column('co_code', INTEGER(), table=<zip_lookup_all>), Column('county', VARCHAR(length=90), table=<zip_lookup_all>), Column('cs_code', INTEGER(), table=<zip_lookup_all>), Column('cousub', VARCHAR(length=90), table=<zip_lookup_all>), Column('pl_code', INTEGER(), table=<zip_lookup_all>), Column('place', VARCHAR(length=90), table=<zip_lookup_all>), Column('cnt', INTEGER(), table=<zip_lookup_all>), schema=None)), ('remove_table', Table('zcta5', MetaData(), Column('gid', INTEGER(), table=<zcta5>, nullable=False), Column('statefp', VARCHAR(length=2), table=<zcta5>, primary_key=True, nullable=False), Column('zcta5ce', VARCHAR(length=5), table=<zcta5>, primary_key=True, nullable=False), Column('classfp', VARCHAR(length=2), table=<zcta5>), Column('mtfcc', VARCHAR(length=5), table=<zcta5>), Column('funcstat', VARCHAR(length=1), table=<zcta5>), Column('aland', DOUBLE_PRECISION(precision=53), table=<zcta5>), Column('awater', DOUBLE_PRECISION(precision=53), table=<zcta5>), Column('intptlat', VARCHAR(length=11), table=<zcta5>), Column('intptlon', VARCHAR(length=12), table=<zcta5>), Column('partflg', VARCHAR(length=1), table=<zcta5>), Column('the_geom', Geometry(dimension=2, spatial_index=False, from_text='ST_GeomFromEWKT', name='geometry', _spatial_index_reflected=True), table=<zcta5>), schema=None)), ('remove_index', Index('idx_tiger_county', Column('countyfp', VARCHAR(length=3), table=<county>))), ('remove_table', Table('county', MetaData(), Column('gid', INTEGER(), table=<county>, nullable=False), Column('statefp', VARCHAR(length=2), table=<county>), Column('countyfp', VARCHAR(length=3), table=<county>), Column('countyns', VARCHAR(length=8), table=<county>), Column('cntyidfp', VARCHAR(length=5), table=<county>, primary_key=True, nullable=False), Column('name', VARCHAR(length=100), table=<county>), Column('namelsad', VARCHAR(length=100), table=<county>), Column('lsad', VARCHAR(length=2), table=<county>), Column('classfp', VARCHAR(length=2), table=<county>), Column('mtfcc', VARCHAR(length=5), table=<county>), Column('csafp', VARCHAR(length=3), table=<county>), Column('cbsafp', VARCHAR(length=5), table=<county>), Column('metdivfp', VARCHAR(length=5), table=<county>), Column('funcstat', VARCHAR(length=1), table=<county>), Column('aland', BIGINT(), table=<county>), Column('awater', DOUBLE_PRECISION(precision=53), table=<county>), Column('intptlat', VARCHAR(length=11), table=<county>), Column('intptlon', VARCHAR(length=12), table=<county>), Column('the_geom', Geometry(dimension=2, spatial_index=False, from_text='ST_GeomFromEWKT', name='geometry', _spatial_index_reflected=True), table=<county>), schema=None)), ('remove_index', Index('idx_tiger_featnames_lname', <alembic.util.sqla_compat._textual_index_element object at 0x10c525310>)), ('remove_index', Index('idx_tiger_featnames_snd_name', <alembic.util.sqla_compat._textual_index_element object at 0x10cbc8130>)), ('remove_index', Index('idx_tiger_featnames_tlid_statefp', Column('tlid', BIGINT(), table=<featnames>), Column('statefp', VARCHAR(length=2), table=<featnames>))), ('remove_table', Table('featnames', MetaData(), Column('gid', INTEGER(), table=<featnames>, primary_key=True, nullable=False), Column('tlid', BIGINT(), table=<featnames>), Column('fullname', VARCHAR(length=100), table=<featnames>), Column('name', VARCHAR(length=100), table=<featnames>), Column('predirabrv', VARCHAR(length=15), table=<featnames>), Column('pretypabrv', VARCHAR(length=50), table=<featnames>), Column('prequalabr', VARCHAR(length=15), table=<featnames>), Column('sufdirabrv', VARCHAR(length=15), table=<featnames>), Column('suftypabrv', VARCHAR(length=50), table=<featnames>), Column('sufqualabr', VARCHAR(length=15), table=<featnames>), Column('predir', VARCHAR(length=2), table=<featnames>), Column('pretyp', VARCHAR(length=3), table=<featnames>), Column('prequal', VARCHAR(length=2), table=<featnames>), Column('sufdir', VARCHAR(length=2), table=<featnames>), Column('suftyp', VARCHAR(length=3), table=<featnames>), Column('sufqual', VARCHAR(length=2), table=<featnames>), Column('linearid', VARCHAR(length=22), table=<featnames>), Column('mtfcc', VARCHAR(length=5), table=<featnames>), Column('paflag', VARCHAR(length=1), table=<featnames>), Column('statefp', VARCHAR(length=2), table=<featnames>), schema=None)), ('remove_table', Table('geocode_settings', MetaData(), Column('name', TEXT(), table=<geocode_settings>, primary_key=True, nullable=False), Column('setting', TEXT(), table=<geocode_settings>), Column('unit', TEXT(), table=<geocode_settings>), Column('category', TEXT(), table=<geocode_settings>), Column('short_desc', TEXT(), table=<geocode_settings>), schema=None)), ('remove_table', Table('zip_lookup', MetaData(), Column('zip', INTEGER(), table=<zip_lookup>, primary_key=True, nullable=False), Column('st_code', INTEGER(), table=<zip_lookup>), Column('state', VARCHAR(length=2), table=<zip_lookup>), Column('co_code', INTEGER(), table=<zip_lookup>), Column('county', VARCHAR(length=90), table=<zip_lookup>), Column('cs_code', INTEGER(), table=<zip_lookup>), Column('cousub', VARCHAR(length=90), table=<zip_lookup>), Column('pl_code', INTEGER(), table=<zip_lookup>), Column('place', VARCHAR(length=90), table=<zip_lookup>), Column('cnt', INTEGER(), table=<zip_lookup>), schema=None)), ('remove_table', Table('loader_variables', MetaData(), Column('tiger_year', VARCHAR(length=4), table=<loader_variables>, primary_key=True, nullable=False), Column('website_root', TEXT(), table=<loader_variables>), Column('staging_fold', TEXT(), table=<loader_variables>), Column('data_schema', TEXT(), table=<loader_variables>), Column('staging_schema', TEXT(), table=<loader_variables>), schema=None)), ('remove_table', Table('pagc_gaz', MetaData(), Column('id', INTEGER(), table=<pagc_gaz>, primary_key=True, nullable=False), Column('seq', INTEGER(), table=<pagc_gaz>), Column('word', TEXT(), table=<pagc_gaz>), Column('stdword', TEXT(), table=<pagc_gaz>), Column('token', INTEGER(), table=<pagc_gaz>), Column('is_custom', BOOLEAN(), table=<pagc_gaz>, nullable=False, server_default=DefaultClause(<sqlalchemy.sql.elements.TextClause object at 0x10c7bfbd0>, for_update=False)), schema=None)), ('remove_table', Table('layer', MetaData(), Column('topology_id', INTEGER(), ForeignKey('topology.id'), table=<layer>, primary_key=True, nullable=False), Column('layer_id', INTEGER(), table=<layer>, primary_key=True, nullable=False), Column('schema_name', VARCHAR(), table=<layer>, nullable=False), Column('table_name', VARCHAR(), table=<layer>, nullable=False), Column('feature_column', VARCHAR(), table=<layer>, nullable=False), Column('feature_type', INTEGER(), table=<layer>, nullable=False), Column('level', INTEGER(), table=<layer>, nullable=False, server_default=DefaultClause(<sqlalchemy.sql.elements.TextClause object at 0x10c809050>, for_update=False)), Column('child_id', INTEGER(), table=<layer>), schema=None)), ('remove_table', Table('zip_state', MetaData(), Column('zip', VARCHAR(length=5), table=<zip_state>, primary_key=True, nullable=False), Column('stusps', VARCHAR(length=2), table=<zip_state>, primary_key=True, nullable=False), Column('statefp', VARCHAR(length=2), table=<zip_state>), schema=None)), ('remove_table', Table('tract', MetaData(), Column('gid', INTEGER(), table=<tract>, nullable=False), Column('statefp', VARCHAR(length=2), table=<tract>), Column('countyfp', VARCHAR(length=3), table=<tract>), Column('tractce', VARCHAR(length=6), table=<tract>), Column('tract_id', VARCHAR(length=11), table=<tract>, primary_key=True, nullable=False), Column('name', VARCHAR(length=7), table=<tract>), Column('namelsad', VARCHAR(length=20), table=<tract>), Column('mtfcc', VARCHAR(length=5), table=<tract>), Column('funcstat', VARCHAR(length=1), table=<tract>), Column('aland', DOUBLE_PRECISION(precision=53), table=<tract>), Column('awater', DOUBLE_PRECISION(precision=53), table=<tract>), Column('intptlat', VARCHAR(length=11), table=<tract>), Column('intptlon', VARCHAR(length=12), table=<tract>), Column('the_geom', Geometry(dimension=2, spatial_index=False, from_text='ST_GeomFromEWKT', name='geometry', _spatial_index_reflected=True), table=<tract>), schema=None)), ('remove_index', Index('countysub_lookup_name_idx', <alembic.util.sqla_compat._textual_index_element object at 0x10cb9b350>)), ('remove_index', Index('countysub_lookup_state_idx', Column('state', VARCHAR(length=2), table=<countysub_lookup>))), ('remove_table', Table('countysub_lookup', MetaData(), Column('st_code', INTEGER(), table=<countysub_lookup>, primary_key=True, nullable=False), Column('state', VARCHAR(length=2), table=<countysub_lookup>), Column('co_code', INTEGER(), table=<countysub_lookup>, primary_key=True, nullable=False), Column('county', VARCHAR(length=90), table=<countysub_lookup>), Column('cs_code', INTEGER(), table=<countysub_lookup>, primary_key=True, nullable=False), Column('name', VARCHAR(length=90), table=<countysub_lookup>), schema=None)), ('remove_index', Index('street_type_lookup_abbrev_idx', Column('abbrev', VARCHAR(length=50), table=<street_type_lookup>))), ('remove_table', Table('street_type_lookup', MetaData(), Column('name', VARCHAR(length=50), table=<street_type_lookup>, primary_key=True, nullable=False), Column('abbrev', VARCHAR(length=50), table=<street_type_lookup>), Column('is_hw', BOOLEAN(), table=<street_type_lookup>, nullable=False, server_default=DefaultClause(<sqlalchemy.sql.elements.TextClause object at 0x10c80aad0>, for_update=False)), schema=None)), ('remove_table', Table('state_lookup', MetaData(), Column('st_code', INTEGER(), table=<state_lookup>, primary_key=True, nullable=False), Column('name', VARCHAR(length=40), table=<state_lookup>), Column('abbrev', VARCHAR(length=3), table=<state_lookup>), Column('statefp', CHAR(length=2), table=<state_lookup>), schema=None)), ('remove_table', Table('topology', MetaData(), Column('id', INTEGER(), table=<topology>, primary_key=True, nullable=False), Column('name', VARCHAR(), table=<topology>, nullable=False), Column('srid', INTEGER(), table=<topology>, nullable=False), Column('precision', DOUBLE_PRECISION(precision=53), table=<topology>, nullable=False), Column('hasz', BOOLEAN(), table=<topology>, nullable=False, server_default=DefaultClause(<sqlalchemy.sql.elements.TextClause object at 0x10c7bd3d0>, for_update=False)), schema=None)), ('remove_index', Index('place_lookup_name_idx', <alembic.util.sqla_compat._textual_index_element object at 0x10c4fac50>)), ('remove_index', Index('place_lookup_state_idx', Column('state', VARCHAR(length=2), table=<place_lookup>))), ('remove_table', Table('place_lookup', MetaData(), Column('st_code', INTEGER(), table=<place_lookup>, primary_key=True, nullable=False), Column('state', VARCHAR(length=2), table=<place_lookup>), Column('pl_code', INTEGER(), table=<place_lookup>, primary_key=True, nullable=False), Column('name', VARCHAR(length=90), table=<place_lookup>), schema=None)), ('remove_table', Table('tabblock', MetaData(), Column('gid', INTEGER(), table=<tabblock>, nullable=False), Column('statefp', VARCHAR(length=2), table=<tabblock>), Column('countyfp', VARCHAR(length=3), table=<tabblock>), Column('tractce', VARCHAR(length=6), table=<tabblock>), Column('blockce', VARCHAR(length=4), table=<tabblock>), Column('tabblock_id', VARCHAR(length=16), table=<tabblock>, primary_key=True, nullable=False), Column('name', VARCHAR(length=20), table=<tabblock>), Column('mtfcc', VARCHAR(length=5), table=<tabblock>), Column('ur', VARCHAR(length=1), table=<tabblock>), Column('uace', VARCHAR(length=5), table=<tabblock>), Column('funcstat', VARCHAR(length=1), table=<tabblock>), Column('aland', DOUBLE_PRECISION(precision=53), table=<tabblock>), Column('awater', DOUBLE_PRECISION(precision=53), table=<tabblock>), Column('intptlat', VARCHAR(length=11), table=<tabblock>), Column('intptlon', VARCHAR(length=12), table=<tabblock>), Column('the_geom', Geometry(dimension=2, spatial_index=False, from_text='ST_GeomFromEWKT', name='geometry', _spatial_index_reflected=True), table=<tabblock>), schema=None)), ('remove_table', Table('geocode_settings_default', MetaData(), Column('name', TEXT(), table=<geocode_settings_default>, primary_key=True, nullable=False), Column('setting', TEXT(), table=<geocode_settings_default>), Column('unit', TEXT(), table=<geocode_settings_default>), Column('category', TEXT(), table=<geocode_settings_default>), Column('short_desc', TEXT(), table=<geocode_settings_default>), schema=None)), ('remove_table', Table('loader_lookuptables', MetaData(), Column('process_order', INTEGER(), table=<loader_lookuptables>, nullable=False, server_default=DefaultClause(<sqlalchemy.sql.elements.TextClause object at 0x10c849450>, for_update=False)), Column('lookup_name', TEXT(), table=<loader_lookuptables>, primary_key=True, nullable=False, comment='This is the table name to inherit from and suffix of resulting output table -- how the table will be named --  edges here would mean -- ma_edges , pa_edges etc. except in the case of national tables. national level tables have no prefix'), Column('table_name', TEXT(), table=<loader_lookuptables>, comment='suffix of the tables to load e.g.  edges would load all tables like *edges.dbf(shp)  -- so tl_2010_42129_edges.dbf .  '), Column('single_mode', BOOLEAN(), table=<loader_lookuptables>, nullable=False, server_default=DefaultClause(<sqlalchemy.sql.elements.TextClause object at 0x10c8495d0>, for_update=False)), Column('load', BOOLEAN(), table=<loader_lookuptables>, nullable=False, server_default=DefaultClause(<sqlalchemy.sql.elements.TextClause object at 0x10c8496d0>, for_update=False), comment="Whether or not to load the table.  For states and zcta5 (you may just want to download states10, zcta510 nationwide file manually) load your own into a single table that inherits from tiger.states, tiger.zcta5.  You'll get improved performance for some geocoding cases."), Column('level_county', BOOLEAN(), table=<loader_lookuptables>, nullable=False, server_default=DefaultClause(<sqlalchemy.sql.elements.TextClause object at 0x10c8497d0>, for_update=False)), Column('level_state', BOOLEAN(), table=<loader_lookuptables>, nullable=False, server_default=DefaultClause(<sqlalchemy.sql.elements.TextClause object at 0x10c8498d0>, for_update=False)), Column('level_nation', BOOLEAN(), table=<loader_lookuptables>, nullable=False, server_default=DefaultClause(<sqlalchemy.sql.elements.TextClause object at 0x10c8494d0>, for_update=False), comment='These are tables that contain all data for the whole US so there is just a single file'), Column('post_load_process', TEXT(), table=<loader_lookuptables>), Column('single_geom_mode', BOOLEAN(), table=<loader_lookuptables>, server_default=DefaultClause(<sqlalchemy.sql.elements.TextClause object at 0x10c849b50>, for_update=False)), Column('insert_mode', CHAR(length=1), table=<loader_lookuptables>, nullable=False, server_default=DefaultClause(<sqlalchemy.sql.elements.TextClause object at 0x10c8491d0>, for_update=False)), Column('pre_load_process', TEXT(), table=<loader_lookuptables>), Column('columns_exclude', ARRAY(TEXT()), table=<loader_lookuptables>, comment='List of columns to exclude as an array. This is excluded from both input table and output table and rest of columns remaining are assumed to be in same order in both tables. gid, geoid,cpi,suffix1ce are excluded if no columns are specified.'), Column('website_root_override', TEXT(), table=<loader_lookuptables>, comment='Path to use for wget instead of that specified in year table.  Needed currently for zcta where they release that only for 2000 and 2010'), schema=None)), ('remove_index', Index('idx_addrfeat_geom_gist', Column('the_geom', Geometry(dimension=2, from_text='ST_GeomFromEWKT', name='geometry', _spatial_index_reflected=True), table=<addrfeat>))), ('remove_index', Index('idx_addrfeat_tlid', Column('tlid', BIGINT(), table=<addrfeat>))), ('remove_index', Index('idx_addrfeat_zipl', Column('zipl', VARCHAR(length=5), table=<addrfeat>))), ('remove_index', Index('idx_addrfeat_zipr', Column('zipr', VARCHAR(length=5), table=<addrfeat>))), ('remove_table', Table('addrfeat', MetaData(), Column('gid', INTEGER(), table=<addrfeat>, primary_key=True, nullable=False), Column('tlid', BIGINT(), table=<addrfeat>), Column('statefp', VARCHAR(length=2), table=<addrfeat>, nullable=False), Column('aridl', VARCHAR(length=22), table=<addrfeat>), Column('aridr', VARCHAR(length=22), table=<addrfeat>), Column('linearid', VARCHAR(length=22), table=<addrfeat>), Column('fullname', VARCHAR(length=100), table=<addrfeat>), Column('lfromhn', VARCHAR(length=12), table=<addrfeat>), Column('ltohn', VARCHAR(length=12), table=<addrfeat>), Column('rfromhn', VARCHAR(length=12), table=<addrfeat>), Column('rtohn', VARCHAR(length=12), table=<addrfeat>), Column('zipl', VARCHAR(length=5), table=<addrfeat>), Column('zipr', VARCHAR(length=5), table=<addrfeat>), Column('edge_mtfcc', VARCHAR(length=5), table=<addrfeat>), Column('parityl', VARCHAR(length=1), table=<addrfeat>), Column('parityr', VARCHAR(length=1), table=<addrfeat>), Column('plus4l', VARCHAR(length=4), table=<addrfeat>), Column('plus4r', VARCHAR(length=4), table=<addrfeat>), Column('lfromtyp', VARCHAR(length=1), table=<addrfeat>), Column('ltotyp', VARCHAR(length=1), table=<addrfeat>), Column('rfromtyp', VARCHAR(length=1), table=<addrfeat>), Column('rtotyp', VARCHAR(length=1), table=<addrfeat>), Column('offsetl', VARCHAR(length=1), table=<addrfeat>), Column('offsetr', VARCHAR(length=1), table=<addrfeat>), Column('the_geom', Geometry(dimension=2, from_text='ST_GeomFromEWKT', name='geometry', _spatial_index_reflected=True), table=<addrfeat>), schema=None)), ('remove_table', Table('pagc_lex', MetaData(), Column('id', INTEGER(), table=<pagc_lex>, primary_key=True, nullable=False), Column('seq', INTEGER(), table=<pagc_lex>), Column('word', TEXT(), table=<pagc_lex>), Column('stdword', TEXT(), table=<pagc_lex>), Column('token', INTEGER(), table=<pagc_lex>), Column('is_custom', BOOLEAN(), table=<pagc_lex>, nullable=False, server_default=DefaultClause(<sqlalchemy.sql.elements.TextClause object at 0x10c79f7d0>, for_update=False)), schema=None)), ('remove_table', Table('zip_state_loc', MetaData(), Column('zip', VARCHAR(length=5), table=<zip_state_loc>, primary_key=True, nullable=False), Column('stusps', VARCHAR(length=2), table=<zip_state_loc>, primary_key=True, nullable=False), Column('statefp', VARCHAR(length=2), table=<zip_state_loc>), Column('place', VARCHAR(length=100), table=<zip_state_loc>, primary_key=True, nullable=False), schema=None)), ('remove_index', Index('idx_edges_tlid', Column('tlid', BIGINT(), table=<edges>))), ('remove_index', Index('idx_tiger_edges_countyfp', Column('countyfp', VARCHAR(length=3), table=<edges>))), ('remove_index', Index('idx_tiger_edges_the_geom_gist', Column('the_geom', Geometry(dimension=2, from_text='ST_GeomFromEWKT', name='geometry', _spatial_index_reflected=True), table=<edges>))), ('remove_table', Table('edges', MetaData(), Column('gid', INTEGER(), table=<edges>, primary_key=True, nullable=False), Column('statefp', VARCHAR(length=2), table=<edges>), Column('countyfp', VARCHAR(length=3), table=<edges>), Column('tlid', BIGINT(), table=<edges>), Column('tfidl', NUMERIC(precision=10, scale=0), table=<edges>), Column('tfidr', NUMERIC(precision=10, scale=0), table=<edges>), Column('mtfcc', VARCHAR(length=5), table=<edges>), Column('fullname', VARCHAR(length=100), table=<edges>), Column('smid', VARCHAR(length=22), table=<edges>), Column('lfromadd', VARCHAR(length=12), table=<edges>), Column('ltoadd', VARCHAR(length=12), table=<edges>), Column('rfromadd', VARCHAR(length=12), table=<edges>), Column('rtoadd', VARCHAR(length=12), table=<edges>), Column('zipl', VARCHAR(length=5), table=<edges>), Column('zipr', VARCHAR(length=5), table=<edges>), Column('featcat', VARCHAR(length=1), table=<edges>), Column('hydroflg', VARCHAR(length=1), table=<edges>), Column('railflg', VARCHAR(length=1), table=<edges>), Column('roadflg', VARCHAR(length=1), table=<edges>), Column('olfflg', VARCHAR(length=1), table=<edges>), Column('passflg', VARCHAR(length=1), table=<edges>), Column('divroad', VARCHAR(length=1), table=<edges>), Column('exttyp', VARCHAR(length=1), table=<edges>), Column('ttyp', VARCHAR(length=1), table=<edges>), Column('deckedroad', VARCHAR(length=1), table=<edges>), Column('artpath', VARCHAR(length=1), table=<edges>), Column('persist', VARCHAR(length=1), table=<edges>), Column('gcseflg', VARCHAR(length=1), table=<edges>), Column('offsetl', VARCHAR(length=1), table=<edges>), Column('offsetr', VARCHAR(length=1), table=<edges>), Column('tnidf', NUMERIC(precision=10, scale=0), table=<edges>), Column('tnidt', NUMERIC(precision=10, scale=0), table=<edges>), Column('the_geom', Geometry(dimension=2, from_text='ST_GeomFromEWKT', name='geometry', _spatial_index_reflected=True), table=<edges>), schema=None)), ('remove_index', Index('tige_cousub_the_geom_gist', Column('the_geom', Geometry(dimension=2, from_text='ST_GeomFromEWKT', name='geometry', _spatial_index_reflected=True), table=<cousub>))), ('remove_table', Table('cousub', MetaData(), Column('gid', INTEGER(), table=<cousub>, nullable=False), Column('statefp', VARCHAR(length=2), table=<cousub>), Column('countyfp', VARCHAR(length=3), table=<cousub>), Column('cousubfp', VARCHAR(length=5), table=<cousub>), Column('cousubns', VARCHAR(length=8), table=<cousub>), Column('cosbidfp', VARCHAR(length=10), table=<cousub>, primary_key=True, nullable=False), Column('name', VARCHAR(length=100), table=<cousub>), Column('namelsad', VARCHAR(length=100), table=<cousub>), Column('lsad', VARCHAR(length=2), table=<cousub>), Column('classfp', VARCHAR(length=2), table=<cousub>), Column('mtfcc', VARCHAR(length=5), table=<cousub>), Column('cnectafp', VARCHAR(length=3), table=<cousub>), Column('nectafp', VARCHAR(length=5), table=<cousub>), Column('nctadvfp', VARCHAR(length=5), table=<cousub>), Column('funcstat', VARCHAR(length=1), table=<cousub>), Column('aland', NUMERIC(precision=14, scale=0), table=<cousub>), Column('awater', NUMERIC(precision=14, scale=0), table=<cousub>), Column('intptlat', VARCHAR(length=11), table=<cousub>), Column('intptlon', VARCHAR(length=12), table=<cousub>), Column('the_geom', Geometry(dimension=2, from_text='ST_GeomFromEWKT', name='geometry', _spatial_index_reflected=True), table=<cousub>), schema=None)), ('remove_table', Table('tabblock20', MetaData(), Column('statefp', VARCHAR(length=2), table=<tabblock20>), Column('countyfp', VARCHAR(length=3), table=<tabblock20>), Column('tractce', VARCHAR(length=6), table=<tabblock20>), Column('blockce', VARCHAR(length=4), table=<tabblock20>), Column('geoid', VARCHAR(length=15), table=<tabblock20>, primary_key=True, nullable=False), Column('name', VARCHAR(length=10), table=<tabblock20>), Column('mtfcc', VARCHAR(length=5), table=<tabblock20>), Column('ur', VARCHAR(length=1), table=<tabblock20>), Column('uace', VARCHAR(length=5), table=<tabblock20>), Column('uatype', VARCHAR(length=1), table=<tabblock20>), Column('funcstat', VARCHAR(length=1), table=<tabblock20>), Column('aland', DOUBLE_PRECISION(precision=53), table=<tabblock20>), Column('awater', DOUBLE_PRECISION(precision=53), table=<tabblock20>), Column('intptlat', VARCHAR(length=11), table=<tabblock20>), Column('intptlon', VARCHAR(length=12), table=<tabblock20>), Column('the_geom', Geometry(geometry_type='MULTIPOLYGON', srid=4269, dimension=2, spatial_index=False, from_text='ST_GeomFromEWKT', name='geometry', _spatial_index_reflected=True), table=<tabblock20>), Column('housing', DOUBLE_PRECISION(precision=53), table=<tabblock20>), Column('pop', DOUBLE_PRECISION(precision=53), table=<tabblock20>), schema=None)), ('remove_index', Index('tiger_place_the_geom_gist', Column('the_geom', Geometry(dimension=2, from_text='ST_GeomFromEWKT', name='geometry', _spatial_index_reflected=True), table=<place>))), ('remove_table', Table('place', MetaData(), Column('gid', INTEGER(), table=<place>, nullable=False), Column('statefp', VARCHAR(length=2), table=<place>), Column('placefp', VARCHAR(length=5), table=<place>), Column('placens', VARCHAR(length=8), table=<place>), Column('plcidfp', VARCHAR(length=7), table=<place>, primary_key=True, nullable=False), Column('name', VARCHAR(length=100), table=<place>), Column('namelsad', VARCHAR(length=100), table=<place>), Column('lsad', VARCHAR(length=2), table=<place>), Column('classfp', VARCHAR(length=2), table=<place>), Column('cpi', VARCHAR(length=1), table=<place>), Column('pcicbsa', VARCHAR(length=1), table=<place>), Column('pcinecta', VARCHAR(length=1), table=<place>), Column('mtfcc', VARCHAR(length=5), table=<place>), Column('funcstat', VARCHAR(length=1), table=<place>), Column('aland', BIGINT(), table=<place>), Column('awater', BIGINT(), table=<place>), Column('intptlat', VARCHAR(length=11), table=<place>), Column('intptlon', VARCHAR(length=12), table=<place>), Column('the_geom', Geometry(dimension=2, from_text='ST_GeomFromEWKT', name='geometry', _spatial_index_reflected=True), table=<place>), schema=None)), ('remove_table', Table('pagc_rules', MetaData(), Column('id', INTEGER(), table=<pagc_rules>, primary_key=True, nullable=False), Column('rule', TEXT(), table=<pagc_rules>), Column('is_custom', BOOLEAN(), table=<pagc_rules>, server_default=DefaultClause(<sqlalchemy.sql.elements.TextClause object at 0x10c892a50>, for_update=False)), schema=None)), ('remove_table', Table('loader_platform', MetaData(), Column('os', VARCHAR(length=50), table=<loader_platform>, primary_key=True, nullable=False), Column('declare_sect', TEXT(), table=<loader_platform>), Column('pgbin', TEXT(), table=<loader_platform>), Column('wget', TEXT(), table=<loader_platform>), Column('unzip_command', TEXT(), table=<loader_platform>), Column('psql', TEXT(), table=<loader_platform>), Column('path_sep', TEXT(), table=<loader_platform>), Column('loader', TEXT(), table=<loader_platform>), Column('environ_set_command', TEXT(), table=<loader_platform>), Column('county_process_command', TEXT(), table=<loader_platform>), schema=None)), ('remove_index', Index('idx_tiger_faces_countyfp', Column('countyfp', VARCHAR(length=3), table=<faces>))), ('remove_index', Index('idx_tiger_faces_tfid', Column('tfid', NUMERIC(precision=10, scale=0), table=<faces>))), ('remove_index', Index('tiger_faces_the_geom_gist', Column('the_geom', Geometry(dimension=2, from_text='ST_GeomFromEWKT', name='geometry', _spatial_index_reflected=True), table=<faces>))), ('remove_table', Table('faces', MetaData(), Column('gid', INTEGER(), table=<faces>, primary_key=True, nullable=False), Column('tfid', NUMERIC(precision=10, scale=0), table=<faces>), Column('statefp00', VARCHAR(length=2), table=<faces>), Column('countyfp00', VARCHAR(length=3), table=<faces>), Column('tractce00', VARCHAR(length=6), table=<faces>), Column('blkgrpce00', VARCHAR(length=1), table=<faces>), Column('blockce00', VARCHAR(length=4), table=<faces>), Column('cousubfp00', VARCHAR(length=5), table=<faces>), Column('submcdfp00', VARCHAR(length=5), table=<faces>), Column('conctyfp00', VARCHAR(length=5), table=<faces>), Column('placefp00', VARCHAR(length=5), table=<faces>), Column('aiannhfp00', VARCHAR(length=5), table=<faces>), Column('aiannhce00', VARCHAR(length=4), table=<faces>), Column('comptyp00', VARCHAR(length=1), table=<faces>), Column('trsubfp00', VARCHAR(length=5), table=<faces>), Column('trsubce00', VARCHAR(length=3), table=<faces>), Column('anrcfp00', VARCHAR(length=5), table=<faces>), Column('elsdlea00', VARCHAR(length=5), table=<faces>), Column('scsdlea00', VARCHAR(length=5), table=<faces>), Column('unsdlea00', VARCHAR(length=5), table=<faces>), Column('uace00', VARCHAR(length=5), table=<faces>), Column('cd108fp', VARCHAR(length=2), table=<faces>), Column('sldust00', VARCHAR(length=3), table=<faces>), Column('sldlst00', VARCHAR(length=3), table=<faces>), Column('vtdst00', VARCHAR(length=6), table=<faces>), Column('zcta5ce00', VARCHAR(length=5), table=<faces>), Column('tazce00', VARCHAR(length=6), table=<faces>), Column('ugace00', VARCHAR(length=5), table=<faces>), Column('puma5ce00', VARCHAR(length=5), table=<faces>), Column('statefp', VARCHAR(length=2), table=<faces>), Column('countyfp', VARCHAR(length=3), table=<faces>), Column('tractce', VARCHAR(length=6), table=<faces>), Column('blkgrpce', VARCHAR(length=1), table=<faces>), Column('blockce', VARCHAR(length=4), table=<faces>), Column('cousubfp', VARCHAR(length=5), table=<faces>), Column('submcdfp', VARCHAR(length=5), table=<faces>), Column('conctyfp', VARCHAR(length=5), table=<faces>), Column('placefp', VARCHAR(length=5), table=<faces>), Column('aiannhfp', VARCHAR(length=5), table=<faces>), Column('aiannhce', VARCHAR(length=4), table=<faces>), Column('comptyp', VARCHAR(length=1), table=<faces>), Column('trsubfp', VARCHAR(length=5), table=<faces>), Column('trsubce', VARCHAR(length=3), table=<faces>), Column('anrcfp', VARCHAR(length=5), table=<faces>), Column('ttractce', VARCHAR(length=6), table=<faces>), Column('tblkgpce', VARCHAR(length=1), table=<faces>), Column('elsdlea', VARCHAR(length=5), table=<faces>), Column('scsdlea', VARCHAR(length=5), table=<faces>), Column('unsdlea', VARCHAR(length=5), table=<faces>), Column('uace', VARCHAR(length=5), table=<faces>), Column('cd111fp', VARCHAR(length=2), table=<faces>), Column('sldust', VARCHAR(length=3), table=<faces>), Column('sldlst', VARCHAR(length=3), table=<faces>), Column('vtdst', VARCHAR(length=6), table=<faces>), Column('zcta5ce', VARCHAR(length=5), table=<faces>), Column('tazce', VARCHAR(length=6), table=<faces>), Column('ugace', VARCHAR(length=5), table=<faces>), Column('puma5ce', VARCHAR(length=5), table=<faces>), Column('csafp', VARCHAR(length=3), table=<faces>), Column('cbsafp', VARCHAR(length=5), table=<faces>), Column('metdivfp', VARCHAR(length=5), table=<faces>), Column('cnectafp', VARCHAR(length=3), table=<faces>), Column('nectafp', VARCHAR(length=5), table=<faces>), Column('nctadvfp', VARCHAR(length=5), table=<faces>), Column('lwflag', VARCHAR(length=1), table=<faces>), Column('offset', VARCHAR(length=1), table=<faces>), Column('atotal', DOUBLE_PRECISION(precision=53), table=<faces>), Column('intptlat', VARCHAR(length=11), table=<faces>), Column('intptlon', VARCHAR(length=12), table=<faces>), Column('the_geom', Geometry(dimension=2, from_text='ST_GeomFromEWKT', name='geometry', _spatial_index_reflected=True), table=<faces>), Column('tractce20', VARCHAR(length=6), table=<faces>), Column('blkgrpce20', VARCHAR(length=1), table=<faces>), Column('blockce20', VARCHAR(length=4), table=<faces>), Column('countyfp20', VARCHAR(length=3), table=<faces>), Column('statefp20', VARCHAR(length=2), table=<faces>), schema=None)), ('remove_index', Index('direction_lookup_abbrev_idx', Column('abbrev', VARCHAR(length=3), table=<direction_lookup>))), ('remove_table', Table('direction_lookup', MetaData(), Column('name', VARCHAR(length=20), table=<direction_lookup>, primary_key=True, nullable=False), Column('abbrev', VARCHAR(length=3), table=<direction_lookup>), schema=None)), ('remove_index', Index('secondary_unit_lookup_abbrev_idx', Column('abbrev', VARCHAR(length=5), table=<secondary_unit_lookup>))), ('remove_table', Table('secondary_unit_lookup', MetaData(), Column('name', VARCHAR(length=20), table=<secondary_unit_lookup>, primary_key=True, nullable=False), Column('abbrev', VARCHAR(length=5), table=<secondary_unit_lookup>), schema=None)), ('remove_index', Index('county_lookup_name_idx', <alembic.util.sqla_compat._textual_index_element object at 0x10cc818b0>)), ('remove_index', Index('county_lookup_state_idx', Column('state', VARCHAR(length=2), table=<county_lookup>))), ('remove_table', Table('county_lookup', MetaData(), Column('st_code', INTEGER(), table=<county_lookup>, primary_key=True, nullable=False), Column('state', VARCHAR(length=2), table=<county_lookup>), Column('co_code', INTEGER(), table=<county_lookup>, primary_key=True, nullable=False), Column('name', VARCHAR(length=90), table=<county_lookup>), schema=None)), ('remove_index', Index('idx_forecast_advisories_hazard', Column('hazard_type', VARCHAR(length=100), table=<forecast_advisories>, nullable=False))), ('remove_index', Index('idx_forecast_advisories_source', Column('source_code', VARCHAR(length=50), table=<forecast_advisories>, nullable=False))), ('add_index', Index('ix_forecast_advisories_hazard_type', Column('hazard_type', String(length=100), table=<forecast_advisories>, nullable=False))), ('add_index', Index('ix_forecast_advisories_source_code', Column('source_code', String(length=50), table=<forecast_advisories>, nullable=False))), ('add_index', Index('ix_forecast_advisories_valid_from', Column('valid_from', DateTime(timezone=True), table=<forecast_advisories>, nullable=False))), ('add_index', Index('ix_forecast_advisories_valid_until', Column('valid_until', DateTime(timezone=True), table=<forecast_advisories>, nullable=False))), ('remove_index', Index('idx_feedback_report_id', Column('report_id', UUID(), table=<incident_feedback>, nullable=False))), ('remove_index', Index('idx_feedback_user_id', Column('user_id', UUID(), table=<incident_feedback>))), ('add_index', Index('ix_incident_feedback_report_id', Column('report_id', UUID(), table=<incident_feedback>, nullable=False))), ('add_index', Index('ix_incident_feedback_user_id', Column('user_id', UUID(), table=<incident_feedback>))), ('remove_index', Index('idx_realtime_outbox_created_at', Column('created_at', TIMESTAMP(timezone=True), table=<realtime_outbox>, nullable=False, server_default=DefaultClause(<sqlalchemy.sql.elements.TextClause object at 0x10c8f3a50>, for_update=False)))), ('remove_index', Index('idx_realtime_outbox_entity_id', Column('entity_id', VARCHAR(length=100), table=<realtime_outbox>, nullable=False))), ('remove_index', Index('idx_realtime_outbox_event_id', Column('event_id', UUID(), table=<realtime_outbox>, nullable=False), unique=True)), ('remove_index', Index('idx_realtime_outbox_event_type', Column('event_type', VARCHAR(length=50), table=<realtime_outbox>, nullable=False))), ('remove_index', Index('idx_realtime_outbox_status', Column('status', VARCHAR(length=20), table=<realtime_outbox>, nullable=False, server_default=DefaultClause(<sqlalchemy.sql.elements.TextClause object at 0x10c8f32d0>, for_update=False)))), ('remove_constraint', UniqueConstraint(Column('event_id', NullType(), table=<realtime_outbox>))), ('add_index', Index('ix_realtime_outbox_created_at', Column('created_at', DateTime(timezone=True), table=<realtime_outbox>, nullable=False, server_default=DefaultClause(<sqlalchemy.sql.functions.now at 0x10c44de90; now>, for_update=False)))), ('add_index', Index('ix_realtime_outbox_entity_id', Column('entity_id', String(length=100), table=<realtime_outbox>, nullable=False))), ('add_index', Index('ix_realtime_outbox_event_id', Column('event_id', UUID(), table=<realtime_outbox>, nullable=False), unique=True)), ('add_index', Index('ix_realtime_outbox_event_type', Column('event_type', String(length=50), table=<realtime_outbox>, nullable=False))), ('add_index', Index('ix_realtime_outbox_next_retry_at', Column('next_retry_at', DateTime(timezone=True), table=<realtime_outbox>))), ('add_index', Index('ix_realtime_outbox_status', Column('status', String(length=20), table=<realtime_outbox>, nullable=False, default=ScalarElementColumnDefault('PENDING')))), ('remove_index', Index('idx_relief_centers_active', Column('is_active', BOOLEAN(), table=<relief_centers>, nullable=False, server_default=DefaultClause(<sqlalchemy.sql.elements.TextClause object at 0x10c93ad50>, for_update=False)))), ('remove_index', Index('idx_relief_centers_district', Column('district_name', VARCHAR(length=100), table=<relief_centers>))), ('remove_index', Index('idx_relief_centers_name', Column('name', VARCHAR(length=255), table=<relief_centers>, nullable=False))), ('remove_index', Index('idx_relief_centers_state', Column('state_name', VARCHAR(length=100), table=<relief_centers>))), ('add_index', Index('ix_relief_centers_district_name', Column('district_name', String(length=100), table=<relief_centers>))), ('add_index', Index('ix_relief_centers_is_active', Column('is_active', Boolean(), table=<relief_centers>, nullable=False, default=ScalarElementColumnDefault(True)))), ('add_index', Index('ix_relief_centers_name', Column('name', String(length=255), table=<relief_centers>, nullable=False))), ('add_index', Index('ix_relief_centers_state_name', Column('state_name', String(length=100), table=<relief_centers>))), ('remove_constraint', UniqueConstraint(Column('email', NullType(), table=<users>))), ('remove_index', Index('idx_weather_reports_cat_occ', Column('reported_category', VARCHAR(length=100), table=<weather_reports>), Column('occurred_at', TIMESTAMP(timezone=True), table=<weather_reports>, nullable=False))), ('remove_index', Index('idx_weather_reports_dashboard_summary', Column('occurred_at', TIMESTAMP(timezone=True), table=<weather_reports>, nullable=False), Column('verification_status', VARCHAR(length=30), table=<weather_reports>, nullable=False, server_default=DefaultClause(<sqlalchemy.sql.elements.TextClause object at 0x10c938cd0>, for_update=False)), Column('severity', VARCHAR(length=20), table=<weather_reports>, nullable=False, server_default=DefaultClause(<sqlalchemy.sql.elements.TextClause object at 0x10c8f3d50>, for_update=False)), Column('reported_category', VARCHAR(length=100), table=<weather_reports>))), ('remove_index', Index('idx_weather_reports_geo_sort', <sqlalchemy.sql.elements.UnaryExpression object at 0x10cc957f0>, <sqlalchemy.sql.elements.UnaryExpression object at 0x10cc95910>)), ('remove_index', Index('idx_weather_reports_sev_occ', Column('severity', VARCHAR(length=20), table=<weather_reports>, nullable=False, server_default=DefaultClause(<sqlalchemy.sql.elements.TextClause object at 0x10c8f3d50>, for_update=False)), Column('occurred_at', TIMESTAMP(timezone=True), table=<weather_reports>, nullable=False))), ('remove_index', Index('idx_weather_reports_summary_cov', Column('verification_status', VARCHAR(length=30), table=<weather_reports>, nullable=False, server_default=DefaultClause(<sqlalchemy.sql.elements.TextClause object at 0x10c938cd0>, for_update=False)), Column('severity', VARCHAR(length=20), table=<weather_reports>, nullable=False, server_default=DefaultClause(<sqlalchemy.sql.elements.TextClause object at 0x10c8f3d50>, for_update=False)))), ('remove_index', Index('idx_weather_reports_user_id', Column('user_id', UUID(), table=<weather_reports>))), ('remove_constraint', UniqueConstraint(Column('tracking_id', NullType(), table=<weather_reports>))), ('add_index', Index('ix_weather_reports_credibility_score', Column('credibility_score', Float(), table=<weather_reports>, nullable=False, default=ScalarElementColumnDefault(0.0)))), ('add_index', Index('ix_weather_reports_tracking_id', Column('tracking_id', String(length=32), table=<weather_reports>, nullable=False), unique=True)), ('add_index', Index('ix_weather_reports_user_id', Column('user_id', UUID(), table=<weather_reports>))), ('remove_index', Index('idx_weather_reports_archive_archived_at', Column('archived_at', TIMESTAMP(timezone=True), table=<weather_reports_archive>, nullable=False, server_default=DefaultClause(<sqlalchemy.sql.elements.TextClause object at 0x10c9746d0>, for_update=False)))), ('remove_index', Index('idx_weather_reports_archive_occurred_at', Column('occurred_at', TIMESTAMP(timezone=True), table=<weather_reports_archive>, nullable=False))), ('remove_index', Index('idx_weather_reports_archive_tracking_id', Column('tracking_id', VARCHAR(length=32), table=<weather_reports_archive>, nullable=False))), ('remove_index', Index('idx_weather_reports_archive_credibility', Column('credibility_score', DOUBLE_PRECISION(precision=53), table=<weather_reports_archive>, nullable=False, server_default=DefaultClause(<sqlalchemy.sql.elements.TextClause object at 0x10c974ad0>, for_update=False)))), ('add_index', Index('idx_weather_reports_archive_credibility', <sqlalchemy.sql.elements.UnaryExpression object at 0x10cc95f40>)), ('remove_index', Index('idx_weather_reports_archive_status_time', Column('verification_status', VARCHAR(length=30), table=<weather_reports_archive>, nullable=False, server_default=DefaultClause(<sqlalchemy.sql.elements.TextClause object at 0x10c974a50>, for_update=False)), Column('occurred_at', TIMESTAMP(timezone=True), table=<weather_reports_archive>, nullable=False))), ('add_index', Index('idx_weather_reports_archive_status_time', Column('verification_status', String(length=30), table=<weather_reports_archive>, nullable=False, default=ScalarElementColumnDefault('VERIFIED')), <sqlalchemy.sql.elements.UnaryExpression object at 0x10cc960f0>)), ('add_index', Index('ix_weather_reports_archive_archived_at', Column('archived_at', DateTime(timezone=True), table=<weather_reports_archive>, nullable=False, server_default=DefaultClause(<sqlalchemy.sql.functions.now at 0x10c361940; now>, for_update=False)))), ('add_index', Index('ix_weather_reports_archive_credibility_score', Column('credibility_score', Float(), table=<weather_reports_archive>, nullable=False, default=ScalarElementColumnDefault(0.0)))), ('add_index', Index('ix_weather_reports_archive_external_id', Column('external_id', String(length=255), table=<weather_reports_archive>))), ('add_index', Index('ix_weather_reports_archive_occurred_at', Column('occurred_at', DateTime(timezone=True), table=<weather_reports_archive>, nullable=False))), ('add_index', Index('ix_weather_reports_archive_tracking_id', Column('tracking_id', String(length=32), table=<weather_reports_archive>, nullable=False))), ('add_index', Index('ix_weather_reports_archive_verification_status', Column('verification_status', String(length=30), table=<weather_reports_archive>, nullable=False, default=ScalarElementColumnDefault('VERIFIED'))))]
+  FAILED: New upgrade operations detected: [('remove_index',
+  Index('idx_tiger_addr_tlid_statefp', Column('tlid', BIGINT(), table=<addr>),
+  Column('statefp', VARCHAR(length=2), table=<addr>))), ('remove_index',
+  Index('idx_tiger_addr_zip', Column('zip', VARCHAR(length=5), table=<addr>))),
+  ('remove_table', Table('addr', MetaData(), Column('gid', INTEGER(),
+  table=<addr>, primary_key=True, nullable=False), Column('tlid', BIGINT(),
+  table=<addr>), Column('fromhn', VARCHAR(length=12), table=<addr>),
+  Column('tohn', VARCHAR(length=12), table=<addr>), Column('side',
+  VARCHAR(length=1), table=<addr>), Column('zip', VARCHAR(length=5),
+  table=<addr>), Column('plus4', VARCHAR(length=4), table=<addr>),
+  Column('fromtyp', VARCHAR(length=1), table=<addr>), Column('totyp',
+  VARCHAR(length=1), table=<addr>), Column('fromarmid', INTEGER(),
+  table=<addr>), Column('toarmid', INTEGER(), table=<addr>), Column('arid',
+  VARCHAR(length=22), table=<addr>), Column('mtfcc', VARCHAR(length=5),
+  table=<addr>), Column('statefp', VARCHAR(length=2), table=<addr>),
+  schema=None)), ('remove_table', Table('bg', MetaData(), Column('gid',
+  INTEGER(), table=<bg>, nullable=False), Column('statefp', VARCHAR(length=2),
+  table=<bg>), Column('countyfp', VARCHAR(length=3), table=<bg>),
+  Column('tractce', VARCHAR(length=6), table=<bg>), Column('blkgrpce',
+  VARCHAR(length=1), table=<bg>), Column('bg_id', VARCHAR(length=12),
+  table=<bg>, primary_key=True, nullable=False), Column('namelsad',
+  VARCHAR(length=13), table=<bg>), Column('mtfcc', VARCHAR(length=5),
+  table=<bg>), Column('funcstat', VARCHAR(length=1), table=<bg>),
+  Column('aland', DOUBLE_PRECISION(precision=53), table=<bg>), Column('awater',
+  DOUBLE_PRECISION(precision=53), table=<bg>), Column('intptlat',
+  VARCHAR(length=11), table=<bg>), Column('intptlon', VARCHAR(length=12),
+  table=<bg>), Column('the_geom', Geometry(dimension=2, spatial_index=False,
+  from_text='ST_GeomFromEWKT', name='geometry', _spatial_index_reflected=True),
+  table=<bg>), schema=None)), ('remove_table', Table('zip_lookup_base',
+  MetaData(), Column('zip', VARCHAR(length=5), table=<zip_lookup_base>,
+  primary_key=True, nullable=False), Column('state', VARCHAR(length=40),
+  table=<zip_lookup_base>), Column('county', VARCHAR(length=90),
+  table=<zip_lookup_base>), Column('city', VARCHAR(length=90),
+  table=<zip_lookup_base>), Column('statefp', VARCHAR(length=2),
+  table=<zip_lookup_base>), schema=None)), ('remove_index',
+  Index('idx_tiger_state_the_geom_gist', Column('the_geom',
+  Geometry(dimension=2, from_text='ST_GeomFromEWKT', name='geometry',
+  _spatial_index_reflected=True), table=<state>))), ('remove_table',
+  Table('state', MetaData(), Column('gid', INTEGER(), table=<state>,
+  nullable=False), Column('region', VARCHAR(length=2), table=<state>),
+  Column('division', VARCHAR(length=2), table=<state>), Column('statefp',
+  VARCHAR(length=2), table=<state>, primary_key=True, nullable=False),
+  Column('statens', VARCHAR(length=8), table=<state>), Column('stusps',
+  VARCHAR(length=2), table=<state>, nullable=False), Column('name',
+  VARCHAR(length=100), table=<state>), Column('lsad', VARCHAR(length=2),
+  table=<state>), Column('mtfcc', VARCHAR(length=5), table=<state>),
+  Column('funcstat', VARCHAR(length=1), table=<state>), Column('aland',
+  BIGINT(), table=<state>), Column('awater', BIGINT(), table=<state>),
+  Column('intptlat', VARCHAR(length=11), table=<state>), Column('intptlon',
+  VARCHAR(length=12), table=<state>), Column('the_geom', Geometry(dimension=2,
+  from_text='ST_GeomFromEWKT', name='geometry', _spatial_index_reflected=True),
+  table=<state>), schema=None)), ('remove_table', Table('zip_lookup_all',
+  MetaData(), Column('zip', INTEGER(), table=<zip_lookup_all>),
+  Column('st_code', INTEGER(), table=<zip_lookup_all>), Column('state',
+  VARCHAR(length=2), table=<zip_lookup_all>), Column('co_code', INTEGER(),
+  table=<zip_lookup_all>), Column('county', VARCHAR(length=90),
+  table=<zip_lookup_all>), Column('cs_code', INTEGER(), table=<zip_lookup_all>),
+  Column('cousub', VARCHAR(length=90), table=<zip_lookup_all>),
+  Column('pl_code', INTEGER(), table=<zip_lookup_all>), Column('place',
+  VARCHAR(length=90), table=<zip_lookup_all>), Column('cnt', INTEGER(),
+  table=<zip_lookup_all>), schema=None)), ('remove_table', Table('zcta5',
+  MetaData(), Column('gid', INTEGER(), table=<zcta5>, nullable=False),
+  Column('statefp', VARCHAR(length=2), table=<zcta5>, primary_key=True,
+  nullable=False), Column('zcta5ce', VARCHAR(length=5), table=<zcta5>,
+  primary_key=True, nullable=False), Column('classfp', VARCHAR(length=2),
+  table=<zcta5>), Column('mtfcc', VARCHAR(length=5), table=<zcta5>),
+  Column('funcstat', VARCHAR(length=1), table=<zcta5>), Column('aland',
+  DOUBLE_PRECISION(precision=53), table=<zcta5>), Column('awater',
+  DOUBLE_PRECISION(precision=53), table=<zcta5>), Column('intptlat',
+  VARCHAR(length=11), table=<zcta5>), Column('intptlon', VARCHAR(length=12),
+  table=<zcta5>), Column('partflg', VARCHAR(length=1), table=<zcta5>),
+  Column('the_geom', Geometry(dimension=2, spatial_index=False,
+  from_text='ST_GeomFromEWKT', name='geometry', _spatial_index_reflected=True),
+  table=<zcta5>), schema=None)), ('remove_index', Index('idx_tiger_county',
+  Column('countyfp', VARCHAR(length=3), table=<county>))), ('remove_table',
+  Table('county', MetaData(), Column('gid', INTEGER(), table=<county>,
+  nullable=False), Column('statefp', VARCHAR(length=2), table=<county>),
+  Column('countyfp', VARCHAR(length=3), table=<county>), Column('countyns',
+  VARCHAR(length=8), table=<county>), Column('cntyidfp', VARCHAR(length=5),
+  table=<county>, primary_key=True, nullable=False), Column('name',
+  VARCHAR(length=100), table=<county>), Column('namelsad', VARCHAR(length=100),
+  table=<county>), Column('lsad', VARCHAR(length=2), table=<county>),
+  Column('classfp', VARCHAR(length=2), table=<county>), Column('mtfcc',
+  VARCHAR(length=5), table=<county>), Column('csafp', VARCHAR(length=3),
+  table=<county>), Column('cbsafp', VARCHAR(length=5), table=<county>),
+  Column('metdivfp', VARCHAR(length=5), table=<county>), Column('funcstat',
+  VARCHAR(length=1), table=<county>), Column('aland', BIGINT(), table=<county>),
+  Column('awater', DOUBLE_PRECISION(precision=53), table=<county>),
+  Column('intptlat', VARCHAR(length=11), table=<county>), Column('intptlon',
+  VARCHAR(length=12), table=<county>), Column('the_geom', Geometry(dimension=2,
+  spatial_index=False, from_text='ST_GeomFromEWKT', name='geometry',
+  _spatial_index_reflected=True), table=<county>), schema=None)),
+  ('remove_index', Index('idx_tiger_featnames_lname',
+  <alembic.util.sqla_compat._textual_index_element object at 0x10c525310>)),
+  ('remove_index', Index('idx_tiger_featnames_snd_name',
+  <alembic.util.sqla_compat._textual_index_element object at 0x10cbc8130>)),
+  ('remove_index', Index('idx_tiger_featnames_tlid_statefp', Column('tlid',
+  BIGINT(), table=<featnames>), Column('statefp', VARCHAR(length=2),
+  table=<featnames>))), ('remove_table', Table('featnames', MetaData(),
+  Column('gid', INTEGER(), table=<featnames>, primary_key=True, nullable=False),
+  Column('tlid', BIGINT(), table=<featnames>), Column('fullname',
+  VARCHAR(length=100), table=<featnames>), Column('name', VARCHAR(length=100),
+  table=<featnames>), Column('predirabrv', VARCHAR(length=15),
+  table=<featnames>), Column('pretypabrv', VARCHAR(length=50),
+  table=<featnames>), Column('prequalabr', VARCHAR(length=15),
+  table=<featnames>), Column('sufdirabrv', VARCHAR(length=15),
+  table=<featnames>), Column('suftypabrv', VARCHAR(length=50),
+  table=<featnames>), Column('sufqualabr', VARCHAR(length=15),
+  table=<featnames>), Column('predir', VARCHAR(length=2), table=<featnames>),
+  Column('pretyp', VARCHAR(length=3), table=<featnames>), Column('prequal',
+  VARCHAR(length=2), table=<featnames>), Column('sufdir', VARCHAR(length=2),
+  table=<featnames>), Column('suftyp', VARCHAR(length=3), table=<featnames>),
+  Column('sufqual', VARCHAR(length=2), table=<featnames>), Column('linearid',
+  VARCHAR(length=22), table=<featnames>), Column('mtfcc', VARCHAR(length=5),
+  table=<featnames>), Column('paflag', VARCHAR(length=1), table=<featnames>),
+  Column('statefp', VARCHAR(length=2), table=<featnames>), schema=None)),
+  ('remove_table', Table('geocode_settings', MetaData(), Column('name', TEXT(),
+  table=<geocode_settings>, primary_key=True, nullable=False), Column('setting',
+  TEXT(), table=<geocode_settings>), Column('unit', TEXT(),
+  table=<geocode_settings>), Column('category', TEXT(),
+  table=<geocode_settings>), Column('short_desc', TEXT(),
+  table=<geocode_settings>), schema=None)), ('remove_table', Table('zip_lookup',
+  MetaData(), Column('zip', INTEGER(), table=<zip_lookup>, primary_key=True,
+  nullable=False), Column('st_code', INTEGER(), table=<zip_lookup>),
+  Column('state', VARCHAR(length=2), table=<zip_lookup>), Column('co_code',
+  INTEGER(), table=<zip_lookup>), Column('county', VARCHAR(length=90),
+  table=<zip_lookup>), Column('cs_code', INTEGER(), table=<zip_lookup>),
+  Column('cousub', VARCHAR(length=90), table=<zip_lookup>), Column('pl_code',
+  INTEGER(), table=<zip_lookup>), Column('place', VARCHAR(length=90),
+  table=<zip_lookup>), Column('cnt', INTEGER(), table=<zip_lookup>),
+  schema=None)), ('remove_table', Table('loader_variables', MetaData(),
+  Column('tiger_year', VARCHAR(length=4), table=<loader_variables>,
+  primary_key=True, nullable=False), Column('website_root', TEXT(),
+  table=<loader_variables>), Column('staging_fold', TEXT(),
+  table=<loader_variables>), Column('data_schema', TEXT(),
+  table=<loader_variables>), Column('staging_schema', TEXT(),
+  table=<loader_variables>), schema=None)), ('remove_table', Table('pagc_gaz',
+  MetaData(), Column('id', INTEGER(), table=<pagc_gaz>, primary_key=True,
+  nullable=False), Column('seq', INTEGER(), table=<pagc_gaz>), Column('word',
+  TEXT(), table=<pagc_gaz>), Column('stdword', TEXT(), table=<pagc_gaz>),
+  Column('token', INTEGER(), table=<pagc_gaz>), Column('is_custom', BOOLEAN(),
+  table=<pagc_gaz>, nullable=False,
+  server_default=DefaultClause(<sqlalchemy.sql.elements.TextClause object at
+  0x10c7bfbd0>, for_update=False)), schema=None)), ('remove_table',
+  Table('layer', MetaData(), Column('topology_id', INTEGER(),
+  ForeignKey('topology.id'), table=<layer>, primary_key=True, nullable=False),
+  Column('layer_id', INTEGER(), table=<layer>, primary_key=True,
+  nullable=False), Column('schema_name', VARCHAR(), table=<layer>,
+  nullable=False), Column('table_name', VARCHAR(), table=<layer>,
+  nullable=False), Column('feature_column', VARCHAR(), table=<layer>,
+  nullable=False), Column('feature_type', INTEGER(), table=<layer>,
+  nullable=False), Column('level', INTEGER(), table=<layer>, nullable=False,
+  server_default=DefaultClause(<sqlalchemy.sql.elements.TextClause object at
+  0x10c809050>, for_update=False)), Column('child_id', INTEGER(),
+  table=<layer>), schema=None)), ('remove_table', Table('zip_state', MetaData(),
+  Column('zip', VARCHAR(length=5), table=<zip_state>, primary_key=True,
+  nullable=False), Column('stusps', VARCHAR(length=2), table=<zip_state>,
+  primary_key=True, nullable=False), Column('statefp', VARCHAR(length=2),
+  table=<zip_state>), schema=None)), ('remove_table', Table('tract', MetaData(),
+  Column('gid', INTEGER(), table=<tract>, nullable=False), Column('statefp',
+  VARCHAR(length=2), table=<tract>), Column('countyfp', VARCHAR(length=3),
+  table=<tract>), Column('tractce', VARCHAR(length=6), table=<tract>),
+  Column('tract_id', VARCHAR(length=11), table=<tract>, primary_key=True,
+  nullable=False), Column('name', VARCHAR(length=7), table=<tract>),
+  Column('namelsad', VARCHAR(length=20), table=<tract>), Column('mtfcc',
+  VARCHAR(length=5), table=<tract>), Column('funcstat', VARCHAR(length=1),
+  table=<tract>), Column('aland', DOUBLE_PRECISION(precision=53),
+  table=<tract>), Column('awater', DOUBLE_PRECISION(precision=53),
+  table=<tract>), Column('intptlat', VARCHAR(length=11), table=<tract>),
+  Column('intptlon', VARCHAR(length=12), table=<tract>), Column('the_geom',
+  Geometry(dimension=2, spatial_index=False, from_text='ST_GeomFromEWKT',
+  name='geometry', _spatial_index_reflected=True), table=<tract>),
+  schema=None)), ('remove_index', Index('countysub_lookup_name_idx',
+  <alembic.util.sqla_compat._textual_index_element object at 0x10cb9b350>)),
+  ('remove_index', Index('countysub_lookup_state_idx', Column('state',
+  VARCHAR(length=2), table=<countysub_lookup>))), ('remove_table',
+  Table('countysub_lookup', MetaData(), Column('st_code', INTEGER(),
+  table=<countysub_lookup>, primary_key=True, nullable=False), Column('state',
+  VARCHAR(length=2), table=<countysub_lookup>), Column('co_code', INTEGER(),
+  table=<countysub_lookup>, primary_key=True, nullable=False), Column('county',
+  VARCHAR(length=90), table=<countysub_lookup>), Column('cs_code', INTEGER(),
+  table=<countysub_lookup>, primary_key=True, nullable=False), Column('name',
+  VARCHAR(length=90), table=<countysub_lookup>), schema=None)), ('remove_index',
+  Index('street_type_lookup_abbrev_idx', Column('abbrev', VARCHAR(length=50),
+  table=<street_type_lookup>))), ('remove_table', Table('street_type_lookup',
+  MetaData(), Column('name', VARCHAR(length=50), table=<street_type_lookup>,
+  primary_key=True, nullable=False), Column('abbrev', VARCHAR(length=50),
+  table=<street_type_lookup>), Column('is_hw', BOOLEAN(),
+  table=<street_type_lookup>, nullable=False,
+  server_default=DefaultClause(<sqlalchemy.sql.elements.TextClause object at
+  0x10c80aad0>, for_update=False)), schema=None)), ('remove_table',
+  Table('state_lookup', MetaData(), Column('st_code', INTEGER(),
+  table=<state_lookup>, primary_key=True, nullable=False), Column('name',
+  VARCHAR(length=40), table=<state_lookup>), Column('abbrev', VARCHAR(length=3),
+  table=<state_lookup>), Column('statefp', CHAR(length=2),
+  table=<state_lookup>), schema=None)), ('remove_table', Table('topology',
+  MetaData(), Column('id', INTEGER(), table=<topology>, primary_key=True,
+  nullable=False), Column('name', VARCHAR(), table=<topology>, nullable=False),
+  Column('srid', INTEGER(), table=<topology>, nullable=False),
+  Column('precision', DOUBLE_PRECISION(precision=53), table=<topology>,
+  nullable=False), Column('hasz', BOOLEAN(), table=<topology>, nullable=False,
+  server_default=DefaultClause(<sqlalchemy.sql.elements.TextClause object at
+  0x10c7bd3d0>, for_update=False)), schema=None)), ('remove_index',
+  Index('place_lookup_name_idx',
+  <alembic.util.sqla_compat._textual_index_element object at 0x10c4fac50>)),
+  ('remove_index', Index('place_lookup_state_idx', Column('state',
+  VARCHAR(length=2), table=<place_lookup>))), ('remove_table',
+  Table('place_lookup', MetaData(), Column('st_code', INTEGER(),
+  table=<place_lookup>, primary_key=True, nullable=False), Column('state',
+  VARCHAR(length=2), table=<place_lookup>), Column('pl_code', INTEGER(),
+  table=<place_lookup>, primary_key=True, nullable=False), Column('name',
+  VARCHAR(length=90), table=<place_lookup>), schema=None)), ('remove_table',
+  Table('tabblock', MetaData(), Column('gid', INTEGER(), table=<tabblock>,
+  nullable=False), Column('statefp', VARCHAR(length=2), table=<tabblock>),
+  Column('countyfp', VARCHAR(length=3), table=<tabblock>), Column('tractce',
+  VARCHAR(length=6), table=<tabblock>), Column('blockce', VARCHAR(length=4),
+  table=<tabblock>), Column('tabblock_id', VARCHAR(length=16), table=<tabblock>,
+  primary_key=True, nullable=False), Column('name', VARCHAR(length=20),
+  table=<tabblock>), Column('mtfcc', VARCHAR(length=5), table=<tabblock>),
+  Column('ur', VARCHAR(length=1), table=<tabblock>), Column('uace',
+  VARCHAR(length=5), table=<tabblock>), Column('funcstat', VARCHAR(length=1),
+  table=<tabblock>), Column('aland', DOUBLE_PRECISION(precision=53),
+  table=<tabblock>), Column('awater', DOUBLE_PRECISION(precision=53),
+  table=<tabblock>), Column('intptlat', VARCHAR(length=11), table=<tabblock>),
+  Column('intptlon', VARCHAR(length=12), table=<tabblock>), Column('the_geom',
+  Geometry(dimension=2, spatial_index=False, from_text='ST_GeomFromEWKT',
+  name='geometry', _spatial_index_reflected=True), table=<tabblock>),
+  schema=None)), ('remove_table', Table('geocode_settings_default', MetaData(),
+  Column('name', TEXT(), table=<geocode_settings_default>, primary_key=True,
+  nullable=False), Column('setting', TEXT(), table=<geocode_settings_default>),
+  Column('unit', TEXT(), table=<geocode_settings_default>), Column('category',
+  TEXT(), table=<geocode_settings_default>), Column('short_desc', TEXT(),
+  table=<geocode_settings_default>), schema=None)), ('remove_table',
+  Table('loader_lookuptables', MetaData(), Column('process_order', INTEGER(),
+  table=<loader_lookuptables>, nullable=False,
+  server_default=DefaultClause(<sqlalchemy.sql.elements.TextClause object at
+  0x10c849450>, for_update=False)), Column('lookup_name', TEXT(),
+  table=<loader_lookuptables>, primary_key=True, nullable=False, comment='This
+  is the table name to inherit from and suffix of resulting output table -- how
+  the table will be named --  edges here would mean -- ma_edges , pa_edges etc.
+  except in the case of national tables. national level tables have no prefix'),
+  Column('table_name', TEXT(), table=<loader_lookuptables>, comment='suffix of
+  the tables to load e.g.  edges would load all tables like *edges.dbf(shp)  --
+  so tl_2010_42129_edges.dbf .  '), Column('single_mode', BOOLEAN(),
+  table=<loader_lookuptables>, nullable=False,
+  server_default=DefaultClause(<sqlalchemy.sql.elements.TextClause object at
+  0x10c8495d0>, for_update=False)), Column('load', BOOLEAN(),
+  table=<loader_lookuptables>, nullable=False,
+  server_default=DefaultClause(<sqlalchemy.sql.elements.TextClause object at
+  0x10c8496d0>, for_update=False), comment="Whether or not to load the table.
+  For states and zcta5 (you may just want to download states10, zcta510
+  nationwide file manually) load your own into a single table that inherits from
+  tiger.states, tiger.zcta5.  You'll get improved performance for some geocoding
+  cases."), Column('level_county', BOOLEAN(), table=<loader_lookuptables>,
+  nullable=False,
+  server_default=DefaultClause(<sqlalchemy.sql.elements.TextClause object at
+  0x10c8497d0>, for_update=False)), Column('level_state', BOOLEAN(),
+  table=<loader_lookuptables>, nullable=False,
+  server_default=DefaultClause(<sqlalchemy.sql.elements.TextClause object at
+  0x10c8498d0>, for_update=False)), Column('level_nation', BOOLEAN(),
+  table=<loader_lookuptables>, nullable=False,
+  server_default=DefaultClause(<sqlalchemy.sql.elements.TextClause object at
+  0x10c8494d0>, for_update=False), comment='These are tables that contain all
+  data for the whole US so there is just a single file'),
+  Column('post_load_process', TEXT(), table=<loader_lookuptables>),
+  Column('single_geom_mode', BOOLEAN(), table=<loader_lookuptables>,
+  server_default=DefaultClause(<sqlalchemy.sql.elements.TextClause object at
+  0x10c849b50>, for_update=False)), Column('insert_mode', CHAR(length=1),
+  table=<loader_lookuptables>, nullable=False,
+  server_default=DefaultClause(<sqlalchemy.sql.elements.TextClause object at
+  0x10c8491d0>, for_update=False)), Column('pre_load_process', TEXT(),
+  table=<loader_lookuptables>), Column('columns_exclude', ARRAY(TEXT()),
+  table=<loader_lookuptables>, comment='List of columns to exclude as an array.
+  This is excluded from both input table and output table and rest of columns
+  remaining are assumed to be in same order in both tables. gid,
+  geoid,cpi,suffix1ce are excluded if no columns are specified.'),
+  Column('website_root_override', TEXT(), table=<loader_lookuptables>,
+  comment='Path to use for wget instead of that specified in year table.  Needed
+  currently for zcta where they release that only for 2000 and 2010'),
+  schema=None)), ('remove_index', Index('idx_addrfeat_geom_gist',
+  Column('the_geom', Geometry(dimension=2, from_text='ST_GeomFromEWKT',
+  name='geometry', _spatial_index_reflected=True), table=<addrfeat>))),
+  ('remove_index', Index('idx_addrfeat_tlid', Column('tlid', BIGINT(),
+  table=<addrfeat>))), ('remove_index', Index('idx_addrfeat_zipl',
+  Column('zipl', VARCHAR(length=5), table=<addrfeat>))), ('remove_index',
+  Index('idx_addrfeat_zipr', Column('zipr', VARCHAR(length=5),
+  table=<addrfeat>))), ('remove_table', Table('addrfeat', MetaData(),
+  Column('gid', INTEGER(), table=<addrfeat>, primary_key=True, nullable=False),
+  Column('tlid', BIGINT(), table=<addrfeat>), Column('statefp',
+  VARCHAR(length=2), table=<addrfeat>, nullable=False), Column('aridl',
+  VARCHAR(length=22), table=<addrfeat>), Column('aridr', VARCHAR(length=22),
+  table=<addrfeat>), Column('linearid', VARCHAR(length=22), table=<addrfeat>),
+  Column('fullname', VARCHAR(length=100), table=<addrfeat>), Column('lfromhn',
+  VARCHAR(length=12), table=<addrfeat>), Column('ltohn', VARCHAR(length=12),
+  table=<addrfeat>), Column('rfromhn', VARCHAR(length=12), table=<addrfeat>),
+  Column('rtohn', VARCHAR(length=12), table=<addrfeat>), Column('zipl',
+  VARCHAR(length=5), table=<addrfeat>), Column('zipr', VARCHAR(length=5),
+  table=<addrfeat>), Column('edge_mtfcc', VARCHAR(length=5), table=<addrfeat>),
+  Column('parityl', VARCHAR(length=1), table=<addrfeat>), Column('parityr',
+  VARCHAR(length=1), table=<addrfeat>), Column('plus4l', VARCHAR(length=4),
+  table=<addrfeat>), Column('plus4r', VARCHAR(length=4), table=<addrfeat>),
+  Column('lfromtyp', VARCHAR(length=1), table=<addrfeat>), Column('ltotyp',
+  VARCHAR(length=1), table=<addrfeat>), Column('rfromtyp', VARCHAR(length=1),
+  table=<addrfeat>), Column('rtotyp', VARCHAR(length=1), table=<addrfeat>),
+  Column('offsetl', VARCHAR(length=1), table=<addrfeat>), Column('offsetr',
+  VARCHAR(length=1), table=<addrfeat>), Column('the_geom', Geometry(dimension=2,
+  from_text='ST_GeomFromEWKT', name='geometry', _spatial_index_reflected=True),
+  table=<addrfeat>), schema=None)), ('remove_table', Table('pagc_lex',
+  MetaData(), Column('id', INTEGER(), table=<pagc_lex>, primary_key=True,
+  nullable=False), Column('seq', INTEGER(), table=<pagc_lex>), Column('word',
+  TEXT(), table=<pagc_lex>), Column('stdword', TEXT(), table=<pagc_lex>),
+  Column('token', INTEGER(), table=<pagc_lex>), Column('is_custom', BOOLEAN(),
+  table=<pagc_lex>, nullable=False,
+  server_default=DefaultClause(<sqlalchemy.sql.elements.TextClause object at
+  0x10c79f7d0>, for_update=False)), schema=None)), ('remove_table',
+  Table('zip_state_loc', MetaData(), Column('zip', VARCHAR(length=5),
+  table=<zip_state_loc>, primary_key=True, nullable=False), Column('stusps',
+  VARCHAR(length=2), table=<zip_state_loc>, primary_key=True, nullable=False),
+  Column('statefp', VARCHAR(length=2), table=<zip_state_loc>), Column('place',
+  VARCHAR(length=100), table=<zip_state_loc>, primary_key=True, nullable=False),
+  schema=None)), ('remove_index', Index('idx_edges_tlid', Column('tlid',
+  BIGINT(), table=<edges>))), ('remove_index', Index('idx_tiger_edges_countyfp',
+  Column('countyfp', VARCHAR(length=3), table=<edges>))), ('remove_index',
+  Index('idx_tiger_edges_the_geom_gist', Column('the_geom',
+  Geometry(dimension=2, from_text='ST_GeomFromEWKT', name='geometry',
+  _spatial_index_reflected=True), table=<edges>))), ('remove_table',
+  Table('edges', MetaData(), Column('gid', INTEGER(), table=<edges>,
+  primary_key=True, nullable=False), Column('statefp', VARCHAR(length=2),
+  table=<edges>), Column('countyfp', VARCHAR(length=3), table=<edges>),
+  Column('tlid', BIGINT(), table=<edges>), Column('tfidl', NUMERIC(precision=10,
+  scale=0), table=<edges>), Column('tfidr', NUMERIC(precision=10, scale=0),
+  table=<edges>), Column('mtfcc', VARCHAR(length=5), table=<edges>),
+  Column('fullname', VARCHAR(length=100), table=<edges>), Column('smid',
+  VARCHAR(length=22), table=<edges>), Column('lfromadd', VARCHAR(length=12),
+  table=<edges>), Column('ltoadd', VARCHAR(length=12), table=<edges>),
+  Column('rfromadd', VARCHAR(length=12), table=<edges>), Column('rtoadd',
+  VARCHAR(length=12), table=<edges>), Column('zipl', VARCHAR(length=5),
+  table=<edges>), Column('zipr', VARCHAR(length=5), table=<edges>),
+  Column('featcat', VARCHAR(length=1), table=<edges>), Column('hydroflg',
+  VARCHAR(length=1), table=<edges>), Column('railflg', VARCHAR(length=1),
+  table=<edges>), Column('roadflg', VARCHAR(length=1), table=<edges>),
+  Column('olfflg', VARCHAR(length=1), table=<edges>), Column('passflg',
+  VARCHAR(length=1), table=<edges>), Column('divroad', VARCHAR(length=1),
+  table=<edges>), Column('exttyp', VARCHAR(length=1), table=<edges>),
+  Column('ttyp', VARCHAR(length=1), table=<edges>), Column('deckedroad',
+  VARCHAR(length=1), table=<edges>), Column('artpath', VARCHAR(length=1),
+  table=<edges>), Column('persist', VARCHAR(length=1), table=<edges>),
+  Column('gcseflg', VARCHAR(length=1), table=<edges>), Column('offsetl',
+  VARCHAR(length=1), table=<edges>), Column('offsetr', VARCHAR(length=1),
+  table=<edges>), Column('tnidf', NUMERIC(precision=10, scale=0),
+  table=<edges>), Column('tnidt', NUMERIC(precision=10, scale=0),
+  table=<edges>), Column('the_geom', Geometry(dimension=2,
+  from_text='ST_GeomFromEWKT', name='geometry', _spatial_index_reflected=True),
+  table=<edges>), schema=None)), ('remove_index',
+  Index('tige_cousub_the_geom_gist', Column('the_geom', Geometry(dimension=2,
+  from_text='ST_GeomFromEWKT', name='geometry', _spatial_index_reflected=True),
+  table=<cousub>))), ('remove_table', Table('cousub', MetaData(), Column('gid',
+  INTEGER(), table=<cousub>, nullable=False), Column('statefp',
+  VARCHAR(length=2), table=<cousub>), Column('countyfp', VARCHAR(length=3),
+  table=<cousub>), Column('cousubfp', VARCHAR(length=5), table=<cousub>),
+  Column('cousubns', VARCHAR(length=8), table=<cousub>), Column('cosbidfp',
+  VARCHAR(length=10), table=<cousub>, primary_key=True, nullable=False),
+  Column('name', VARCHAR(length=100), table=<cousub>), Column('namelsad',
+  VARCHAR(length=100), table=<cousub>), Column('lsad', VARCHAR(length=2),
+  table=<cousub>), Column('classfp', VARCHAR(length=2), table=<cousub>),
+  Column('mtfcc', VARCHAR(length=5), table=<cousub>), Column('cnectafp',
+  VARCHAR(length=3), table=<cousub>), Column('nectafp', VARCHAR(length=5),
+  table=<cousub>), Column('nctadvfp', VARCHAR(length=5), table=<cousub>),
+  Column('funcstat', VARCHAR(length=1), table=<cousub>), Column('aland',
+  NUMERIC(precision=14, scale=0), table=<cousub>), Column('awater',
+  NUMERIC(precision=14, scale=0), table=<cousub>), Column('intptlat',
+  VARCHAR(length=11), table=<cousub>), Column('intptlon', VARCHAR(length=12),
+  table=<cousub>), Column('the_geom', Geometry(dimension=2,
+  from_text='ST_GeomFromEWKT', name='geometry', _spatial_index_reflected=True),
+  table=<cousub>), schema=None)), ('remove_table', Table('tabblock20',
+  MetaData(), Column('statefp', VARCHAR(length=2), table=<tabblock20>),
+  Column('countyfp', VARCHAR(length=3), table=<tabblock20>), Column('tractce',
+  VARCHAR(length=6), table=<tabblock20>), Column('blockce', VARCHAR(length=4),
+  table=<tabblock20>), Column('geoid', VARCHAR(length=15), table=<tabblock20>,
+  primary_key=True, nullable=False), Column('name', VARCHAR(length=10),
+  table=<tabblock20>), Column('mtfcc', VARCHAR(length=5), table=<tabblock20>),
+  Column('ur', VARCHAR(length=1), table=<tabblock20>), Column('uace',
+  VARCHAR(length=5), table=<tabblock20>), Column('uatype', VARCHAR(length=1),
+  table=<tabblock20>), Column('funcstat', VARCHAR(length=1),
+  table=<tabblock20>), Column('aland', DOUBLE_PRECISION(precision=53),
+  table=<tabblock20>), Column('awater', DOUBLE_PRECISION(precision=53),
+  table=<tabblock20>), Column('intptlat', VARCHAR(length=11),
+  table=<tabblock20>), Column('intptlon', VARCHAR(length=12),
+  table=<tabblock20>), Column('the_geom', Geometry(geometry_type='MULTIPOLYGON',
+  srid=4269, dimension=2, spatial_index=False, from_text='ST_GeomFromEWKT',
+  name='geometry', _spatial_index_reflected=True), table=<tabblock20>),
+  Column('housing', DOUBLE_PRECISION(precision=53), table=<tabblock20>),
+  Column('pop', DOUBLE_PRECISION(precision=53), table=<tabblock20>),
+  schema=None)), ('remove_index', Index('tiger_place_the_geom_gist',
+  Column('the_geom', Geometry(dimension=2, from_text='ST_GeomFromEWKT',
+  name='geometry', _spatial_index_reflected=True), table=<place>))),
+  ('remove_table', Table('place', MetaData(), Column('gid', INTEGER(),
+  table=<place>, nullable=False), Column('statefp', VARCHAR(length=2),
+  table=<place>), Column('placefp', VARCHAR(length=5), table=<place>),
+  Column('placens', VARCHAR(length=8), table=<place>), Column('plcidfp',
+  VARCHAR(length=7), table=<place>, primary_key=True, nullable=False),
+  Column('name', VARCHAR(length=100), table=<place>), Column('namelsad',
+  VARCHAR(length=100), table=<place>), Column('lsad', VARCHAR(length=2),
+  table=<place>), Column('classfp', VARCHAR(length=2), table=<place>),
+  Column('cpi', VARCHAR(length=1), table=<place>), Column('pcicbsa',
+  VARCHAR(length=1), table=<place>), Column('pcinecta', VARCHAR(length=1),
+  table=<place>), Column('mtfcc', VARCHAR(length=5), table=<place>),
+  Column('funcstat', VARCHAR(length=1), table=<place>), Column('aland',
+  BIGINT(), table=<place>), Column('awater', BIGINT(), table=<place>),
+  Column('intptlat', VARCHAR(length=11), table=<place>), Column('intptlon',
+  VARCHAR(length=12), table=<place>), Column('the_geom', Geometry(dimension=2,
+  from_text='ST_GeomFromEWKT', name='geometry', _spatial_index_reflected=True),
+  table=<place>), schema=None)), ('remove_table', Table('pagc_rules',
+  MetaData(), Column('id', INTEGER(), table=<pagc_rules>, primary_key=True,
+  nullable=False), Column('rule', TEXT(), table=<pagc_rules>),
+  Column('is_custom', BOOLEAN(), table=<pagc_rules>,
+  server_default=DefaultClause(<sqlalchemy.sql.elements.TextClause object at
+  0x10c892a50>, for_update=False)), schema=None)), ('remove_table',
+  Table('loader_platform', MetaData(), Column('os', VARCHAR(length=50),
+  table=<loader_platform>, primary_key=True, nullable=False),
+  Column('declare_sect', TEXT(), table=<loader_platform>), Column('pgbin',
+  TEXT(), table=<loader_platform>), Column('wget', TEXT(),
+  table=<loader_platform>), Column('unzip_command', TEXT(),
+  table=<loader_platform>), Column('psql', TEXT(), table=<loader_platform>),
+  Column('path_sep', TEXT(), table=<loader_platform>), Column('loader', TEXT(),
+  table=<loader_platform>), Column('environ_set_command', TEXT(),
+  table=<loader_platform>), Column('county_process_command', TEXT(),
+  table=<loader_platform>), schema=None)), ('remove_index',
+  Index('idx_tiger_faces_countyfp', Column('countyfp', VARCHAR(length=3),
+  table=<faces>))), ('remove_index', Index('idx_tiger_faces_tfid',
+  Column('tfid', NUMERIC(precision=10, scale=0), table=<faces>))),
+  ('remove_index', Index('tiger_faces_the_geom_gist', Column('the_geom',
+  Geometry(dimension=2, from_text='ST_GeomFromEWKT', name='geometry',
+  _spatial_index_reflected=True), table=<faces>))), ('remove_table',
+  Table('faces', MetaData(), Column('gid', INTEGER(), table=<faces>,
+  primary_key=True, nullable=False), Column('tfid', NUMERIC(precision=10,
+  scale=0), table=<faces>), Column('statefp00', VARCHAR(length=2),
+  table=<faces>), Column('countyfp00', VARCHAR(length=3), table=<faces>),
+  Column('tractce00', VARCHAR(length=6), table=<faces>), Column('blkgrpce00',
+  VARCHAR(length=1), table=<faces>), Column('blockce00', VARCHAR(length=4),
+  table=<faces>), Column('cousubfp00', VARCHAR(length=5), table=<faces>),
+  Column('submcdfp00', VARCHAR(length=5), table=<faces>), Column('conctyfp00',
+  VARCHAR(length=5), table=<faces>), Column('placefp00', VARCHAR(length=5),
+  table=<faces>), Column('aiannhfp00', VARCHAR(length=5), table=<faces>),
+  Column('aiannhce00', VARCHAR(length=4), table=<faces>), Column('comptyp00',
+  VARCHAR(length=1), table=<faces>), Column('trsubfp00', VARCHAR(length=5),
+  table=<faces>), Column('trsubce00', VARCHAR(length=3), table=<faces>),
+  Column('anrcfp00', VARCHAR(length=5), table=<faces>), Column('elsdlea00',
+  VARCHAR(length=5), table=<faces>), Column('scsdlea00', VARCHAR(length=5),
+  table=<faces>), Column('unsdlea00', VARCHAR(length=5), table=<faces>),
+  Column('uace00', VARCHAR(length=5), table=<faces>), Column('cd108fp',
+  VARCHAR(length=2), table=<faces>), Column('sldust00', VARCHAR(length=3),
+  table=<faces>), Column('sldlst00', VARCHAR(length=3), table=<faces>),
+  Column('vtdst00', VARCHAR(length=6), table=<faces>), Column('zcta5ce00',
+  VARCHAR(length=5), table=<faces>), Column('tazce00', VARCHAR(length=6),
+  table=<faces>), Column('ugace00', VARCHAR(length=5), table=<faces>),
+  Column('puma5ce00', VARCHAR(length=5), table=<faces>), Column('statefp',
+  VARCHAR(length=2), table=<faces>), Column('countyfp', VARCHAR(length=3),
+  table=<faces>), Column('tractce', VARCHAR(length=6), table=<faces>),
+  Column('blkgrpce', VARCHAR(length=1), table=<faces>), Column('blockce',
+  VARCHAR(length=4), table=<faces>), Column('cousubfp', VARCHAR(length=5),
+  table=<faces>), Column('submcdfp', VARCHAR(length=5), table=<faces>),
+  Column('conctyfp', VARCHAR(length=5), table=<faces>), Column('placefp',
+  VARCHAR(length=5), table=<faces>), Column('aiannhfp', VARCHAR(length=5),
+  table=<faces>), Column('aiannhce', VARCHAR(length=4), table=<faces>),
+  Column('comptyp', VARCHAR(length=1), table=<faces>), Column('trsubfp',
+  VARCHAR(length=5), table=<faces>), Column('trsubce', VARCHAR(length=3),
+  table=<faces>), Column('anrcfp', VARCHAR(length=5), table=<faces>),
+  Column('ttractce', VARCHAR(length=6), table=<faces>), Column('tblkgpce',
+  VARCHAR(length=1), table=<faces>), Column('elsdlea', VARCHAR(length=5),
+  table=<faces>), Column('scsdlea', VARCHAR(length=5), table=<faces>),
+  Column('unsdlea', VARCHAR(length=5), table=<faces>), Column('uace',
+  VARCHAR(length=5), table=<faces>), Column('cd111fp', VARCHAR(length=2),
+  table=<faces>), Column('sldust', VARCHAR(length=3), table=<faces>),
+  Column('sldlst', VARCHAR(length=3), table=<faces>), Column('vtdst',
+  VARCHAR(length=6), table=<faces>), Column('zcta5ce', VARCHAR(length=5),
+  table=<faces>), Column('tazce', VARCHAR(length=6), table=<faces>),
+  Column('ugace', VARCHAR(length=5), table=<faces>), Column('puma5ce',
+  VARCHAR(length=5), table=<faces>), Column('csafp', VARCHAR(length=3),
+  table=<faces>), Column('cbsafp', VARCHAR(length=5), table=<faces>),
+  Column('metdivfp', VARCHAR(length=5), table=<faces>), Column('cnectafp',
+  VARCHAR(length=3), table=<faces>), Column('nectafp', VARCHAR(length=5),
+  table=<faces>), Column('nctadvfp', VARCHAR(length=5), table=<faces>),
+  Column('lwflag', VARCHAR(length=1), table=<faces>), Column('offset',
+  VARCHAR(length=1), table=<faces>), Column('atotal',
+  DOUBLE_PRECISION(precision=53), table=<faces>), Column('intptlat',
+  VARCHAR(length=11), table=<faces>), Column('intptlon', VARCHAR(length=12),
+  table=<faces>), Column('the_geom', Geometry(dimension=2,
+  from_text='ST_GeomFromEWKT', name='geometry', _spatial_index_reflected=True),
+  table=<faces>), Column('tractce20', VARCHAR(length=6), table=<faces>),
+  Column('blkgrpce20', VARCHAR(length=1), table=<faces>), Column('blockce20',
+  VARCHAR(length=4), table=<faces>), Column('countyfp20', VARCHAR(length=3),
+  table=<faces>), Column('statefp20', VARCHAR(length=2), table=<faces>),
+  schema=None)), ('remove_index', Index('direction_lookup_abbrev_idx',
+  Column('abbrev', VARCHAR(length=3), table=<direction_lookup>))),
+  ('remove_table', Table('direction_lookup', MetaData(), Column('name',
+  VARCHAR(length=20), table=<direction_lookup>, primary_key=True,
+  nullable=False), Column('abbrev', VARCHAR(length=3),
+  table=<direction_lookup>), schema=None)), ('remove_index',
+  Index('secondary_unit_lookup_abbrev_idx', Column('abbrev', VARCHAR(length=5),
+  table=<secondary_unit_lookup>))), ('remove_table',
+  Table('secondary_unit_lookup', MetaData(), Column('name', VARCHAR(length=20),
+  table=<secondary_unit_lookup>, primary_key=True, nullable=False),
+  Column('abbrev', VARCHAR(length=5), table=<secondary_unit_lookup>),
+  schema=None)), ('remove_index', Index('county_lookup_name_idx',
+  <alembic.util.sqla_compat._textual_index_element object at 0x10cc818b0>)),
+  ('remove_index', Index('county_lookup_state_idx', Column('state',
+  VARCHAR(length=2), table=<county_lookup>))), ('remove_table',
+  Table('county_lookup', MetaData(), Column('st_code', INTEGER(),
+  table=<county_lookup>, primary_key=True, nullable=False), Column('state',
+  VARCHAR(length=2), table=<county_lookup>), Column('co_code', INTEGER(),
+  table=<county_lookup>, primary_key=True, nullable=False), Column('name',
+  VARCHAR(length=90), table=<county_lookup>), schema=None)), ('remove_index',
+  Index('idx_forecast_advisories_hazard', Column('hazard_type',
+  VARCHAR(length=100), table=<forecast_advisories>, nullable=False))),
+  ('remove_index', Index('idx_forecast_advisories_source', Column('source_code',
+  VARCHAR(length=50), table=<forecast_advisories>, nullable=False))),
+  ('add_index', Index('ix_forecast_advisories_hazard_type',
+  Column('hazard_type', String(length=100), table=<forecast_advisories>,
+  nullable=False))), ('add_index', Index('ix_forecast_advisories_source_code',
+  Column('source_code', String(length=50), table=<forecast_advisories>,
+  nullable=False))), ('add_index', Index('ix_forecast_advisories_valid_from',
+  Column('valid_from', DateTime(timezone=True), table=<forecast_advisories>,
+  nullable=False))), ('add_index', Index('ix_forecast_advisories_valid_until',
+  Column('valid_until', DateTime(timezone=True), table=<forecast_advisories>,
+  nullable=False))), ('remove_index', Index('idx_feedback_report_id',
+  Column('report_id', UUID(), table=<incident_feedback>, nullable=False))),
+  ('remove_index', Index('idx_feedback_user_id', Column('user_id', UUID(),
+  table=<incident_feedback>))), ('add_index',
+  Index('ix_incident_feedback_report_id', Column('report_id', UUID(),
+  table=<incident_feedback>, nullable=False))), ('add_index',
+  Index('ix_incident_feedback_user_id', Column('user_id', UUID(),
+  table=<incident_feedback>))), ('remove_index',
+  Index('idx_realtime_outbox_created_at', Column('created_at',
+  TIMESTAMP(timezone=True), table=<realtime_outbox>, nullable=False,
+  server_default=DefaultClause(<sqlalchemy.sql.elements.TextClause object at
+  0x10c8f3a50>, for_update=False)))), ('remove_index',
+  Index('idx_realtime_outbox_entity_id', Column('entity_id',
+  VARCHAR(length=100), table=<realtime_outbox>, nullable=False))),
+  ('remove_index', Index('idx_realtime_outbox_event_id', Column('event_id',
+  UUID(), table=<realtime_outbox>, nullable=False), unique=True)),
+  ('remove_index', Index('idx_realtime_outbox_event_type', Column('event_type',
+  VARCHAR(length=50), table=<realtime_outbox>, nullable=False))),
+  ('remove_index', Index('idx_realtime_outbox_status', Column('status',
+  VARCHAR(length=20), table=<realtime_outbox>, nullable=False,
+  server_default=DefaultClause(<sqlalchemy.sql.elements.TextClause object at
+  0x10c8f32d0>, for_update=False)))), ('remove_constraint',
+  UniqueConstraint(Column('event_id', NullType(), table=<realtime_outbox>))),
+  ('add_index', Index('ix_realtime_outbox_created_at', Column('created_at',
+  DateTime(timezone=True), table=<realtime_outbox>, nullable=False,
+  server_default=DefaultClause(<sqlalchemy.sql.functions.now at 0x10c44de90;
+  now>, for_update=False)))), ('add_index',
+  Index('ix_realtime_outbox_entity_id', Column('entity_id', String(length=100),
+  table=<realtime_outbox>, nullable=False))), ('add_index',
+  Index('ix_realtime_outbox_event_id', Column('event_id', UUID(),
+  table=<realtime_outbox>, nullable=False), unique=True)), ('add_index',
+  Index('ix_realtime_outbox_event_type', Column('event_type', String(length=50),
+  table=<realtime_outbox>, nullable=False))), ('add_index',
+  Index('ix_realtime_outbox_next_retry_at', Column('next_retry_at',
+  DateTime(timezone=True), table=<realtime_outbox>))), ('add_index',
+  Index('ix_realtime_outbox_status', Column('status', String(length=20),
+  table=<realtime_outbox>, nullable=False,
+  default=ScalarElementColumnDefault('PENDING')))), ('remove_index',
+  Index('idx_relief_centers_active', Column('is_active', BOOLEAN(),
+  table=<relief_centers>, nullable=False,
+  server_default=DefaultClause(<sqlalchemy.sql.elements.TextClause object at
+  0x10c93ad50>, for_update=False)))), ('remove_index',
+  Index('idx_relief_centers_district', Column('district_name',
+  VARCHAR(length=100), table=<relief_centers>))), ('remove_index',
+  Index('idx_relief_centers_name', Column('name', VARCHAR(length=255),
+  table=<relief_centers>, nullable=False))), ('remove_index',
+  Index('idx_relief_centers_state', Column('state_name', VARCHAR(length=100),
+  table=<relief_centers>))), ('add_index',
+  Index('ix_relief_centers_district_name', Column('district_name',
+  String(length=100), table=<relief_centers>))), ('add_index',
+  Index('ix_relief_centers_is_active', Column('is_active', Boolean(),
+  table=<relief_centers>, nullable=False,
+  default=ScalarElementColumnDefault(True)))), ('add_index',
+  Index('ix_relief_centers_name', Column('name', String(length=255),
+  table=<relief_centers>, nullable=False))), ('add_index',
+  Index('ix_relief_centers_state_name', Column('state_name', String(length=100),
+  table=<relief_centers>))), ('remove_constraint',
+  UniqueConstraint(Column('email', NullType(), table=<users>))),
+  ('remove_index', Index('idx_weather_reports_cat_occ',
+  Column('reported_category', VARCHAR(length=100), table=<weather_reports>),
+  Column('occurred_at', TIMESTAMP(timezone=True), table=<weather_reports>,
+  nullable=False))), ('remove_index',
+  Index('idx_weather_reports_dashboard_summary', Column('occurred_at',
+  TIMESTAMP(timezone=True), table=<weather_reports>, nullable=False),
+  Column('verification_status', VARCHAR(length=30), table=<weather_reports>,
+  nullable=False,
+  server_default=DefaultClause(<sqlalchemy.sql.elements.TextClause object at
+  0x10c938cd0>, for_update=False)), Column('severity', VARCHAR(length=20),
+  table=<weather_reports>, nullable=False,
+  server_default=DefaultClause(<sqlalchemy.sql.elements.TextClause object at
+  0x10c8f3d50>, for_update=False)), Column('reported_category',
+  VARCHAR(length=100), table=<weather_reports>))), ('remove_index',
+  Index('idx_weather_reports_geo_sort', <sqlalchemy.sql.elements.UnaryExpression
+  object at 0x10cc957f0>, <sqlalchemy.sql.elements.UnaryExpression object at
+  0x10cc95910>)), ('remove_index', Index('idx_weather_reports_sev_occ',
+  Column('severity', VARCHAR(length=20), table=<weather_reports>,
+  nullable=False,
+  server_default=DefaultClause(<sqlalchemy.sql.elements.TextClause object at
+  0x10c8f3d50>, for_update=False)), Column('occurred_at',
+  TIMESTAMP(timezone=True), table=<weather_reports>, nullable=False))),
+  ('remove_index', Index('idx_weather_reports_summary_cov',
+  Column('verification_status', VARCHAR(length=30), table=<weather_reports>,
+  nullable=False,
+  server_default=DefaultClause(<sqlalchemy.sql.elements.TextClause object at
+  0x10c938cd0>, for_update=False)), Column('severity', VARCHAR(length=20),
+  table=<weather_reports>, nullable=False,
+  server_default=DefaultClause(<sqlalchemy.sql.elements.TextClause object at
+  0x10c8f3d50>, for_update=False)))), ('remove_index',
+  Index('idx_weather_reports_user_id', Column('user_id', UUID(),
+  table=<weather_reports>))), ('remove_constraint',
+  UniqueConstraint(Column('tracking_id', NullType(), table=<weather_reports>))),
+  ('add_index', Index('ix_weather_reports_credibility_score',
+  Column('credibility_score', Float(), table=<weather_reports>, nullable=False,
+  default=ScalarElementColumnDefault(0.0)))), ('add_index',
+  Index('ix_weather_reports_tracking_id', Column('tracking_id',
+  String(length=32), table=<weather_reports>, nullable=False), unique=True)),
+  ('add_index', Index('ix_weather_reports_user_id', Column('user_id', UUID(),
+  table=<weather_reports>))), ('remove_index',
+  Index('idx_weather_reports_archive_archived_at', Column('archived_at',
+  TIMESTAMP(timezone=True), table=<weather_reports_archive>, nullable=False,
+  server_default=DefaultClause(<sqlalchemy.sql.elements.TextClause object at
+  0x10c9746d0>, for_update=False)))), ('remove_index',
+  Index('idx_weather_reports_archive_occurred_at', Column('occurred_at',
+  TIMESTAMP(timezone=True), table=<weather_reports_archive>, nullable=False))),
+  ('remove_index', Index('idx_weather_reports_archive_tracking_id',
+  Column('tracking_id', VARCHAR(length=32), table=<weather_reports_archive>,
+  nullable=False))), ('remove_index',
+  Index('idx_weather_reports_archive_credibility', Column('credibility_score',
+  DOUBLE_PRECISION(precision=53), table=<weather_reports_archive>,
+  nullable=False,
+  server_default=DefaultClause(<sqlalchemy.sql.elements.TextClause object at
+  0x10c974ad0>, for_update=False)))), ('add_index',
+  Index('idx_weather_reports_archive_credibility',
+  <sqlalchemy.sql.elements.UnaryExpression object at 0x10cc95f40>)),
+  ('remove_index', Index('idx_weather_reports_archive_status_time',
+  Column('verification_status', VARCHAR(length=30),
+  table=<weather_reports_archive>, nullable=False,
+  server_default=DefaultClause(<sqlalchemy.sql.elements.TextClause object at
+  0x10c974a50>, for_update=False)), Column('occurred_at',
+  TIMESTAMP(timezone=True), table=<weather_reports_archive>, nullable=False))),
+  ('add_index', Index('idx_weather_reports_archive_status_time',
+  Column('verification_status', String(length=30),
+  table=<weather_reports_archive>, nullable=False,
+  default=ScalarElementColumnDefault('VERIFIED')),
+  <sqlalchemy.sql.elements.UnaryExpression object at 0x10cc960f0>)),
+  ('add_index', Index('ix_weather_reports_archive_archived_at',
+  Column('archived_at', DateTime(timezone=True),
+  table=<weather_reports_archive>, nullable=False,
+  server_default=DefaultClause(<sqlalchemy.sql.functions.now at 0x10c361940;
+  now>, for_update=False)))), ('add_index',
+  Index('ix_weather_reports_archive_credibility_score',
+  Column('credibility_score', Float(), table=<weather_reports_archive>,
+  nullable=False, default=ScalarElementColumnDefault(0.0)))), ('add_index',
+  Index('ix_weather_reports_archive_external_id', Column('external_id',
+  String(length=255), table=<weather_reports_archive>))), ('add_index',
+  Index('ix_weather_reports_archive_occurred_at', Column('occurred_at',
+  DateTime(timezone=True), table=<weather_reports_archive>, nullable=False))),
+  ('add_index', Index('ix_weather_reports_archive_tracking_id',
+  Column('tracking_id', String(length=32), table=<weather_reports_archive>,
+  nullable=False))), ('add_index',
+  Index('ix_weather_reports_archive_verification_status',
+  Column('verification_status', String(length=30),
+  table=<weather_reports_archive>, nullable=False,
+  default=ScalarElementColumnDefault('VERIFIED'))))]
