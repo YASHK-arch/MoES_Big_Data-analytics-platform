@@ -43,5 +43,28 @@
     "providerStatus": "Provider Status",
     "noData": "No physical observations available for this incident window",
     "simulatedNotice": "Demo Simulation: Uses mock deterministic atmospheric observations for live drill demonstration"
+  },
+  "imageForensics": {
+    "title": "Image Forensics & EXIF Consistency",
+    "subtitle": "Cryptographic hashing, perceptual hash reuse detection, and EXIF consistency checks",
+    "overallVerdict": "Forensic Verdict",
+    "verdictSupports": "CONSISTENT",
+    "verdictContradicts": "CONTRADICTS",
+    "verdictNeutral": "NEUTRAL",
+    "timeConsistency": "Capture Time Consistency",
+    "locationConsistency": "Location Consistency",
+    "reuseDetection": "Image Reuse Detection",
+    "timeGap": "Time Difference",
+    "distance": "Distance",
+    "adjustment": "Credibility Impact",
+    "reusedIn": "Reused in Incident",
+    "viewIncident": "View Incident",
+    "noExifReason": "No camera metadata found (treated as neutral)",
+    "corruptReason": "Image file could not be parsed (neutral)",
+    "noReuse": "No cross-incident reuse detected",
+    "reuseDetected": "Image detected in another separate incident",
+    "simulatedBadge": "SIMULATED",
+    "noData": "No images available for forensic analysis",
+    "imagesAnalyzed": "Images Analyzed"
   }
 }
