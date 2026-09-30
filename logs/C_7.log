@@ -1,0 +1,41 @@
+=== ITEM 7: DEMO SCRIPT COMMAND RUNS & PITCH VERIFICATION ===
+Timestamp: 2026-09-30 22:54:53 UTC
+
+--- [1] HEALTH CHECK COMMAND ---
+$ curl -s http://localhost:8080/health
+{"success":true,"data":{"status":"healthy","service":"National Weather Big Data Analytics Platform","environment":"production","version":"0.1.0"},"meta":{"timestamp":"2026-09-30T22:54:53.701197+00:00"}}
+--- [2] READINESS CHECK COMMAND ---
+$ curl -s http://localhost:8080/ready
+{"success":true,"data":{"status":"ready","checks":{"database":"ok","redis":"ok","alembic":"0020_image_forensics"}},"meta":{"timestamp":"2026-09-30T22:54:53.755789+00:00"}}
+--- [3] OPERATOR AUTHENTICATION COMMAND ---
+$ curl -s -X POST http://localhost:8080/api/v1/auth/login ...
+{"success":true,"data":{"access_token":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJhMWIyYzNkNC1lNWY2LTc4OTAtYWJjZC0xMjM0NTY3ODkwYWIiLCJyb2xlIjoiT1BFUkFUT1IiLCJleHAiOjE3OTA4OTUyOTMsImlhdCI6MTc5MDgwODg5MywiZW1haWwiOiJvcGVyYXRvckB3ZWF0aGVyLXBsYXRmb3JtLmdvdi5pbiIsImZ1bGxfbmFtZSI6Ik5hdGlvbmFsIERFT0MgTGVhZCBPcGVyYXRvciJ9.Q56VBz0UUOGIuVxo_6foauv0Qxcm4DKtNIGzcfVgC04","token_type":"bearer","expires_in_seconds":86400,"user":{"id":"a1b2c3d4-e5f6-7890-abcd-1234567890ab","email":"operator@weather-platform.gov.in","full_name":"National DEOC Lead Operator","role":"OPERATOR","jurisdiction_code":"NATIONAL_DEOC","home_location_lat":null,"home_location_lng":null,"home_location_name":null,"alert_radius_km":25.0},"operator":{"id":"a1b2c3d4-e5f6-7890-abcd-1234567890ab","email":"operator@weather-platform.gov.in","full_name":"National DEOC Lead Operator","role":"OPERATOR","jurisdiction_code":"NATIONAL_DEOC","home_location_lat":null,"home_location_lng":null,"home_location_name":null,"alert_radius_km":25.0}},"meta":{}}
+--- [4] S1 PHYSICAL CORROBORATION SCENARIO (DEMO-SIM-S1-CORROB) ---
+$ curl -s http://localhost:8080/api/v1/reports/DEMO-SIM-S1-CORROB
+{"success":true,"data":{"id":"1afe4ddf-8c29-490c-a985-85108ddb4fbb","tracking_id":"DEMO-SIM-S1-CORROB","title":"[SIMULATED S1] Heavy Rainfall Physical Corroboration Scenario","description":"Simulated meteorological station corroboration fixture for demo presentation.","category":{"code":"HEAVY_RAINFALL","title":"HEAVY_RAINFALL"},"severity":"SEVERE","location":{"name":"New Delhi Regional Met Center","latitude":28.6139,"longitude":77.209},"occurred_at":"2026-09-30T22:41:44.859778Z","processing_status":"COMPLETED","verification_status":"VERIFIED","credibility_score":0.6499,"credibility_reason":null,"is_demo":false,"media":[],"verification_history":[],"physical_corroboration":{"overall_verdict":"SUPPORTS","overall_provider_status":"OK","total_contribution":0.0941,"items":[{"id":"448039c7-07f0-4fc2-9a76-9f3c25565932","variable":"rainfall_24h","observed_value":142.0,"unit":"mm/24h","source":"DEMO_FIXTURE_STATION","source_type":"STATION","station_or_grid_id":"AWS_DEMO_SUPPORT_01","distance_km":1.48,"time_gap_hours":0.0,"verdict":"SUPPORTS","weight":0.9408,"contribution":0.0941,"provider_status":"OK","observation_time":"2026-09-30T22:41:44.859778Z","explanation":"Measured 24h rainfall of 142.0 mm exceeds IMD heavy rain threshold (64.5 mm)","is_simulated":true}],"is_simulated":true},"physical_verdict":"SUPPORTS","created_at":"2026-09-30T22:41:44.582614Z"},"meta":{"timestamp":"2026-09-30T22:54:54.031971+00:00","request_id":"req_ec0de5ad015c"}}
+--- [5] S2 IMAGE FORENSICS SCENARIO (ca5d2a00-aa08-42c6-907b-0274ba8ff64e) ---
+$ curl -s http://localhost:8080/api/v1/incidents/ca5d2a00-aa08-42c6-907b-0274ba8ff64e
+{"success":true,"data":{"id":"ca5d2a00-aa08-42c6-907b-0274ba8ff64e","tracking_id":"DEMO-SIM-S2-FORENSICS","title":"[SIMULATED S2] Image Forensics Reused Photo Scenario","description":"Simulated photo reuse contradiction fixture for demo presentation.","category":{"code":"FLOOD_WATERLOGGING","title":"Flood Waterlogging"},"severity":"HIGH","location":{"name":"Mumbai Marine Drive Area","latitude":19.076,"longitude":72.8777,"resolution_status":"RESOLVED","confidence":1.0},"occurred_at":"2026-09-30T22:41:44.859778Z","credibility":{"score":0.5701,"is_machine_assessed":true,"label":"MODERATE_CREDIBILITY","engine_version":"v1","policy_version":"v1","explanation":"Machine Credibility Score: 0.5701 (Ceiling: 0.9800).\nBase incident anchor: 0.6000 (Prior 0.60, Quality 1.00).\nCorroboration lift: +0.0201 (Support 0.0475, Diversity ×1.06).","reason":"Moderate baseline source trust (0.60) from CITIZEN_WEB.","positive_drivers":["Moderate baseline source trust (0.60) from CITIZEN_WEB.","Multi-source diversity boost (×1.06) from 2 independent families (CITIZEN, NEWS)."],"negative_drivers":[],"uncertainty_flags":[]},"verification":{"status":"PENDING","is_human_verified":false,"verified_at":null},"intelligence_status":{"overall_readiness":"INTELLIGENCE_READY","last_computed_at":"2026-09-30T22:44:38.678034Z"},"summaries":{"evidence_count":1,"observation_count":1,"duplicate_cluster_size":1,"is_cluster_representative":true},"is_demo":false,"media":[{"id":"1ebab6a1-2cd4-4d57-8310-d2f233fcb17e","media_type":"IMAGE","url":"http://minio:9000/demo-weather-evidence/demo/simulated_reused_image_ca5d2a00-aa08-42c6-907b-0274ba8ff64e.jpg?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=minioadmin%2F20260930%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20260930T225454Z&X-Amz-Expires=3600&X-Amz-SignedHeaders=host&X-Amz-Signature=1efbd87ed4fff88ed41c304a358cc8d87b95c9f17b48709fa1ffb838beb23667","sha256_hash":"demof1e4e55072af48bbace4863d7b0fd884"}],"image_forensics":{"overall_verdict":"CONTRADICTS","total_credibility_adjustment":-0.05,"image_count":1,"is_simulated":true,"images":[{"media_id":"1ebab6a1-2cd4-4d57-8310-d2f233fcb17e","sha256":"demof1e4e55072af48bbace4863d7b0fd884","phash":"a1b2c3d4e5f60000","has_exif":true,"exif_timestamp_utc":"2026-09-30T22:41:44.859778Z","timezone_assumed_ist":false,"time_verdict":"SUPPORTS","time_difference":"0.10 hours","location_verdict":"SUPPORTS","location_difference":"1.20 km","reuse_verdict":"CONTRADICTS","matched_incident_ids":["9170f4d7-0252-4094-9d49-3c4fdd04c725"],"overall_verdict":"CONTRADICTS","credibility_adjustment":-0.05,"error_reason":null,"is_simulated":true,"checks":[{"check_type":"EXIF_TIME","verdict":"SUPPORTS","observed_value":"2026-09-30T22:41:44.859778+00:00","expected_value":"2026-09-30T22:41:44.859778+00:00","difference":"0.10 hours","reason":"EXIF capture timestamp is consistent with incident window","matched_incident_ids":[]},{"check_type":"EXIF_LOCATION","verdict":"SUPPORTS","observed_value":"COORDINATES_PRESENT","expected_value":"DECLARED_INCIDENT_LOCATION","difference":"1.20 km","reason":"EXIF GPS coordinates match declared location within 1.20 km","matched_incident_ids":[]},{"check_type":"IMAGE_REUSE","verdict":"CONTRADICTS","observed_value":"1 distant matches","expected_value":"0 cross-incident matches","difference":"1 distant incident(s)","reason":"Perceptual hash match with separate past incident 9170f4d7-0252-4094-9d49-3c4fdd04c725","matched_incident_ids":["9170f4d7-0252-4094-9d49-3c4fdd04c725"]}]}]},"created_at":"2026-09-30T22:41:44.582614Z"},"meta":{"timestamp":"2026-09-30T22:54:54.062783+00:00","request_id":"req_342139da7836"}}
+--- [6] WORKER KILL & RECOVERY DRILL ---
+$ docker compose -f docker-compose.demo.yml --env-file .env.demo -p sih-demo kill worker-ingestion
+ Container sih-demo-worker-ingestion-1 Killing 
+ Container sih-demo-worker-ingestion-1 Killed 
+$ docker compose -f docker-compose.demo.yml --env-file .env.demo -p sih-demo up -d worker-ingestion
+ Container sih-demo-redis-1 Running 
+ Container sih-demo-postgres-1 Running 
+ Container sih-demo-postgres-1 Waiting 
+ Container sih-demo-postgres-1 Healthy 
+ Container sih-demo-migrate-1 Starting 
+ Container sih-demo-migrate-1 Started 
+ Container sih-demo-migrate-1 Waiting 
+ Container sih-demo-postgres-1 Waiting 
+ Container sih-demo-redis-1 Waiting 
+ Container sih-demo-redis-1 Healthy 
+ Container sih-demo-postgres-1 Healthy 
+ Container sih-demo-migrate-1 Exited 
+ Container sih-demo-worker-ingestion-1 Starting 
+ Container sih-demo-worker-ingestion-1 Started 
+$ docker compose -f docker-compose.demo.yml --env-file .env.demo -p sih-demo ps | grep worker-ingestion
+sih-demo-worker-ingestion-1     sih-backend:latest              "python -m app.worke…"   worker-ingestion     15 minutes ago   Up 2 seconds (health: starting)   8000/tcp
+
+=== END OF C_7.LOG ===
