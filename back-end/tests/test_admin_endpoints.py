@@ -6,9 +6,9 @@ from httpx import ASGITransport, AsyncClient
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.core.security import create_access_token
 from app.main import app
 from app.models.audit import AuditLog
+from app.models.outbox import RealtimeOutbox
 from app.models.report import WeatherReport
 from app.models.verification import VerificationEvent
 
@@ -99,7 +99,9 @@ class TestAdminEndpoints:
         assert tracking_id in content
         assert "FLOOD_WATERLOGGING" in content
 
-    async def test_geojson_export_streaming(self, api_client: AsyncClient, db_session: AsyncSession):
+    async def test_geojson_export_streaming(
+        self, api_client: AsyncClient, db_session: AsyncSession
+    ):
         """Streamed GeoJSON export must return a valid FeatureCollection structure."""
         from app.services.report_service import report_service
 
@@ -139,7 +141,9 @@ class TestAdminEndpoints:
         assert matching[0]["geometry"]["type"] == "Point"
         assert matching[0]["geometry"]["coordinates"] == [85.8245, 20.2961]
 
-    async def test_bulk_verify_atomic_and_audit_rows(self, api_client: AsyncClient, db_session: AsyncSession):
+    async def test_bulk_verify_atomic_and_audit_rows(
+        self, api_client: AsyncClient, db_session: AsyncSession
+    ):
         """Bulk verify updates statuses atomically and creates exactly 1 audit row per incident."""
         from app.services.report_service import report_service
 
@@ -221,6 +225,26 @@ class TestAdminEndpoints:
         audit_rows = list(a_res.scalars().all())
         assert len(audit_rows) >= 2
 
+        outbox_res = await db_session.execute(
+            select(RealtimeOutbox).where(
+                RealtimeOutbox.entity_id == str(inc_1.id),
+                RealtimeOutbox.event_type == "report.verification_changed",
+            )
+        )
+        outbox_row = outbox_res.scalar_one()
+        assert outbox_row.status == "PENDING"
+
+        from app.core.redis import redis_client
+
+        stream_entries = await redis_client.xrevrange(
+            "stream:weather:realtime", max_id="+", min_id="-", count=100
+        )
+        assert any(
+            entry[1].get("event_id") == str(outbox_row.event_id)
+            and entry[1].get("event_type") == "report.verification_changed"
+            for entry in stream_entries
+        )
+
         res_logs = await api_client.get("/api/v1/admin/audit-logs?action=BULK_VERIFY")
         assert res_logs.status_code == 200
         logs_data = res_logs.json()
@@ -230,7 +254,9 @@ class TestAdminEndpoints:
         assert first_log["action"] == "BULK_VERIFY"
         assert first_log["user_email"] is not None
 
-    async def test_bulk_verify_rollback_on_invalid_id(self, api_client: AsyncClient, db_session: AsyncSession):
+    async def test_bulk_verify_rollback_on_invalid_id(
+        self, api_client: AsyncClient, db_session: AsyncSession
+    ):
         """Atomic guarantee: if any ID in the bulk batch is invalid, all updates roll back."""
         from app.services.report_service import report_service
 
@@ -265,3 +291,37 @@ class TestAdminEndpoints:
 
         await db_session.refresh(valid_inc)
         assert valid_inc.verification_status == "PENDING"
+
+    async def test_bulk_verify_rejects_invalid_transition(
+        self, api_client: AsyncClient, db_session: AsyncSession
+    ):
+        """Bulk verification rejects reports already in a terminal state."""
+        from app.services.report_service import report_service
+
+        source = await report_service.get_or_create_source(db_session, source_code="CITIZEN")
+        terminal_incident = WeatherReport(
+            id=uuid.uuid4(),
+            tracking_id=f"R3-TERMINAL-{uuid.uuid4().hex[:8].upper()}",
+            source_id=source.id,
+            title="Already verified incident",
+            reported_category="FLOOD_WATERLOGGING",
+            severity="MODERATE",
+            verification_status="VERIFIED",
+            processing_status="COMPLETED",
+            latitude=19.0760,
+            longitude=72.8777,
+            geom="SRID=4326;POINT(72.8777 19.0760)",
+            occurred_at=datetime.now(timezone.utc),
+            is_demo=False,
+        )
+        db_session.add(terminal_incident)
+        await db_session.commit()
+
+        response = await api_client.post(
+            "/api/v1/admin/verification/bulk",
+            json={"incident_ids": [str(terminal_incident.id)], "action": "VERIFY"},
+        )
+
+        assert response.status_code == 400
+        await db_session.refresh(terminal_incident)
+        assert terminal_incident.verification_status == "VERIFIED"

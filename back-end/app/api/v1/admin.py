@@ -15,9 +15,9 @@ from sqlalchemy.orm import selectinload
 from app.api.deps import get_current_operator
 from app.db.session import get_db
 from app.models.audit import AuditLog
+from app.models.outbox import RealtimeOutbox
 from app.models.report import WeatherReport
 from app.models.user import User
-from app.models.verification import VerificationEvent
 from app.schemas.admin import (
     AuditLogItem,
     AuditLogListResponse,
@@ -286,20 +286,10 @@ async def bulk_verification_action(
     # ── Pass 2: Apply mutations and commit once ──────────────────────────────────
     affected_ids: list[str] = []
     try:
-        reviewer = await report_service.get_or_create_default_reviewer(db)
         for report in resolved:
-            previous_status = (report.verification_status or "PENDING").upper()
-
-            report.verification_status = target_status
-            if target_status == "VERIFIED":
-                report.processing_status = "COMPLETED"
-            elif target_status == "REJECTED":
-                report.processing_status = "CLOSED"
-
-            verification_event = VerificationEvent(
-                report_id=report.id,
-                user_id=reviewer.id,
-                previous_status=previous_status,
+            await report_service.update_verification_status(
+                session=db,
+                report_id_or_tracking=str(report.id),
                 new_status=target_status,
                 notes=payload.notes,
                 action_metadata={
@@ -307,8 +297,8 @@ async def bulk_verification_action(
                     "rejection_reason": payload.rejection_reason,
                     "operator_email": current_operator.email,
                 },
+                commit=False,
             )
-            db.add(verification_event)
 
             audit_log = AuditLog(
                 user_id=current_operator.id,
@@ -326,7 +316,19 @@ async def bulk_verification_action(
             db.add(audit_log)
             affected_ids.append(str(report.id))
 
+        await db.flush()
+        outbox_result = await db.execute(
+            select(RealtimeOutbox).where(
+                RealtimeOutbox.entity_id.in_(affected_ids),
+                RealtimeOutbox.event_type == "report.verification_changed",
+                RealtimeOutbox.status == "PENDING",
+            )
+        )
+        staged_outbox_rows = list(outbox_result.scalars().all())
         await db.commit()
+
+        for outbox_row in staged_outbox_rows:
+            await report_service.realtime_svc.publish_staged_outbox(outbox_row)
     except Exception as e:
         await db.rollback()
         logger.error(f"Bulk action failed unexpectedly: {e}")

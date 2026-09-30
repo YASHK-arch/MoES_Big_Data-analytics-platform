@@ -480,6 +480,7 @@ class ReportService:
         new_status: str,
         notes: Optional[str] = None,
         action_metadata: Optional[Dict[str, Any]] = None,
+        commit: bool = True,
     ) -> WeatherReport:
         """Update report verification status and record persistent VerificationEvent audit trail."""
         report = await self.get_report_by_id_or_tracking(session, report_id_or_tracking)
@@ -538,6 +539,9 @@ class ReportService:
             new_status=clean_status,
             category_code=report.reported_category,
         )
+
+        if not commit:
+            return report
 
         await session.commit()
 
