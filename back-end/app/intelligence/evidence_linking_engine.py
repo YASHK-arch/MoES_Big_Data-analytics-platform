@@ -155,8 +155,9 @@ class EvidenceLinkingEngine:
             if cat_val:
                 cat_code = cat_val
         elif report.reported_category:
-            cat_code = report.reported_category
+            cat_code = report.reported_category.upper()
 
+        assessed_pairs = []
         for ev in candidate_evidence:
             source_type = ev.evidence_type
             if ev.source_id:
@@ -183,8 +184,17 @@ class EvidenceLinkingEngine:
                 evidence_url=ev.url,
                 evidence_domain=ev.publisher_domain,
             )
+            assessed_pairs.append((ev, assessment))
 
-            if assessment.relationship_type != EvidenceRelationship.IRRELEVANT:
+        # Top-N per incident cap: keep highest confidence links up to 10
+        positive_pairs = [
+            p for p in assessed_pairs if p[1].relationship_type != EvidenceRelationship.IRRELEVANT
+        ]
+        positive_pairs.sort(key=lambda p: p[1].overall_score, reverse=True)
+        top_positive_ev_ids = {p[0].id for p in positive_pairs[:10]}
+
+        for ev, assessment in assessed_pairs:
+            if ev.id in top_positive_ev_ids:
                 link_id = await self._persist_link(
                     db=db,
                     incident_id=report.id,

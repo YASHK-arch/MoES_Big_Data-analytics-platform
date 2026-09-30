@@ -154,9 +154,9 @@ class EvidenceScorer:
         matches = sum(1 for kw in keywords if kw in clean_text)
 
         if matches >= 2:
-            return 1.0
+            return 1.0 if clean_cat != "OTHER" else 0.7
         elif matches == 1:
-            return 0.8
+            return 0.8 if clean_cat != "OTHER" else 0.5
         elif any(
             kw in clean_text
             for kw in ["rain", "storm", "flood", "alert", "weather", "warning", "monsoon"]
@@ -244,8 +244,12 @@ class EvidenceScorer:
         spatial_score = 0.0
         entity_score = 0.5
 
-        # Identify cities from both text and resolver
-        inc_city = inc_loc_res.city
+        # Identify cities and states from both text and resolver
+        inc_text_res = location_resolver.resolve(text=inc_full_text)
+        inc_city = inc_loc_res.city or inc_text_res.city
+        inc_state = inc_loc_res.state or inc_text_res.state
+        evi_state = evi_loc_res.state
+
         if not inc_city and incident_loc_name:
             loc_clean = incident_loc_name.lower()
             cities = [
@@ -454,6 +458,25 @@ class EvidenceScorer:
                 assessed_at=datetime.now(timezone.utc),
             )
 
+        # Gate 4b: Confirmed different states -> IRRELEVANT
+        if (
+            evi_loc_res.state
+            and inc_loc_res.state
+            and evi_loc_res.state.lower() != inc_loc_res.state.lower()
+        ):
+            return EvidenceLinkAssessment(
+                incident_id=incident_id,
+                evidence_id=evidence_id,
+                relationship_type=EvidenceRelationship.IRRELEVANT,
+                overall_score=0.0,
+                signals=signals,
+                explanation=f"Evidence is in a different state ({evi_loc_res.state} vs {inc_loc_res.state}).",
+                engine_version=self.engine_version,
+                policy_version=self.policy_version,
+                semantic_method=self.semantic_method,
+                assessed_at=datetime.now(timezone.utc),
+            )
+
         # Gate 5: Extreme temporal mismatch (> 48h horizon) -> IRRELEVANT
         if temporal_delta_hours is not None and temporal_delta_hours > self.max_window_hours:
             return EvidenceLinkAssessment(
@@ -499,9 +522,14 @@ class EvidenceScorer:
         )
 
         # Contextual check (Government review / preparedness)
-        is_contextual = self._is_contextual_text(evi_full_text) or (
-            evi_loc_res.state and not evi_loc_res.city and not evi_loc_res.locality
+        is_state_advisory = bool(
+            evi_loc_res.state
+            and not evi_loc_res.city
+            and not evi_loc_res.locality
+            and inc_state
+            and evi_loc_res.state.lower() == inc_state.lower()
         )
+        is_contextual = self._is_contextual_text(evi_full_text) or is_state_advisory
 
         if is_contextual and overall >= self.contextual_threshold:
             return EvidenceLinkAssessment(
