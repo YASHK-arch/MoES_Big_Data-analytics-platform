@@ -109,22 +109,25 @@ def run_checks():
     sse_thread.start()
     time.sleep(0.5)
 
-    # 3. POST one report per category (including FOG, DUST_STORM, STRONG_WIND, OTHER)
+    # 3. POST one report per accepted category (all 13 canonical categories)
     categories = [
+        "FLOOD_WATERLOGGING",
+        "HEAVY_RAINFALL",
+        "THUNDERSTORM_LIGHTNING",
+        "CYCLONE_STORM",
+        "HEATWAVE",
+        "HAILSTORM",
+        "LANDSLIDE",
+        "DROUGHT",
+        "URBAN_FLOOD",
         "FOG",
         "DUST_STORM",
         "STRONG_WIND",
         "OTHER",
-        "FLOOD_WATERLOGGING",
-        "HEAVY_RAINFALL",
-        "CYCLONE_STORM",
-        "LANDSLIDE",
-        "HEATWAVE",
-        "COLD_WAVE",
     ]
     submitted_reports = []
-    print(f"3. Posting reports for {len(categories)} categories...")
-    for cat in categories:
+    print(f"3. Posting reports for all {len(categories)} accepted categories...")
+    for idx, cat in enumerate(categories):
         form = {
             "latitude": "28.6139",
             "longitude": "77.2090",
@@ -134,7 +137,8 @@ def run_checks():
             "description": f"Automated smoke test report for category {cat}",
             "location_name": "New Delhi Smoke Test Area",
         }
-        status, body, _ = http_post(f"{API_V1}/reports", data=form, is_form=True)
+        hdrs = {"X-Forwarded-For": f"198.51.100.{10 + idx}"}
+        status, body, _ = http_post(f"{API_V1}/reports", data=form, headers=hdrs, is_form=True)
         assert status == 201, f"POST /reports for {cat} failed ({status}): {body.decode()}"
         res = json.loads(body.decode())
         rpt_data = res.get("data", {})
@@ -143,6 +147,30 @@ def run_checks():
         submitted_reports.append((cat, tracking_id, report_id))
         print(f"   - {cat}: tracking_id={tracking_id}")
     results["categories_posted"] = len(submitted_reports)
+
+    # 3b. Verify each submitted report got a non-NULL category_id
+    import subprocess
+    print("3b. Verifying non-NULL category_id for each submitted category report...")
+    tracking_ids = [t[1] for t in submitted_reports]
+    in_clause = "'" + "','".join(tracking_ids) + "'"
+    cmd = [
+        "docker", "exec", "sih-demo-postgres-1",
+        "psql", "-U", "weather_demo", "-d", "weather_demo", "-t", "-c",
+        f"SELECT tracking_id, category_id, reported_category FROM weather_reports WHERE tracking_id IN ({in_clause});"
+    ]
+    raw_out = subprocess.check_output(cmd).decode("utf-8").strip()
+    db_cat_map = {}
+    for line in raw_out.splitlines():
+        parts = [p.strip() for p in line.split("|")]
+        if len(parts) >= 2:
+            t_id, c_id = parts[0], parts[1]
+            db_cat_map[t_id] = c_id if c_id else None
+
+    for cat, trk, rpt_id in submitted_reports:
+        cat_id = db_cat_map.get(trk)
+        print(f"   - Category {cat} ({trk}) -> category_id: {cat_id}")
+        assert cat_id is not None and len(cat_id) > 10, f"Report {trk} for {cat} has NULL or invalid category_id: {cat_id}"
+    results["all_categories_have_category_id"] = "PASS"
 
     # 4. Poll tracking until pipeline is COMPLETED
     print("4. Polling pipeline tracking for first report...")

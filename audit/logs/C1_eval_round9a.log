@@ -1,0 +1,59 @@
+Loaded 200 incidents from audit DB.
+
+=== MEASUREMENT RESULTS (200 Incidents vs No-Links Baseline) ===
+BEFORE CAP:
+  Mean absolute delta: 0.0659
+  p50 absolute delta:  0.0687
+  p95 absolute delta:  0.1430
+  Max absolute delta:  0.1742
+  Threshold crossings before:
+    Threshold 0.45: 24 (12.0%)
+    Threshold 0.50: 24 (12.0%)
+    Threshold 0.65: 36 (18.0%)
+    Threshold 0.70: 45 (22.5%)
+    Threshold 0.80: 16 (8.0%)
+    Threshold 0.82: 7 (3.5%)
+    Threshold 0.85: 5 (2.5%)
+    Threshold 0.88: 1 (0.5%)
+
+AFTER CAP:
+  Mean absolute delta: 0.0303
+  p50 absolute delta:  0.0300
+  p95 absolute delta:  0.1430
+  Max absolute delta:  0.1742
+  Threshold crossings after:
+    Threshold 0.45: 0 (0.0%)
+    Threshold 0.50: 0 (0.0%)
+    Threshold 0.65: 10 (5.0%)
+    Threshold 0.70: 11 (5.5%)
+    Threshold 0.80: 2 (1.0%)
+    Threshold 0.82: 2 (1.0%)
+    Threshold 0.85: 2 (1.0%)
+    Threshold 0.88: 1 (0.5%)
+
+=== WEAK-LINK ISOLATED CONTRIBUTION (Delta over Strong Evidence Baseline) ===
+BEFORE CAP (Weak links alone):
+  Mean weak delta: 0.0568
+  p95 weak delta:  0.0888
+  Max weak delta:  0.1025
+  Threshold crossings caused by weak links: 130
+    Threshold 0.45: 24 (12.0%)
+    Threshold 0.50: 24 (12.0%)
+    Threshold 0.65: 26 (13.0%)
+    Threshold 0.70: 34 (17.0%)
+    Threshold 0.80: 14 (7.0%)
+    Threshold 0.82: 5 (2.5%)
+    Threshold 0.85: 3 (1.5%)
+AFTER CAP (Weak links alone):
+  Mean weak delta: 0.0212
+  p95 weak delta:  0.0300
+  Max weak delta:  0.0300
+  Threshold crossings caused by weak links: 0
+    Threshold 0.45: 0 (0.0%)
+    Threshold 0.50: 0 (0.0%)
+    Threshold 0.65: 0 (0.0%)
+    Threshold 0.70: 0 (0.0%)
+    Threshold 0.80: 0 (0.0%)
+    Threshold 0.82: 0 (0.0%)
+    Threshold 0.85: 0 (0.0%)
+    Threshold 0.88: 0 (0.0%)

@@ -68,28 +68,34 @@ async def get_new_links(db, report, candidate_evidence):
     return {ev_id: assess for ev_id, assess in assessed[:10]}
 
 def build_groups(links_map, ev_by_id):
-    prov_map = defaultdict(lambda: [0, 0.0, 0.0, SourceFamily.NEWS, False])
+    prov_map = defaultdict(lambda: [0, 0.0, 0.0, SourceFamily.NEWS, False, None])
     for ev_id, a in links_map.items():
         ev = ev_by_id.get(ev_id)
         if not ev:
             continue
+        rel_type = a.relationship_type.value
         if a.relationship_type == EvidenceRelationship.SUPPORTING:
             role_w = 1.00
         elif a.relationship_type == EvidenceRelationship.RELATED:
             role_w = 0.35
+        elif a.relationship_type == EvidenceRelationship.CONTEXTUAL:
+            role_w = 0.20
         else:
             role_w = 0.00
         fam = map_source_type_to_family(ev.evidence_type)
         pkey = f'domain_{ev.publisher_domain.lower()}' if ev.publisher_domain else f'evi_{ev.id}'
         prov_map[pkey][0] += 1
         prov_map[pkey][1] = max(prov_map[pkey][1], a.overall_score)
+        if role_w > prov_map[pkey][2] or prov_map[pkey][5] is None:
+            prov_map[pkey][5] = rel_type
         prov_map[pkey][2] = max(prov_map[pkey][2], role_w)
         prov_map[pkey][3] = fam
 
     return [
         DigitalEvidenceGroupInput(
             provenance_key=k, article_count=v[0], max_confidence=v[1],
-            role_weight=v[2], source_family=v[3], is_derived_lineage=v[4]
+            role_weight=v[2], source_family=v[3], is_derived_lineage=v[4],
+            relationship_type=v[5],
         ) for k, v in prov_map.items() if v[2] > 0.0
     ]
 
@@ -125,8 +131,12 @@ async def main():
 
         deltas_before = []
         deltas_after = []
+        weak_deltas_before = []
+        weak_deltas_after = []
         crossings_before = {t: 0 for t in THRESHOLDS}
         crossings_after = {t: 0 for t in THRESHOLDS}
+        crossings_weak_before = {t: 0 for t in THRESHOLDS}
+        crossings_weak_after = {t: 0 for t in THRESHOLDS}
 
         for rep in reports:
             time_min = rep.occurred_at - evidence_candidate_generator.max_window
@@ -149,6 +159,12 @@ async def main():
 
             # Full: all links before cap (raw uncapped)
             groups_all = build_groups(links, ev_by_id)
+
+            # Strong-only baseline:
+            groups_strong = [g for g in groups_all if not credibility_scorer._is_weak_group(g)]
+            inp_strong = raw_inputs.model_copy(deep=True)
+            inp_strong.evidence_groups = groups_strong
+            s_strong = credibility_scorer._compute_raw_signals(inp_strong).final_credibility_score
             inp_full = raw_inputs.model_copy(deep=True)
             inp_full.evidence_groups = groups_all
             s_full_uncapped = credibility_scorer._compute_raw_signals(inp_full).final_credibility_score
@@ -162,16 +178,27 @@ async def main():
             deltas_before.append(d_before)
             deltas_after.append(d_after)
 
+            d_weak_before = max(0.0, s_full_uncapped - s_strong)
+            d_weak_after = max(0.0, s_capped - s_strong)
+            weak_deltas_before.append(d_weak_before)
+            weak_deltas_after.append(d_weak_after)
+
             for t in THRESHOLDS:
                 if s_base < t <= s_full_uncapped:
                     crossings_before[t] += 1
                 if s_base < t <= s_capped:
                     crossings_after[t] += 1
+                if s_strong < t <= s_full_uncapped:
+                    crossings_weak_before[t] += 1
+                if s_strong < t <= s_capped:
+                    crossings_weak_after[t] += 1
 
         await engine.dispose()
 
         p95_b = sorted(deltas_before)[int(len(deltas_before) * 0.95)]
         p95_a = sorted(deltas_after)[int(len(deltas_after) * 0.95)]
+        p95_wb = sorted(weak_deltas_before)[int(len(weak_deltas_before) * 0.95)]
+        p95_wa = sorted(weak_deltas_after)[int(len(weak_deltas_after) * 0.95)]
 
         print("\n=== MEASUREMENT RESULTS (200 Incidents vs No-Links Baseline) ===")
         print(f"BEFORE CAP:")
@@ -191,6 +218,24 @@ async def main():
         print(f"  Threshold crossings after:")
         for t in THRESHOLDS:
             print(f"    Threshold {t:.2f}: {crossings_after[t]} ({crossings_after[t]/len(reports)*100:.1f}%)")
+
+        print(f"\n=== WEAK-LINK ISOLATED CONTRIBUTION (Delta over Strong Evidence Baseline) ===")
+        print(f"BEFORE CAP (Weak links alone):")
+        print(f"  Mean weak delta: {statistics.mean(weak_deltas_before):.4f}")
+        print(f"  p95 weak delta:  {p95_wb:.4f}")
+        print(f"  Max weak delta:  {max(weak_deltas_before):.4f}")
+        print(f"  Threshold crossings caused by weak links: {sum(crossings_weak_before.values())}")
+        for t, cnt in crossings_weak_before.items():
+            if cnt > 0:
+                print(f"    Threshold {t:.2f}: {cnt} ({cnt/len(reports)*100:.1f}%)")
+
+        print(f"AFTER CAP (Weak links alone):")
+        print(f"  Mean weak delta: {statistics.mean(weak_deltas_after):.4f}")
+        print(f"  p95 weak delta:  {p95_wa:.4f}")
+        print(f"  Max weak delta:  {max(weak_deltas_after):.4f}")
+        print(f"  Threshold crossings caused by weak links: {sum(crossings_weak_after.values())}")
+        for t, cnt in crossings_weak_after.items():
+            print(f"    Threshold {t:.2f}: {cnt} ({cnt/len(reports)*100:.1f}%)")
 
 if __name__ == "__main__":
     asyncio.run(main())

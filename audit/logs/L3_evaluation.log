@@ -1,0 +1,32 @@
+Loaded 200 incidents from audit DB.
+
+=== 20-Link Table Evaluation (Pre-L1 vs New Logic) ===
+| # | Incident Title | City | Evidence Title | Old Score | New Score | New Role | Status |
+|---|---|---|---|---|---|---|---|
+| 1 | State Machine Test Report 22c6 | Unknown | Subway Inundation at Kurla Sta | 0.5425 | 0.6175 | RELATED | ACTIVE |
+| 2 | Real Ingestion Test FLOOD_WATE | Mumbai, Maharas | Subway Inundation at Kurla Sta | 0.6481 | 0.6481 | RELATED | ACTIVE |
+| 3 | Severe Waterlogging in Puri Ma | Puri, Odisha | Mastodon post: Flooding in sec | 0.5626 | 0.4626 | IRRELEVANT | **REMOVED** |
+| 4 | High Intensity Downpour | Andheri East, M | Storm in Goa 0f771dcc | 0.5339 | 0.0000 | IRRELEVANT | **REMOVED** |
+| 5 | Severe Inundation at MG Road | MG Road, Bengal | Severe Flooding Alert ea00a987 | 0.5292 | 0.4292 | IRRELEVANT | **REMOVED** |
+| 6 | Chennai flood event | Unknown | Severe Flooding Alert 271a73a7 | 0.5604 | 0.4604 | IRRELEVANT | **REMOVED** |
+| 7 | State Machine Test Report 4480 | Unknown | Severe waterlogging reported n | 0.5550 | 0.6300 | RELATED | ACTIVE |
+| 8 | Atomic Outbox Report Test | Bandra East | Subway Inundation at Kurla Sta | 0.6372 | 0.7122 | RELATED | ACTIVE |
+| 9 | State Machine Test Report 386f | Unknown | Subway Inundation at Kurla Sta | 0.5425 | 0.6175 | RELATED | ACTIVE |
+| 10 | Cyclone Gale Warning | Puri, Odisha | Puri Flood News Article | 0.5593 | 0.6343 | RELATED | ACTIVE |
+| 11 | Severe Waterlogging on Mount R | Anna Salai, Che | Severe Flooding Alert ea00a987 | 0.5700 | 0.4700 | IRRELEVANT | **REMOVED** |
+| 12 | Severe Inundation at MG Road | MG Road, Bengal | Mastodon post: Flooding in sec | 0.5143 | 0.4143 | IRRELEVANT | **REMOVED** |
+| 13 | State Machine Test Report 8105 | Unknown | Severe waterlogging reported n | 0.5550 | 0.6300 | RELATED | ACTIVE |
+| 14 | Heavy Flood in Kurla East | Kurla, Mumbai | Mastodon post: Flooding in sec | 0.5650 | 0.4650 | IRRELEVANT | **REMOVED** |
+| 15 | Severe Waterlogging on Mount R | Anna Salai, Che | Mastodon post: Flooding in sec | 0.5573 | 0.4573 | IRRELEVANT | **REMOVED** |
+| 16 | Evidence media test report | Unknown | Subway Inundation at Kurla Sta | 0.5725 | 0.6475 | RELATED | ACTIVE |
+| 17 | Real Ingestion Test FLOOD_WATE | Mumbai, Maharas | Severe waterlogging reported n | 0.6603 | 0.6603 | RELATED | ACTIVE |
+| 18 | Cyclone Storm Damage | Puri, Odisha | Flash Flood Submerges Grand Ro | 0.5576 | 0.6326 | RELATED | ACTIVE |
+| 19 | Cyclone Gale Warning | Puri, Odisha | Cyclone Storm Gale Hits Puri C | 0.6292 | 0.7042 | RELATED | ACTIVE |
+| 20 | Heavy Flood in Kurla East | Kurla, Mumbai | Mastodon post: Flooding in sec | 0.5650 | 0.4650 | IRRELEVANT | **REMOVED** |
+
+Implausible rows (1, 4, 6, 7, 9, 10, 11, 12, 13, 16, 18, 19, 20) remaining: 8 / 13
+
+=== Aggregate Impact on 200 Incidents ===
+Total links formed (score >= 0.50): 1142 (Old) -> 713 (New)
+Cap hits: 79 / 200
+Persisted credibility deltas vs no-links baseline: Mean=0.0265, p95=0.1461, Max=0.2310

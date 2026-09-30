@@ -1,0 +1,3 @@
+[weather_platform_audit] Marked 10000 / 10000 evidence items as is_test_fixture=TRUE (Command: UPDATE 10000)
+[weather_platform] Marked 479 / 1311 evidence items as is_test_fixture=TRUE (Command: UPDATE 479)
+[weather_platform_test] Marked 45 / 187 evidence items as is_test_fixture=TRUE (Command: UPDATE 45)
