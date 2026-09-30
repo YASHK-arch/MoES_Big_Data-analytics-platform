@@ -1,0 +1,253 @@
+=== ITEM 3: DEMO COMPOSE STACK WITH S1/S2 FIXTURES ===
+Date: 2026-09-30 22:42:13 UTC
+
+--- COMPOSE CONFIG CHECK (Environment & Flags) ---
+      IMAGE_FORENSICS_DEMO_FIXTURE_ENABLED: "true"
+      IMAGE_FORENSICS_ENABLED: "true"
+      LOCATION_MISMATCH_ENABLED: "false"
+      PHYSICAL_CORROBORATION_DEMO_FIXTURE_ENABLED: "true"
+      PHYSICAL_CORROBORATION_ENABLED: "true"
+  IMAGE_FORENSICS_DEMO_FIXTURE_ENABLED: "true"
+  IMAGE_FORENSICS_ENABLED: "true"
+  LOCATION_MISMATCH_ENABLED: "false"
+  PHYSICAL_CORROBORATION_DEMO_FIXTURE_ENABLED: "true"
+  PHYSICAL_CORROBORATION_ENABLED: "true"
+
+--- MIGRATION REVISION CHECK ---
+INFO  [alembic.runtime.migration] Context impl PostgresqlImpl.
+INFO  [alembic.runtime.migration] Will assume transactional DDL.
+0020_image_forensics (head)
+
+--- SMOKE TEST: HEALTH ENDPOINT ---
+{"success":true,"data":{"status":"healthy","service":"National Weather Big Data Analytics Platform","environment":"production","version":"0.1.0"},"meta":{"timestamp":"2026-09-30T22:42:15.233864+00:00"}}
+
+--- SMOKE TEST: READY ENDPOINT ---
+{"success":true,"data":{"status":"ready","checks":{"database":"ok","redis":"ok","alembic":"0020_image_forensics"}},"meta":{"timestamp":"2026-09-30T22:42:15.261780+00:00"}}
+
+--- SMOKE TEST: OPERATOR AUTH (/api/v1/auth/login) ---
+{
+    "success": true,
+    "data": {
+        "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJhMWIyYzNkNC1lNWY2LTc4OTAtYWJjZC0xMjM0NTY3ODkwYWIiLCJyb2xlIjoiT1BFUkFUT1IiLCJleHAiOjE3OTA4OTQ1MzUsImlhdCI6MTc5MDgwODEzNSwiZW1haWwiOiJvcGVyYXRvckB3ZWF0aGVyLXBsYXRmb3JtLmdvdi5pbiIsImZ1bGxfbmFtZSI6Ik5hdGlvbmFsIERFT0MgTGVhZCBPcGVyYXRvciJ9.MEWc29cemKgWk--8_X1mUVrRaLpNy-DV-SDPKWRbw3g",
+        "token_type": "bearer",
+        "expires_in_seconds": 86400,
+        "user": {
+            "id": "a1b2c3d4-e5f6-7890-abcd-1234567890ab",
+            "email": "operator@weather-platform.gov.in",
+            "full_name": "National DEOC Lead Operator",
+            "role": "OPERATOR",
+            "jurisdiction_code": "NATIONAL_DEOC",
+
+--- SIMULATED S1 SCENARIO (Physical Corroboration Fixture: DEMO-SIM-S1-CORROB) ---
+{
+    "success": true,
+    "data": {
+        "id": "1afe4ddf-8c29-490c-a985-85108ddb4fbb",
+        "tracking_id": "DEMO-SIM-S1-CORROB",
+        "title": "[SIMULATED S1] Heavy Rainfall Physical Corroboration Scenario",
+        "description": "Simulated meteorological station corroboration fixture for demo presentation.",
+        "category": {
+            "code": "HEAVY_RAINFALL",
+            "title": "HEAVY_RAINFALL"
+        },
+        "severity": "SEVERE",
+        "location": {
+            "name": "New Delhi Regional Met Center",
+            "latitude": 28.6139,
+            "longitude": 77.209
+        },
+        "occurred_at": "2026-09-30T22:41:44.859778Z",
+        "processing_status": "COMPLETED",
+        "verification_status": "VERIFIED",
+        "credibility_score": 0.75,
+        "credibility_reason": null,
+        "is_demo": false,
+        "media": [],
+        "verification_history": [],
+        "physical_corroboration": {
+            "overall_verdict": "SUPPORTS",
+            "overall_provider_status": "OK",
+            "total_contribution": 0.0941,
+            "items": [
+                {
+                    "id": "448039c7-07f0-4fc2-9a76-9f3c25565932",
+                    "variable": "rainfall_24h",
+                    "observed_value": 142.0,
+                    "unit": "mm/24h",
+                    "source": "DEMO_FIXTURE_STATION",
+                    "source_type": "STATION",
+                    "station_or_grid_id": "AWS_DEMO_SUPPORT_01",
+                    "distance_km": 1.48,
+                    "time_gap_hours": 0.0,
+                    "verdict": "SUPPORTS",
+                    "weight": 0.9408,
+                    "contribution": 0.0941,
+                    "provider_status": "OK",
+                    "observation_time": "2026-09-30T22:41:44.859778Z",
+                    "explanation": "Measured 24h rainfall of 142.0 mm exceeds IMD heavy rain threshold (64.5 mm)",
+                    "is_simulated": true
+                }
+            ],
+            "is_simulated": true
+        },
+        "physical_verdict": "SUPPORTS",
+        "created_at": "2026-09-30T22:41:44.582614Z"
+    },
+    "meta": {
+        "timestamp": "2026-09-30T22:42:15.525605+00:00",
+        "request_id": "req_fece66b2ff15"
+    }
+}
+
+--- SIMULATED S2 SCENARIO (Image Forensics Fixture: DEMO-SIM-S2-FORENSICS) ---
+{
+    "success": true,
+    "data": {
+        "id": "ca5d2a00-aa08-42c6-907b-0274ba8ff64e",
+        "tracking_id": "DEMO-SIM-S2-FORENSICS",
+        "title": "[SIMULATED S2] Image Forensics Reused Photo Scenario",
+        "description": "Simulated photo reuse contradiction fixture for demo presentation.",
+        "category": {
+            "code": "FLOOD_WATERLOGGING",
+            "title": "Flood Waterlogging"
+        },
+        "severity": "HIGH",
+        "location": {
+            "name": "Mumbai Marine Drive Area",
+            "latitude": 19.076,
+            "longitude": 72.8777,
+            "resolution_status": "RESOLVED",
+            "confidence": 1.0
+        },
+        "occurred_at": "2026-09-30T22:41:44.859778Z",
+        "credibility": {
+            "score": 0.55,
+            "is_machine_assessed": true,
+            "label": "MODERATE_CREDIBILITY",
+            "engine_version": "v1",
+            "policy_version": "v1",
+            "explanation": null,
+            "reason": "Moderate machine credibility (55%) based on baseline intake.",
+            "positive_drivers": [],
+            "negative_drivers": [],
+            "uncertainty_flags": []
+        },
+        "verification": {
+            "status": "PENDING",
+            "is_human_verified": false,
+            "verified_at": null
+        },
+        "intelligence_status": {
+            "overall_readiness": "INTELLIGENCE_PENDING",
+            "last_computed_at": "2026-09-30T22:42:15.557520Z"
+        },
+        "summaries": {
+            "evidence_count": 0,
+            "observation_count": 0,
+            "duplicate_cluster_size": 1,
+            "is_cluster_representative": true
+        },
+        "is_demo": false,
+        "media": [
+            {
+                "id": "1ebab6a1-2cd4-4d57-8310-d2f233fcb17e",
+                "media_type": "IMAGE",
+                "url": "http://minio:9000/demo-weather-evidence/demo/simulated_reused_image_ca5d2a00-aa08-42c6-907b-0274ba8ff64e.jpg?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=minioadmin%2F20260930%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20260930T224215Z&X-Amz-Expires=3600&X-Amz-SignedHeaders=host&X-Amz-Signature=fa6bea6fd3f3531919d8c59cff71a5b3e574ec0a5a4edf6d6648d713af5a131b",
+                "sha256_hash": "demof1e4e55072af48bbace4863d7b0fd884"
+            }
+        ],
+        "image_forensics": {
+            "overall_verdict": "CONTRADICTS",
+            "total_credibility_adjustment": -0.05,
+            "image_count": 1,
+            "is_simulated": true,
+            "images": [
+                {
+                    "media_id": "1ebab6a1-2cd4-4d57-8310-d2f233fcb17e",
+                    "sha256": "demof1e4e55072af48bbace4863d7b0fd884",
+                    "phash": "a1b2c3d4e5f60000",
+                    "has_exif": true,
+                    "exif_timestamp_utc": "2026-09-30T22:41:44.859778Z",
+                    "timezone_assumed_ist": false,
+                    "time_verdict": "SUPPORTS",
+                    "time_difference": "0.10 hours",
+                    "location_verdict": "SUPPORTS",
+                    "location_difference": "1.20 km",
+                    "reuse_verdict": "CONTRADICTS",
+                    "matched_incident_ids": [
+                        "9170f4d7-0252-4094-9d49-3c4fdd04c725"
+                    ],
+                    "overall_verdict": "CONTRADICTS",
+                    "credibility_adjustment": -0.05,
+                    "error_reason": null,
+                    "is_simulated": true,
+                    "checks": [
+                        {
+                            "check_type": "EXIF_TIME",
+                            "verdict": "SUPPORTS",
+                            "observed_value": "2026-09-30T22:41:44.859778+00:00",
+                            "expected_value": "2026-09-30T22:41:44.859778+00:00",
+                            "difference": "0.10 hours",
+                            "reason": "EXIF capture timestamp is consistent with incident window",
+                            "matched_incident_ids": []
+                        },
+                        {
+                            "check_type": "EXIF_LOCATION",
+                            "verdict": "SUPPORTS",
+                            "observed_value": "COORDINATES_PRESENT",
+                            "expected_value": "DECLARED_INCIDENT_LOCATION",
+                            "difference": "1.20 km",
+                            "reason": "EXIF GPS coordinates match declared location within 1.20 km",
+                            "matched_incident_ids": []
+                        },
+                        {
+                            "check_type": "IMAGE_REUSE",
+                            "verdict": "CONTRADICTS",
+                            "observed_value": "1 distant matches",
+                            "expected_value": "0 cross-incident matches",
+                            "difference": "1 distant incident(s)",
+                            "reason": "Perceptual hash match with separate past incident 9170f4d7-0252-4094-9d49-3c4fdd04c725",
+                            "matched_incident_ids": [
+                                "9170f4d7-0252-4094-9d49-3c4fdd04c725"
+                            ]
+                        }
+                    ]
+                }
+            ]
+        },
+        "created_at": "2026-09-30T22:41:44.582614Z"
+    },
+    "meta": {
+        "timestamp": "2026-09-30T22:42:15.560892+00:00",
+        "request_id": "req_946b6b1c83d8"
+    }
+}
+
+--- CONTAINER STATUS & HEALTH ---
+NAME                            IMAGE                           COMMAND                  SERVICE              CREATED         STATUS                   PORTS
+sih-demo-api-1                  sih-backend:latest              "uvicorn app.main:ap…"   api                  2 minutes ago   Up 2 minutes (healthy)   8000/tcp
+sih-demo-minio-1                minio/minio:latest              "/usr/bin/docker-ent…"   minio                12 hours ago    Up 12 hours (healthy)    9000/tcp
+sih-demo-postgres-1             postgis/postgis:16-3.4-alpine   "docker-entrypoint.s…"   postgres             12 hours ago    Up 12 hours (healthy)    5432/tcp
+sih-demo-redis-1                redis:7-alpine                  "docker-entrypoint.s…"   redis                15 hours ago    Up 15 hours (healthy)    6379/tcp
+sih-demo-web-1                  sih-demo-web                    "/docker-entrypoint.…"   web                  2 minutes ago   Up 2 minutes             0.0.0.0:8080->80/tcp, [::]:8080->80/tcp
+sih-demo-worker-dispatcher-1    sih-backend:latest              "python -m app.worke…"   worker-dispatcher    2 minutes ago   Up 2 minutes (healthy)   8000/tcp
+sih-demo-worker-evidence-1      sih-backend:latest              "python -m app.worke…"   worker-evidence      2 minutes ago   Up 2 minutes (healthy)   8000/tcp
+sih-demo-worker-ingestion-1     sih-backend:latest              "python -m app.worke…"   worker-ingestion     2 minutes ago   Up 2 minutes (healthy)   8000/tcp
+sih-demo-worker-observation-1   sih-backend:latest              "python -m app.worke…"   worker-observation   2 minutes ago   Up 2 minutes (healthy)   8000/tcp
+sih-demo-worker-outbox-1        sih-backend:latest              "python -m app.worke…"   worker-outbox        2 minutes ago   Up 2 minutes (healthy)   8000/tcp
+sih-demo-worker-scheduler-1     sih-backend:latest              "python -m app.worke…"   worker-scheduler     2 minutes ago   Up 2 minutes (healthy)   8000/tcp
+
+--- DEMO STACK CONTAINER MEMORY & RESOURCE UTILIZATION ---
+NAME                                       CPU %     MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O
+sih-demo-web-1                             0.00%     9.105MiB / 64MiB      14.23%    51.8kB / 51.4kB   3.44MB / 4.1kB
+sih-demo-worker-ingestion-1                0.49%     104.6MiB / 192MiB     54.50%    746kB / 218kB     393kB / 53.2kB
+sih-demo-worker-dispatcher-1               5.70%     110.4MiB / 192MiB     57.49%    181MB / 17MB      627kB / 53.2kB
+sih-demo-worker-evidence-1                 2.63%     105.9MiB / 192MiB     55.16%    2.28MB / 1.62MB   0B / 53.2kB
+sih-demo-api-1                             0.77%     263.4MiB / 512MiB     51.44%    1.3MB / 508kB     9.73MB / 0B
+sih-demo-worker-scheduler-1                3.70%     112MiB / 256MiB       43.76%    845kB / 1.75MB    41kB / 53.2kB
+sih-demo-worker-outbox-1                   5.39%     104.2MiB / 192MiB     54.28%    1.1MB / 1.47MB    0B / 53.2kB
+sih-demo-worker-observation-1              0.17%     104.3MiB / 192MiB     54.31%    406kB / 451kB     0B / 53.2kB
+sih-demo-minio-1                           0.11%     106.3MiB / 256MiB     41.54%    27.6kB / 18.9kB   5.56MB / 34.7MB
+sih-demo-postgres-1                        2.86%     476.3MiB / 512MiB     93.03%    3.01GB / 25.7GB   1.9GB / 11.5GB
+sih-demo-redis-1                           1.57%     127.9MiB / 192MiB     66.59%    1.24GB / 1.25GB   114MB / 6.74GB
+

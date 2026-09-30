@@ -463,6 +463,104 @@ async def seed_bulk_demo_reports(session: AsyncSession, count: int = 500) -> Non
     print(f"✅ Seeded {count} demo weather reports flagged as [DEMO].")
 
 
+async def seed_simulated_scenarios(session: AsyncSession) -> None:
+    """Seed one SIMULATED S1 scenario and one SIMULATED S2 scenario for demo verification."""
+    from app.intelligence.image_forensics_demo_fixtures import (
+        SCENARIO_REUSED_IMAGE,
+        create_demo_image_forensics_scenario,
+    )
+    from app.intelligence.physical_corroboration.providers.fixture_provider import (
+        FixtureWeatherProvider,
+    )
+    from app.intelligence.physical_corroboration.service import (
+        PhysicalCorroborationService,
+    )
+
+    src_res = await session.execute(select(Source).where(Source.source_code == "CITIZEN_WEB"))
+    source = src_res.scalar_one_or_none()
+    if not source:
+        source = Source(
+            source_code="CITIZEN_WEB",
+            name="Citizen Web Portal",
+            source_type="CITIZEN_REPORT",
+            base_trust_score=0.6,
+            is_active=True,
+        )
+        session.add(source)
+        await session.flush()
+
+    now = datetime.now(timezone.utc)
+
+    # 1. SIMULATED S1 scenario: Physical Corroboration
+    s1_stmt = select(WeatherReport).where(WeatherReport.tracking_id == "DEMO-SIM-S1-CORROB")
+    s1_res = await session.execute(s1_stmt)
+    s1_report = s1_res.scalar_one_or_none()
+    if not s1_report:
+        s1_lat, s1_lng = 28.6139, 77.2090
+        s1_report = WeatherReport(
+            id=uuid.uuid4(),
+            tracking_id="DEMO-SIM-S1-CORROB",
+            source_id=source.id,
+            reported_category="HEAVY_RAINFALL",
+            severity="SEVERE",
+            title="[SIMULATED S1] Heavy Rainfall Physical Corroboration Scenario",
+            description="Simulated meteorological station corroboration fixture for demo presentation.",
+            location_name="New Delhi Regional Met Center",
+            latitude=s1_lat,
+            longitude=s1_lng,
+            geom=WKTElement(f"POINT({s1_lng} {s1_lat})", srid=4326),
+            occurred_at=now,
+            processing_status="COMPLETED",
+            verification_status="VERIFIED",
+            credibility_score=0.75,
+        )
+        session.add(s1_report)
+        await session.flush()
+
+        fixture_provider = FixtureWeatherProvider(scenario="SUPPORTS")
+        corrob_service = PhysicalCorroborationService(provider=fixture_provider)
+        await corrob_service.corroborate_incident(session, s1_report, force_run=True)
+        print("✅ Seeded SIMULATED S1 scenario (DEMO-SIM-S1-CORROB).")
+
+    # 2. SIMULATED S2 scenario: Image Forensics
+    s2_stmt = select(WeatherReport).where(WeatherReport.tracking_id == "DEMO-SIM-S2-FORENSICS")
+    s2_res = await session.execute(s2_stmt)
+    s2_report = s2_res.scalar_one_or_none()
+    if not s2_report:
+        s2_lat, s2_lng = 19.0760, 72.8777
+        s2_report = WeatherReport(
+            id=uuid.uuid4(),
+            tracking_id="DEMO-SIM-S2-FORENSICS",
+            source_id=source.id,
+            reported_category="FLOOD_WATERLOGGING",
+            severity="HIGH",
+            title="[SIMULATED S2] Image Forensics Reused Photo Scenario",
+            description="Simulated photo reuse contradiction fixture for demo presentation.",
+            location_name="Mumbai Marine Drive Area",
+            latitude=s2_lat,
+            longitude=s2_lng,
+            geom=WKTElement(f"POINT({s2_lng} {s2_lat})", srid=4326),
+            occurred_at=now,
+            processing_status="COMPLETED",
+            verification_status="PENDING",
+            credibility_score=0.55,
+        )
+        session.add(s2_report)
+        await session.flush()
+
+        other_id = str(uuid.uuid4())
+        await create_demo_image_forensics_scenario(
+            db=session,
+            report=s2_report,
+            scenario=SCENARIO_REUSED_IMAGE,
+            other_incident_id=other_id,
+            force=True,
+        )
+        print("✅ Seeded SIMULATED S2 scenario (DEMO-SIM-S2-FORENSICS).")
+
+    await session.commit()
+
+
 async def main() -> None:
     print("🌱 Running National Weather Platform Database Seeder...")
     async with async_session_factory() as session:
@@ -471,7 +569,9 @@ async def main() -> None:
         await seed_active_incidents(session)
         await seed_forecast_advisories(session)
         await seed_bulk_demo_reports(session, count=500)
+        await seed_simulated_scenarios(session)
     print("🚀 All demo data seeded successfully!")
+
 
 
 if __name__ == "__main__":
