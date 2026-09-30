@@ -46,7 +46,17 @@ class PhysicalCorroborationService:
         cache: Optional[SingleFlightGridHourCache] = None,
         config: Optional[PhysicalCorroborationConfig] = None,
     ) -> None:
-        self.provider = provider or OpenMeteoProvider()
+        if provider:
+            self.provider = provider
+        elif getattr(settings, "PHYSICAL_CORROBORATION_DEMO_FIXTURE_ENABLED", False):
+            from app.intelligence.physical_corroboration.providers.fixture_provider import (
+                FixtureWeatherProvider,
+            )
+
+            self.provider = FixtureWeatherProvider()
+        else:
+            self.provider = OpenMeteoProvider()
+
         self.cache = cache or SingleFlightGridHourCache(ttl_seconds=3600)
         self.config = config or default_physical_config
 
