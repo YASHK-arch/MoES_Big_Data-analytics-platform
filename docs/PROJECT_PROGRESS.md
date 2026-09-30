@@ -6,8 +6,8 @@
 - **Problem statement:** SIH 2026 PS 26069 (weather event intelligence platform)
 - **Team status:** Selected from IIT Madras internal round; now competing on this PS with other colleges
 - **Goals of the current phase:** (1) architecture that stays fast after deployment, (2) intact and recoverable pipelines, (3) full PS requirement coverage, (4) standout features
-- **Last updated:** 2026-09-30 (Round 6 audit complete)
-- **Deployment status:** NOT deployed. Everything runs locally on a developer laptop (load generator, API, Postgres, Redis, workers and IDE agent share CPU/RAM). Treat absolute benchmark numbers as pessimistic and noisy; compare only before/after runs under the same conditions, and repeat suspicious timings 3 times. Deploy target: _undecided_ (fill in).
+- **Last updated:** 2026-09-30 (Round 8 deployability complete)
+- **Deployment status:** Local isolated Docker compose demo stack (`sih-demo`) tested & operational at `:8080`. Total memory: ~1.07 GB idle across 11 containers. Production guardrails verified.
 - **Legend:** ✅ done · 🟡 in progress · ⬜ todo · ❌ failed / blocked · 🔎 needs verification
 
 ---
@@ -169,11 +169,11 @@ Re-run only: **A3, A4, A6, A7, A10, B1, B3, B4, B5, B7** (same DB, same methods)
 
 | ID | Task | Status |
 |---|---|---|
-| O1 | Dockerfiles for API, workers, frontend; single `docker compose up` starts everything | ⬜ |
-| O2 | Health/readiness endpoints for API and every worker | ⬜ |
-| O3 | Prometheus metrics: stream lag (`XPENDING`), outbox age, queue depth, request latency | ⬜ |
+| O1 | Dockerfiles for API, workers, frontend; single `docker compose up` starts everything | ✅ |
+| O2 | Health/readiness endpoints for API and every worker | ✅ |
+| O3 | Prometheus metrics: stream lag (`XPENDING`), outbox age, queue depth, request latency | ✅ |
 | O4 | Structured JSON logging with request/correlation IDs | ⬜ |
-| O5 | Frontend route-level code splitting (`React.lazy`), target main chunk < 400 kB | ⬜ |
+| O5 | Frontend route-level code splitting (`React.lazy`), target main chunk < 400 kB | ✅ |
 | O6 | Redis TLS (`rediss://`) support or migrate to `redis.asyncio` + `hiredis` | ⬜ |
 | O7 | Partition/retention plan for `weather_reports`, `evidence_items`, observations; keyset pagination for deep pages | ⬜ |
 | O8 | Multi-worker uvicorn/gunicorn config; PgBouncer note for production | ⬜ |
@@ -190,7 +190,7 @@ Re-run only: **A3, A4, A6, A7, A10, B1, B3, B4, B5, B7** (same DB, same methods)
 | R2 | More social/news sources: Bluesky, Telegram public channels, RSS news | ⬜ |
 | R3 | Admin panel: export (CSV/GeoJSON), bulk verify/reject, source management, audit-log viewer | ⬜ |
 | R4 | End-to-end classification test for fog / dust storm / strong wind posts (English + Hinglish) | ⬜ |
-| R5 | Clearly label demo/simulated data vs live data in UI and README | ⬜ |
+| R5 | Clearly label demo/simulated data vs live data in UI and README | 🟡 |
 
 ---
 
@@ -250,6 +250,7 @@ Keep your edits to this file under 40 lines. In your final reply, only state "PR
 | 2026-09-30 | Re-audit round 4 (D1–D5) | D1: 0 only-in-OLD, 3261 only-in-NEW, 1186 identical; C1 credibility equivalence invalid (in-memory); D3: default 500 (~26KB gzip); D4: Redis c50 p50 0.21ms | Full equivalence verified; Redis pooling active; zero duplicate indexes |
 | 2026-09-30 | Re-audit round 5 (E1–E5, 100k rows) | E1: 0/10 neg controls, 80% plausibility; E3: honest B4 (/geo 500 gzip + /reports) 1w 79.2 RPS/p50 488ms vs 4w 77.5 RPS/p50 541ms; E4: c50 RTT p50 0.17–0.38ms, auto-reconnect 0.03s; E5: 18 idxs (52MB), 20k COPY 6978 rps | E1–E5 verified; geo payload reduced -6.5% raw (-16.5KB); local commits cleanly split |
 | 2026-09-30 | Re-audit round 6 (G1–G5, 100k rows) | G1 test isolation (weather_platform_test); G2 geo p50 104.2ms cached (4w)/156.1ms (1w), uncached 487.5ms; G3 bench 100% prec/rec; G5 migration 0013 dropped 2 dup idxs, 20k COPY +26.7% (1237ms) | G1–G5 complete; zero duplicate indexes in DB |
+| 2026-09-30 | Round 8 Deployability (O1–O5, V1–V6) | Web :8080 SPA; API :8000; 11 containers healthy; memory 1097 MiB (< 3.5GB); smoke 10/10 cats + rate limit 429 + SSE pass; prod 404 docs; redis 20s stop 503->200 without api restart; down/up persist 623 rpts; main chunk 24.66 kB | Fully deployed, isolated demo compose stack verified |
 
 ---
 
@@ -263,6 +264,7 @@ Keep your edits to this file under 40 lines. In your final reply, only state "PR
 | 2026-09-30 | D1–D5, B4, C1–C4 | `6efda69`, `b0e72af` | Evidence linking equivalence restored (0 only-in-OLD), Redis connection pooling (c50 p50 0.21ms), geo limit, regression tests | BE 441 pass; FE 177 pass; tsc 0 errors; ruff clean |
 | 2026-09-30 | E1–E5 | `276f106`, `9e33220`, `9052ca5`, `a553fd3` | Round 5: precision tightening, honest B4 load test, unused geo property drop, Redis pool audit & reconnect, 18-index analysis | BE 442 pass; FE 177 pass; tsc 0 errors; ruff clean |
 | 2026-09-30 | G1–G5 | `current` | Round 6: test DB isolation, geo Redis byte caching (compresslevel=4), evidence linking analysis, migration 0013 dropping duplicate indexes | BE 442 pass; FE 177 pass; tsc 0 errors; ruff clean |
+| 2026-09-30 | O1–O3, O5, V | `d605aa6..b31931a` | Round 8 deployability: Docker multi-stage images, health/ready, metrics Prometheus, React.lazy/chunks, smoke & failure acceptance | BE 442 pass; FE 177 pass; tsc clean; ruff clean |
 
 ---
 
@@ -271,7 +273,7 @@ Keep your edits to this file under 40 lines. In your final reply, only state "PR
 | # | Issue | Severity | Owner | Status |
 |---|---|---|---|---|
 | 1 | **B7 resolved**: worker kill & stream recovery cleanly claims in-flight messages; 200/200 reached COMPLETED in DB within 30s | High | — | ✅ |
-| 2 | Rate limiter IP source and proxy trust (`X-Forwarded-For` spoofing) | High | — | 🔎 |
+| 2 | Rate limiter IP source and proxy trust (`X-Forwarded-For` spoofing): verified with `TRUSTED_PROXY_COUNT=1`, async Redis rate limiter, 11th request 429 | High | — | ✅ |
 | 3 | Rate limiter behaviour when Redis is down: verified fail-open with warning log | Medium | — | ✅ |
 | 4 | Migration `0009` downgrade path: verified downgrade to `0008` and upgrade to `0011` on populated DB | Medium | — | ✅ |
 | 5 | Dashboard summary Seq Scan: resolved via covering index migration `0011` (Index-Only Scan, 22.1 ms) | High | — | ✅ (P3) |
@@ -283,7 +285,7 @@ Keep your edits to this file under 40 lines. In your final reply, only state "PR
 | 11 | Dashboard summary Seq Scan: removed via migration `0011` covering index (`idx_weather_reports_summary_cov`) | High | — | ✅ (P3) |
 | 12 | B1/B4 numbers cache-off baseline: measured (B1 99.35 RPS / 11.3 ms; B4 85.10 RPS / 562 ms) | Medium | — | ✅ |
 | 13 | Earlier B4 result was limit=50 only, not what the frontend sends. Honest B4 (/geo default 500 gzip + /reports active) measured: 79.2 RPS, p50 488 ms (1w) / 77.5 RPS, p50 541 ms (4w) | Medium | — | ✅ (E3) |
-| 14 | A7: verify `/docs` and startup guards with `ENVIRONMENT=production` (deferred until deployment) | Low now / Medium at deploy | — | ⏸ |
+| 14 | A7: verify `/docs` and startup guards with `ENVIRONMENT=production`: verified exit on weak key, 404 on docs | Medium | — | ✅ (V3) |
 | 15 | Re-audit ran on Redis DB 0: verified fresh on Redis DB 5 | Medium | — | ✅ |
 | 16 | Audit test scripts freeze: B7 frozen and verified 200/200 pass | Medium | — | ✅ |
 | 17 | Test DB isolation: pytest redirected to dedicated `weather_platform_test` database and Redis DB 15 | High | — | ✅ (G1) |
@@ -294,6 +296,9 @@ Keep your edits to this file under 40 lines. In your final reply, only state "PR
 | 22 | H4: max_connections=100; pg_stat_activity under 50-user geo load: active=1 (sampler only), Postgres never queried | Medium | — | ✅ (H4) |
 | 23 | H5: Geo gzip size variation (G2: 19-20KB, R5/now: 37KB): explained by row count difference — 2047 geo-tagged reports in 24h window now vs fewer at earlier measurement | Low | — | ✅ (H5) |
 | 24 | H5: Mypy errors a1b95e8→HEAD: **31 → 31** (no regression); all 31 are pre-existing in feedback.py (Column[T] assignment type narrowing) | Low | — | ✅ (H5) |
+| 25 | RELATED evidence links inflate credibility scores by mean 0.0637 without spatial decay (H2) | Medium | — | ⬜ |
+| 26 | No remote Git backup / origin configured (`git push` not backed up upstream) | High | — | ⬜ |
+| 27 | Accidental `FLUSHALL` risk on shared Redis instances (mitigated by isolated demo container stack) | High | — | ✅ |
 
 ---
 
