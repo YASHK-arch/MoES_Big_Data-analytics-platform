@@ -1,0 +1,37 @@
+=== S2 IMAGE FORENSICS CREDIBILITY INTEGRATION & CAP SENSITIVITY ===
+Loaded 200 incidents from baseline snapshot.
+Collected valid scoring inputs for 200 incidents.
+
+--- CAP SENSITIVITY ANALYSIS (0.03 vs 0.05 vs 0.10) ---
+Cap: 0.03 | Scenario: POSITIVE_SUPPORT   | Mean Delta: +0.0300 | Max Delta: 0.0300 | Crossed 0.45: 0 (Up: 0, Down: 0)
+Cap: 0.03 | Scenario: NEGATIVE_CONTRADICT | Mean Delta: -0.0300 | Max Delta: 0.0300 | Crossed 0.45: 0 (Up: 0, Down: 0)
+Cap: 0.05 | Scenario: POSITIVE_SUPPORT   | Mean Delta: +0.0500 | Max Delta: 0.0500 | Crossed 0.45: 0 (Up: 0, Down: 0)
+Cap: 0.05 | Scenario: NEGATIVE_CONTRADICT | Mean Delta: -0.0500 | Max Delta: 0.0500 | Crossed 0.45: 0 (Up: 0, Down: 0)
+Cap: 0.10 | Scenario: POSITIVE_SUPPORT   | Mean Delta: +0.1000 | Max Delta: 0.1000 | Crossed 0.45: 0 (Up: 0, Down: 0)
+Cap: 0.10 | Scenario: NEGATIVE_CONTRADICT | Mean Delta: -0.1000 | Max Delta: 0.1000 | Crossed 0.45: 0 (Up: 0, Down: 0)
+
+--- BORDERLINE SENSITIVITY (REPORTS NEAR 0.45 THRESHOLD) ---
+Cap: 0.03 | Borderline crossing 0.45: 3/8 (Up: 1, Down: 2)
+Cap: 0.05 | Borderline crossing 0.45: 5/8 (Up: 3, Down: 2)
+Cap: 0.10 | Borderline crossing 0.45: 8/8 (Up: 4, Down: 4)
+
+=== SUMMARY TABLE ACROSS CAP VALUES ===
+Cap    | Scenario           | Mean Delta   | Max Delta    | 0.45 Crossings 
+---------------------------------------------------------------------------
+0.03   | POSITIVE_SUPPORT   | +0.0300      | 0.0300       | 0              
+0.03   | NEGATIVE_CONTRADICT | -0.0300      | 0.0300       | 0              
+0.05   | POSITIVE_SUPPORT   | +0.0500      | 0.0500       | 0              
+0.05   | NEGATIVE_CONTRADICT | -0.0500      | 0.0500       | 0              
+0.10   | POSITIVE_SUPPORT   | +0.1000      | 0.1000       | 0              
+0.10   | NEGATIVE_CONTRADICT | -0.1000      | 0.1000       | 0              
+
+=== CAP RECOMMENDATION & JUSTIFICATION ===
+RECOMMENDED_CAP: 0.05
+  Analysis of candidate cap options:
+  - Cap 0.03: Too conservative; max delta of +/-0.03 provides insufficient differentiation
+    for triage queues when high-confidence EXIF or cross-incident reuse is proven.
+  - Cap 0.10: Too aggressive; causes excessive threshold crossings (up to multiple reports
+    crossing the 0.45 priority threshold solely based on forgeable or stripped image metadata,
+    violating Product Rule P2 that image signals must remain weak secondary indicators).
+  - Cap 0.05 (Recommended): Balances signal utility (+/-0.05 max delta) with safety,
+    preventing image metadata from unilaterally dictating incident verification priority.

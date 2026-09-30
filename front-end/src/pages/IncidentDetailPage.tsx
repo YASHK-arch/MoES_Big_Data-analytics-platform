@@ -15,6 +15,7 @@ import L from 'leaflet';
 import { Navbar } from '@/components/layout/Navbar';
 import { Footer } from '@/components/layout/Footer';
 import { FeedbackWidget } from '@/components/incident/FeedbackWidget';
+import { ImageForensicsCard } from '@/components/incident/ImageForensicsCard';
 import { CredibilitySection } from '@/features/incidents/CredibilitySection';
 import { IntelligenceStatusSection } from '@/features/incidents/IntelligenceStatusSection';
 import { LinkedEvidenceSection } from '@/features/incidents/LinkedEvidenceSection';
@@ -283,6 +284,9 @@ export const IncidentDetailPage: React.FC = () => {
                       </div>
                     </div>
                   )}
+
+                  {/* Image Forensics & EXIF Consistency */}
+                  <ImageForensicsCard forensics={incident.image_forensics} />
 
                   {/* Physical Observations */}
                   <PhysicalObservationsSection

@@ -1,0 +1,12 @@
+=== DEPENDENCY METADATA ===
+Package: Pillow | Version: 12.3.0 | License: MIT-CMU
+Package: numpy | Version: 2.5.2 | License: BSD-3-Clause AND 0BSD AND MIT AND Zlib AND CC0-1.0
+
+=== EXIF TIMEZONE HANDLING TEST ===
+Explicit offset: raw='2026:08:15 14:30:00 +05:30' -> UTC='2026-08-15T09:00:00+00:00'
+Naive timestamp: raw='2026:08:15 14:30:00' -> ASSUMPTION IST (UTC+05:30) -> UTC='2026-08-15T09:00:00+00:00'
+Timezone parity verified: PASS
+
+=== PILLOW EXIF CAPABILITY TEST ===
+Written EXIF DateTime: '2026:08:15 14:30:00' | Retrieved: '2026:08:15 14:30:00'
+Pillow EXIF roundtrip verified: PASS

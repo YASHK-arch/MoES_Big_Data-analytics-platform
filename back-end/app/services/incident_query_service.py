@@ -31,6 +31,7 @@ from app.models.corroboration import IncidentObservationCorroboration
 from app.models.duplicate import DuplicateCluster, DuplicateMember
 from app.models.evidence import EvidenceItem, IncidentEvidenceLink
 from app.models.forecast import ForecastAdvisory
+from app.models.image_forensics import IncidentImageFinding
 from app.models.observation import WeatherObservation
 from app.models.report import WeatherReport
 from app.orchestration.events import OverallReadiness
@@ -56,10 +57,13 @@ from app.schemas.geo import (
     GeoJSONIncidentProperties,
 )
 from app.schemas.incident import (
+    ImageForensicCheckDetail,
+    ImageForensicItemDetail,
     IncidentCorroborationCounts,
     IncidentCredibilitySummary,
     IncidentDetailOperator,
     IncidentDetailPublic,
+    IncidentImageForensicsDetail,
     IncidentIntelligenceSummary,
     IncidentLocationResponse,
     IncidentSummaryResponse,
@@ -385,6 +389,70 @@ class IncidentQueryService:
             is_cluster_representative=is_rep,
         )
 
+        # Image forensics findings (S2)
+        img_forensics = None
+        img_findings_stmt = (
+            select(IncidentImageFinding)
+            .where(IncidentImageFinding.incident_id == report.id)
+            .order_by(IncidentImageFinding.created_at.asc())
+        )
+        img_res = await session.execute(img_findings_stmt)
+        findings_rows = list(img_res.scalars().all())
+
+        if findings_rows:
+            image_details: List[ImageForensicItemDetail] = []
+            has_contra = any(f.overall_verdict == "CONTRADICTS" for f in findings_rows)
+            all_supp = all(f.overall_verdict == "SUPPORTS" for f in findings_rows)
+            agg_verdict = "CONTRADICTS" if has_contra else ("SUPPORTS" if all_supp else "NEUTRAL")
+            from app.core.config import settings
+            cap = getattr(settings, "IMAGE_FORENSICS_CAP", 0.05)
+            total_adj = -cap if has_contra else (cap if all_supp else 0.0)
+
+            for f in findings_rows:
+                checks_list: List[ImageForensicCheckDetail] = []
+                if f.checks and isinstance(f.checks, list):
+                    for c in f.checks:
+                        checks_list.append(
+                            ImageForensicCheckDetail(
+                                check_type=c.get("check_type", "UNKNOWN"),
+                                verdict=c.get("verdict", "NEUTRAL"),
+                                observed_value=c.get("observed_value"),
+                                expected_value=c.get("expected_value"),
+                                difference=c.get("difference"),
+                                reason=c.get("reason", ""),
+                                matched_incident_ids=c.get("matched_incident_ids", []),
+                            )
+                        )
+                image_details.append(
+                    ImageForensicItemDetail(
+                        media_id=f.media_id,
+                        sha256=f.sha256,
+                        phash=f.phash,
+                        has_exif=f.has_exif,
+                        exif_timestamp_utc=f.exif_timestamp_utc,
+                        timezone_assumed_ist=f.timezone_assumed_ist,
+                        time_verdict=f.time_verdict,
+                        time_difference=f.time_difference,
+                        location_verdict=f.location_verdict,
+                        location_difference=f.location_difference,
+                        reuse_verdict=f.reuse_verdict,
+                        matched_incident_ids=f.matched_incident_ids or [],
+                        overall_verdict=f.overall_verdict,
+                        credibility_adjustment=f.credibility_adjustment,
+                        error_reason=f.error_reason,
+                        is_simulated=f.is_simulated,
+                        checks=checks_list,
+                    )
+                )
+
+            img_forensics = IncidentImageForensicsDetail(
+                overall_verdict=agg_verdict,
+                total_credibility_adjustment=total_adj,
+                image_count=len(findings_rows),
+                is_simulated=any(f.is_simulated for f in findings_rows),
+                images=image_details,
+            )
+
         if not is_operator:
             return IncidentDetailPublic(
                 id=report.id,
@@ -401,6 +469,7 @@ class IncidentQueryService:
                 summaries=counts,
                 is_demo=getattr(report, "is_demo", False),
                 media=media_items,
+                image_forensics=img_forensics,
                 created_at=report.created_at,
             )
 
@@ -444,6 +513,7 @@ class IncidentQueryService:
             summaries=counts,
             is_demo=getattr(report, "is_demo", False),
             media=media_items,
+            image_forensics=img_forensics,
             created_at=report.created_at,
             verification_history=history_items,
             orchestration_stages=stage_data,

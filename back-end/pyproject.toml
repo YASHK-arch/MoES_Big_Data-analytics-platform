@@ -29,6 +29,7 @@ dependencies = [
     "python-multipart>=0.0.9",
     "shapely>=2.0.0",
     "email-validator>=2.0.0",
+    "Pillow>=10.0.0",
 ]
 
 [tool.pytest.ini_options]

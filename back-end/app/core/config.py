@@ -205,6 +205,22 @@ class Settings(BaseSettings):
     # Minimum resolver confidence to consider text-side location "known"
     LOCATION_MISMATCH_MIN_TEXT_CONFIDENCE: float = 0.70
 
+    # Image Forensics Signals (S2) — ASSUMPTION - unverified magnitudes
+    # Feature flag: OFF by default. Enable per-instance via environment variable. (Product Rule P7)
+    IMAGE_FORENSICS_ENABLED: bool = False
+    IMAGE_FORENSICS_DEMO_FIXTURE_ENABLED: bool = False
+    IMAGE_FORENSICS_CAP: float = 0.05  # Evaluated in Item 7
+    IMAGE_FORENSICS_PHASH_THRESHOLD: int = 10  # Measured on synthetic data in Item 3
+    IMAGE_FORENSICS_DHASH_THRESHOLD: int = 8   # Measured on synthetic data in Item 3
+    IMAGE_FORENSICS_EXIF_TIME_SUPPORT_HOURS: float = 3.0  # ASSUMPTION - unverified
+    IMAGE_FORENSICS_EXIF_TIME_CONTRADICT_HOURS: float = 24.0  # ASSUMPTION - unverified
+    IMAGE_FORENSICS_EXIF_GPS_SUPPORT_KM: float = 15.0  # ASSUMPTION - unverified
+    IMAGE_FORENSICS_EXIF_GPS_CONTRADICT_KM: float = 50.0  # ASSUMPTION - unverified
+    IMAGE_FORENSICS_REUSE_TIME_HOURS: float = 48.0  # ASSUMPTION - unverified
+    IMAGE_FORENSICS_REUSE_DISTANCE_KM: float = 50.0  # ASSUMPTION - unverified
+    IMAGE_FORENSICS_MAX_FILE_BYTES: int = 15 * 1024 * 1024  # 15 MB limit before decode (P6)
+    IMAGE_FORENSICS_MAX_PIXELS: int = 40_000_000  # 40 MP decompression limit (P6)
+
     # CORS Configuration
     ALLOWED_ORIGINS: Union[List[str], str] = ["http://localhost:5173", "http://localhost:3000"]
 

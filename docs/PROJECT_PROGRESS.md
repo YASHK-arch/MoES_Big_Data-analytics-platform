@@ -199,7 +199,7 @@ Re-run only: **A3, A4, A6, A7, A10, B1, B3, B4, B5, B7** (same DB, same methods)
 | ID | Feature | Why it wins | Status |
 |---|---|---|---|
 | S1 | **Physical corroboration** beyond CWC: IMD AWS/ARG rainfall, temperature, wind | Uses MoES's own data; strongest differentiator | 🔎 |
-| S2 | **Image forensics**: EXIF time/GPS vs claim, perceptual-hash reuse detection, AI-generated image score | Directly addresses "fake reports" | ⬜ |
+| S2 | **Image forensics**: EXIF time/GPS vs claim, perceptual-hash reuse detection (pHash/dHash, cap 0.05) | Directly addresses "fake reports" (P1-P7) | 🔎 |
 | S3 | **NDMA alert overlay**: reports inside/outside active alert polygons; flag "impact reported, no alert issued" | Actionable insight for authorities | ⬜ |
 | S4 | **Indian languages**: Hindi/regional post classification (Bhashini / IndicBERT) + Hindi UI | India-specific, jury-visible | ⬜ |
 | S5 | **Low-connectivity intake**: offline-queueing PWA, WhatsApp/Telegram bot | Answers "why hasn't this been solved" | ⬜ |
@@ -271,6 +271,7 @@ Keep your edits to this file under 40 lines. In your final reply, only state "PR
 | 2026-09-30 | R3, R1–R5, L4 | _working tree_ | Bulk verify/reject emits outbox/SSE event; test DB resets once per session with seeded reference rows; region precedence fixed | R3 SSE regression passes; BE 476/0 ×3; Ruff/mypy clean; format 62 files; Alembic check drift |
 | 2026-10-01 | S1 (1–16) | `s1-physical-corroboration` | S1 Physical Corroboration: pure evaluator, Open-Meteo provider, mig 0019, worker integration, credibility engine, UI card (EN/HI), Prometheus metrics & drills, replay evaluation | BE 523 pass / 0 fail (full & seed 42); FE 182 pass, tsc/lint/build clean; mypy/ruff clean |
 | 2026-10-01 | A (6–8) | `4f74716` | Demo stack: PHYSICAL_CORROBORATION_ENABLED=true in compose, DEMO_FIXTURE opt-in (default false); SSE RealtimeEventType.INCIDENT_PHYSICAL_CORROBORATION_COMPLETED added; report_service rollback fix | 7 passed (corroboration_api + pipeline); enum import OK; logs/A_6.log |
+| 2026-10-01 | S2 (1–12) | `s2-image-forensics` | S2-lite Image Forensics: pure pHash/dHash & EXIF logic, mig 0020, pipeline worker & outbox, credibility step 16 (cap 0.05), public/operator API, FE card (EN/HI), SIMULATED fixtures | BE 609 pass / 0 fail (seed 42); FE 190 pass, tsc/lint/build clean; mypy (0 new), ruff clean |
 
 ---
 
@@ -286,7 +287,7 @@ Keep your edits to this file under 40 lines. In your final reply, only state "PR
 | 6 | Hand-written Redis client: connection pooling (pool_size=8) implemented, concurrency 50 RTT p50 down from 5.39ms to 0.21ms | Medium | — | ✅ (D4) |
 | 7 | Entity extractor uses one regex per gazetteer key; gazetteer only ~460 entries | Medium | — | ⬜ |
 | 8 | Live-map cap of 500 markers hides data at scale (need server-side grid/H3 aggregation) | Medium | — | ⬜ |
-| 9 | Fake-report detection has no image forensics or trained model | Medium | — | ⬜ (S2) |
+| 9 | Fake-report detection S2-lite image forensics implemented (pHash reuse + EXIF consistency, P1-P7, cap 0.05) | Medium | — | 🔎 (S2) |
 | 10 | B3 incident list page 500: Index Scan 2.8–3.7 ms on warm cache (earlier 112 ms was cold/noisy outlier) | High | — | ✅ |
 | 11 | Dashboard summary Seq Scan: removed via migration `0011` covering index (`idx_weather_reports_summary_cov`) | High | — | ✅ (P3) |
 | 12 | B1/B4 numbers cache-off baseline: measured (B1 99.35 RPS / 11.3 ms; B4 85.10 RPS / 562 ms) | Medium | — | ✅ |

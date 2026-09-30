@@ -76,6 +76,45 @@ export interface IncidentSummary {
   created_at: string;
 }
 
+export interface ImageForensicCheckDetail {
+  check_type: string;
+  verdict: string;
+  observed_value?: string | null;
+  expected_value?: string | null;
+  difference?: string | null;
+  reason?: string | null;
+  matched_incident_ids: string[];
+}
+
+export interface ImageForensicItemDetail {
+  id: string;
+  media_id: string;
+  sha256: string;
+  phash?: string | null;
+  dhash?: string | null;
+  has_exif: boolean;
+  exif_timestamp_utc?: string | null;
+  timezone_assumed_ist: boolean;
+  time_verdict: string;
+  time_difference?: string | null;
+  location_verdict: string;
+  location_difference?: string | null;
+  reuse_verdict: string;
+  matched_incident_ids: string[];
+  overall_verdict: string;
+  credibility_adjustment: number;
+  checks: ImageForensicCheckDetail[];
+  is_simulated: boolean;
+}
+
+export interface IncidentImageForensicsDetail {
+  overall_verdict: string;
+  total_credibility_adjustment: number;
+  image_count: number;
+  images: ImageForensicItemDetail[];
+  is_simulated: boolean;
+}
+
 export interface IncidentDetailPublic {
   id: string;
   tracking_id: string;
@@ -91,6 +130,7 @@ export interface IncidentDetailPublic {
   summaries: IncidentCorroborationCounts;
   is_demo?: boolean;
   media: IncidentMedia[];
+  image_forensics?: IncidentImageForensicsDetail | null;
   created_at: string;
 }
 
