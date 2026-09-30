@@ -161,7 +161,7 @@ services:
       timeout: 5s
       retries: 5
       start_period: 20s
-    mem_limit: 384m
+    mem_limit: 512m
 
   # ── Background workers ─────────────────────────────────────────────────────
   worker-outbox:
@@ -264,7 +264,7 @@ services:
     networks:
       - demo_net
     healthcheck: *worker-healthcheck
-    mem_limit: 128m
+    mem_limit: 256m
 
   # ── Frontend (nginx + SPA) ─────────────────────────────────────────────────
   web:
