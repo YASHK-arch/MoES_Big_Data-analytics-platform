@@ -42,6 +42,9 @@ async def get_or_compute(
     Fails open (computes directly) on Redis errors.
     """
     effective_ttl = ttl if ttl is not None else getattr(settings, "DASHBOARD_CACHE_TTL_SECONDS", 10)
+    if effective_ttl <= 0:
+        return await compute_fn()
+
     cache_key = generate_cache_key(endpoint, query_params)
     lock_key = f"lock:{cache_key}"
     stale_key = f"stale:{cache_key}"
