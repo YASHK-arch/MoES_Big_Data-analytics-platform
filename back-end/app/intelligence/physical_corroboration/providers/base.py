@@ -136,7 +136,7 @@ class BaseWeatherProvider(abc.ABC):
                         "Provider %s attempt %d raised exception: %s. Retrying in %.2fs...",
                         self.name,
                         attempt,
-                        exc,
+                        str(exc),
                         backoff,
                     )
                     await asyncio.sleep(backoff)
@@ -146,7 +146,7 @@ class BaseWeatherProvider(abc.ABC):
                         "Provider %s failed with unexpected exception after %d attempts: %s",
                         self.name,
                         attempt,
-                        exc,
+                        str(exc),
                     )
                     return (
                         None,

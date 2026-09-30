@@ -195,3 +195,42 @@ async def on_human_verification_updated(
         new_status,
     )
     return report
+
+
+async def on_physical_observation_updated(
+    db: AsyncSession,
+    incident_id: uuid.UUID,
+    commit: bool = True,
+) -> bool:
+    """Late-arriving physical weather observation triggers credibility recompute and outbox/SSE."""
+    from app.intelligence.physical_corroboration.service import (
+        physical_corroboration_service,
+    )
+    from app.orchestration.handlers import StageName
+    from app.orchestration.incident_pipeline import incident_pipeline
+
+    stmt = select(WeatherReport).where(WeatherReport.id == incident_id)
+    res = await db.execute(stmt)
+    report = res.scalar_one_or_none()
+    if not report:
+        return False
+
+    phys_record = await physical_corroboration_service.corroborate_incident(
+        db=db, report=report, force_run=True
+    )
+    if phys_record is not None:
+        physical_corroboration_service.stage_corroboration_event(
+            db=db, report=report, record=phys_record
+        )
+
+    # Trigger credibility stage recomputation
+    await incident_pipeline.execute_single_stage(
+        db=db,
+        incident_id=incident_id,
+        stage_name=StageName.CREDIBILITY,
+        commit=False,
+    )
+
+    if commit:
+        await db.commit()
+    return True

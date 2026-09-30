@@ -186,6 +186,15 @@ class Settings(BaseSettings):
     LLM_PROVIDER: str = "none"
     LLM_API_KEY: str = ""
 
+    # S1 Physical Corroboration Settings (Product Rules P1-P9)
+    PHYSICAL_CORROBORATION_ENABLED: bool = False
+    PHYSICAL_CORROBORATION_KILL_SWITCH: bool = False
+    PHYSICAL_CORROBORATION_TOTAL_CAP: float = 0.10
+    PHYSICAL_CORROBORATION_ALLOW_MODEL_CONTRADICTS: bool = False
+    PHYSICAL_CORROBORATION_STATION_WEIGHT: float = 1.00
+    PHYSICAL_CORROBORATION_MODEL_WEIGHT: float = 0.60
+    PHYSICAL_CORROBORATION_DEMO_FIXTURE_ENABLED: bool = False
+
     # CORS Configuration
     ALLOWED_ORIGINS: Union[List[str], str] = ["http://localhost:5173", "http://localhost:3000"]
 

@@ -53,6 +53,23 @@ def haversine_distance_km(lat1: float, lon1: float, lat2: float, lon2: float) ->
     return radius_earth_km * c
 
 
+CATEGORY_PRIMARY_VARIABLES = {
+    "HEAVY_RAINFALL": "rainfall_1h",
+    "FLOOD_WATERLOGGING": "rainfall_1h",
+    "URBAN_FLOOD": "rainfall_1h",
+    "LANDSLIDE": "rainfall_24h",
+    "HEATWAVE": "max_temperature",
+    "STRONG_WIND": "wind_speed",
+    "CYCLONE_STORM": "wind_speed",
+    "THUNDERSTORM_LIGHTNING": "rainfall_1h",
+    "HAILSTORM": "rainfall_1h",
+    "FOG": "visibility",
+    "DUST_STORM": "visibility",
+    "DROUGHT": "rainfall_72h",
+    "OTHER": "rainfall_1h",
+}
+
+
 def evaluate(
     category: str,
     observation: PhysicalObservation,
@@ -66,6 +83,19 @@ def evaluate(
     """
     cfg = config or default_physical_config
     inc_lat, inc_lon = incident_coords
+    cat = (category or "OTHER").upper()
+    prim_var = CATEGORY_PRIMARY_VARIABLES.get(cat, "rainfall_1h")
+
+    # Null observation check (Product Rule P2: provider failure -> NEUTRAL)
+    if observation is None:
+        return PhysicalCorroborationResult(
+            verdict=PhysicalCorroborationVerdict.NEUTRAL,
+            variable=prim_var,
+            provider_status=ProviderStatus.NO_DATA,
+            weight=0.0,
+            contribution=0.0,
+            explanation="No physical weather observation available",
+        )
 
     # 1. Geodesic distance calculation
     distance_km = haversine_distance_km(
