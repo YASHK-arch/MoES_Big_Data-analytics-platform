@@ -255,7 +255,7 @@ class AsyncRedisClient:
         cmd: List[Union[str, bytes, int, float]] = ["XREADGROUP", "GROUP", group, consumer]
         if count is not None:
             cmd.extend(["COUNT", str(count)])
-        if block_ms is not None:
+        if block_ms is not None and block_ms > 0:
             cmd.extend(["BLOCK", str(block_ms)])
 
         cmd.append("STREAMS")

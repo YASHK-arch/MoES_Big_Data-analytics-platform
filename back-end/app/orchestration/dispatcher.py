@@ -55,6 +55,7 @@ class OrchestrationDispatcher:
         self.session_factory = session_factory or async_session_factory
         self.retry_mgr = retry_mgr or retry_policy
         self.consumer_name = consumer_name
+        self._claim_cursor: str = "0-0"
 
     async def publish_event(
         self,
@@ -229,13 +230,15 @@ class OrchestrationDispatcher:
             )
             max_attempts = getattr(settings, "STREAM_MAX_DELIVERY_ATTEMPTS", 3)
             try:
-                _, claimed = await self.client.xautoclaim(
+                next_start, claimed = await self.client.xautoclaim(
                     stream=self.DEFAULT_STREAM,
                     group=self.DEFAULT_GROUP,
                     consumer=self.consumer_name,
                     min_idle_time_ms=idle_ms,
+                    start_id=self._claim_cursor,
                     count=count,
                 )
+                self._claim_cursor = next_start if next_start else "0-0"
                 if claimed:
                     pending_details = await self.client.xpending_detail(
                         self.DEFAULT_STREAM, self.DEFAULT_GROUP, count=max(count * 2, 50)
@@ -282,7 +285,7 @@ class OrchestrationDispatcher:
                 consumer=self.consumer_name,
                 streams={self.DEFAULT_STREAM: from_id},
                 count=remaining_count,
-                block_ms=block_ms if not entries_to_process else 0,
+                block_ms=block_ms if not entries_to_process else None,
             )
             for _, entries in raw_results:
                 entries_to_process.extend(entries)

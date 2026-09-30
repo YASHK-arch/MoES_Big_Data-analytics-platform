@@ -8,6 +8,7 @@ Usage:
 
 import asyncio
 import logging
+import os
 import signal
 import sys
 
@@ -51,7 +52,10 @@ async def main() -> int:
             # Fallback for environments where add_signal_handler is not available
             signal.signal(sig, _fallback_signal_handler)
 
-    logger.info("Initializing standalone OrchestrationDispatcher process...")
+    consumer_name = os.environ.get("ORCHESTRATOR_CONSUMER_NAME")
+    if consumer_name:
+        orchestration_dispatcher.consumer_name = consumer_name
+    logger.info("Initializing standalone OrchestrationDispatcher process (%s)...", orchestration_dispatcher.consumer_name)
 
     try:
         # Loop until stop event is set

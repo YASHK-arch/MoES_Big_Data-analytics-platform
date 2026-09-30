@@ -404,3 +404,84 @@ async def test_concurrent_stage_updates_no_jsonb_overwrite(
         StageOutcome.SUCCESS_WITH_RESULTS.value,
         StageOutcome.SUCCESS_WITH_NO_MATCH.value,
     )
+
+
+@pytest.mark.asyncio
+async def test_consumer_killed_mid_batch_reclaimed_by_new_worker(db_session: AsyncSession):
+    """Regression test: worker 1 reads messages mid-batch and crashes without ACKing; worker 2 reclaims and completes them."""
+    from app.core.redis import AsyncRedisClient
+    from app.orchestration.dispatcher import OrchestrationDispatcher
+    from app.orchestration.events import AggregateType, OrchestrationEvent, OrchestrationEventType
+
+    client = AsyncRedisClient(redis_url="redis://localhost:6379/5")
+    await client.connect()
+    stream_name = f"stream:test:reclaim:{uuid.uuid4().hex[:6]}"
+    group_name = "group:test:reclaim"
+
+    # Setup stream and group
+    await client.xgroup_create(stream_name, group_name, id_str="0", mkstream=True)
+
+    # Dispatcher 1 (Worker 1)
+    dispatcher_1 = OrchestrationDispatcher(client=client, consumer_name="worker-1")
+    dispatcher_1.DEFAULT_STREAM = stream_name
+    dispatcher_1.DEFAULT_GROUP = group_name
+
+    # Publish 2 events
+    ev1 = OrchestrationEvent(
+        event_id=uuid.uuid4(),
+        event_type=OrchestrationEventType.INCIDENT_INGESTED,
+        aggregate_type=AggregateType.WEATHER_REPORT,
+        aggregate_id=uuid.uuid4(),
+        producer="test",
+        correlation_id="c1",
+        idempotency_key=str(uuid.uuid4()),
+        attempt=1,
+        created_at=datetime.now(timezone.utc),
+    )
+    ev2 = OrchestrationEvent(
+        event_id=uuid.uuid4(),
+        event_type=OrchestrationEventType.INCIDENT_INGESTED,
+        aggregate_type=AggregateType.WEATHER_REPORT,
+        aggregate_id=uuid.uuid4(),
+        producer="test",
+        correlation_id="c2",
+        idempotency_key=str(uuid.uuid4()),
+        attempt=1,
+        created_at=datetime.now(timezone.utc),
+    )
+    await dispatcher_1.publish_event(ev1)
+    await dispatcher_1.publish_event(ev2)
+
+    # Worker 1 reads 2 events from stream but crashes before ACKing
+    events_w1 = await dispatcher_1.read_events(count=2, block_ms=500)
+    assert len(events_w1) == 2
+
+    # Verify 2 messages are pending on worker-1
+    pending_w1 = await client.xpending_detail(stream_name, group_name)
+    assert len(pending_w1) == 2
+    assert all(p["consumer"] == "worker-1" for p in pending_w1)
+
+    # Simulate worker 1 dying and idle time passing
+    import asyncio
+    await asyncio.sleep(0.05)
+
+    # Dispatcher 2 (Worker 2) starts with claim_idle_ms=10 (10ms)
+    dispatcher_2 = OrchestrationDispatcher(client=client, consumer_name="worker-2")
+    dispatcher_2.DEFAULT_STREAM = stream_name
+    dispatcher_2.DEFAULT_GROUP = group_name
+
+    claimed_events = await dispatcher_2.read_events(count=10, block_ms=500, claim_idle_ms=10)
+    assert len(claimed_events) == 2
+    assert {e[1].event_id for e in claimed_events} == {ev1.event_id, ev2.event_id}
+
+    # Worker 2 ACKs them after processing
+    for msg_id, _ in claimed_events:
+        await client.xack(stream_name, group_name, msg_id)
+
+    # Verify pending list is now completely cleared
+    pending_after = await client.xpending_detail(stream_name, group_name)
+    assert len(pending_after) == 0
+
+    await client.delete(stream_name)
+    await client.close()
+
