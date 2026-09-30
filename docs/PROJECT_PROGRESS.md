@@ -6,8 +6,8 @@
 - **Problem statement:** SIH 2026 PS 26069 (weather event intelligence platform)
 - **Team status:** Selected from IIT Madras internal round; now competing on this PS with other colleges
 - **Goals of the current phase:** (1) architecture that stays fast after deployment, (2) intact and recoverable pipelines, (3) full PS requirement coverage, (4) standout features
-- **Last updated:** 2026-09-30 (Round 8 deployability complete)
-- **Deployment status:** Local isolated Docker compose demo stack (`sih-demo`) tested & operational at `:8080`. Total memory: ~1.07 GB idle across 11 containers. Production guardrails verified.
+- **Last updated:** 2026-09-30 (Round 9a evidence linking & credibility cap complete)
+- **Deployment status:** Local isolated Docker compose demo stack (`sih-demo`) tested & operational at `:8080`. Total memory: ~1.07 GB idle across 11 containers. Production guardrails & smoke tests verified.
 - **Legend:** ✅ done · 🟡 in progress · ⬜ todo · ❌ failed / blocked · 🔎 needs verification
 
 ---
@@ -297,9 +297,10 @@ Keep your edits to this file under 40 lines. In your final reply, only state "PR
 | 22 | H4: max_connections=100; pg_stat_activity under 50-user geo load: active=1 (sampler only), Postgres never queried | Medium | — | ✅ (H4) |
 | 23 | H5: Geo gzip size variation (G2: 19-20KB, R5/now: 37KB): explained by row count difference — 2047 geo-tagged reports in 24h window now vs fewer at earlier measurement | Low | — | ✅ (H5) |
 | 24 | H5: Mypy errors a1b95e8→HEAD: **31 → 31** (no regression); all 31 are pre-existing in feedback.py (Column[T] assignment type narrowing) | Low | — | ✅ (H5) |
-| 25 | RELATED evidence links inflate credibility scores by mean 0.0637 without spatial decay (H2) | Medium | — | ⬜ |
+| 25 | Weak-link cap (0.03 max boost) & L1 location gate implemented; 0 crossings, F1 1.0 on benchmark v2 | High | — | ✅ (Round 9a) |
 | 26 | Remote Git backup: pushed all commits up to Round 8 and audit suite to `origin/main` | High | — | ✅ |
 | 27 | Accidental `FLUSHALL` risk on shared Redis instances (mitigated by isolated demo container stack) | High | — | ✅ |
+| 28 | L4 test marker: is_test_fixture column added (mig 0016); 10k fixture items tagged in audit DB | Low | — | ✅ (Round 9a) |
 
 ---
 
