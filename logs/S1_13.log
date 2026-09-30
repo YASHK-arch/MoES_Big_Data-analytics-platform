@@ -1,0 +1,103 @@
+============================= test session starts ==============================
+platform darwin -- Python 3.14.0, pytest-8.4.2, pluggy-1.6.0 -- /Users/akshatjain/Documents/SIH/back-end/.venv/bin/python3.14
+cachedir: .pytest_cache
+Using --randomly-seed=2513132069
+rootdir: /Users/akshatjain/Documents/SIH/back-end
+configfile: pyproject.toml
+plugins: randomly-5.0.0, cov-4.1.0, anyio-4.14.2, asyncio-0.26.0
+asyncio: mode=Mode.AUTO, asyncio_default_fixture_loop_scope=None, asyncio_default_test_loop_scope=function
+collecting ... collected 4 items
+
+back-end/tests/test_observability_and_drills.py::test_drill_latency_benchmark ✅ Seeded Admin, Operator, and Citizen accounts.
+✅ Seeded 6 Metropolitan Relief Shelters.
+
+================================================================================
+S1 PHYSICAL CORROBORATION LATENCY BENCHMARK (50 iterations)
+================================================================================
+Pure Logic Evaluation : p50 = 0.0034 ms | p95 = 0.0068 ms
+Cache Miss (Provider) : p50 = 0.0076 ms | p95 = 0.0123 ms
+Cache Hit (In-Memory) : p50 = 0.0022 ms | p95 = 0.0027 ms
+================================================================================
+PASSED
+back-end/tests/test_observability_and_drills.py::test_prometheus_physical_metrics_in_endpoint PASSED
+back-end/tests/test_observability_and_drills.py::test_drill_1_provider_outage_resilience_and_recovery PASSED
+back-end/tests/test_observability_and_drills.py::test_drill_2_worker_crash_recovery_no_duplicate_rows PASSED
+
+=============================== warnings summary ===============================
+tests/test_observability_and_drills.py::test_drill_latency_benchmark
+  /Users/akshatjain/Documents/SIH/back-end/.venv/lib/python3.14/site-packages/pytest_asyncio/plugin.py:1216: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+    return asyncio.get_event_loop_policy()
+
+tests/test_observability_and_drills.py::test_drill_latency_benchmark
+tests/test_observability_and_drills.py::test_drill_latency_benchmark
+tests/test_observability_and_drills.py::test_prometheus_physical_metrics_in_endpoint
+tests/test_observability_and_drills.py::test_drill_1_provider_outage_resilience_and_recovery
+tests/test_observability_and_drills.py::test_drill_2_worker_crash_recovery_no_duplicate_rows
+  /Users/akshatjain/Documents/SIH/back-end/.venv/lib/python3.14/site-packages/pytest_asyncio/plugin.py:772: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+    old_loop_policy = asyncio.get_event_loop_policy()
+
+tests/test_observability_and_drills.py::test_drill_latency_benchmark
+tests/test_observability_and_drills.py::test_drill_latency_benchmark
+tests/test_observability_and_drills.py::test_prometheus_physical_metrics_in_endpoint
+tests/test_observability_and_drills.py::test_drill_1_provider_outage_resilience_and_recovery
+tests/test_observability_and_drills.py::test_drill_2_worker_crash_recovery_no_duplicate_rows
+  /Users/akshatjain/Documents/SIH/back-end/.venv/lib/python3.14/site-packages/pytest_asyncio/plugin.py:777: DeprecationWarning: 'asyncio.set_event_loop_policy' is deprecated and slated for removal in Python 3.16
+    asyncio.set_event_loop_policy(policy)
+
+tests/test_observability_and_drills.py::test_drill_latency_benchmark
+tests/test_observability_and_drills.py::test_drill_latency_benchmark
+tests/test_observability_and_drills.py::test_prometheus_physical_metrics_in_endpoint
+tests/test_observability_and_drills.py::test_drill_1_provider_outage_resilience_and_recovery
+tests/test_observability_and_drills.py::test_drill_2_worker_crash_recovery_no_duplicate_rows
+  /Users/akshatjain/Documents/SIH/back-end/.venv/lib/python3.14/site-packages/pytest_asyncio/plugin.py:1183: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+    loop = asyncio.get_event_loop_policy().new_event_loop()
+
+tests/test_observability_and_drills.py::test_drill_latency_benchmark
+tests/test_observability_and_drills.py::test_prometheus_physical_metrics_in_endpoint
+tests/test_observability_and_drills.py::test_drill_1_provider_outage_resilience_and_recovery
+tests/test_observability_and_drills.py::test_drill_2_worker_crash_recovery_no_duplicate_rows
+  /Users/akshatjain/Documents/SIH/back-end/.venv/lib/python3.14/site-packages/pytest_asyncio/plugin.py:874: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+    _restore_event_loop_policy(asyncio.get_event_loop_policy()),
+
+tests/test_observability_and_drills.py::test_drill_latency_benchmark
+tests/test_observability_and_drills.py::test_prometheus_physical_metrics_in_endpoint
+tests/test_observability_and_drills.py::test_drill_1_provider_outage_resilience_and_recovery
+tests/test_observability_and_drills.py::test_drill_2_worker_crash_recovery_no_duplicate_rows
+  /Users/akshatjain/Documents/SIH/back-end/.venv/lib/python3.14/site-packages/pytest_asyncio/plugin.py:889: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+    policy = asyncio.get_event_loop_policy()
+
+tests/test_observability_and_drills.py: 77 warnings
+  /Users/akshatjain/Documents/SIH/back-end/.venv/lib/python3.14/site-packages/pydantic/main.py:263: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+    validated_self = self.__pydantic_validator__.validate_python(data, self_instance=self)
+
+tests/test_observability_and_drills.py::test_drill_latency_benchmark
+tests/test_observability_and_drills.py::test_prometheus_physical_metrics_in_endpoint
+tests/test_observability_and_drills.py::test_drill_1_provider_outage_resilience_and_recovery
+tests/test_observability_and_drills.py::test_drill_2_worker_crash_recovery_no_duplicate_rows
+tests/test_observability_and_drills.py::test_drill_2_worker_crash_recovery_no_duplicate_rows
+  /Users/akshatjain/Documents/SIH/back-end/.venv/lib/python3.14/site-packages/pytest_asyncio/plugin.py:794: DeprecationWarning: 'asyncio.set_event_loop_policy' is deprecated and slated for removal in Python 3.16
+    asyncio.set_event_loop_policy(old_loop_policy)
+
+tests/test_observability_and_drills.py::test_drill_latency_benchmark
+tests/test_observability_and_drills.py::test_prometheus_physical_metrics_in_endpoint
+tests/test_observability_and_drills.py::test_drill_1_provider_outage_resilience_and_recovery
+tests/test_observability_and_drills.py::test_drill_2_worker_crash_recovery_no_duplicate_rows
+  /Users/akshatjain/Documents/SIH/back-end/.venv/lib/python3.14/site-packages/pytest_asyncio/plugin.py:942: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+    policy = asyncio.get_event_loop_policy()
+
+tests/test_observability_and_drills.py::test_drill_latency_benchmark
+tests/test_observability_and_drills.py::test_prometheus_physical_metrics_in_endpoint
+tests/test_observability_and_drills.py::test_drill_1_provider_outage_resilience_and_recovery
+tests/test_observability_and_drills.py::test_drill_2_worker_crash_recovery_no_duplicate_rows
+  /Users/akshatjain/Documents/SIH/back-end/.venv/lib/python3.14/site-packages/pytest_asyncio/plugin.py:966: DeprecationWarning: 'asyncio.set_event_loop_policy' is deprecated and slated for removal in Python 3.16
+    asyncio.set_event_loop_policy(previous_policy)
+
+tests/test_observability_and_drills.py::test_drill_latency_benchmark
+tests/test_observability_and_drills.py::test_prometheus_physical_metrics_in_endpoint
+tests/test_observability_and_drills.py::test_drill_1_provider_outage_resilience_and_recovery
+tests/test_observability_and_drills.py::test_drill_2_worker_crash_recovery_no_duplicate_rows
+  /Users/akshatjain/Documents/SIH/back-end/.venv/lib/python3.14/site-packages/pytest_asyncio/plugin.py:978: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+    policy = asyncio.get_event_loop_policy()
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+======================= 4 passed, 118 warnings in 1.87s ========================

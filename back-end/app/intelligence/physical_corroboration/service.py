@@ -7,6 +7,7 @@ and PostgreSQL persistence with idempotent deduplication and outbox staging.
 from __future__ import annotations
 
 import logging
+import time
 import uuid
 from datetime import datetime, timezone
 from typing import Any, Dict, List, Optional
@@ -15,6 +16,13 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.config import settings
+from app.core.metrics import (
+    physical_eval_duration_seconds,
+    physical_fetch_duration_seconds,
+    physical_provider_fetch_total,
+    physical_recomputes_total,
+    physical_verdicts_total,
+)
 from app.intelligence.physical_corroboration.config import (
     PhysicalCorroborationConfig,
     default_physical_config,
@@ -103,14 +111,24 @@ class PhysicalCorroborationService:
                 category=category,
             )
 
+        t0_fetch = time.monotonic()
         obs, provider_status, err_msg, _ = await self.cache.get_or_fetch(
             lat=lat,
             lon=lon,
             target_time=incident_time,
             fetch_coroutine_fn=_fetch,
         )
+        fetch_dur = time.monotonic() - t0_fetch
+        physical_fetch_duration_seconds.labels(provider=self.provider.name).observe(fetch_dur)
+        reason_label = (err_msg[:30] if err_msg else "OK").replace(" ", "_")
+        physical_provider_fetch_total.labels(
+            provider=self.provider.name,
+            status=provider_status.value,
+            reason=reason_label,
+        ).inc()
 
         # 2. Evaluate corroboration logic
+        t0_eval = time.monotonic()
         eval_result: PhysicalCorroborationResult = evaluate(
             category=category,
             observation=obs,
@@ -118,12 +136,19 @@ class PhysicalCorroborationService:
             incident_coords=(lat, lon),
             config=self.config,
         )
+        eval_dur = time.monotonic() - t0_eval
+        physical_eval_duration_seconds.labels(category=category).observe(eval_dur)
 
         # Override provider status if the provider explicitly failed
         if provider_status != ProviderStatus.OK:
             eval_result.provider_status = provider_status
             if err_msg and not eval_result.explanation:
                 eval_result.explanation = f"Provider {provider_status.value}: {err_msg}"
+
+        physical_verdicts_total.labels(
+            category=category,
+            verdict=eval_result.verdict.value,
+        ).inc()
 
         # 3. Idempotent persistence (Upsert semantics)
         obs_time = obs.observed_at if obs else incident_time
@@ -170,6 +195,7 @@ class PhysicalCorroborationService:
             )
             db.add(record)
         else:
+            physical_recomputes_total.inc()
             # Update existing row
             record.observed_value = eval_result.observed_value
             record.unit = eval_result.unit

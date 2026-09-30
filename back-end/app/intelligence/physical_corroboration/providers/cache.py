@@ -12,6 +12,7 @@ import logging
 from datetime import datetime
 from typing import Awaitable, Callable, Dict, Optional, Tuple
 
+from app.core.metrics import physical_cache_requests_total
 from app.intelligence.physical_corroboration.evaluator import compute_grid_hour_cache_key
 from app.intelligence.physical_corroboration.models import (
     PhysicalObservation,
@@ -57,6 +58,7 @@ class SingleFlightGridHourCache:
             obs, expire_at = self._in_memory_cache[cache_key]
             if now < expire_at:
                 self.cache_hits += 1
+                physical_cache_requests_total.labels(result="hit").inc()
                 return obs, ProviderStatus.OK, None, True
             else:
                 del self._in_memory_cache[cache_key]
@@ -74,11 +76,13 @@ class SingleFlightGridHourCache:
         if not is_leader:
             # Follower: await the leader's in-flight execution
             self.cache_hits += 1
+            physical_cache_requests_total.labels(result="hit").inc()
             obs, status, err = await future
             return obs, status, err, True
 
         # Leader: execute the actual fetch
         self.cache_misses += 1
+        physical_cache_requests_total.labels(result="miss").inc()
         try:
             obs, status, err = await fetch_coroutine_fn()
             if status == ProviderStatus.OK and obs is not None:
