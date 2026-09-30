@@ -107,6 +107,51 @@ class IncidentSummaryResponse(BaseModel):
     created_at: datetime
 
 
+class ImageForensicCheckDetail(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    check_type: str = Field(..., description="EXIF_TIME, EXIF_LOCATION, IMAGE_REUSE, etc.")
+    verdict: str = Field(..., description="SUPPORTS, CONTRADICTS, NEUTRAL")
+    observed_value: Optional[str] = Field(None, description="Derived privacy-safe observed value")
+    expected_value: Optional[str] = Field(None, description="Expected incident declaration value")
+    difference: Optional[str] = Field(None, description="Quantified difference between observed and expected")
+    reason: str = Field(..., description="Plain-language explanation of check verdict")
+    matched_incident_ids: List[str] = Field(
+        default_factory=list, description="IDs of matching distant incidents (P5: IDs only)"
+    )
+
+
+class ImageForensicItemDetail(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    media_id: Optional[uuid.UUID] = None
+    sha256: str
+    phash: str
+    has_exif: bool = False
+    exif_timestamp_utc: Optional[datetime] = None
+    timezone_assumed_ist: bool = False
+    time_verdict: str = "NEUTRAL"
+    time_difference: Optional[str] = None
+    location_verdict: str = "NEUTRAL"
+    location_difference: Optional[str] = None
+    reuse_verdict: str = "NEUTRAL"
+    matched_incident_ids: List[str] = Field(default_factory=list)
+    overall_verdict: str = "NEUTRAL"
+    credibility_adjustment: float = 0.0
+    error_reason: Optional[str] = None
+    checks: List[ImageForensicCheckDetail] = Field(default_factory=list)
+
+
+class IncidentImageForensicsDetail(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    overall_verdict: str = Field(default="NEUTRAL", description="Aggregate verdict: SUPPORTS, CONTRADICTS, NEUTRAL")
+    total_credibility_adjustment: float = Field(default=0.0, description="Capped credibility delta applied to incident")
+    image_count: int = Field(default=0, description="Number of analyzed images")
+    is_simulated: bool = Field(default=False, description="True if generated from demo fixture")
+    images: List[ImageForensicItemDetail] = Field(default_factory=list, description="Per-image forensic details")
+
+
 class IncidentDetailPublic(BaseModel):
     """Public operational incident detail with bounded summaries and PII/audit redacted."""
 
@@ -126,6 +171,10 @@ class IncidentDetailPublic(BaseModel):
     summaries: IncidentCorroborationCounts
     is_demo: bool = False
     media: List[MediaDetail] = Field(default_factory=list)
+    image_forensics: Optional[IncidentImageForensicsDetail] = Field(
+        default=None,
+        description="Forensic analysis block for attached images (reused image detection & EXIF consistency).",
+    )
     created_at: datetime
 
 
