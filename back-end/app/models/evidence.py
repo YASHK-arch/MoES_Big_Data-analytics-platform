@@ -3,6 +3,7 @@ from datetime import datetime
 from typing import TYPE_CHECKING, Any, Dict, List, Optional
 
 from sqlalchemy import (
+    Boolean,
     DateTime,
     Float,
     ForeignKey,
@@ -56,6 +57,12 @@ class EvidenceItem(Base):
     publisher_domain: Mapped[Optional[str]] = mapped_column(
         String(150),
         nullable=True,
+        index=True,
+    )
+    is_test_fixture: Mapped[bool] = mapped_column(
+        Boolean,
+        default=False,
+        nullable=False,
         index=True,
     )
     language: Mapped[Optional[str]] = mapped_column(
