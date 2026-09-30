@@ -139,6 +139,27 @@ INDIAN_CITIES: Dict[str, Dict[str, Any]] = {
         "lat": 26.9124,
         "lon": 75.7873,
     },
+    "puri": {
+        "city": "Puri",
+        "district": "Puri",
+        "state": "Odisha",
+        "lat": 19.8135,
+        "lon": 85.8312,
+    },
+    "shimoga": {
+        "city": "Shimoga",
+        "district": "Shimoga",
+        "state": "Karnataka",
+        "lat": 13.9299,
+        "lon": 75.5681,
+    },
+    "shivamogga": {
+        "city": "Shimoga",
+        "district": "Shimoga",
+        "state": "Karnataka",
+        "lat": 13.9299,
+        "lon": 75.5681,
+    },
     "lucknow": {
         "city": "Lucknow",
         "district": "Lucknow",

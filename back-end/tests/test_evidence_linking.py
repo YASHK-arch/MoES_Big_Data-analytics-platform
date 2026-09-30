@@ -419,3 +419,113 @@ async def test_evidence_linking_lifecycle_and_idempotency(db_session: AsyncSessi
     # 8. WeatherReport verification status safety
     rep_check = await db_session.execute(select(WeatherReport).where(WeatherReport.id == inc_a.id))
     assert rep_check.scalar_one().verification_status == "PENDING"
+
+
+def test_location_gate_puri_vs_mumbai_no_coords():
+    """Verify coordinate-less Puri evidence does NOT link to coordinate-less Mumbai incident."""
+    scorer = EvidenceScorer()
+    res = scorer.score_link(
+        incident_id=uuid.uuid4(),
+        evidence_id=uuid.uuid4(),
+        incident_title="Severe waterlogging in Mumbai",
+        incident_desc="Heavy monsoon downpour submerges roads in Mumbai.",
+        incident_cat="FLOOD_WATERLOGGING",
+        incident_lat=None,
+        incident_lon=None,
+        incident_time=datetime(2026, 8, 29, 10, 0, tzinfo=timezone.utc),
+        incident_loc_name="Mumbai, Maharashtra",
+        evidence_title="Heavy rains cause waterlogging in Puri",
+        evidence_snippet="Torrential rain submerges Grand Road in Puri town.",
+        evidence_source_type="NEWS_PORTAL",
+        evidence_pub_time=datetime(2026, 8, 29, 10, 30, tzinfo=timezone.utc),
+    )
+    assert res.relationship_type == EvidenceRelationship.IRRELEVANT
+    assert res.overall_score == 0.0
+
+
+def test_location_gate_goa_vs_bengaluru_no_coords():
+    """Verify coordinate-less Goa evidence does NOT link to coordinate-less Bengaluru incident."""
+    scorer = EvidenceScorer()
+    res = scorer.score_link(
+        incident_id=uuid.uuid4(),
+        evidence_id=uuid.uuid4(),
+        incident_title="Flooding across Bengaluru tech corridors",
+        incident_desc="Waterlogging on Outer Ring Road in Bengaluru.",
+        incident_cat="FLOOD_WATERLOGGING",
+        incident_lat=None,
+        incident_lon=None,
+        incident_time=datetime(2026, 8, 29, 12, 0, tzinfo=timezone.utc),
+        incident_loc_name="Bengaluru, Karnataka",
+        evidence_title="Goa coastal weather warning issued",
+        evidence_snippet="Heavy downpours submerge coastal streets across Goa.",
+        evidence_source_type="NEWS_PORTAL",
+        evidence_pub_time=datetime(2026, 8, 29, 12, 30, tzinfo=timezone.utc),
+    )
+    assert res.relationship_type == EvidenceRelationship.IRRELEVANT
+    assert res.overall_score == 0.0
+
+
+def test_location_gate_mumbai_vs_kurla_no_coords_links():
+    """Verify coordinate-less Kurla evidence still links to coordinate-less Mumbai incident."""
+    scorer = EvidenceScorer()
+    res = scorer.score_link(
+        incident_id=uuid.uuid4(),
+        evidence_id=uuid.uuid4(),
+        incident_title="Severe waterlogging across Mumbai suburban stations",
+        incident_desc="Tracks and arterial roads submerged across Mumbai suburbs.",
+        incident_cat="FLOOD_WATERLOGGING",
+        incident_lat=None,
+        incident_lon=None,
+        incident_time=datetime(2026, 8, 29, 10, 0, tzinfo=timezone.utc),
+        incident_loc_name="Mumbai, Maharashtra",
+        evidence_title="Kurla railway station tracks waterlogged in Mumbai",
+        evidence_snippet="Suburban train services disrupted due to water accumulation at Kurla in Mumbai.",
+        evidence_source_type="NEWS_PORTAL",
+        evidence_pub_time=datetime(2026, 8, 29, 10, 30, tzinfo=timezone.utc),
+    )
+    assert res.relationship_type in (EvidenceRelationship.SUPPORTING, EvidenceRelationship.RELATED)
+    assert res.overall_score > 0.0
+
+
+def test_location_gate_coordinate_cases_unchanged():
+    """Verify coordinate-based links remain unchanged by the location gate."""
+    scorer = EvidenceScorer()
+    # Case 1: Matching coordinates in Mumbai -> SUPPORTING
+    res_close = scorer.score_link(
+        incident_id=uuid.uuid4(),
+        evidence_id=uuid.uuid4(),
+        incident_title="Severe waterlogging near Andheri subway",
+        incident_desc="Water knee-deep near railway station subway.",
+        incident_cat="FLOOD_WATERLOGGING",
+        incident_lat=19.1197,
+        incident_lon=72.8468,
+        incident_time=datetime(2026, 8, 29, 10, 0, tzinfo=timezone.utc),
+        incident_loc_name="Andheri, Mumbai",
+        evidence_title="Heavy rains cause severe waterlogging at Andheri subway in Mumbai",
+        evidence_snippet="Subway traffic suspended as water levels rise outside Andheri station.",
+        evidence_source_type="GDELT",
+        evidence_pub_time=datetime(2026, 8, 29, 10, 30, tzinfo=timezone.utc),
+    )
+    assert res_close.relationship_type == EvidenceRelationship.SUPPORTING
+    assert res_close.overall_score >= 0.65
+
+    # Case 2: Distant coordinates (> 25km) -> IRRELEVANT (Pune vs Mumbai)
+    res_far = scorer.score_link(
+        incident_id=uuid.uuid4(),
+        evidence_id=uuid.uuid4(),
+        incident_title="Waterlogging in Mumbai south",
+        incident_desc="Streets flooded near Colaba.",
+        incident_cat="FLOOD_WATERLOGGING",
+        incident_lat=18.9067,
+        incident_lon=72.8147,
+        incident_time=datetime(2026, 8, 29, 10, 0, tzinfo=timezone.utc),
+        incident_loc_name="Colaba, Mumbai",
+        evidence_title="Severe flooding across Pune streets after cloudburst",
+        evidence_snippet="Streets in Pune flooded with high water levels.",
+        evidence_source_type="NEWS_PORTAL",
+        evidence_pub_time=datetime(2026, 8, 29, 10, 30, tzinfo=timezone.utc),
+    )
+    # Pune is > 100km from Colaba
+    assert res_far.relationship_type == EvidenceRelationship.IRRELEVANT
+    assert res_far.overall_score == 0.0
+

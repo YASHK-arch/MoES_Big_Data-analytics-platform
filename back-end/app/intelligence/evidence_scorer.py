@@ -5,6 +5,7 @@ from datetime import datetime, timezone
 from typing import Optional
 
 from app.core.config import settings
+from app.intelligence.gazetteer import INDIAN_CITIES
 from app.intelligence.resolver import location_resolver
 from app.intelligence.schemas import (
     EvidenceLinkAssessment,
@@ -244,10 +245,23 @@ class EvidenceScorer:
         spatial_score = 0.0
         entity_score = 0.5
 
-        # Identify cities and states from both text and resolver
+        # Identify cities and states from coords, resolver, and text
+        inc_has_coords = incident_lat is not None and incident_lon is not None
         inc_text_res = location_resolver.resolve(text=inc_full_text)
         inc_city = inc_loc_res.city or inc_text_res.city
         inc_state = inc_loc_res.state or inc_text_res.state
+
+        if inc_has_coords and (not inc_city or not inc_state):
+            assert incident_lat is not None and incident_lon is not None
+            for c_data in INDIAN_CITIES.values():
+                if "lat" in c_data and "lon" in c_data:
+                    d = self.haversine_distance_meters(
+                        incident_lat, incident_lon, c_data["lat"], c_data["lon"]
+                    )
+                    if d <= 50000.0:
+                        inc_city = inc_city or c_data.get("city")
+                        inc_state = inc_state or c_data.get("state")
+                        break
 
         if not inc_city and incident_loc_name:
             loc_clean = incident_loc_name.lower()
@@ -266,13 +280,41 @@ class EvidenceScorer:
                 "dehradun",
                 "amritsar",
                 "thane",
+                "puri",
             ]
             for c in cities:
                 if c in loc_clean:
                     inc_city = c.capitalize()
                     break
 
-        evi_city = evi_loc_res.city
+        if inc_city and not inc_state:
+            c_key = inc_city.lower()
+            if c_key in INDIAN_CITIES:
+                inc_state = INDIAN_CITIES[c_key].get("state")
+
+        evi_has_coords = (
+            evi_loc_res.latitude is not None and evi_loc_res.longitude is not None
+        )
+        evi_text_res = location_resolver.resolve(text=evi_full_text)
+        evi_city = evi_loc_res.city or evi_text_res.city
+        evi_state = evi_loc_res.state or evi_text_res.state
+
+        if evi_has_coords and (not evi_city or not evi_state):
+            assert evi_loc_res.latitude is not None and evi_loc_res.longitude is not None
+            for c_data in INDIAN_CITIES.values():
+                if "lat" in c_data and "lon" in c_data:
+                    d = self.haversine_distance_meters(
+                        evi_loc_res.latitude, evi_loc_res.longitude, c_data["lat"], c_data["lon"]
+                    )
+                    if d <= 50000.0:
+                        evi_city = evi_city or c_data.get("city")
+                        evi_state = evi_state or c_data.get("state")
+                        break
+
+        if evi_city and not evi_state:
+            c_key = evi_city.lower()
+            if c_key in INDIAN_CITIES:
+                evi_state = INDIAN_CITIES[c_key].get("state")
 
         # Foreign Country Check
         foreign_kws = [
@@ -291,12 +333,7 @@ class EvidenceScorer:
             re.search(rf"\b{kw}\b", clean_evi) for kw in foreign_kws
         )
 
-        has_coords = (
-            incident_lat is not None
-            and incident_lon is not None
-            and evi_loc_res.latitude is not None
-            and evi_loc_res.longitude is not None
-        )
+        has_coords = inc_has_coords and evi_has_coords
         if has_coords:
             assert incident_lat is not None and incident_lon is not None
             assert evi_loc_res.latitude is not None and evi_loc_res.longitude is not None
@@ -319,6 +356,8 @@ class EvidenceScorer:
                 return True
             if "mumbai" in c1_l and "mumbai" in c2_l:
                 return True
+            if ("kurla" in c1_l and "mumbai" in c2_l) or ("kurla" in c2_l and "mumbai" in c1_l):
+                return True
             b1 = "bengaluru" in c1_l or "bangalore" in c1_l
             b2 = "bengaluru" in c2_l or "bangalore" in c2_l
             return b1 and b2
@@ -336,9 +375,9 @@ class EvidenceScorer:
             else:
                 entity_score = 0.0
         elif (
-            evi_loc_res.state
-            and inc_loc_res.state
-            and evi_loc_res.state.lower() == inc_loc_res.state.lower()
+            evi_state
+            and inc_state
+            and evi_state.lower() == inc_state.lower()
         ):
             entity_score = 0.6
         elif evi_loc_res.place_name and inc_loc_res.place_name:
@@ -457,11 +496,11 @@ class EvidenceScorer:
                 assessed_at=datetime.now(timezone.utc),
             )
 
-        # Gate 4b: Confirmed different states -> IRRELEVANT
+        # Gate 4b: Both states known and different -> IRRELEVANT
         if (
-            evi_loc_res.state
-            and inc_loc_res.state
-            and evi_loc_res.state.lower() != inc_loc_res.state.lower()
+            evi_state
+            and inc_state
+            and evi_state.strip().lower() != inc_state.strip().lower()
         ):
             return EvidenceLinkAssessment(
                 incident_id=incident_id,
@@ -469,12 +508,38 @@ class EvidenceScorer:
                 relationship_type=EvidenceRelationship.IRRELEVANT,
                 overall_score=0.0,
                 signals=signals,
-                explanation=f"Evidence is in a different state ({evi_loc_res.state} vs {inc_loc_res.state}).",
+                explanation=f"Evidence is in a different state ({evi_state} vs {inc_state}).",
                 engine_version=self.engine_version,
                 policy_version=self.policy_version,
                 semantic_method=self.semantic_method,
                 assessed_at=datetime.now(timezone.utc),
             )
+
+        # Gate 4c: Neither side has coordinates and no matching state or city -> IRRELEVANT
+        if not inc_has_coords and not evi_has_coords:
+            if inc_state or inc_city or evi_state or evi_city:
+                matching_city = is_same_city(evi_city, inc_city)
+                matching_state = bool(
+                    evi_state
+                    and inc_state
+                    and evi_state.strip().lower() == inc_state.strip().lower()
+                )
+                if not matching_city and not matching_state:
+                    return EvidenceLinkAssessment(
+                        incident_id=incident_id,
+                        evidence_id=evidence_id,
+                        relationship_type=EvidenceRelationship.IRRELEVANT,
+                        overall_score=0.0,
+                        signals=signals,
+                        explanation=(
+                            "Neither incident nor evidence has coordinates, and no matching state "
+                            f"or city found ({evi_city or evi_state} vs {inc_city or inc_state})."
+                        ),
+                        engine_version=self.engine_version,
+                        policy_version=self.policy_version,
+                        semantic_method=self.semantic_method,
+                        assessed_at=datetime.now(timezone.utc),
+                    )
 
         # Gate 5: Extreme temporal mismatch (> 48h horizon) -> IRRELEVANT
         if temporal_delta_hours is not None and temporal_delta_hours > self.max_window_hours:
@@ -522,13 +587,18 @@ class EvidenceScorer:
 
         # Contextual check (Government review / preparedness)
         is_state_advisory = bool(
-            evi_loc_res.state
-            and not evi_loc_res.city
+            evi_state
+            and not evi_city
             and not evi_loc_res.locality
             and inc_state
-            and evi_loc_res.state.lower() == inc_state.lower()
+            and evi_state.lower() == inc_state.lower()
         )
         is_contextual = self._is_contextual_text(evi_full_text) or is_state_advisory
+
+        # One side has coordinates and the other only state/city: compare state; -0.10 if city unknown
+        one_sided_coords = inc_has_coords != evi_has_coords
+        if one_sided_coords and (not inc_city or not evi_city) and not is_contextual:
+            overall = max(0.0, overall - 0.10)
 
         if is_contextual and overall >= self.contextual_threshold:
             return EvidenceLinkAssessment(
