@@ -310,9 +310,16 @@ class ReportService:
                 )
                 await session.refresh(report)
             except Exception as pipe_err:
+                await session.rollback()
                 logger.warning(
                     "Inline intelligence pipeline execution deferred to worker: %s", pipe_err
                 )
+                res = await session.execute(
+                    select(WeatherReport).where(WeatherReport.id == report_id)
+                )
+                refreshed = res.scalar_one_or_none()
+                if refreshed is not None:
+                    report = refreshed
 
             return report, len(media_records)
 

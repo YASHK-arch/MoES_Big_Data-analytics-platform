@@ -23,6 +23,7 @@ class RealtimeEventType(str, enum.Enum):
     CLUSTER_UPDATED = "cluster.updated"
     SYSTEM_HEARTBEAT = "system.heartbeat"
     SYSTEM_RESYNC_REQUIRED = "system.resync_required"
+    INCIDENT_PHYSICAL_CORROBORATION_COMPLETED = "incident.physical_corroboration_completed"
 
 
 class SystemResyncRequiredPayload(BaseModel):
