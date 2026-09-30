@@ -1,0 +1,29 @@
+=== PYTEST COUNT ===
+tests/test_o3_metrics.py::test_metrics_contains_expected_metric_names
+tests/test_o3_metrics.py::test_metrics_endpoint_returns_prometheus_format
+tests/test_o3_metrics.py::test_http_requests_total_increments
+
+585 tests collected in 0.28s
+
+=== CODE MAP INSPECTION ===
+Upload/MinIO/SHA-256:
+  app/services/storage.py: validate_file_magic_bytes: True
+  app/services/storage.py: StorageService.upload_media_file: True
+  app/services/report_service.py: ReportService.create_citizen_report: True
+Media Models & Evidence Linking:
+  app/models/media.py: ReportMedia: True report_media
+  app/models/evidence.py: EvidenceItem: True evidence_items
+  app/models/evidence.py: IncidentEvidenceLink: True incident_evidence_links
+Worker & Outbox:
+  app/models/outbox.py: RealtimeOutbox: True realtime_outbox
+  app/workers/outbox_worker.py: RealtimeOutboxWorker.publish_pending_batch: True
+Credibility Scorer:
+  app/intelligence/credibility_collector.py: CredibilityCollector.collect_inputs: True
+  app/intelligence/credibility_scorer.py: CredibilityScorer.score_incident: True
+
+=== 200 INCIDENTS BASELINE SNAPSHOT ===
+Loaded 200 reports from postgresql+asyncpg://postgres:postgres@localhost:5432/weather_platform_s2
+Saved 200 incidents to /Users/akshatjain/Documents/SIH/audit/s2_baseline.json
+Mean credibility score: 0.7087
+Min credibility score: 0.6000
+Max credibility score: 0.7786
