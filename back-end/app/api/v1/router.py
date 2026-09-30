@@ -9,6 +9,7 @@ from app.api.v1.feedback import router as feedback_router
 from app.api.v1.geo import router as geo_router
 from app.api.v1.health import router as health_router
 from app.api.v1.incidents import router as incidents_router
+from app.api.v1.metrics import router as metrics_router
 from app.api.v1.relief_centers import router as relief_centers_router
 from app.api.v1.reports import router as reports_router
 from app.api.v1.routes import router as routes_router
@@ -31,3 +32,4 @@ api_v1_router.include_router(relief_centers_router, prefix="/geo/relief-centers"
 api_v1_router.include_router(relief_centers_router, prefix="/relief-centers", tags=["Relief Centers"])
 api_v1_router.include_router(dashboard_router, prefix="/dashboard", tags=["Dashboard"])
 api_v1_router.include_router(analytics_router, prefix="/analytics", tags=["Analytics"])
+api_v1_router.include_router(metrics_router, tags=["Metrics"])

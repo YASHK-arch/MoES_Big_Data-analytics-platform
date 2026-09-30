@@ -10,6 +10,7 @@ from fastapi.responses import JSONResponse, ORJSONResponse
 from starlette.middleware.gzip import GZipMiddleware
 
 from app.api.v1.events import broadcaster
+from app.api.v1.metrics import record_request_metric
 from app.api.v1.router import api_v1_router
 from app.core.config import settings
 
@@ -36,6 +37,9 @@ def create_application() -> FastAPI:
     )
 
     app.add_middleware(GZipMiddleware, minimum_size=1000, compresslevel=4)
+
+    # O3: HTTP request count + latency metrics middleware
+    app.middleware("http")(record_request_metric)
 
     # CORS Middleware configuration
     if settings.ALLOWED_ORIGINS:
