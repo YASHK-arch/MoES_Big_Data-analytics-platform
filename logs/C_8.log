@@ -1,0 +1,23 @@
+=== ITEM 8: PROJECT_PROGRESS.MD UPDATE VERIFICATION ===
+Timestamp: 2026-09-30 22:56:45 UTC
+
+1. S1, S2, L5 Rule Check:
+   - S1 (Physical corroboration): Status = 🔎 (Line 202)
+   - S2 (Image forensics): Status = 🔎 (Line 203)
+   - L5 (Location-mismatch signal): Status = 🟡 (Line 204)
+   - Verified: None of S1, S2, or L5 are marked with ✅. Rule satisfied.
+
+2. Change Log Row Added:
+   - Row: 2026-10-01 | C-lite (C1–C8) | main | C-lite: S2 merge, demo stack S1/S2 fixtures, Locust load test (576 RPS at 100u), stream throughput (14.9k ev/s), worker kill drill (2.47s recovery, 0 lost/dup), secret/path audit, LOAD_REPORT, DEMO_SCRIPT, PITCH | BE 609 pass / 0 fail; FE 190 pass; tsc/lint/build clean; logs/C_1..C_8.log
+   - Verified present at Line 274.
+
+3. Open Issues / Audit History Row Added:
+   - Row: 34 | C-lite audit: Pytest 609/0 (seed 42); Locust 10/50/100u (576 RPS, p50 35ms, 0% err); stream 14.9k ev/s; worker kill 2.47s (0 lost/dup); repo path/secret audit; DEMO_SCRIPT & PITCH complete | Low | — | 🔎 (C-lite)
+   - Verified present at Line 313.
+
+4. Diff Line Count:
+   - Command: git diff docs/PROJECT_PROGRESS.md | wc -l
+   - Output: 39 lines (under 40 lines constraint satisfied).
+
+5. Cleanliness Check:
+   - Zero [LOCAL_USER_PATH]/ paths in docs/PROJECT_PROGRESS.md or logs/C_8.log.

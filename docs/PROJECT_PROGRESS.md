@@ -6,8 +6,8 @@
 - **Problem statement:** SIH 2026 PS 26069 (weather event intelligence platform)
 - **Team status:** Selected from IIT Madras internal round; now competing on this PS with other colleges
 - **Goals of the current phase:** (1) architecture that stays fast after deployment, (2) intact and recoverable pipelines, (3) full PS requirement coverage, (4) standout features
-- **Last updated:** 2026-10-01 (A-items 6-8: demo stack enable, SSE event wiring, report_service rollback fix)
-- **Deployment status:** Local isolated Docker compose demo stack (`sih-demo`) tested & operational at `:8080`. Total memory: ~1.07 GB idle across 11 containers. Production guardrails & smoke tests verified.
+- **Last updated:** 2026-10-01 (C-lite audit: S2 merge, demo stack S1/S2 fixtures, Locust load test, stream throughput, worker drill, honest docs)
+- **Deployment status:** Local isolated Docker compose demo stack (`sih-demo`) tested & operational at `:8080`. Total memory: ~1.51 GB idle across 11 containers. Production guardrails & smoke tests verified.
 - **Legend:** ✅ done · 🟡 in progress · ⬜ todo · ❌ failed / blocked · 🔎 needs verification
 
 ---
@@ -200,6 +200,7 @@ Re-run only: **A3, A4, A6, A7, A10, B1, B3, B4, B5, B7** (same DB, same methods)
 |---|---|---|---|
 | S1 | **Physical corroboration** beyond CWC: IMD AWS/ARG rainfall, temperature, wind | Uses MoES's own data; strongest differentiator | 🔎 |
 | S2 | **Image forensics**: EXIF time/GPS vs claim, perceptual-hash reuse detection (pHash/dHash, cap 0.05) | Directly addresses "fake reports" (P1-P7) | 🔎 |
+| L5 | **Location-mismatch signal**: text-to-GPS distance verification and credibility penalty | Flag-gated (default false); prevents geographic spoofing | 🟡 |
 | S3 | **NDMA alert overlay**: reports inside/outside active alert polygons; flag "impact reported, no alert issued" | Actionable insight for authorities | ⬜ |
 | S4 | **Indian languages**: Hindi/regional post classification (Bhashini / IndicBERT) + Hindi UI | India-specific, jury-visible | ⬜ |
 | S5 | **Low-connectivity intake**: offline-queueing PWA, WhatsApp/Telegram bot | Answers "why hasn't this been solved" | ⬜ |
@@ -272,6 +273,7 @@ Keep your edits to this file under 40 lines. In your final reply, only state "PR
 | 2026-10-01 | S1 (1–16) | `s1-physical-corroboration` | S1 Physical Corroboration: pure evaluator, Open-Meteo provider, mig 0019, worker integration, credibility engine, UI card (EN/HI), Prometheus metrics & drills, replay evaluation | BE 523 pass / 0 fail (full & seed 42); FE 182 pass, tsc/lint/build clean; mypy/ruff clean |
 | 2026-10-01 | A (6–8) | `4f74716` | Demo stack: PHYSICAL_CORROBORATION_ENABLED=true in compose, DEMO_FIXTURE opt-in (default false); SSE RealtimeEventType.INCIDENT_PHYSICAL_CORROBORATION_COMPLETED added; report_service rollback fix | 7 passed (corroboration_api + pipeline); enum import OK; logs/A_6.log |
 | 2026-10-01 | S2 (1–12) | `s2-image-forensics` | S2-lite Image Forensics: pure pHash/dHash & EXIF logic, mig 0020, pipeline worker & outbox, credibility step 16 (cap 0.05), public/operator API, FE card (EN/HI), SIMULATED fixtures | BE 609 pass / 0 fail (seed 42); FE 190 pass, tsc/lint/build clean; mypy (0 new), ruff clean |
+| 2026-10-01 | C-lite (C1–C8) | `main` | C-lite: S2 merge, demo stack S1/S2 fixtures, Locust load test (576 RPS at 100u), stream throughput (14.9k ev/s), worker kill drill (2.47s recovery, 0 lost/dup), secret/path audit, LOAD_REPORT, DEMO_SCRIPT, PITCH | BE 609 pass / 0 fail; FE 190 pass; tsc/lint/build clean; logs/C_1..C_8.log |
 
 ---
 
@@ -312,6 +314,7 @@ Keep your edits to this file under 40 lines. In your final reply, only state "PR
 | 31 | R4 holdout & credibility: 30-post holdout (agent-authored, not blind) scored 21/30 (70.0% accuracy; 9 misses listed in audit/logs/K1_2.log); hoax mean 0.4821 vs genuine 0.6500 (5 foreign-location >0.45; audit/logs/K1_3.log); category_rules.py diff empty | High | — | 🔎 |
 | 32 | `alembic check`: migration 0018 added for archive metadata & ORM index alignment; PostGIS filter added to env.py; alembic check exit 0; audit DB upgrade head -> downgrade -1 -> upgrade head verified (audit/logs/K1_7.log) | Medium | — | ✅ |
 | 33 | Test DB is truncated once per session and seeded; observation test uses unique location; full suite 476/0 three consecutive runs | Medium | — | ✅ |
+| 34 | C-lite audit: Pytest 609/0 (seed 42); Locust 10/50/100u (576 RPS, p50 35ms, 0% err); stream 14.9k ev/s; worker kill 2.47s (0 lost/dup); repo path/secret audit; DEMO_SCRIPT & PITCH complete | Low | — | 🔎 (C-lite) |
 
 ---
 
