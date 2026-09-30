@@ -135,7 +135,7 @@ class Settings(BaseSettings):
     EVIDENCE_SPATIAL_RADIUS_METERS: float = 25000.0
     EVIDENCE_TIME_WINDOW_HOURS: float = 48.0
     EVIDENCE_SUPPORTING_THRESHOLD: float = 0.65
-    EVIDENCE_RELATED_THRESHOLD: float = 0.45
+    EVIDENCE_RELATED_THRESHOLD: float = 0.50
     EVIDENCE_CONTEXTUAL_THRESHOLD: float = 0.35
     EVIDENCE_CANDIDATE_LIMIT: int = 50
     # Observation Corroboration Engine (v1 — Water Level Policy Defaults)
