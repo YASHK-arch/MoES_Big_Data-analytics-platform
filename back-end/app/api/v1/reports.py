@@ -233,6 +233,7 @@ async def submit_citizen_report(
 async def list_reports(
     page: int = Query(default=1, ge=1, description="Page number starting at 1"),
     page_size: int = Query(default=20, ge=1, le=100, description="Records per page (max 100)"),
+    limit: Optional[int] = Query(None, ge=1, le=100, description="Records per page (alias for page_size)"),
     category: Optional[str] = Query(None, description="Event category code"),
     severity: Optional[SeverityType] = Query(None, description="Severity level"),
     status_filter: Optional[str] = Query(
@@ -250,6 +251,7 @@ async def list_reports(
     db: AsyncSession = Depends(get_db),
 ) -> ReportListResponse:
     """List and filter weather incident reports for map explorer and public lists."""
+    effective_page_size = limit if limit is not None else page_size
     # 1. Validate date bounds
     if from_date and to_date and from_date > to_date:
         raise HTTPException(
@@ -315,7 +317,7 @@ async def list_reports(
     ) = await report_service.list_reports(
         session=db,
         page=page,
-        page_size=page_size,
+        page_size=effective_page_size,
         category=category,
         severity=severity,
         status=status_filter,

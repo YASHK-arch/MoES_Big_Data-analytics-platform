@@ -69,6 +69,9 @@ async def get_geo_incidents(
     hours_ago: Optional[int] = Query(
         default=24, ge=1, le=720, description="Hours window (optional; omit for all-time)"
     ),
+    limit: Optional[int] = Query(
+        default=500, ge=1, le=500, description="Max incidents to return"
+    ),
     db: AsyncSession = Depends(get_db),
 ) -> Any:
     """Retrieve GeoJSON FeatureCollection bounded by PostGIS viewport or national overview."""
@@ -134,6 +137,7 @@ async def get_geo_incidents(
         status=status_filter,
         category=category,
         hours_ago=hours_ago,
+        limit=limit or 50,
     )
     return create_cached_geojson_response(request, geojson_data)
 

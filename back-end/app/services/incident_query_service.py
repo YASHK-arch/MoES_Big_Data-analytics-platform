@@ -922,6 +922,7 @@ class IncidentQueryService:
         status: Optional[str] = None,
         category: Optional[str] = None,
         hours_ago: Optional[int] = 24,
+        limit: int = 500,
     ) -> GeoJSONFeatureCollection:
         """Fetch GeoJSON FeatureCollection bounded by PostGIS viewport or nationwide overview."""
         stmt = (
@@ -949,7 +950,7 @@ class IncidentQueryService:
                 WeatherReport.occurred_at >= func.now() - func.make_interval(0, 0, 0, 0, hours_ago)
             )
 
-        stmt = stmt.order_by(WeatherReport.occurred_at.desc().nullslast(), WeatherReport.created_at.desc()).limit(500)
+        stmt = stmt.order_by(WeatherReport.occurred_at.desc().nullslast(), WeatherReport.created_at.desc()).limit(limit)
         res = await session.execute(stmt)
         reports = res.scalars().all()
 
@@ -968,7 +969,6 @@ class IncidentQueryService:
                         credibility_score=r.credibility_score,
                         credibility_reason=r.credibility_reason,
                         verification_status=r.verification_status,
-                        readiness=self._extract_readiness(r).value,
                         occurred_at=r.occurred_at.isoformat(),
                         location_name=r.location_name,
                     ),

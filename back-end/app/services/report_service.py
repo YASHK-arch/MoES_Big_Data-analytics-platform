@@ -1,6 +1,7 @@
 import logging
 import math
 import secrets
+import time
 import uuid
 from datetime import datetime, timedelta, timezone
 from typing import Any, Dict, List, Optional, Tuple
@@ -9,7 +10,7 @@ from fastapi import UploadFile
 from geoalchemy2.elements import WKTElement
 from sqlalchemy import func, or_, select
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.orm import selectinload
+from sqlalchemy.orm import joinedload, selectinload
 
 from app.core.config import settings
 from app.ingestion.schemas import NormalizedIngestionEvent
@@ -25,6 +26,9 @@ from app.services.realtime_service import RealtimeService, realtime_service
 from app.services.storage import StorageService, storage_service
 
 logger = logging.getLogger(__name__)
+
+REPORT_COUNT_CACHE_TTL_SECONDS: float = 30.0
+_UNFILTERED_COUNT_CACHE: Dict[str, float] = {"count": 0, "expires_at": 0.0}
 
 
 class InvalidStateTransitionError(Exception):
@@ -284,6 +288,7 @@ class ReportService:
 
             await session.commit()
             await session.refresh(report)
+            _UNFILTERED_COUNT_CACHE["expires_at"] = 0.0
 
             # Fast-path publish to Redis Stream (worker retries if this fails or network blips)
             await self.realtime_svc.publish_staged_outbox(outbox_row)
@@ -358,7 +363,7 @@ class ReportService:
     ) -> Tuple[List[WeatherReport], int, int, bool, bool]:
         """Query and filter weather reports with PostGIS spatial bounds and pagination."""
         stmt = select(WeatherReport).options(
-            selectinload(WeatherReport.category),
+            joinedload(WeatherReport.category),
             selectinload(WeatherReport.media),
             selectinload(WeatherReport.verification_events),
         )
@@ -408,8 +413,18 @@ class ReportService:
                 count_stmt = count_stmt.where(f)
 
         # 1. Total records count
-        count_res = await session.execute(count_stmt)
-        total_records = count_res.scalar() or 0
+        if not filters:
+            now_mono = time.monotonic()
+            if _UNFILTERED_COUNT_CACHE["expires_at"] > now_mono and _UNFILTERED_COUNT_CACHE["count"] > 0:
+                total_records = int(_UNFILTERED_COUNT_CACHE["count"])
+            else:
+                count_res = await session.execute(count_stmt)
+                total_records = count_res.scalar() or 0
+                _UNFILTERED_COUNT_CACHE["count"] = total_records
+                _UNFILTERED_COUNT_CACHE["expires_at"] = now_mono + REPORT_COUNT_CACHE_TTL_SECONDS
+        else:
+            count_res = await session.execute(count_stmt)
+            total_records = count_res.scalar() or 0
 
         # 2. Paginated data query
         stmt = stmt.order_by(WeatherReport.occurred_at.desc(), WeatherReport.created_at.desc())

@@ -21,19 +21,24 @@ class AsyncRedisClient:
     external C-extension or binary driver dependencies.
     """
 
-    def __init__(self, redis_url: Optional[str] = None) -> None:
+    def __init__(self, redis_url: Optional[str] = None, pool_size: int = 8) -> None:
         self.redis_url = redis_url or settings.REDIS_URL
         parsed = urlparse(self.redis_url)
         self.host = parsed.hostname or "localhost"
         self.port = parsed.port or 6379
         self.db = int(parsed.path.lstrip("/") or "0")
         self.password = parsed.password
+        self.pool_size = pool_size
 
         self._reader: Optional[asyncio.StreamReader] = None
         self._writer: Optional[asyncio.StreamWriter] = None
         self._conn_loop: Optional[asyncio.AbstractEventLoop] = None
         self._lock_obj: Optional[asyncio.Lock] = None
         self._lock_loop: Optional[asyncio.AbstractEventLoop] = None
+
+        self._pool: Optional[asyncio.Queue[Tuple[asyncio.StreamReader, asyncio.StreamWriter]]] = None
+        self._pool_loop: Optional[asyncio.AbstractEventLoop] = None
+        self._pool_created: int = 0
 
     @property
     def _lock(self) -> asyncio.Lock:
@@ -45,6 +50,72 @@ class AsyncRedisClient:
             self._lock_obj = asyncio.Lock()
             self._lock_loop = loop
         return self._lock_obj
+
+    async def _create_connection(self) -> Tuple[asyncio.StreamReader, asyncio.StreamWriter]:
+        """Create and authenticate a single Redis socket connection."""
+        reader, writer = await asyncio.wait_for(
+            asyncio.open_connection(self.host, self.port),
+            timeout=5.0,
+        )
+        if self.password:
+            await self._send_command_on_conn(reader, writer, "AUTH", self.password)
+        if self.db != 0:
+            await self._send_command_on_conn(reader, writer, "SELECT", str(self.db))
+        return reader, writer
+
+    async def _acquire_connection(self) -> Tuple[asyncio.StreamReader, asyncio.StreamWriter]:
+        """Acquire a connection from the connection pool."""
+        try:
+            loop = asyncio.get_running_loop()
+        except RuntimeError:
+            loop = None
+
+        if self._pool is None or self._pool_loop is not loop:
+            self._pool = asyncio.Queue(maxsize=self.pool_size)
+            self._pool_loop = loop
+            self._pool_created = 0
+
+        if not self._pool.empty():
+            return await self._pool.get()
+
+        if self._pool_created < self.pool_size:
+            self._pool_created += 1
+            try:
+                return await self._create_connection()
+            except Exception:
+                self._pool_created -= 1
+                raise
+
+        return await self._pool.get()
+
+    async def _release_connection(
+        self,
+        reader: asyncio.StreamReader,
+        writer: asyncio.StreamWriter,
+        error: bool = False,
+    ) -> None:
+        """Release a connection back to the connection pool."""
+        if error or writer.is_closing():
+            try:
+                writer.close()
+                await writer.wait_closed()
+            except Exception:
+                pass
+            if self._pool_created > 0:
+                self._pool_created -= 1
+            return
+
+        if self._pool is not None:
+            try:
+                self._pool.put_nowait((reader, writer))
+            except asyncio.QueueFull:
+                try:
+                    writer.close()
+                    await writer.wait_closed()
+                except Exception:
+                    pass
+                if self._pool_created > 0:
+                    self._pool_created -= 1
 
     async def connect(self) -> None:
         """Establish asynchronous TCP socket connection to Redis server."""
@@ -62,26 +133,14 @@ class AsyncRedisClient:
             return
 
         try:
-            self._reader, self._writer = await asyncio.wait_for(
-                asyncio.open_connection(self.host, self.port),
-                timeout=5.0,
-            )
-
-            # Authenticate if password provided
-            if self.password:
-                await self._send_command("AUTH", self.password)
-
-            # Select DB if not 0
-            if self.db != 0:
-                await self._send_command("SELECT", str(self.db))
-
+            self._reader, self._writer = await self._create_connection()
         except Exception as e:
             self._reader = None
             self._writer = None
             raise ConnectionError(f"Could not connect to Redis at {self.host}:{self.port}: {e}")
 
     async def close(self) -> None:
-        """Close Redis connection."""
+        """Close Redis connection and pool."""
         async with self._lock:
             if self._writer is not None:
                 try:
@@ -92,7 +151,19 @@ class AsyncRedisClient:
                 self._writer = None
                 self._reader = None
 
-    def _encode_command(self, *args: Union[str, bytes, int, float]) -> bytes:
+        if self._pool is not None:
+            while not self._pool.empty():
+                try:
+                    _, w = self._pool.get_nowait()
+                    w.close()
+                    await w.wait_closed()
+                except Exception:
+                    pass
+            self._pool = None
+            self._pool_created = 0
+
+    @classmethod
+    def _encode_command(cls, *args: Union[str, bytes, int, float]) -> bytes:
         """Encode command arguments into Redis RESP array format."""
         parts = [f"*{len(args)}\r\n".encode("utf-8")]
         for arg in args:
@@ -105,12 +176,10 @@ class AsyncRedisClient:
             parts.append(b"\r\n")
         return b"".join(parts)
 
-    async def _read_response(self) -> Any:
-        """Parse RESP response from server."""
-        if self._reader is None:
-            raise ConnectionError("Redis client is not connected.")
-
-        line = await self._reader.readline()
+    @classmethod
+    async def _read_response_from_reader(cls, reader: asyncio.StreamReader) -> Any:
+        """Parse RESP response from server reader stream."""
+        line = await reader.readline()
         if not line:
             raise ConnectionError("Redis connection closed unexpectedly.")
 
@@ -135,7 +204,7 @@ class AsyncRedisClient:
             length = int(content)
             if length == -1:
                 return None
-            data = await self._reader.readexactly(length + 2)
+            data = await reader.readexactly(length + 2)
             return data[:-2].decode("utf-8", errors="replace")
 
         # Array (*)
@@ -145,31 +214,60 @@ class AsyncRedisClient:
                 return None
             result: List[Any] = []
             for _ in range(num_elements):
-                result.append(await self._read_response())
+                result.append(await cls._read_response_from_reader(reader))
             return result
 
         raise RedisProtocolError(f"Unknown RESP prefix: {prefix!r}")
 
-    async def _send_command(self, *args: Union[str, bytes, int, float]) -> Any:
-        """Write command and parse response without acquiring self._lock."""
-        if self._writer is None:
+    async def _read_response(self) -> Any:
+        """Parse RESP response from default reader."""
+        if self._reader is None:
             raise ConnectionError("Redis client is not connected.")
+        return await self._read_response_from_reader(self._reader)
+
+    @classmethod
+    async def _send_command_on_conn(
+        cls,
+        reader: asyncio.StreamReader,
+        writer: asyncio.StreamWriter,
+        *args: Union[str, bytes, int, float],
+    ) -> Any:
+        """Write command and parse response on given stream pair."""
         try:
-            cmd_bytes = self._encode_command(*args)
-            self._writer.write(cmd_bytes)
-            await self._writer.drain()
-            return await self._read_response()
+            cmd_bytes = cls._encode_command(*args)
+            writer.write(cmd_bytes)
+            await writer.drain()
+            return await cls._read_response_from_reader(reader)
         except (ConnectionError, asyncio.TimeoutError, OSError) as e:
-            # Reset connection on transport failures
-            self._writer = None
-            self._reader = None
             raise ConnectionError(f"Redis transport failure: {e}")
 
+    async def _send_command(self, *args: Union[str, bytes, int, float]) -> Any:
+        """Write command and parse response without acquiring self._lock on default connection."""
+        if self._writer is None or self._reader is None:
+            raise ConnectionError("Redis client is not connected.")
+        try:
+            return await self._send_command_on_conn(self._reader, self._writer, *args)
+        except ConnectionError:
+            self._writer = None
+            self._reader = None
+            raise
+
     async def _execute_raw(self, *args: Union[str, bytes, int, float]) -> Any:
-        """Execute command over socket with connection safety and retry."""
-        async with self._lock:
-            await self.connect()
-            return await self._send_command(*args)
+        """Execute command over socket with connection pooling or single-connection fallback."""
+        if self.pool_size > 1:
+            reader, writer = await self._acquire_connection()
+            has_error = False
+            try:
+                return await self._send_command_on_conn(reader, writer, *args)
+            except Exception:
+                has_error = True
+                raise
+            finally:
+                await self._release_connection(reader, writer, error=has_error)
+        else:
+            async with self._lock:
+                await self.connect()
+                return await self._send_command(*args)
 
     async def ping(self) -> bool:
         """Check Redis connectivity."""
