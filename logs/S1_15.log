@@ -1,0 +1,55 @@
+================================================================================
+S1 PHYSICAL WEATHER CORROBORATION: REPLAY EVALUATION & CONTROLS
+================================================================================
+Timestamp: 2026-09-30T20:56:00.320271+00:00
+Dataset: s1_labelled_events_TEMPLATE.csv
+
+Loaded 10 labelled test events.
+Running evaluation across:
+  1. Ground-truth historical event (actual date & location)
+  2. Time-shift negative control (+30 days)
+  3. Space-shift negative control (+100 km north, +0.9° lat)
+--------------------------------------------------------------------------------
+Evaluating EVT-2023-001 (CYCLONE_HIGH_WIND @ Chennai, 2023-12-04)...
+Evaluating EVT-2023-002 (HEAVY_RAINFALL @ New Delhi, 2023-07-09)...
+Evaluating EVT-2023-003 (CYCLONE_HIGH_WIND @ Jakhau Gujarat, 2023-06-15)...
+Evaluating EVT-2022-004 (FLOOD_WATERLOGGING @ Bengaluru, 2022-09-05)...
+Evaluating EVT-2023-005 (HEAVY_RAINFALL @ Mumbai, 2023-07-26)...
+Evaluating EVT-2024-006 (HEATWAVE @ Nagpur, 2024-05-28)...
+Evaluating EVT-2024-007 (HEATWAVE @ New Delhi, 2024-05-29)...
+Evaluating EVT-2023-008 (HEAVY_RAINFALL @ Shimla, 2023-08-14)...
+Evaluating EVT-2024-009 (GALE_WIND @ Puri, 2024-10-25)...
+Evaluating EVT-2024-010 (DUST_STORM @ Jaipur, 2024-06-03)...
+
+==============================================================================================================
+Event ID      Category               Location       Base Verdict   +30d Control   +100km Control
+--------------------------------------------------------------------------------------------------------------
+EVT-2023-001  CYCLONE_HIGH_WIND      Chennai        NEUTRAL        NEUTRAL        NEUTRAL       
+EVT-2023-002  HEAVY_RAINFALL         New Delhi      NEUTRAL        NEUTRAL        NEUTRAL       
+EVT-2023-003  CYCLONE_HIGH_WIND      Jakhau Gujarat NEUTRAL        NEUTRAL        NEUTRAL       
+EVT-2022-004  FLOOD_WATERLOGGING     Bengaluru      NEUTRAL        NEUTRAL        NEUTRAL       
+EVT-2023-005  HEAVY_RAINFALL         Mumbai         SUPPORTS       NEUTRAL        NEUTRAL       
+EVT-2024-006  HEATWAVE               Nagpur         SUPPORTS       NEUTRAL        SUPPORTS      
+EVT-2024-007  HEATWAVE               New Delhi      SUPPORTS       NEUTRAL        SUPPORTS      
+EVT-2023-008  HEAVY_RAINFALL         Shimla         NEUTRAL        NEUTRAL        NEUTRAL       
+EVT-2024-009  GALE_WIND              Puri           NEUTRAL        NEUTRAL        NEUTRAL       
+EVT-2024-010  DUST_STORM             Jaipur         NEUTRAL        NEUTRAL        NEUTRAL       
+==============================================================================================================
+
+AGGREGATE CORROBORATION RATES:
+--------------------------------------------------------------------------------
+Condition                 SUPPORTS        CONTRADICTS     NEUTRAL        
+--------------------------------------------------------------------------------
+Base Ground Truth Events   30.0% (3/10)     0.0% (0/10)    70.0% (7/10)
+Time-Shift (+30 days)       0.0% (0/10)     0.0% (0/10)   100.0% (10/10)
+Space-Shift (+100 km)      20.0% (2/10)     0.0% (0/10)    80.0% (8/10)
+--------------------------------------------------------------------------------
+
+================================================================================
+STATUS NOTE: ACCURACY: NOT MEASURED
+================================================================================
+Reason: Model-based Open-Meteo archive evaluation demonstrates physical
+signal corroboration vs. temporal/spatial controls. Ground-truth precision
+and recall cannot be formally declared without full dual-station ground
+truth and human annotation verification.
+================================================================================
