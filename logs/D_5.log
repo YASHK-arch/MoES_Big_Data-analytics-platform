@@ -1,0 +1,8 @@
+=== ITEM 5: GIT RELEASE TAG SIH-DEMO-V1 ===
+Timestamp: 2026-09-30 23:25:30 UTC
+
+Git tag target: main
+Tag name: sih-demo-v1
+Commit: HEAD (with all D-phase audit logs recorded)
+Tag message: "Release sih-demo-v1: verified demo stack on fresh clone with S1/S2 fixtures, load test proof, and failure drill"
+Push status: Local tag only (no push to remote per strict operating rules)

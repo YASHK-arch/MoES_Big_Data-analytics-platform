@@ -1,0 +1,323 @@
+=== ITEM 2: SMOKE TEST, API PAGES, SIMULATED INCIDENTS & OFFLINE FALLBACK ===
+Timestamp: 2026-09-30 23:14:07 UTC
+
+--- [1] SMOKE TEST: HEALTH & READINESS ENDPOINTS ---
+$ curl -s http://localhost:8080/health
+{"success":true,"data":{"status":"healthy","service":"National Weather Big Data Analytics Platform","environment":"production","version":"0.1.0"},"meta":{"timestamp":"2026-09-30T23:14:07.107597+00:00"}}
+$ curl -s http://localhost:8080/ready
+{"success":true,"data":{"status":"ready","checks":{"database":"ok","redis":"ok","alembic":"0020_image_forensics"}},"meta":{"timestamp":"2026-09-30T23:14:07.132676+00:00"}}
+--- [2] OPEN MAIN PAGES VIA API & HTTP ---
+$ curl -s -I http://localhost:8080/ (Frontend index)
+HTTP/1.1 200 OK
+Server: nginx/1.27.5
+Date: Wed, 30 Sep 2026 23:14:07 GMT
+Content-Type: text/html
+Content-Length: 912
+Last-Modified: Wed, 30 Sep 2026 22:38:47 GMT
+Connection: keep-alive
+ETag: "6abd8f77-390"
+X-Frame-Options: SAMEORIGIN
+X-Content-Type-Options: nosniff
+
+$ curl -s http://localhost:8080/api/v1/dashboard/summary (Dashboard summary)
+{
+    "success": true,
+    "data": {
+        "total_count": 297,
+        "period_count": 297,
+        "count_24h": 297,
+        "last_24h_pct": 100,
+        "verification": {
+            "verified_count": 79,
+            "verified_rate": 27,
+            "pending_count": 218,
+            "under_review_count": 0,
+            "rejected_count": 0,
+            "duplicate_count": 0
+        },
+        "severity": {
+            "severe_high_count": 83,
+            "severe_count": 62,
+            "high_count": 21,
+            "moderate_count": 84,
+            "low_count": 63
+        },
+        "category_distribution": [
+            {
+                "category_code": "FLOOD_WATERLOGGING",
+                "category_name": "Flooding & Waterlogging",
+                "count": 67,
+                "percentage": 23
+            },
+            {
+
+$ curl -s 'http://localhost:8080/api/v1/geo/incidents?limit=5' (Geo cluster map)
+{
+    "type": "FeatureCollection",
+    "features": [
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    77.5946,
+                    12.9716
+                ]
+            },
+            "properties": {
+                "id": "31dba1c6-f602-4e7d-93ef-c6cd9dd803b9",
+                "tracking_id": "RPT-20260930-EE5C2465",
+                "title": "Thunderstorm and Tree Fall near Indiranagar",
+                "category_code": "THUNDERSTORM_LIGHTNING",
+                "severity": "MODERATE",
+                "credibility_score": 0.7669,
+                "credibility_reason": "Moderate baseline source trust (0.75) from DEMO_FEED.",
+                "verification_status": "PENDING",
+                "occurred_at": "2026-09-30T23:11:45.476180+00:00",
+                "location_name": "Indiranagar, Bengaluru, Karnataka",
+                "is_demo": false
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+
+$ curl -s 'http://localhost:8080/api/v1/incidents?page=1&page_size=3' (Incident list)
+{
+    "success": true,
+    "data": [
+        {
+            "id": "88111494-3554-4ac1-bb57-541c487e2c1b",
+            "tracking_id": "RPT-20260930-CDDB1FCB",
+            "title": "Severe Waterlogging along Western Express Highway",
+            "category": {
+                "code": "FLOOD_WATERLOGGING",
+                "title": "Flooding & Waterlogging"
+            },
+            "severity": "HIGH",
+            "location": {
+                "name": "Andheri East, Mumbai, Maharashtra",
+                "latitude": 19.1136,
+                "longitude": 72.8697,
+                "resolution_status": "STRUCTURED",
+                "confidence": 1.0
+            },
+            "occurred_at": "2026-09-30T23:11:45.476180Z",
+            "verification_status": "PENDING",
+            "credibility_score": 0.78,
+            "credibility_reason": "Moderate baseline source trust (0.75) from DEMO_FEED.",
+            "credibility_explanation": {
+                "signals": {
+                    "applied_cap": 0.98,
+                    "source_prior": 0.75,
+                    "support_delta": 0.0636,
+                    "positive_score": 0.8136,
+                    "penalized_score": 0.8136,
+                    "negative_penalty": 0.0,
+                    "incident_baseline": 0.75,
+                    "crowd_cluster_score": 0.0,
+                    "synthesized_support": 0.2271,
+                    "diversity_multiplier": 1.12,
+
+--- [3] SHOW SIMULATED S1 INCIDENT (DEMO-SIM-S1-CORROB) ---
+$ curl -s http://localhost:8080/api/v1/reports/DEMO-SIM-S1-CORROB
+{
+    "success": true,
+    "data": {
+        "id": "937ca5e6-f748-40ee-b4ab-4f6d886cecc1",
+        "tracking_id": "DEMO-SIM-S1-CORROB",
+        "title": "[SIMULATED S1] Heavy Rainfall Physical Corroboration Scenario",
+        "description": "Simulated meteorological station corroboration fixture for demo presentation.",
+        "category": {
+            "code": "HEAVY_RAINFALL",
+            "title": "HEAVY_RAINFALL"
+        },
+        "severity": "SEVERE",
+        "location": {
+            "name": "New Delhi Regional Met Center",
+            "latitude": 28.6139,
+            "longitude": 77.209
+        },
+        "occurred_at": "2026-09-30T23:11:11.096825Z",
+        "processing_status": "COMPLETED",
+        "verification_status": "VERIFIED",
+        "credibility_score": 0.6499,
+        "credibility_reason": null,
+        "is_demo": false,
+        "media": [],
+        "verification_history": [],
+        "physical_corroboration": {
+            "overall_verdict": "SUPPORTS",
+            "overall_provider_status": "OK",
+            "total_contribution": 0.0941,
+            "items": [
+                {
+                    "id": "87018272-bad5-433c-a702-39d10e4a4ff1",
+                    "variable": "rainfall_24h",
+                    "observed_value": 142.0,
+                    "unit": "mm/24h",
+                    "source": "DEMO_FIXTURE_STATION",
+                    "source_type": "STATION",
+                    "station_or_grid_id": "AWS_DEMO_SUPPORT_01",
+                    "distance_km": 1.48,
+                    "time_gap_hours": 0.0,
+                    "verdict": "SUPPORTS",
+                    "weight": 0.9408,
+                    "contribution": 0.0941,
+                    "provider_status": "OK",
+                    "observation_time": "2026-09-30T23:11:11.096825Z",
+                    "explanation": "Measured 24h rainfall of 142.0 mm exceeds IMD heavy rain threshold (64.5 mm)",
+                    "is_simulated": true
+                }
+            ],
+            "is_simulated": true
+        },
+        "physical_verdict": "SUPPORTS",
+        "created_at": "2026-09-30T23:11:11.096376Z"
+    },
+    "meta": {
+        "timestamp": "2026-09-30T23:14:07.473332+00:00",
+        "request_id": "req_8cbab54bfb69"
+    }
+}
+
+--- [4] SHOW SIMULATED S2 INCIDENT (DEMO-SIM-S2-FORENSICS) ---
+$ curl -s http://localhost:8080/api/v1/incidents/7c6bff17-78a6-4d2b-958e-bc82371a6228
+{
+    "success": true,
+    "data": {
+        "id": "7c6bff17-78a6-4d2b-958e-bc82371a6228",
+        "tracking_id": "DEMO-SIM-S2-FORENSICS",
+        "title": "[SIMULATED S2] Image Forensics Reused Photo Scenario",
+        "description": "Simulated photo reuse contradiction fixture for demo presentation.",
+        "category": {
+            "code": "FLOOD_WATERLOGGING",
+            "title": "Flood Waterlogging"
+        },
+        "severity": "HIGH",
+        "location": {
+            "name": "Mumbai Marine Drive Area",
+            "latitude": 19.076,
+            "longitude": 72.8777,
+            "resolution_status": "RESOLVED",
+            "confidence": 1.0
+        },
+        "occurred_at": "2026-09-30T23:11:11.096825Z",
+        "credibility": {
+            "score": 0.5701,
+            "is_machine_assessed": true,
+            "label": "MODERATE_CREDIBILITY",
+            "engine_version": "v1",
+            "policy_version": "v1",
+            "explanation": "Machine Credibility Score: 0.5701 (Ceiling: 0.9800).\nBase incident anchor: 0.6000 (Prior 0.60, Quality 1.00).\nCorroboration lift: +0.0201 (Support 0.0474, Diversity \u00d71.06).",
+            "reason": "Moderate baseline source trust (0.60) from CITIZEN_WEB.",
+            "positive_drivers": [
+                "Moderate baseline source trust (0.60) from CITIZEN_WEB.",
+                "Multi-source diversity boost (\u00d71.06) from 2 independent families (CITIZEN, NEWS)."
+            ],
+            "negative_drivers": [],
+            "uncertainty_flags": []
+        },
+        "verification": {
+            "status": "PENDING",
+            "is_human_verified": false,
+            "verified_at": null
+        },
+        "intelligence_status": {
+            "overall_readiness": "INTELLIGENCE_READY",
+            "last_computed_at": "2026-09-30T23:13:44.900562Z"
+        },
+        "summaries": {
+            "evidence_count": 1,
+            "observation_count": 1,
+            "duplicate_cluster_size": 1,
+            "is_cluster_representative": true
+        },
+        "is_demo": false,
+        "media": [
+            {
+                "id": "c18a36cc-b3cb-4adb-90c4-a5a62069053b",
+                "media_type": "IMAGE",
+                "url": "http://minio:9000/demo-weather-evidence/demo/simulated_reused_image_7c6bff17-78a6-4d2b-958e-bc82371a6228.jpg?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=minioadmin%2F20260930%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20260930T231407Z&X-Amz-Expires=3600&X-Amz-SignedHeaders=host&X-Amz-Signature=881a975043d76c3fb6041958b9e3bc504341d76670fd4b86569440dedd3cb92d",
+                "sha256_hash": "demo1ac9c148977f4794b82ced6c69a172b7"
+            }
+        ],
+        "image_forensics": {
+            "overall_verdict": "CONTRADICTS",
+            "total_credibility_adjustment": -0.05,
+            "image_count": 1,
+            "is_simulated": true,
+            "images": [
+                {
+                    "media_id": "c18a36cc-b3cb-4adb-90c4-a5a62069053b",
+                    "sha256": "demo1ac9c148977f4794b82ced6c69a172b7",
+                    "phash": "a1b2c3d4e5f60000",
+                    "has_exif": true,
+                    "exif_timestamp_utc": "2026-09-30T23:11:11.096825Z",
+                    "timezone_assumed_ist": false,
+                    "time_verdict": "SUPPORTS",
+                    "time_difference": "0.10 hours",
+                    "location_verdict": "SUPPORTS",
+                    "location_difference": "1.20 km",
+                    "reuse_verdict": "CONTRADICTS",
+                    "matched_incident_ids": [
+                        "ebf5022f-ecd9-4d06-ae73-32cb556d15b6"
+                    ],
+                    "overall_verdict": "CONTRADICTS",
+                    "credibility_adjustment": -0.05,
+                    "error_reason": null,
+                    "is_simulated": true,
+                    "checks": [
+                        {
+                            "check_type": "EXIF_TIME",
+                            "verdict": "SUPPORTS",
+                            "observed_value": "2026-09-30T23:11:11.096825+00:00",
+                            "expected_value": "2026-09-30T23:11:11.096825+00:00",
+                            "difference": "0.10 hours",
+                            "reason": "EXIF capture timestamp is consistent with incident window",
+                            "matched_incident_ids": []
+                        },
+                        {
+                            "check_type": "EXIF_LOCATION",
+                            "verdict": "SUPPORTS",
+                            "observed_value": "COORDINATES_PRESENT",
+                            "expected_value": "DECLARED_INCIDENT_LOCATION",
+                            "difference": "1.20 km",
+                            "reason": "EXIF GPS coordinates match declared location within 1.20 km",
+                            "matched_incident_ids": []
+                        },
+                        {
+                            "check_type": "IMAGE_REUSE",
+                            "verdict": "CONTRADICTS",
+                            "observed_value": "1 distant matches",
+                            "expected_value": "0 cross-incident matches",
+                            "difference": "1 distant incident(s)",
+                            "reason": "Perceptual hash match with separate past incident ebf5022f-ecd9-4d06-ae73-32cb556d15b6",
+                            "matched_incident_ids": [
+                                "ebf5022f-ecd9-4d06-ae73-32cb556d15b6"
+                            ]
+                        }
+                    ]
+                }
+            ]
+        },
+        "created_at": "2026-09-30T23:11:11.096376Z"
+    },
+    "meta": {
+        "timestamp": "2026-09-30T23:14:07.553154+00:00",
+        "request_id": "req_f9003231083b"
+    }
+}
+
+--- [5] OFFLINE FALLBACK VERIFICATION WITH INTERNET DISABLED ---
+[offline] Verifying that demo fixture providers operate with zero external network connectivity...
+[offline] 1. FixtureWeatherProvider evaluation (zero external HTTP traffic):
+   -> Fixture provider returned local sensor observation without external network call (status=ProviderStatus.OK):
+      * rainfall_24h_mm: 142.0 mm (source=DEMO_FIXTURE_STATION, station=AWS_DEMO_SUPPORT_01)
+[offline] 2. OpenMeteoProvider offline network failure simulation:
+   -> External provider network failure gracefully caught: status=ProviderStatus.PROVIDER_ERROR
+   -> Returned observation is None: True
+   -> System successfully avoids crash and defaults to safe status.
+
+=== ITEM 2 RUN COMPLETE ===

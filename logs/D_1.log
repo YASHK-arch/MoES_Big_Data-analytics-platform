@@ -1,0 +1,352 @@
+[demo-up] Generating [LOCAL_PATH]/scratch/fresh-clone/.env.demo with random secrets...
+[demo-up] Created [LOCAL_PATH]/scratch/fresh-clone/.env.demo
+[demo-up] Building demo stack images...
+ Image sih-backend:latest Building 
+ Image sih-demo-web Building 
+ Image sih-backend:latest Building 
+#1 [internal] load local bake definitions
+#1 reading from stdin 1.54kB done
+#1 DONE 0.0s
+
+#2 [api internal] load build definition from Dockerfile
+#2 transferring dockerfile: 1.70kB 0.0s done
+#2 DONE 0.0s
+
+#3 [web internal] load build definition from Dockerfile
+#3 transferring dockerfile: 1.01kB 0.0s done
+#3 DONE 0.0s
+
+#4 [migrate internal] load metadata for docker.io/library/python:3.11-slim
+#4 DONE 3.5s
+
+#5 [api internal] load .dockerignore
+#5 transferring context: 253B done
+#5 DONE 0.0s
+
+#6 [api builder 1/5] FROM docker.io/library/python:3.11-slim@sha256:e41613d42d4891e4930f79523f93f81bbc7632584ec65e36ab055f41a800b41e
+#6 resolve docker.io/library/python:3.11-slim@sha256:e41613d42d4891e4930f79523f93f81bbc7632584ec65e36ab055f41a800b41e 0.0s done
+#6 DONE 0.0s
+
+#7 [web internal] load metadata for docker.io/library/nginx:1.27-alpine
+#7 DONE 3.6s
+
+#8 [api internal] load build context
+#8 transferring context: 1.53MB 0.0s done
+#8 DONE 0.1s
+
+#9 [api builder 5/5] RUN pip install --no-cache-dir --upgrade pip  && pip install --no-cache-dir --prefix=/install .[prod] 2>/dev/null     || pip install --no-cache-dir --prefix=/install .
+#9 CACHED
+
+#10 [api builder 2/5] WORKDIR /build
+#10 CACHED
+
+#11 [api runtime 3/6] RUN apt-get update && apt-get install -y --no-install-recommends         libpq5         curl     && rm -rf /var/lib/apt/lists/*
+#11 CACHED
+
+#12 [api runtime 4/6] COPY --from=builder /install /usr/local
+#12 CACHED
+
+#13 [api runtime 2/6] RUN groupadd -r appuser && useradd -r -g appuser -d /app -s /sbin/nologin appuser
+#13 CACHED
+
+#14 [api builder 3/5] RUN apt-get update && apt-get install -y --no-install-recommends         gcc         libpq-dev     && rm -rf /var/lib/apt/lists/*
+#14 CACHED
+
+#15 [api builder 4/5] COPY pyproject.toml .
+#15 CACHED
+
+#16 [api runtime 5/6] WORKDIR /app
+#16 CACHED
+
+#17 [api runtime 6/6] COPY --chown=appuser:appuser . .
+#17 DONE 0.1s
+
+#18 [migrate] exporting to image
+#18 exporting layers 0.1s done
+#18 exporting manifest sha256:109750ce3869875777351b2586a289cfc8bd0bfa0f5512548c73cfdffed9fbcf done
+#18 exporting config sha256:2b990323e96f56f2b6fe252233ddf4c644f3c6a329a0643a423b592dde5969da done
+#18 exporting attestation manifest sha256:90aa4e7495b074daf374e636dbaf7dc700cca327b5b06cc06a7ed8001aa6e745 done
+#18 exporting manifest list sha256:723df159b6722faae101aafc95b149789327911dfa0886c7a90ab2d54123d2fd done
+#18 naming to docker.io/library/sih-backend:latest done
+#18 unpacking to docker.io/library/sih-backend:latest 0.0s done
+#18 DONE 0.1s
+
+#19 [api] exporting to image
+#19 exporting layers 0.1s done
+#19 exporting manifest sha256:b8f85f952f2aaefbb9052e32de1f4041400fa3eb5cfac997324f3c50233f0196 done
+#19 exporting config sha256:fbbf1ddad85e41e64586a927c62beeddcba1f4ac83412d5254f79cba674297f7 done
+#19 exporting attestation manifest sha256:f6e4b87fe5640f1195fe4d8ecbe4d4796cb9283718d89a4a4d08c9f7a2c6f678 done
+#19 exporting manifest list sha256:b8e442af0d2cf37dd8b82515ebe12e1290e96dae6b1cb49e034e601c62878be8 done
+#19 naming to docker.io/library/sih-backend:latest done
+#19 unpacking to docker.io/library/sih-backend:latest 0.0s done
+#19 DONE 0.1s
+
+#20 [migrate] resolving provenance for metadata file
+#20 DONE 0.0s
+
+#21 [api] resolving provenance for metadata file
+#21 DONE 0.0s
+
+#22 [web internal] load metadata for docker.io/library/node:20-alpine
+#22 DONE 4.0s
+
+#23 [web internal] load .dockerignore
+#23 transferring context: 2B done
+#23 DONE 0.0s
+
+#24 [web runtime 1/4] FROM docker.io/library/nginx:1.27-alpine@sha256:65645c7bb6a0661892a8b03b89d0743208a18dd2f3f17a54ef4b76fb8e2f2a10
+#24 resolve docker.io/library/nginx:1.27-alpine@sha256:65645c7bb6a0661892a8b03b89d0743208a18dd2f3f17a54ef4b76fb8e2f2a10 done
+#24 DONE 0.0s
+
+#25 [web builder 1/6] FROM docker.io/library/node:20-alpine@sha256:fb4cd12c85ee03686f6af5362a0b0d56d50c58a04632e6c0fb8363f609372293
+#25 resolve docker.io/library/node:20-alpine@sha256:fb4cd12c85ee03686f6af5362a0b0d56d50c58a04632e6c0fb8363f609372293 done
+#25 DONE 0.0s
+
+#26 [web internal] load build context
+#26 transferring context: 1.09MB 0.4s done
+#26 DONE 0.4s
+
+#27 [web builder 2/6] WORKDIR /app
+#27 CACHED
+
+#28 [web builder 3/6] COPY package.json package-lock.json* ./
+#28 CACHED
+
+#29 [web builder 4/6] RUN npm ci --prefer-offline
+#29 CACHED
+
+#30 [web builder 5/6] COPY . .
+#30 DONE 0.0s
+
+#31 [web builder 6/6] RUN npm run build
+#31 0.518 
+#31 0.518 > weather-platform-frontend@0.1.0 build
+#31 0.518 > tsc && vite build
+#31 0.518 
+#31 4.611 vite v5.4.21 building for production...
+#31 4.850 transforming...
+#31 7.822 ✓ 2522 modules transformed.
+#31 8.090 rendering chunks...
+#31 8.198 computing gzip size...
+#31 8.214 dist/index.html                                       0.91 kB │ gzip:   0.49 kB
+#31 8.214 dist/assets/index-Dk5z81Rc.css                       71.71 kB │ gzip:  16.62 kB
+#31 8.214 dist/assets/filter-Bmem6QiD.js                        0.33 kB │ gzip:   0.27 kB
+#31 8.214 dist/assets/arrow-right-CD_2ZtTJ.js                   0.33 kB │ gzip:   0.27 kB
+#31 8.214 dist/assets/arrow-left-JsPFE75D.js                    0.33 kB │ gzip:   0.27 kB
+#31 8.214 dist/assets/circle-check-DcfEmUw3.js                  0.34 kB │ gzip:   0.27 kB
+#31 8.214 dist/assets/clock-C5CGSgTL.js                         0.35 kB │ gzip:   0.28 kB
+#31 8.214 dist/assets/info-CW3I26JH.js                          0.37 kB │ gzip:   0.28 kB
+#31 8.214 dist/assets/circle-plus-D4sC5oq8.js                   0.37 kB │ gzip:   0.28 kB
+#31 8.214 dist/assets/circle-x-BcFOxu1r.js                      0.37 kB │ gzip:   0.28 kB
+#31 8.214 dist/assets/trending-up-PEgY2X0_.js                   0.37 kB │ gzip:   0.29 kB
+#31 8.214 dist/assets/compass--6HNjHk0.js                       0.39 kB │ gzip:   0.30 kB
+#31 8.214 dist/assets/copy-B3cxwadv.js                          0.40 kB │ gzip:   0.31 kB
+#31 8.214 dist/assets/circle-help-C7UC6q-B.js                   0.40 kB │ gzip:   0.31 kB
+#31 8.214 dist/assets/camera-CDVD10bg.js                        0.42 kB │ gzip:   0.31 kB
+#31 8.215 dist/assets/circle-alert-DzYR0gIZ.js                  0.42 kB │ gzip:   0.29 kB
+#31 8.215 dist/assets/external-link-CPBhA6cG.js                 0.42 kB │ gzip:   0.30 kB
+#31 8.215 dist/assets/triangle-alert-BrZmyg1l.js                0.43 kB │ gzip:   0.32 kB
+#31 8.215 dist/assets/file-video-Dm0i1gNN.js                    0.44 kB │ gzip:   0.31 kB
+#31 8.215 dist/assets/refresh-cw-BvVdSH6K.js                    0.49 kB │ gzip:   0.33 kB
+#31 8.215 dist/assets/shield-alert-B7Qqaohz.js                  0.52 kB │ gzip:   0.37 kB
+#31 8.215 dist/assets/layers-C2JemDDR.js                        0.53 kB │ gzip:   0.34 kB
+#31 8.215 dist/assets/radio-CzGnn1Au.js                         0.53 kB │ gzip:   0.36 kB
+#31 8.215 dist/assets/dashboardApi-DDesdAlm.js                  0.54 kB │ gzip:   0.31 kB
+#31 8.215 dist/assets/droplets-R1lfVI7U.js                      0.54 kB │ gzip:   0.39 kB
+#31 8.215 dist/assets/chevron-right-uqPJe9pA.js                 0.55 kB │ gzip:   0.28 kB
+#31 8.215 dist/assets/routeApi-D1LpuZvR.js                      0.55 kB │ gzip:   0.35 kB
+#31 8.215 dist/assets/sparkles-CaZ0Bavz.js                      0.59 kB │ gzip:   0.36 kB
+#31 8.215 dist/assets/image-off-bqteE5U0.js                     0.64 kB │ gzip:   0.40 kB
+#31 8.215 dist/assets/cpu-B7qy0yWW.js                           0.67 kB │ gzip:   0.36 kB
+#31 8.215 dist/assets/wind-RKwUmvv7.js                          0.82 kB │ gzip:   0.40 kB
+#31 8.215 dist/assets/Footer-CMCstupX.js                        0.94 kB │ gzip:   0.46 kB
+#31 8.215 dist/assets/adapters-BQQGd5jy.js                      1.32 kB │ gzip:   0.56 kB
+#31 8.215 dist/assets/reportApi-7eoK3wZU.js                     1.73 kB │ gzip:   0.69 kB
+#31 8.215 dist/assets/user-check-IEpdYgqx.js                    1.92 kB │ gzip:   0.67 kB
+#31 8.215 dist/assets/adminApi-DSr-8bxs.js                      2.05 kB │ gzip:   1.05 kB
+#31 8.215 dist/assets/MobileBottomNav-C1UHpePb.js               2.22 kB │ gzip:   0.99 kB
+#31 8.215 dist/assets/ErrorCard-D616h10M.js                     2.93 kB │ gzip:   1.26 kB
+#31 8.215 dist/assets/incidentApi-BtmP7LXH.js                   3.42 kB │ gzip:   0.82 kB
+#31 8.215 dist/assets/presentation-DxrS4Vkw.js                  5.40 kB │ gzip:   1.69 kB
+#31 8.215 dist/assets/MyReportsPage-BX0cmC95.js                 7.43 kB │ gzip:   2.21 kB
+#31 8.215 dist/assets/NationalMapPage-DsJ5P65k.js               8.02 kB │ gzip:   2.63 kB
+#31 8.215 dist/assets/AdminAuditLogPage-DNbNt9ei.js             8.10 kB │ gzip:   2.43 kB
+#31 8.215 dist/assets/SignupPage-DAMJv4yq.js                    8.42 kB │ gzip:   2.23 kB
+#31 8.215 dist/assets/LoginPage-B8OTHfE7.js                    11.63 kB │ gzip:   3.27 kB
+#31 8.215 dist/assets/IncidentListPage-DKYNCPzD.js             15.57 kB │ gzip:   4.48 kB
+#31 8.215 dist/assets/HomePage-BzU0iBCd.js                     20.37 kB │ gzip:   5.09 kB
+#31 8.215 dist/assets/Navbar-ZOFzIcwY.js                       22.11 kB │ gzip:   5.77 kB
+#31 8.215 dist/assets/LiveMapPage-DVOZN2T7.js                  22.21 kB │ gzip:   6.66 kB
+#31 8.215 dist/assets/TrackReportPage-jacfq9ew.js              26.16 kB │ gzip:   6.60 kB
+#31 8.215 dist/assets/index-Ddv0Dmp7.js                        28.12 kB │ gzip:  10.56 kB
+#31 8.215 dist/assets/CitizenDashboardPage-DAByZQfu.js         34.34 kB │ gzip:   9.52 kB
+#31 8.215 dist/assets/AnalyticsPage-DbtWFk1h.js                34.41 kB │ gzip:   8.46 kB
+#31 8.215 dist/assets/DashboardPage-DBGQnxry.js                39.13 kB │ gzip:   9.95 kB
+#31 8.215 dist/assets/IncidentDetailPage-BZMOvy6X.js           41.79 kB │ gzip:   9.15 kB
+#31 8.215 dist/assets/AdminVerificationQueuePage-BrAVXqgJ.js   45.32 kB │ gzip:  10.23 kB
+#31 8.215 dist/assets/i18n-2n7YG8rS.js                         51.23 kB │ gzip:  16.99 kB
+#31 8.215 dist/assets/CitizenReportPage---662fRh.js           110.99 kB │ gzip:  30.37 kB
+#31 8.215 dist/assets/leaflet-C45BipMn.js                     155.21 kB │ gzip:  45.35 kB
+#31 8.215 dist/assets/vendor-react-DRIze55x.js                202.02 kB │ gzip:  64.39 kB
+#31 8.215 dist/assets/recharts-JHQzr8Ab.js                    399.66 kB │ gzip: 108.40 kB
+#31 8.215 ✓ built in 3.38s
+#31 DONE 8.3s
+
+#32 [web runtime 2/4] RUN rm /etc/nginx/conf.d/default.conf
+#32 CACHED
+
+#33 [web runtime 3/4] COPY nginx.conf /etc/nginx/conf.d/app.conf
+#33 CACHED
+
+#34 [web runtime 4/4] COPY --from=builder /app/dist /usr/share/nginx/html
+#34 CACHED
+
+#35 [web] exporting to image
+#35 exporting layers done
+#35 exporting manifest sha256:8eaff0f36bff55dfaa1077f8c007f9fd9578864e48e9fa00a92de9283bf84140 done
+#35 exporting config sha256:e03fc1b2a227a7c13ff04707272dba42b912bae36abad0cd4db2447e1453947a done
+#35 exporting attestation manifest sha256:01e329f5147cb5b8e13ec449952dbe5e1e0871a6df6003ee4e358aa675708aab done
+#35 exporting manifest list sha256:7938d30d216130803f95065731f81362f98a0bc7ee5642755b89906a4e434480 done
+#35 naming to docker.io/library/sih-demo-web:latest done
+#35 unpacking to docker.io/library/sih-demo-web:latest done
+#35 DONE 0.0s
+
+#36 [web] resolving provenance for metadata file
+#36 DONE 0.0s
+ Image sih-backend:latest Built 
+ Image sih-demo-web Built 
+ Image sih-backend:latest Built 
+[demo-up] Starting demo stack...
+ Volume sih-demo_demo_minio Creating 
+ Volume sih-demo_demo_redis Creating 
+ Volume sih-demo_demo_postgres Creating 
+ Network sih-demo_demo_net Creating 
+ Volume sih-demo_demo_postgres Creating 
+ Volume sih-demo_demo_minio Creating 
+ Network sih-demo_demo_net Creating 
+ Volume sih-demo_demo_redis Creating 
+ Volume sih-demo_demo_postgres Created 
+ Volume sih-demo_demo_postgres Created 
+ Volume sih-demo_demo_redis Created 
+ Volume sih-demo_demo_redis Created 
+ Volume sih-demo_demo_minio Created 
+ Volume sih-demo_demo_minio Created 
+ Network sih-demo_demo_net Created 
+ Network sih-demo_demo_net Created 
+ Container sih-demo-redis-1 Creating 
+ Container sih-demo-minio-1 Creating 
+ Container sih-demo-postgres-1 Creating 
+ Container sih-demo-minio-1 Created 
+ Container sih-demo-minio-init-1 Creating 
+ postgres The requested image's platform (linux/amd64) does not match the detected host platform (linux/arm64/v8) and no specific platform was requested 
+ Container sih-demo-postgres-1 Created 
+ Container sih-demo-migrate-1 Creating 
+ Container sih-demo-redis-1 Created 
+ Container sih-demo-minio-init-1 Created 
+ Container sih-demo-migrate-1 Created 
+ Container sih-demo-worker-ingestion-1 Creating 
+ Container sih-demo-worker-scheduler-1 Creating 
+ Container sih-demo-worker-observation-1 Creating 
+ Container sih-demo-worker-outbox-1 Creating 
+ Container sih-demo-api-1 Creating 
+ Container sih-demo-worker-evidence-1 Creating 
+ Container sih-demo-worker-dispatcher-1 Creating 
+ Container sih-demo-worker-observation-1 Created 
+ Container sih-demo-worker-scheduler-1 Created 
+ Container sih-demo-worker-dispatcher-1 Created 
+ Container sih-demo-api-1 Created 
+ Container sih-demo-web-1 Creating 
+ Container sih-demo-worker-ingestion-1 Created 
+ Container sih-demo-worker-outbox-1 Created 
+ Container sih-demo-worker-evidence-1 Created 
+ Container sih-demo-web-1 Created 
+ Container sih-demo-postgres-1 Starting 
+ Container sih-demo-minio-1 Starting 
+ Container sih-demo-redis-1 Starting 
+ Container sih-demo-postgres-1 Started 
+ Container sih-demo-postgres-1 Waiting 
+ Container sih-demo-redis-1 Started 
+ Container sih-demo-minio-1 Started 
+ Container sih-demo-minio-1 Waiting 
+ Container sih-demo-postgres-1 Healthy 
+ Container sih-demo-migrate-1 Starting 
+ Container sih-demo-minio-1 Healthy 
+ Container sih-demo-minio-init-1 Starting 
+ Container sih-demo-migrate-1 Started 
+ Container sih-demo-postgres-1 Waiting 
+ Container sih-demo-migrate-1 Waiting 
+ Container sih-demo-postgres-1 Waiting 
+ Container sih-demo-redis-1 Waiting 
+ Container sih-demo-redis-1 Waiting 
+ Container sih-demo-migrate-1 Waiting 
+ Container sih-demo-migrate-1 Waiting 
+ Container sih-demo-migrate-1 Waiting 
+ Container sih-demo-redis-1 Waiting 
+ Container sih-demo-postgres-1 Waiting 
+ Container sih-demo-redis-1 Waiting 
+ Container sih-demo-postgres-1 Waiting 
+ Container sih-demo-redis-1 Waiting 
+ Container sih-demo-migrate-1 Waiting 
+ Container sih-demo-postgres-1 Waiting 
+ Container sih-demo-redis-1 Waiting 
+ Container sih-demo-postgres-1 Waiting 
+ Container sih-demo-redis-1 Waiting 
+ Container sih-demo-migrate-1 Waiting 
+ Container sih-demo-postgres-1 Waiting 
+ Container sih-demo-migrate-1 Waiting 
+ Container sih-demo-minio-init-1 Started 
+ Container sih-demo-redis-1 Healthy 
+ Container sih-demo-postgres-1 Healthy 
+ Container sih-demo-redis-1 Healthy 
+ Container sih-demo-redis-1 Healthy 
+ Container sih-demo-postgres-1 Healthy 
+ Container sih-demo-postgres-1 Healthy 
+ Container sih-demo-redis-1 Healthy 
+ Container sih-demo-redis-1 Healthy 
+ Container sih-demo-postgres-1 Healthy 
+ Container sih-demo-postgres-1 Healthy 
+ Container sih-demo-redis-1 Healthy 
+ Container sih-demo-postgres-1 Healthy 
+ Container sih-demo-redis-1 Healthy 
+ Container sih-demo-postgres-1 Healthy 
+ Container sih-demo-migrate-1 Exited 
+ Container sih-demo-worker-outbox-1 Starting 
+ Container sih-demo-migrate-1 Exited 
+ Container sih-demo-worker-ingestion-1 Starting 
+ Container sih-demo-migrate-1 Exited 
+ Container sih-demo-worker-scheduler-1 Starting 
+ Container sih-demo-migrate-1 Exited 
+ Container sih-demo-migrate-1 Exited 
+ Container sih-demo-api-1 Starting 
+ Container sih-demo-worker-observation-1 Starting 
+ Container sih-demo-migrate-1 Exited 
+ Container sih-demo-worker-evidence-1 Starting 
+ Container sih-demo-migrate-1 Exited 
+ Container sih-demo-worker-dispatcher-1 Starting 
+ Container sih-demo-worker-outbox-1 Started 
+ Container sih-demo-worker-dispatcher-1 Started 
+ Container sih-demo-worker-scheduler-1 Started 
+ Container sih-demo-worker-evidence-1 Started 
+ Container sih-demo-worker-ingestion-1 Started 
+ Container sih-demo-worker-observation-1 Started 
+ Container sih-demo-api-1 Started 
+ Container sih-demo-api-1 Waiting 
+ Container sih-demo-api-1 Healthy 
+ Container sih-demo-web-1 Starting 
+ Container sih-demo-web-1 Started 
+[demo-up] Stack started. Web UI: http://localhost:8080
+[demo-up] Run: docker compose -f docker-compose.demo.yml -p sih-demo logs -f
+[demo-up] Seed demo data: ./scripts/demo-seed.sh
+[demo-seed] Seeding database inside the demo api container...
+🌱 Running National Weather Platform Database Seeder...
+✅ Seeded Admin, Operator, and Citizen accounts.
+✅ Seeded 6 Metropolitan Relief Shelters.
+✅ Seeded Active Verified Metro Weather Incidents.
+✅ Seeded 4 active forecast advisories.
+✅ Seeded 500 demo weather reports flagged as [DEMO].
+✅ Seeded SIMULATED S1 scenario (DEMO-SIM-S1-CORROB).
+✅ Seeded SIMULATED S2 scenario (DEMO-SIM-S2-FORENSICS).
+🚀 All demo data seeded successfully!
+[demo-seed] Verifying operator authentication via http://localhost:8080/api/v1/auth/login...
+[demo-seed] ✅ Operator authenticated successfully!
+[demo-seed] Seeding complete: operator accounts, relief centers, advisories, and 500 [DEMO] reports created.

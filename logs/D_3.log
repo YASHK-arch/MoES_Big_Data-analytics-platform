@@ -1,0 +1,30 @@
+=== ITEM 3: FAILURE-RECOVERY DRILL FROM DEMO_SCRIPT.MD ===
+Timestamp: 2026-09-30 23:24:39 UTC
+
+--- [1] KILL PRIMARY INGESTION WORKER CONTAINER ---
+$ docker compose -f docker-compose.demo.yml --env-file .env.demo -p sih-demo kill worker-ingestion
+ Container sih-demo-worker-ingestion-1 Killing 
+ Container sih-demo-worker-ingestion-1 Killed 
+
+--- [2] RESTART WORKER CONTAINER ---
+$ docker compose -f docker-compose.demo.yml --env-file .env.demo -p sih-demo up -d worker-ingestion
+ Container sih-demo-redis-1 Running 
+ Container sih-demo-postgres-1 Running 
+ Container sih-demo-postgres-1 Waiting 
+ Container sih-demo-postgres-1 Healthy 
+ Container sih-demo-migrate-1 Starting 
+ Container sih-demo-migrate-1 Started 
+ Container sih-demo-postgres-1 Waiting 
+ Container sih-demo-redis-1 Waiting 
+ Container sih-demo-migrate-1 Waiting 
+ Container sih-demo-redis-1 Healthy 
+ Container sih-demo-postgres-1 Healthy 
+ Container sih-demo-migrate-1 Exited 
+ Container sih-demo-worker-ingestion-1 Starting 
+ Container sih-demo-worker-ingestion-1 Started 
+
+--- [3] CHECK WORKER CONTAINER STATUS ---
+$ docker compose -f docker-compose.demo.yml --env-file .env.demo -p sih-demo ps | grep worker-ingestion
+sih-demo-worker-ingestion-1     sih-backend:latest              "python -m app.worke…"   worker-ingestion     28 seconds ago   Up 2 seconds (health: starting)   8000/tcp
+
+=== ITEM 3 RUN COMPLETE ===
