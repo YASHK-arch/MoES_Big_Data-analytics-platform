@@ -424,6 +424,10 @@ class DigitalEvidenceGroupInput(BaseModel):
         default=False,
         description="True if derived/cross-quoted from another primary source.",
     )
+    relationship_type: Optional[str] = Field(
+        default=None,
+        description="Primary relationship classification (e.g., SUPPORTING, RELATED, CONTEXTUAL).",
+    )
 
 
 class PhysicalStationInput(BaseModel):

@@ -12,12 +12,16 @@ from typing import Optional, Set
 from app.core.config import settings
 from app.intelligence.schemas import (
     CredibilitySignalBreakdown,
+    DigitalEvidenceGroupInput,
     IncidentCredibilityInputs,
     SourceFamily,
 )
 
 VERIFICATION_THRESHOLDS: tuple[float, ...] = (0.45, 0.50, 0.65, 0.70, 0.80, 0.82, 0.85, 0.88)
 MAX_WEAK_LINK_CONTRIBUTION: float = 0.03
+
+
+WEAK_RELATIONSHIP_TYPES: set[str] = {"RELATED", "CONTEXTUAL"}
 
 
 class CredibilityScorer:
@@ -241,21 +245,28 @@ class CredibilityScorer:
             final_credibility_score=final_score,
         )
 
+    @staticmethod
+    def _is_weak_group(grp: DigitalEvidenceGroupInput) -> bool:
+        """Check if group represents weak evidence (keyed on relationship type RELATED/CONTEXTUAL)."""
+        if grp.relationship_type is not None:
+            return grp.relationship_type.upper() in WEAK_RELATIONSHIP_TYPES
+        return grp.role_weight < 0.8
+
     def score_incident(
         self,
         inputs: IncidentCredibilityInputs,
     ) -> CredibilitySignalBreakdown:
         """Compute incident credibility breakdown with capped weak link contributions."""
-        # Check if there are weak digital evidence groups (role_weight < 0.8)
-        has_weak = any(grp.role_weight < 0.8 for grp in inputs.evidence_groups)
+        # Key on relationship type: RELATED and CONTEXTUAL links
+        has_weak = any(self._is_weak_group(grp) for grp in inputs.evidence_groups)
         if not has_weak:
             return self._compute_raw_signals(inputs)
 
         # 1. Compute full raw signals
         full_signals = self._compute_raw_signals(inputs)
 
-        # 2. Compute signals with only strong evidence (role_weight >= 0.8)
-        strong_groups = [grp for grp in inputs.evidence_groups if grp.role_weight >= 0.8]
+        # 2. Compute signals with only strong evidence (excluding RELATED and CONTEXTUAL)
+        strong_groups = [grp for grp in inputs.evidence_groups if not self._is_weak_group(grp)]
         strong_inputs = inputs.model_copy(update={"evidence_groups": strong_groups})
         strong_signals = self._compute_raw_signals(strong_inputs)
 

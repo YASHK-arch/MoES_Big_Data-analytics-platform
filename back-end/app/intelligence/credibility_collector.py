@@ -57,6 +57,7 @@ class _ProvenanceBucket:
     count: int = 0
     family: SourceFamily = SourceFamily.NEWS
     is_derived: bool = False
+    primary_role: Optional[str] = None
 
 
 @dataclass
@@ -159,6 +160,8 @@ class CredibilityCollector:
                 role_w = 1.00
             elif role_str == EvidenceRelationship.RELATED.value:
                 role_w = 0.35
+            elif role_str == EvidenceRelationship.CONTEXTUAL.value:
+                role_w = 0.20
             elif role_str == EvidenceRelationship.CONTRADICTORY.value:
                 role_w = 0.00
                 contradiction_inputs.append(
@@ -198,6 +201,8 @@ class CredibilityCollector:
             bucket = prov_map[prov_key]
             bucket.count += 1
             bucket.max_conf = max(bucket.max_conf, conf)
+            if role_w > bucket.role_w or bucket.primary_role is None:
+                bucket.primary_role = role_str
             bucket.role_w = max(bucket.role_w, role_w)
             bucket.family = fam
             if quotes_social:
@@ -214,6 +219,7 @@ class CredibilityCollector:
                         article_count=bdata.count,
                         source_family=bdata.family,
                         is_derived_lineage=bdata.is_derived,
+                        relationship_type=bdata.primary_role,
                     )
                 )
 
