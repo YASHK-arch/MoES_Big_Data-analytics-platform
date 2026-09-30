@@ -9,14 +9,14 @@
 ## 2. Source of Truth & Architecture Hierarchy
 Before writing code or making modifications, every agent and human developer **MUST** consult the project's documentation suite located in `/docs`:
 
-1. [docs/PRD.md](file:///Users/akshatjain/Documents/SIH/docs/PRD.md) — Product Requirements, User Personas, Core Use Cases, SIH Scope.
-2. [docs/ARCHITECTURE.md](file:///Users/akshatjain/Documents/SIH/docs/ARCHITECTURE.md) — High-Level Design, Data Flow, Ingestion, Intelligence Pipeline, Real-Time Architecture.
-3. [docs/TECH_STACK.md](file:///Users/akshatjain/Documents/SIH/docs/TECH_STACK.md) — Approved Frameworks, Libraries, Utilities, and Technical Constraints.
-4. [docs/DATA_MODEL.md](file:///Users/akshatjain/Documents/SIH/docs/DATA_MODEL.md) — Conceptual and Logical Entity Relationships, Field Constraints, Spatial Schemas.
-5. [docs/API_CONTRACT.md](file:///Users/akshatjain/Documents/SIH/docs/API_CONTRACT.md) — RESTful Endpoints, Request/Response Schemas, Error Envelopes, Auth Scopes.
-6. [docs/EXTERNAL_SETUP.md](file:///Users/akshatjain/Documents/SIH/docs/EXTERNAL_SETUP.md) — Local vs. External Infrastructure, API Keys, Environment Variables.
-7. [docs/IMPLEMENTATION_PLAN.md](file:///Users/akshatjain/Documents/SIH/docs/IMPLEMENTATION_PLAN.md) — Phased Roadmap and Verification Gates.
-8. [.agents/rules/project-rules.md](file:///Users/akshatjain/Documents/SIH/.agents/rules/project-rules.md) — Persistent behavioral rules and strict guardrails.
+1. [docs/PRD.md](docs/PRD.md) — Product Requirements, User Personas, Core Use Cases, SIH Scope.
+2. [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) — High-Level Design, Data Flow, Ingestion, Intelligence Pipeline, Real-Time Architecture.
+3. [docs/TECH_STACK.md](docs/TECH_STACK.md) — Approved Frameworks, Libraries, Utilities, and Technical Constraints.
+4. [docs/DATA_MODEL.md](docs/DATA_MODEL.md) — Conceptual and Logical Entity Relationships, Field Constraints, Spatial Schemas.
+5. [docs/API_CONTRACT.md](docs/API_CONTRACT.md) — RESTful Endpoints, Request/Response Schemas, Error Envelopes, Auth Scopes.
+6. [docs/EXTERNAL_SETUP.md](docs/EXTERNAL_SETUP.md) — Local vs. External Infrastructure, API Keys, Environment Variables.
+7. [docs/IMPLEMENTATION_PLAN.md](docs/IMPLEMENTATION_PLAN.md) — Phased Roadmap and Verification Gates.
+8. [.agents/rules/project-rules.md](.agents/rules/project-rules.md) — Persistent behavioral rules and strict guardrails.
 
 ---
 
@@ -67,5 +67,5 @@ Before writing code or making modifications, every agent and human developer **M
 
 ## 4. Verification & Checkpoint Workflows
 Before declaring any task or phase complete:
-1. Run the verification workflow defined in [.agents/workflows/verify.md](file:///Users/akshatjain/Documents/SIH/.agents/workflows/verify.md).
-2. Follow the commit checkpoint protocol in [.agents/workflows/checkpoint.md](file:///Users/akshatjain/Documents/SIH/.agents/workflows/checkpoint.md).
+1. Run the verification workflow defined in [.agents/workflows/verify.md](.agents/workflows/verify.md).
+2. Follow the commit checkpoint protocol in [.agents/workflows/checkpoint.md](.agents/workflows/checkpoint.md).

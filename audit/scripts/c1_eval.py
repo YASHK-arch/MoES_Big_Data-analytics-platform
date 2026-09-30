@@ -7,7 +7,7 @@ import sys
 from collections import defaultdict
 from pathlib import Path
 
-BACKEND_DIR = Path('/Users/akshatjain/Documents/SIH/back-end')
+BACKEND_DIR = Path(__file__).resolve().parent.parent.parent / "back-end"
 if str(BACKEND_DIR) not in sys.path:
     sys.path.insert(0, str(BACKEND_DIR))
 

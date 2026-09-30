@@ -50,4 +50,6 @@ scratch/
 back-end/scratch/
 .env.demo
 *.pstats
+*.prof
+audit/logs/
 audit/test_media/large_16mb.jpg

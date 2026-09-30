@@ -21,7 +21,7 @@ Use this workflow before creating any checkpoint commit in the repository to gua
 ---
 
 ## 2. Verification Gate
-Run the verification suite defined in [.agents/workflows/verify.md](file:///Users/akshatjain/Documents/SIH/.agents/workflows/verify.md).
+Run the verification suite defined in [.agents/workflows/verify.md](.agents/workflows/verify.md).
 - Proceed **ONLY** if all checks pass without errors.
 
 ---

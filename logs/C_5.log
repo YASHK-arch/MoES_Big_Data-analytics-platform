@@ -1,0 +1,99 @@
+=== ITEM 5: REPOSITORY SECURITY & HYGIENE AUDIT ===
+Total files scanned across repo, audit/logs, and logs: 697
+
+--- [1] COMMITTED SECRETS & PRIVATE KEYS ---
+Private Keys Found: 0 files
+Hardcoded API Secrets/Tokens Found: 0 files
+  Zero committed private keys or unmanaged production secrets detected.
+
+--- [2] CONNECTION STRINGS WITH EMBEDDED CREDENTIALS ---
+Total files containing connection strings: 30
+  audit/b1_load.py (1 matches) [e.g. line 4: postgresql:****@localhost:5432]
+  audit/b2_seed.py (1 matches) [e.g. line 5: postgresql:****@localhost:5432]
+  audit/b3_explain.py (1 matches) [e.g. line 4: postgresql:****@localhost:5432]
+  audit/b7_recovery.py (2 matches) [e.g. line 7: postgresql:****@localhost:5432]
+  audit/c2_runner.py (1 matches) [e.g. line 63: postgresql+asyncpg:****@localhost:5432]
+  audit/c3_optimized_run.py (1 matches) [e.g. line 20: postgresql+asyncpg:****@localhost:5432]
+  audit/c3_profiler.py (1 matches) [e.g. line 23: postgresql+asyncpg:****@localhost:5432]
+  audit/d4_runner.py (1 matches) [e.g. line 62: postgresql+asyncpg:****@localhost:5432]
+  audit/scripts/add_test_marker.py (1 matches) [e.g. line 11: postgresql:****@localhost:5432]
+  audit/scripts/c1_eval.py (1 matches) [e.g. line 33: postgresql+asyncpg:****@localhost:5432]
+  audit/scripts/c2_precision_table.py (1 matches) [e.g. line 27: postgresql+asyncpg:****@localhost:5432]
+  audit/scripts/c3_audit_performance.py (2 matches) [e.g. line 17: postgresql+asyncpg:****@localhost:5432]
+  audit/scripts/e5_index_audit.py (1 matches) [e.g. line 9: postgresql:****@localhost:5432]
+  audit/scripts/eval_s1_full_baseline.py (1 matches) [e.g. line 31: postgresql+asyncpg:****@localhost:5432]
+  audit/scripts/eval_s2_credibility_integration.py (1 matches) [e.g. line 34: postgresql+asyncpg:****@localhost:5432]
+  audit/scripts/g2_load_matrix.py (1 matches) [e.g. line 62: postgresql+asyncpg:****@localhost:5432]
+  audit/scripts/g2_profile_geo.py (2 matches) [e.g. line 12: postgresql+asyncpg:****@localhost:5432]
+  audit/scripts/g2_worker_saturation.py (1 matches) [e.g. line 10: postgresql:****@localhost:5432]
+  audit/scripts/g5_runner.py (3 matches) [e.g. line 21: postgresql:****@localhost:5432]
+  audit/scripts/l3_eval.py (1 matches) [e.g. line 32: postgresql+asyncpg:****@localhost:5432]
+  audit/scripts/measure_incident_detail_latency.py (1 matches) [e.g. line 27: postgresql+asyncpg:****@localhost:5432]
+  audit/scripts/snapshot_s2_baseline.py (1 matches) [e.g. line 24: postgresql+asyncpg:****@localhost:5432]
+  back-end/.env.example (1 matches) [e.g. line 16: postgresql+asyncpg:****@localhost:5432]
+  back-end/alembic.ini (1 matches) [e.g. line 46: postgresql+asyncpg:****@localhost:5432]
+  back-end/app/core/config.py (1 matches) [e.g. line 27: postgresql+asyncpg:****@localhost:5432]
+  back-end/tests/conftest.py (1 matches) [e.g. line 13: postgresql+asyncpg:****@localhost:5432]
+  back-end/tests/test_config.py (2 matches) [e.g. line 24: postgresql+asyncpg:****@db-host:5432]
+  docker-compose.demo.yml (1 matches) [e.g. line 17: postgresql+asyncpg:****@postgres:5432]
+  docs/EXTERNAL_SETUP.md (1 matches) [e.g. line 57: postgresql+asyncpg:****@localhost:5432]
+  logs/S2_1.log (1 matches) [e.g. line 25: postgresql+asyncpg:****@localhost:5432]
+
+--- [3] LOCAL PATHS ([LOCAL_USER_PATH]/...) ---
+Total files with [LOCAL_USER_PATH]/ paths: 49
+  audit/logs/A2_vitest.txt: 1 matches (lines: 2)
+  audit/logs/C2_precision_table.log: 2 matches (lines: 2, 14)
+  audit/logs/H1_category_test.log: 2 matches (lines: 2, 16)
+  audit/logs/K0_bulk_sse_and_observation.log: 11 matches (lines: 4, 10, 16, 22, 27...)
+  audit/logs/K0_bulk_sse_final.log: 11 matches (lines: 4, 9, 14, 19, 23...)
+  audit/logs/K0_observation_after_truncate.log: 10 matches (lines: 4, 8, 12, 16, 20...)
+  audit/logs/K0_observation_alone_initial.log: 10 matches (lines: 4, 8, 12, 16, 20...)
+  audit/logs/K0_observation_alone_pretruncate.log: 10 matches (lines: 4, 8, 12, 16, 20...)
+  audit/logs/K0_observation_hermetic_1.log: 10 matches (lines: 4, 8, 12, 16, 20...)
+  audit/logs/K0_observation_hermetic_2.log: 10 matches (lines: 4, 8, 12, 16, 20...)
+  audit/logs/K0_observation_repeat_1.log: 10 matches (lines: 4, 8, 12, 16, 20...)
+  audit/logs/K0_observation_repeat_2.log: 10 matches (lines: 4, 8, 12, 16, 20...)
+  audit/logs/K0_pytest_baseline.log: 33 matches (lines: 8, 10, 12, 14, 16...)
+  audit/logs/K0_pytest_final_1.log: 30 matches (lines: 8, 10, 12, 14, 16...)
+  audit/logs/K0_pytest_final_2.log: 31 matches (lines: 8, 10, 12, 14, 16...)
+  audit/logs/K0_pytest_final_3.log: 29 matches (lines: 8, 10, 12, 14, 16...)
+  audit/logs/K0_pytest_fixture_six.log: 12 matches (lines: 2, 158, 168, 178, 188...)
+  audit/logs/K0_pytest_fixture_six_after_fix.log: 12 matches (lines: 2, 6, 16, 26, 36...)
+  audit/logs/K0_pytest_run1.log: 31 matches (lines: 8, 10, 12, 14, 16...)
+  audit/logs/K0_pytest_run2.log: 29 matches (lines: 8, 10, 12, 14, 16...)
+  audit/logs/K0_pytest_run3.log: 31 matches (lines: 8, 10, 12, 14, 16...)
+  audit/logs/K1_5.log: 45 matches (lines: 205, 211, 217, 223, 228...)
+  audit/logs/K1_7.log: 69 matches (lines: 147, 199, 204, 209, 214...)
+  audit/logs/K1_7_autogen.log: 1 matches (lines: 17)
+  audit/logs/K1_7_pytest_normal.log: 30 matches (lines: 8, 10, 12, 14, 16...)
+  audit/logs/K1_7_pytest_random_complete.log: 28 matches (lines: 10, 66, 122, 178, 234...)
+  audit/logs/K1_7_random_first_fail.log: 10 matches (lines: 353, 358, 363, 368, 372...)
+  audit/logs/K1_7_random_plugin.log: 1 matches (lines: 15)
+  audit/logs/K1_9.log: 1 matches (lines: 28)
+  audit/logs/c3_baseline.json: 5 matches (lines: 48, 49, 50, 51, 52)
+  logs/A_3.log: 1 matches (lines: 1)
+  logs/A_4.log: 10 matches (lines: 54, 159, 163, 167, 171...)
+  logs/C_1.log: 36 matches (lines: 4, 285, 350, 415, 480...)
+  logs/C_2.log: 19 matches (lines: 58, 175, 253, 322, 391...)
+  logs/S1_10.log: 26 matches (lines: 2, 5, 51, 59, 67...)
+  logs/S1_11.log: 1 matches (lines: 15)
+  logs/S1_12.log: 14 matches (lines: 2, 5, 17, 24, 31...)
+  logs/S1_13.log: 13 matches (lines: 2, 5, 28, 36, 44...)
+  logs/S1_14.log: 46 matches (lines: 109, 119, 129, 139, 148...)
+  logs/S1_5.log: 13 matches (lines: 2, 5, 32, 36, 40...)
+  logs/S1_6.log: 12 matches (lines: 2, 5, 23, 27, 31...)
+  logs/S1_8.log: 13 matches (lines: 2, 5, 17, 24, 31...)
+  logs/S2_1.log: 1 matches (lines: 26)
+  logs/S2_10.log: 13 matches (lines: 2, 5, 19, 28, 37...)
+  logs/S2_11.log: 31 matches (lines: 58, 173, 176, 202, 207...)
+  logs/S2_4.log: 12 matches (lines: 2, 5, 25, 29, 33...)
+  logs/S2_6.log: 12 matches (lines: 2, 5, 18, 26, 34...)
+  logs/S2_8.log: 13 matches (lines: 2, 5, 18, 26, 34...)
+  logs/S2_9.log: 1 matches (lines: 10)
+
+--- [4] MITIGATION ACTIONS PERFORMED ---
+1. .gitignore: Added 'audit/logs/' and '*.prof' to prevent historical audit logs and profiling dumps from tracking.
+2. AGENTS.md: Replaced 10 hardcoded file://[LOCAL_USER_PATH]/ URLs with relative repository links.
+3. .agents/workflows/checkpoint.md: Replaced 1 file://[LOCAL_USER_PATH]/ URL with relative workflow link.
+4. audit/scripts/: Replaced hardcoded BACKEND_DIR in 5 evaluation scripts (c1_eval.py, h2_analysis.py, c3_audit_performance.py, l3_eval.py, c2_precision_table.py) with dynamic repo-relative Path(__file__).resolve().parent.parent.parent / 'back-end'.
+5. Historical git history preserved intact (no history rewriting applied per rules).
