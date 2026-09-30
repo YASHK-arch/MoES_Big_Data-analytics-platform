@@ -1,0 +1,31 @@
+{"_header":"AGENT-AUTHORED, NOT BLIND","description":"Replacement holdout because the user-supplied file was absent; 30 new varied examples, 10 per category."}
+{"text":"Lucknow bypass pe subah itna dhuandhar tha ki aage wali bus bas laal dots jaisi dikh rahi thi.","expected_category":"FOG","source_type":"CITIZEN_REPORT","has_coords":true}
+{"text":"Guwahati flyover par dhundh ne signboard nigal liya, horn sunai de raha par gaadi nahi.","expected_category":"FOG","source_type":"MASTODON","has_coords":false}
+{"text":"आज नोएडा सेक्टर 62 में कोहरा इतना घना है कि सामने की लेन भी नहीं दिख रही।","expected_category":"FOG","source_type":"CITIZEN_REPORT","has_coords":true}
+{"text":"Yamuna ke kinare subah ka kuhra chipka hua hai, visibility maybe 15m max.","expected_category":"FOG","source_type":"RSS","has_coords":false}
+{"text":"धुंध में मेट्रो स्टेशन का बोर्ड देर से दिखा, गाड़ियां रेंग रही हैं.","expected_category":"FOG","source_type":"CITIZEN_REPORT","has_coords":true}
+{"text":"Patna junction side full white-out scene, train horns and no visibility rn.","expected_category":"FOG","source_type":"MASTODON","has_coords":false}
+{"text":"Subah-subah kohra chha gaya, flyover pe 20 kadam door kuch clear nahi.","expected_category":"FOG","source_type":"CITIZEN_REPORT","has_coords":true}
+{"text":"चंडीगढ़ रोड पर धुंध की चादर है, headlights on karke bhi mushkil.","expected_category":"FOG","source_type":"RSS","has_coords":false}
+{"text":"Agra expressway fog patch bahut thick, truck lane marker gayab ho gaya.","expected_category":"FOG","source_type":"CITIZEN_REPORT","has_coords":true}
+{"text":"सुबह की कुहासे वाली हालत में airport road पर visibility बहुत कम है।","expected_category":"FOG","source_type":"MASTODON","has_coords":false}
+{"text":"Bikaner side dhool ka parda ghoom raha, dukaan ke shutter tak mitti se bhar gaye.","expected_category":"DUST_STORM","source_type":"CITIZEN_REPORT","has_coords":true}
+{"text":"जैसलमेर में रेत वाली आंधी ने आसमान पीला कर दिया, बाहर निकलना मुश्किल.","expected_category":"DUST_STORM","source_type":"RSS","has_coords":false}
+{"text":"Barmer highway pe aandhi aisi ki balu seedha aankhon mein, bikes pulled over.","expected_category":"DUST_STORM","source_type":"MASTODON","has_coords":true}
+{"text":"धूल भरी हवा का गुबार अजमेर की तरफ बढ़ रहा, दुकानदार तिरपाल बांध रहे हैं।","expected_category":"DUST_STORM","source_type":"CITIZEN_REPORT","has_coords":false}
+{"text":"Jaipur outskirts me achanak sand haze + mitti ka toofan, visibility down.","expected_category":"DUST_STORM","source_type":"RSS","has_coords":true}
+{"text":"रेतीली आंधी ने खेत की मेड़ ढक दी, हवा में धूल ही धूल है.","expected_category":"DUST_STORM","source_type":"MASTODON","has_coords":false}
+{"text":"Jodhpur ke paas dhool-andhad full speed aa rahi, tin sheets rattling.","expected_category":"DUST_STORM","source_type":"CITIZEN_REPORT","has_coords":true}
+{"text":"धूल का बवंडर सड़क पार कर रहा है, छोटे पत्थर और रेत उड़ रहे हैं।","expected_category":"DUST_STORM","source_type":"RSS","has_coords":false}
+{"text":"Aandhi with flying sand near the canal; sky brown, zero rain so far.","expected_category":"DUST_STORM","source_type":"CITIZEN_REPORT","has_coords":true}
+{"text":"बीकानेर रोड पर मिट्टी वाली तेज आंधी, helmet visor पर रेत जम गई.","expected_category":"DUST_STORM","source_type":"MASTODON","has_coords":false}
+{"text":"Pune camp side jhakkad chal raha, balcony ka cooler cover udd ke road pe.","expected_category":"STRONG_WIND","source_type":"CITIZEN_REPORT","has_coords":true}
+{"text":"मुंबई सी-लिंक पर हवा के झोंके car ko side mein dhakel rahe hain.","expected_category":"STRONG_WIND","source_type":"RSS","has_coords":false}
+{"text":"Nagpur market mein gale-force gusts, tin signboards are wobbling hard.","expected_category":"STRONG_WIND","source_type":"MASTODON","has_coords":true}
+{"text":"तेज झक्कड़ से पुराने पेड़ की डाल टूटकर फुटपाथ पर आ गिरी.","expected_category":"STRONG_WIND","source_type":"CITIZEN_REPORT","has_coords":false}
+{"text":"Coastal road pe wind blast aa raha every few seconds, walkers can't stay upright.","expected_category":"STRONG_WIND","source_type":"RSS","has_coords":true}
+{"text":"हवा के थपेड़े इतने तेज कि दुकान का फाइबर बोर्ड उखड़ गया.","expected_category":"STRONG_WIND","source_type":"MASTODON","has_coords":false}
+{"text":"Indore bypass gusts are throwing dust and leaves around, poles swaying; no rain.","expected_category":"STRONG_WIND","source_type":"CITIZEN_REPORT","has_coords":true}
+{"text":"हवा का तेज झोंका आया और छत पर रखी खाली बाल्टी नीचे गिर गई.","expected_category":"STRONG_WIND","source_type":"RSS","has_coords":false}
+{"text":"Kolhapur mein hawa full crazy, patte horizontal jaa rahe and wires humming.","expected_category":"STRONG_WIND","source_type":"CITIZEN_REPORT","has_coords":true}
+{"text":"तटीय गांव में तेज पवन से नावों के ऊपर की चादरें उड़ गईं.","expected_category":"STRONG_WIND","source_type":"MASTODON","has_coords":false}

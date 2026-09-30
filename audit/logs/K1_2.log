@@ -1,0 +1,6 @@
+$ if test -f audit/holdout_r4_v2.jsonl; then wc -l audit/holdout_r4_v2.jsonl; else printf "NOT FOUND: audit/holdout_r4_v2.jsonl
+"; fi
+NOT FOUND: audit/holdout_r4_v2.jsonl
+$ git diff --stat -- back-end/app/intelligence/category_rules.py
+$ git status --short
+?? audit/logs/K1_2.log
