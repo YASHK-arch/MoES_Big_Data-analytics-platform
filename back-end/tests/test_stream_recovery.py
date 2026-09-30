@@ -80,7 +80,9 @@ async def test_stream_autoclaim_unacked_message_recovery():
         assert str(reclaimed_ev.event_id) == str(event.event_id)
 
         # Consumer B acknowledges the message
-        ack_res = await service.ack_event(reclaimed_id, stream_name=stream_name, group_name=group_name)
+        ack_res = await service.ack_event(
+            reclaimed_id, stream_name=stream_name, group_name=group_name
+        )
         assert ack_res is True
 
         # Confirm PEL is empty

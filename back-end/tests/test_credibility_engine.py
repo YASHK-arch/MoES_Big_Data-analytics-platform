@@ -1094,4 +1094,3 @@ def test_weak_link_contribution_cap_and_threshold_barrier():
     sig_strong = credibility_scorer.score_incident(strong_input)
     strong_delta = sig_strong.final_credibility_score - base_score
     assert strong_delta > 0.05, f"Strong link delta {strong_delta} was unexpectedly capped"
-

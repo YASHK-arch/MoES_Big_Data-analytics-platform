@@ -140,9 +140,8 @@ class DataRetentionService:
             # ─────────────────────────────────────────────────────────────────
             # 2. Delete Expired WeatherReports (All expired reports)
             # ─────────────────────────────────────────────────────────────────
-            expired_reports_stmt = (
-                select(WeatherReport.id)
-                .where(WeatherReport.occurred_at < cutoff)
+            expired_reports_stmt = select(WeatherReport.id).where(
+                WeatherReport.occurred_at < cutoff
             )
             expired_rep_res = await session.execute(expired_reports_stmt)
             expired_rep_ids = list(expired_rep_res.scalars().all())
@@ -159,13 +158,17 @@ class DataRetentionService:
                         delete(DuplicateMember).where(DuplicateMember.report_id.in_(chunk_ids))
                     )
                     await session.execute(
-                        delete(DuplicateCluster).where(DuplicateCluster.primary_report_id.in_(chunk_ids))
+                        delete(DuplicateCluster).where(
+                            DuplicateCluster.primary_report_id.in_(chunk_ids)
+                        )
                     )
                     await session.execute(
                         delete(ReportMedia).where(ReportMedia.report_id.in_(chunk_ids))
                     )
                     await session.execute(
-                        delete(IncidentEvidenceLink).where(IncidentEvidenceLink.report_id.in_(chunk_ids))
+                        delete(IncidentEvidenceLink).where(
+                            IncidentEvidenceLink.report_id.in_(chunk_ids)
+                        )
                     )
                     await session.execute(
                         delete(IncidentObservationCorroboration).where(
@@ -182,9 +185,8 @@ class DataRetentionService:
             # ─────────────────────────────────────────────────────────────────
             # 3. Delete Expired WeatherObservations
             # ─────────────────────────────────────────────────────────────────
-            expired_obs_stmt = (
-                select(WeatherObservation.id)
-                .where(WeatherObservation.observed_at < cutoff)
+            expired_obs_stmt = select(WeatherObservation.id).where(
+                WeatherObservation.observed_at < cutoff
             )
             expired_obs_res = await session.execute(expired_obs_stmt)
             expired_obs_ids = list(expired_obs_res.scalars().all())
@@ -208,10 +210,7 @@ class DataRetentionService:
             # 4. Delete Expired EvidenceItems
             # ─────────────────────────────────────────────────────────────────
             effective_pub_time = func.coalesce(EvidenceItem.published_at, EvidenceItem.captured_at)
-            expired_evi_stmt = (
-                select(EvidenceItem.id)
-                .where(effective_pub_time < cutoff)
-            )
+            expired_evi_stmt = select(EvidenceItem.id).where(effective_pub_time < cutoff)
             expired_evi_res = await session.execute(expired_evi_stmt)
             expired_evi_ids = list(expired_evi_res.scalars().all())
 

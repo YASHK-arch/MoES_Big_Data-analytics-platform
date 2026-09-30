@@ -26,7 +26,9 @@ def upgrade() -> None:
     if not res:
         op.add_column(
             "evidence_items",
-            sa.Column("is_test_fixture", sa.Boolean(), nullable=False, server_default=sa.text("false")),
+            sa.Column(
+                "is_test_fixture", sa.Boolean(), nullable=False, server_default=sa.text("false")
+            ),
         )
         op.create_index(
             "ix_evidence_items_is_test_fixture",

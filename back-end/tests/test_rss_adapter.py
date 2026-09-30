@@ -96,7 +96,9 @@ class TestRSSNewsAdapter:
         """Test parsing RSS 2.0 with XML unescaping and deduplication of tracking URLs."""
         adapter = RSSNewsAdapter(feed_urls=["https://weather-news.in/feed.xml"])
         seen_hashes = set()
-        events = adapter.parse_feed_xml(RSS_20_SAMPLE, "https://weather-news.in/feed.xml", seen_hashes)
+        events = adapter.parse_feed_xml(
+            RSS_20_SAMPLE, "https://weather-news.in/feed.xml", seen_hashes
+        )
 
         # The 2nd item is duplicate of 1st after URL canonicalization -> only 2 unique events
         assert len(events) == 2
@@ -120,7 +122,9 @@ class TestRSSNewsAdapter:
         assert len(events) == 1
         shimla_raw = events[0]
         assert "Shimla" in shimla_raw.payload["title"]
-        assert shimla_raw.payload["url"] == "https://disaster-bulletin.in/bulletins/shimla-rain-alert"
+        assert (
+            shimla_raw.payload["url"] == "https://disaster-bulletin.in/bulletins/shimla-rain-alert"
+        )
         assert "Landslide warning" in shimla_raw.payload["description"]
 
     def test_parse_article_caps_persisted_summary_and_raw_payload(self):
@@ -276,7 +280,10 @@ class TestRSSNewsAdapter:
         # Gate 4 (different cities) and Gate 4b (different states) must trigger IRRELEVANT
         assert assessment_no_coords.relationship_type == EvidenceRelationship.IRRELEVANT
         assert assessment_no_coords.overall_score == 0.0
-        assert "different city" in assessment_no_coords.explanation or "different state" in assessment_no_coords.explanation
+        assert (
+            "different city" in assessment_no_coords.explanation
+            or "different state" in assessment_no_coords.explanation
+        )
 
     def test_positive_corroboration_same_city(self):
         """Positive Test: RSS article about Mumbai links to Mumbai incident."""

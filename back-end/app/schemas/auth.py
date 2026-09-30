@@ -12,7 +12,9 @@ class SignupRequest(BaseModel):
     """Payload for citizen self-registration."""
 
     email: EmailStr = Field(..., description="Valid citizen email address")
-    password: str = Field(..., min_length=8, max_length=128, description="Password with minimum 8 characters")
+    password: str = Field(
+        ..., min_length=8, max_length=128, description="Password with minimum 8 characters"
+    )
     full_name: str = Field(..., min_length=2, max_length=150, description="Full name of citizen")
 
 

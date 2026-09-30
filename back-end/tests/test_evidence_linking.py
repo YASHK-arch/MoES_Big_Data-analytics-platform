@@ -528,4 +528,3 @@ def test_location_gate_coordinate_cases_unchanged():
     # Pune is > 100km from Colaba
     assert res_far.relationship_type == EvidenceRelationship.IRRELEVANT
     assert res_far.overall_score == 0.0
-

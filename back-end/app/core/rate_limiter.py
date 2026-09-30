@@ -63,9 +63,7 @@ class SlidingWindowRateLimiter:
         self._history[key].append(now)
         return True
 
-    async def is_allowed_async(
-        self, key: str, max_requests: Optional[int] = None
-    ) -> bool:
+    async def is_allowed_async(self, key: str, max_requests: Optional[int] = None) -> bool:
         """Check rate limit backed by Redis.
 
         If Redis is unavailable, logs a warning and fails OPEN (returns True).
@@ -111,10 +109,12 @@ class SlidingWindowRateLimiter:
             del self._history[key]
         try:
             import asyncio
+
             loop = asyncio.get_running_loop()
             bucket = int(time.time() // self.window_seconds)
             redis_key = f"ratelimit:{key}:{bucket}"
             from app.core.redis import redis_client
+
             loop.create_task(redis_client.delete(redis_key))
         except (RuntimeError, Exception):
             pass
@@ -135,9 +135,11 @@ class SlidingWindowRateLimiter:
         """Clear all in-memory rate limit history and Redis keys."""
         try:
             import asyncio
+
             loop = asyncio.get_running_loop()
             bucket = int(time.time() // self.window_seconds)
             from app.core.redis import redis_client
+
             for k in set(self._history.keys()) | getattr(self, "_active_keys", set()):
                 loop.create_task(redis_client.delete(f"ratelimit:{k}:{bucket}"))
         except (RuntimeError, Exception):
@@ -152,4 +154,3 @@ login_rate_limiter = SlidingWindowRateLimiter(max_requests=15, window_seconds=60
 
 # Global rate limiter instance for citizen report submissions
 report_rate_limiter = SlidingWindowRateLimiter(max_requests=10, window_seconds=60.0)
-

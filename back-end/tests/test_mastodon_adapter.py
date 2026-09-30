@@ -117,6 +117,7 @@ def test_mastodon_instance_and_hashtag_configuration():
 def test_mastodon_default_hashtags_include_imd_variants():
     """Verify default MASTODON_HASHTAGS in settings includes imd, imdweather, and imdindia."""
     from app.core.config import Settings
+
     fresh_settings = Settings()
     assert "imd" in fresh_settings.MASTODON_HASHTAGS
     assert "imdweather" in fresh_settings.MASTODON_HASHTAGS

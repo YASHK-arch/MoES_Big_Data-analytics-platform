@@ -85,16 +85,22 @@ class TestSourceTrustScoreAudit:
         assert imd >= 0.90
 
     @pytest.mark.asyncio
-    async def test_report_service_get_or_create_source_dynamic_lookup(self, db_session: AsyncSession):
+    async def test_report_service_get_or_create_source_dynamic_lookup(
+        self, db_session: AsyncSession
+    ):
         """ReportService.get_or_create_source dynamically resolves trust score from adapter_registry."""
         for code, expected_trust in EXPECTED_TRUST_SCORES.items():
             source = await report_service.get_or_create_source(db_session, source_code=code)
             assert source.base_trust_score == pytest.approx(expected_trust)
 
     @pytest.mark.asyncio
-    async def test_evidence_service_get_or_create_source_dynamic_lookup(self, db_session: AsyncSession):
+    async def test_evidence_service_get_or_create_source_dynamic_lookup(
+        self, db_session: AsyncSession
+    ):
         """EvidenceService.get_or_create_source dynamically resolves trust score from adapter_registry."""
-        source_gdelt = await evidence_service.get_or_create_source(db_session, source_code="GDELT_DOC")
+        source_gdelt = await evidence_service.get_or_create_source(
+            db_session, source_code="GDELT_DOC"
+        )
         assert source_gdelt.base_trust_score == pytest.approx(0.70)
 
         source_mastodon = await evidence_service.get_or_create_source(
@@ -103,10 +109,16 @@ class TestSourceTrustScoreAudit:
         assert source_mastodon.base_trust_score == pytest.approx(0.60)
 
     @pytest.mark.asyncio
-    async def test_observation_service_get_or_create_source_dynamic_lookup(self, db_session: AsyncSession):
+    async def test_observation_service_get_or_create_source_dynamic_lookup(
+        self, db_session: AsyncSession
+    ):
         """ObservationService.get_or_create_source dynamically resolves trust score from adapter_registry."""
-        source_cwc = await observation_service.get_or_create_source(db_session, source_code="CWC_NWDP")
+        source_cwc = await observation_service.get_or_create_source(
+            db_session, source_code="CWC_NWDP"
+        )
         assert source_cwc.base_trust_score == pytest.approx(0.92)
 
-        source_om = await observation_service.get_or_create_source(db_session, source_code="OPEN_METEO")
+        source_om = await observation_service.get_or_create_source(
+            db_session, source_code="OPEN_METEO"
+        )
         assert source_om.base_trust_score == pytest.approx(0.80)

@@ -31,7 +31,6 @@ POSTS = [
     ("FOG", "Purani Delhi railway station par dhoondh aur kohre ka aalam, visibility 10m."),
     ("FOG", "राजधानी में कड़ाके की ठंड के साथ छाया घना कोहरा।"),
     ("FOG", "Har taraf safed chadar jaisa kohra aur dhund pheli hui hai."),
-
     # 20 DUST_STORM
     ("DUST_STORM", "Massive dust storm hits Bikaner, turning the sky orange and blocking roads."),
     ("DUST_STORM", "Severe sandstorm approaching Jodhpur desert areas with high flying sand."),
@@ -53,10 +52,15 @@ POSTS = [
     ("DUST_STORM", "Achanak tez dhool aandhi aane se visual band ho gaya, sandstorm alert."),
     ("DUST_STORM", "तेज धूल भरी हवा और रेत का तूफान पश्चिमी राजस्थान में तबाही मचा रहा है।"),
     ("DUST_STORM", "Dhool bhari andhi toofan ne sadkon par ret ke dher laga diye."),
-
     # 20 STRONG_WIND
-    ("STRONG_WIND", "Violent strong wind blowing across the coastline, roaring gale ripping tarpaulins."),
-    ("STRONG_WIND", "Extreme high wind gusts exceeding 80 km/h uprooting trees and electric poles."),
+    (
+        "STRONG_WIND",
+        "Violent strong wind blowing across the coastline, roaring gale ripping tarpaulins.",
+    ),
+    (
+        "STRONG_WIND",
+        "Extreme high wind gusts exceeding 80 km/h uprooting trees and electric poles.",
+    ),
     ("STRONG_WIND", "Severe gale force winds howling through south Mumbai promenades."),
     ("STRONG_WIND", "Intense windstorm causes structural damage and signboards to collapse."),
     ("STRONG_WIND", "Buffeting strong winds making it impossible to walk along the beach front."),

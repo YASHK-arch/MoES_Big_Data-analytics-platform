@@ -57,7 +57,10 @@ async def main() -> int:
     consumer_name = os.environ.get("ORCHESTRATOR_CONSUMER_NAME")
     if consumer_name:
         orchestration_dispatcher.consumer_name = consumer_name
-    logger.info("Initializing standalone OrchestrationDispatcher process (%s)...", orchestration_dispatcher.consumer_name)
+    logger.info(
+        "Initializing standalone OrchestrationDispatcher process (%s)...",
+        orchestration_dispatcher.consumer_name,
+    )
 
     try:
         # Loop until stop event is set

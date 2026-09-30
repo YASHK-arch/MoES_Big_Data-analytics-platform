@@ -44,7 +44,9 @@ async def fetch_osrm_road_geometry(
                 if routes and "geometry" in routes[0]:
                     return routes[0]["geometry"]
     except Exception as e:
-        logger.warning("OSRM routing service unavailable (%s). Falling back to great-circle corridor.", e)
+        logger.warning(
+            "OSRM routing service unavailable (%s). Falling back to great-circle corridor.", e
+        )
     return None
 
 

@@ -17,7 +17,9 @@ class ReliefCenter(Base):
 
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     name = Column(String(255), nullable=False)
-    center_type = Column(String(50), nullable=False, default="SHELTER")  # SHELTER, HOSPITAL, RELIEF_CAMP
+    center_type = Column(
+        String(50), nullable=False, default="SHELTER"
+    )  # SHELTER, HOSPITAL, RELIEF_CAMP
     address = Column(Text, nullable=True)
     district_name = Column(String(100), nullable=True)
     state_name = Column(String(100), nullable=True)
@@ -32,7 +34,9 @@ class ReliefCenter(Base):
     longitude = Column(Float, nullable=False)
     geom = Column(Geometry(geometry_type="POINT", srid=4326), nullable=False)
 
-    created_at = Column(DateTime(timezone=True), nullable=False, default=lambda: datetime.now(timezone.utc))
+    created_at = Column(
+        DateTime(timezone=True), nullable=False, default=lambda: datetime.now(timezone.utc)
+    )
     updated_at = Column(
         DateTime(timezone=True),
         nullable=False,

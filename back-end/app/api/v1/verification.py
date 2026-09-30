@@ -109,9 +109,7 @@ async def verify_incident(
             new_status="VERIFIED",
             notes=payload.notes if payload else None,
             action_metadata=(
-                {"broadcast_alert": True}
-                if payload and payload.broadcast_alert
-                else None
+                {"broadcast_alert": True} if payload and payload.broadcast_alert else None
             ),
             audit_user_id=current_operator.id,
             audit_action="VERIFY",

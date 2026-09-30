@@ -64,11 +64,13 @@ PROMPT_INJECTION_PATTERNS: List[re.Pattern] = [
 
 class SSRFValidationError(ValueError):
     """Raised when an external URL fails strict security and domain whitelisting checks."""
+
     pass
 
 
 class CircuitBreakerOpenError(RuntimeError):
     """Raised when a request is blocked because the source's circuit breaker is in OPEN state."""
+
     pass
 
 
@@ -81,11 +83,7 @@ def is_ip_private_or_restricted(hostname: str) -> bool:
     try:
         ip = ipaddress.ip_address(hostname)
         return (
-            ip.is_private
-            or ip.is_loopback
-            or ip.is_link_local
-            or ip.is_multicast
-            or ip.is_reserved
+            ip.is_private or ip.is_loopback or ip.is_link_local or ip.is_multicast or ip.is_reserved
         )
     except ValueError:
         # Not a raw IP literal; hostname string
@@ -104,7 +102,9 @@ def validate_external_url(url: str) -> str:
     parsed = urlparse(clean_url)
 
     if parsed.scheme not in ("http", "https"):
-        raise SSRFValidationError(f"Invalid URL scheme '{parsed.scheme}'. Only HTTP/HTTPS permitted.")
+        raise SSRFValidationError(
+            f"Invalid URL scheme '{parsed.scheme}'. Only HTTP/HTTPS permitted."
+        )
 
     hostname = (parsed.hostname or "").lower()
     if not hostname:
@@ -149,7 +149,9 @@ def sanitize_nlp_text(text: Optional[str]) -> str:
     normalized = unicodedata.normalize("NFKC", str(text))
 
     # 2. Strip zero-width non-printable characters
-    normalized = re.sub(r"[\u200B-\u200D\uFEFF\u0000-\u0008\u000B\u000C\u000E-\u001F]", "", normalized)
+    normalized = re.sub(
+        r"[\u200B-\u200D\uFEFF\u0000-\u0008\u000B\u000C\u000E-\u001F]", "", normalized
+    )
 
     # 3. Strip prompt injection delimiters and script tags
     sanitized = normalized
@@ -204,7 +206,9 @@ class CircuitBreaker:
             # Check if recovery timeout has elapsed
             if (time.monotonic() - self.last_failure_time) >= self.recovery_timeout:
                 self.state = "HALF_OPEN"
-                logger.info("Circuit breaker '%s' transitioned to HALF_OPEN trial state.", self.name)
+                logger.info(
+                    "Circuit breaker '%s' transitioned to HALF_OPEN trial state.", self.name
+                )
                 return True
             return False
 

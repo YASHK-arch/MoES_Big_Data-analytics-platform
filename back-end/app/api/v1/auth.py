@@ -181,7 +181,8 @@ async def login_user(
         email=user.email,
         full_name=user.full_name,
         role=user.role,
-        jurisdiction_code=user.jurisdiction_code or ("NATIONAL_DEOC" if user.role in ("OPERATOR", "ADMIN") else None),
+        jurisdiction_code=user.jurisdiction_code
+        or ("NATIONAL_DEOC" if user.role in ("OPERATOR", "ADMIN") else None),
         home_location_lat=user.home_location_lat,
         home_location_lng=user.home_location_lng,
         home_location_name=user.home_location_name,
@@ -264,4 +265,3 @@ async def logout_user(
             "message": "Session revoked successfully.",
         },
     }
-

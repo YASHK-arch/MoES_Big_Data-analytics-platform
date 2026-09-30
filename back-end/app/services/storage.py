@@ -39,7 +39,9 @@ def validate_file_magic_bytes(file_bytes: bytes, declared_mime: str) -> None:
     dangerous_signatures = [b"<script", b"<html", b"<?php", b"<!doctype html", b"<svg", b"#!/"]
     for danger in dangerous_signatures:
         if danger in header_preview:
-            raise ValueError(f"File contains disallowed executable or script payload signature: {danger.decode('latin-1')}")
+            raise ValueError(
+                f"File contains disallowed executable or script payload signature: {danger.decode('latin-1')}"
+            )
 
     # Check magic byte signatures
     expected_magics = MAGIC_SIGNATURES.get(declared_mime, [])

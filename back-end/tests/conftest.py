@@ -25,7 +25,9 @@ settings.REDIS_URL = os.environ["REDIS_URL"]
 
 from app.db import session as db_session_module  # noqa: E402
 
-db_session_module.engine, db_session_module.async_session_factory = db_session_module.create_engine_and_session_factory()
+db_session_module.engine, db_session_module.async_session_factory = (
+    db_session_module.create_engine_and_session_factory()
+)
 
 from app.core.security import create_access_token, get_password_hash  # noqa: E402
 from app.main import app  # noqa: E402
@@ -97,7 +99,13 @@ async def clean_test_database():
                     ("CYCLONE_STORM", "Cyclone & Storm", "SEVERE", "#7c3aed", "wind"),
                     ("DROUGHT", "Drought Condition", "MODERATE", "#d97706", "sun"),
                     ("DUST_STORM", "Dust Storm", "HIGH", "#a16207", "sparkles"),
-                    ("FLOOD_WATERLOGGING", "Flooding & Waterlogging", "HIGH", "#3b82f6", "droplets"),
+                    (
+                        "FLOOD_WATERLOGGING",
+                        "Flooding & Waterlogging",
+                        "HIGH",
+                        "#3b82f6",
+                        "droplets",
+                    ),
                     ("FOG", "Dense Fog", "MODERATE", "#64748b", "cloud-fog"),
                     ("HAILSTORM", "Hailstorm", "HIGH", "#06b6d4", "cloud-hail"),
                     ("HEATWAVE", "Heatwave", "HIGH", "#ef4444", "thermometer-sun"),
@@ -105,7 +113,13 @@ async def clean_test_database():
                     ("LANDSLIDE", "Landslide & Mudslip", "SEVERE", "#b45309", "mountain"),
                     ("OTHER", "Other Weather Hazard", "LOW", "#6b7280", "alert-triangle"),
                     ("STRONG_WIND", "Strong Wind & Gale", "HIGH", "#0d9488", "wind"),
-                    ("THUNDERSTORM_LIGHTNING", "Thunderstorm & Lightning", "HIGH", "#eab308", "zap"),
+                    (
+                        "THUNDERSTORM_LIGHTNING",
+                        "Thunderstorm & Lightning",
+                        "HIGH",
+                        "#eab308",
+                        "zap",
+                    ),
                     ("URBAN_FLOOD", "Urban Inundation", "HIGH", "#0284c7", "waves"),
                 )
             ]
@@ -186,4 +200,3 @@ async def reset_rate_limiters():
     yield
     await _clear_limiter_async(report_rate_limiter)
     await _clear_limiter_async(login_rate_limiter)
-

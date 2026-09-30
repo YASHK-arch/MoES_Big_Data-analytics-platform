@@ -157,6 +157,7 @@ async def _refresh_gauges() -> None:
 
 # ── Middleware hook for request metrics ───────────────────────────────────────
 
+
 async def record_request_metric(request: Request, call_next: Any) -> Any:
     """ASGI middleware for request count and latency metrics.
 
@@ -183,6 +184,7 @@ async def record_request_metric(request: Request, call_next: Any) -> Any:
 
 
 # ── /metrics endpoint ─────────────────────────────────────────────────────────
+
 
 @router.get(
     "/metrics",

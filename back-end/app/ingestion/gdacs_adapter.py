@@ -45,9 +45,9 @@ class GDACSAlertAdapter:
 
     # GDACS alert level → domain severity mapping
     ALERT_SEVERITY_MAP: Dict[int, str] = {
-        1: "LOW",       # Green — minor impact expected
-        2: "HIGH",      # Orange — moderate to serious impact expected
-        3: "SEVERE",    # Red — serious impact expected / mass casualty risk
+        1: "LOW",  # Green — minor impact expected
+        2: "HIGH",  # Orange — moderate to serious impact expected
+        3: "SEVERE",  # Red — serious impact expected / mass casualty risk
     }
     # Textual fallback for alert_level strings published in some responses
     ALERT_TEXT_MAP: Dict[str, str] = {
@@ -60,11 +60,11 @@ class GDACSAlertAdapter:
     EVENT_CATEGORY_MAP: Dict[str, str] = {
         "FL": "FLOOD_WATERLOGGING",
         "TC": "CYCLONE_GALE",
-        "DR": "HEATWAVE",           # Drought — closest thermal extreme proxy
-        "WF": "OTHER",              # Wildfire — not in primary taxonomy, use OTHER
-        "EQ": "OTHER",              # Earthquake — not a hydro-met event
-        "TS": "CYCLONE_GALE",       # Tsunami — coastal wave, closest proxy
-        "VO": "OTHER",              # Volcano
+        "DR": "HEATWAVE",  # Drought — closest thermal extreme proxy
+        "WF": "OTHER",  # Wildfire — not in primary taxonomy, use OTHER
+        "EQ": "OTHER",  # Earthquake — not a hydro-met event
+        "TS": "CYCLONE_GALE",  # Tsunami — coastal wave, closest proxy
+        "VO": "OTHER",  # Volcano
     }
 
     # Event types to request from GDACS (hydro-meteorological only)
@@ -90,13 +90,19 @@ class GDACSAlertAdapter:
             settings, "GDACS_EVENT_TYPES", self.HYDRO_EVENT_TYPES
         )
         self.country_code = country_code or getattr(settings, "GDACS_COUNTRY_CODE", "IND")
-        self.lookback_days = lookback_days if lookback_days is not None else getattr(
-            settings, "GDACS_LOOKBACK_DAYS", 7
+        self.lookback_days = (
+            lookback_days
+            if lookback_days is not None
+            else getattr(settings, "GDACS_LOOKBACK_DAYS", 7)
         )
-        self.min_interval_seconds = min_interval_seconds if min_interval_seconds is not None else getattr(
-            settings, "GDACS_MIN_REQUEST_INTERVAL_SECONDS", 5.0
+        self.min_interval_seconds = (
+            min_interval_seconds
+            if min_interval_seconds is not None
+            else getattr(settings, "GDACS_MIN_REQUEST_INTERVAL_SECONDS", 5.0)
         )
-        self.timeout_seconds = timeout_seconds or getattr(settings, "GDACS_REQUEST_TIMEOUT_SECONDS", 15.0)
+        self.timeout_seconds = timeout_seconds or getattr(
+            settings, "GDACS_REQUEST_TIMEOUT_SECONDS", 15.0
+        )
         self._http_client = http_client
         self._last_request_time: float = 0.0
 
@@ -171,11 +177,7 @@ class GDACSAlertAdapter:
     def _extract_coordinates(cls, event: Dict[str, Any]) -> Tuple[Optional[float], Optional[float]]:
         """Extract validated WGS84 lat/lon from a GDACS event record."""
         # GDACS API response shapes vary — check multiple field names
-        lat = (
-            event.get("latitude")
-            or event.get("lat")
-            or event.get("centroid_latitude")
-        )
+        lat = event.get("latitude") or event.get("lat") or event.get("centroid_latitude")
         lon = (
             event.get("longitude")
             or event.get("lon")
@@ -221,7 +223,7 @@ class GDACSAlertAdapter:
             "%d %b %Y",
         ):
             try:
-                dt = datetime.strptime(raw_str[:len(fmt)], fmt)
+                dt = datetime.strptime(raw_str[: len(fmt)], fmt)
                 return dt.replace(tzinfo=timezone.utc)
             except (ValueError, TypeError):
                 continue
@@ -234,9 +236,7 @@ class GDACSAlertAdapter:
 
         lat, lon = self._extract_coordinates(event)
         if lat is None or lon is None:
-            logger.debug(
-                "Skipping GDACS event %s: no valid coordinates.", external_id
-            )
+            logger.debug("Skipping GDACS event %s: no valid coordinates.", external_id)
             return None
 
         # Title / name
@@ -362,7 +362,8 @@ class GDACSAlertAdapter:
         if not raw_events:
             logger.info(
                 "GDACS API returned 0 raw events for country=%s, types=%s.",
-                self.country_code, self.event_types,
+                self.country_code,
+                self.event_types,
             )
 
         normalized: List[NormalizedIngestionEvent] = []
@@ -391,7 +392,9 @@ class GDACSAlertAdapter:
 
             if response.status_code == 429:
                 logger.warning("GDACS API rate limit encountered (HTTP 429).")
-                raise AdapterFetchError("GDACS rate limit exceeded (HTTP 429).", source_code=self.source_code)
+                raise AdapterFetchError(
+                    "GDACS rate limit exceeded (HTTP 429).", source_code=self.source_code
+                )
 
             if response.status_code >= 500:
                 logger.error("GDACS API server error (HTTP %d).", response.status_code)
@@ -403,7 +406,8 @@ class GDACSAlertAdapter:
             if response.status_code not in (200, 201, 206):
                 logger.warning(
                     "GDACS API unexpected status %d: %s",
-                    response.status_code, response.text[:200],
+                    response.status_code,
+                    response.text[:200],
                 )
                 return []
 
@@ -416,7 +420,8 @@ class GDACSAlertAdapter:
             events = self._parse_response(data)
             logger.info(
                 "GDACS ingestion complete: %d events parsed for country=%s.",
-                len(events), self.country_code,
+                len(events),
+                self.country_code,
             )
             return events
 
@@ -430,7 +435,9 @@ class GDACSAlertAdapter:
             raise
         except Exception as e:
             logger.error("Unexpected error in GDACS adapter: %s", e, exc_info=True)
-            raise AdapterFetchError(f"Unexpected GDACS fetch error: {e}", source_code=self.source_code) from e
+            raise AdapterFetchError(
+                f"Unexpected GDACS fetch error: {e}", source_code=self.source_code
+            ) from e
         finally:
             if should_close:
                 await client.aclose()

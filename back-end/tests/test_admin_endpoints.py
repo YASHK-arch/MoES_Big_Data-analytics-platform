@@ -258,7 +258,7 @@ class TestAdminEndpoints:
         sse_redis = MagicMock(spec=AsyncRedisClient)
         sse_redis.connect = AsyncMock()
         sse_redis.close = AsyncMock()
-        sse_redis.xrange = AsyncMock(side_effect=[[('0-0', {})], [matching_entry]])
+        sse_redis.xrange = AsyncMock(side_effect=[[("0-0", {})], [matching_entry]])
         sse_redis.xread = AsyncMock(side_effect=ConnectionError("End SSE test stream"))
         original_broadcaster = events_module.broadcaster
         test_broadcaster = SSEBroadcaster()
@@ -364,9 +364,7 @@ class TestAdminEndpoints:
         single_events = list(
             (
                 await db_session.scalars(
-                    select(VerificationEvent).where(
-                        VerificationEvent.report_id == single_report.id
-                    )
+                    select(VerificationEvent).where(VerificationEvent.report_id == single_report.id)
                 )
             ).all()
         )
@@ -399,9 +397,7 @@ class TestAdminEndpoints:
         )
         audit_rows = list(
             (
-                await db_session.scalars(
-                    select(AuditLog).where(AuditLog.entity_id.in_(report_ids))
-                )
+                await db_session.scalars(select(AuditLog).where(AuditLog.entity_id.in_(report_ids)))
             ).all()
         )
         sections = {
@@ -414,12 +410,34 @@ class TestAdminEndpoints:
                 [columns(row, {"id", "report_id", "created_at"}) for row in bulk_events],
             ),
             "realtime_outbox": (
-                [columns(row, {"id", "event_id", "entity_id", "tracking_id", "occurred_at", "created_at"}) for row in outbox_rows if row.entity_id == str(single_report.id)],
-                [columns(row, {"id", "event_id", "entity_id", "tracking_id", "occurred_at", "created_at"}) for row in outbox_rows if row.entity_id == str(bulk_report.id)],
+                [
+                    columns(
+                        row,
+                        {"id", "event_id", "entity_id", "tracking_id", "occurred_at", "created_at"},
+                    )
+                    for row in outbox_rows
+                    if row.entity_id == str(single_report.id)
+                ],
+                [
+                    columns(
+                        row,
+                        {"id", "event_id", "entity_id", "tracking_id", "occurred_at", "created_at"},
+                    )
+                    for row in outbox_rows
+                    if row.entity_id == str(bulk_report.id)
+                ],
             ),
             "audit_logs": (
-                [columns(row, {"id", "entity_id", "created_at"}) for row in audit_rows if row.entity_id == single_report.id],
-                [columns(row, {"id", "entity_id", "created_at"}) for row in audit_rows if row.entity_id == bulk_report.id],
+                [
+                    columns(row, {"id", "entity_id", "created_at"})
+                    for row in audit_rows
+                    if row.entity_id == single_report.id
+                ],
+                [
+                    columns(row, {"id", "entity_id", "created_at"})
+                    for row in audit_rows
+                    if row.entity_id == bulk_report.id
+                ],
             ),
         }
         differences = {
@@ -467,12 +485,14 @@ class TestAdminEndpoints:
             report.verification_status != "PENDING" or report.processing_status != "PENDING"
         )
         verification_events = await db_session.scalar(
-            select(func.count()).select_from(VerificationEvent).where(
-                VerificationEvent.report_id == report.id
-            )
+            select(func.count())
+            .select_from(VerificationEvent)
+            .where(VerificationEvent.report_id == report.id)
         )
         outbox_rows = await db_session.scalar(
-            select(func.count()).select_from(RealtimeOutbox).where(
+            select(func.count())
+            .select_from(RealtimeOutbox)
+            .where(
                 RealtimeOutbox.entity_id == str(report.id),
                 RealtimeOutbox.event_type == "report.verification_changed",
             )

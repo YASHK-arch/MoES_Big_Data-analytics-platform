@@ -14,6 +14,7 @@ def test_db_pool_kwargs_configuration():
     with patch.object(settings, "DB_DISABLE_POOL", True):
         kwargs = get_engine_kwargs()
         from sqlalchemy import pool
+
         assert kwargs["poolclass"] is pool.NullPool
 
     with patch.object(settings, "DB_DISABLE_POOL", False):

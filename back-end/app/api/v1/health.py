@@ -103,9 +103,7 @@ async def readiness_check() -> JSONResponse:
     # 3. Alembic migration check
     try:
         async with async_session_factory() as session:
-            result = await session.execute(
-                text("SELECT version_num FROM alembic_version LIMIT 1")
-            )
+            result = await session.execute(text("SELECT version_num FROM alembic_version LIMIT 1"))
             row = result.scalar_one_or_none()
             alembic_rev = row or "unknown"
             checks["alembic"] = str(alembic_rev)

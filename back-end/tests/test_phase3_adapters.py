@@ -26,11 +26,13 @@ from app.ingestion.schemas import NormalizedIngestionEvent, NormalizedObservatio
 # Open-Meteo Adapter Tests
 # ─────────────────────────────────────────────────────────────────────────────
 
+
 def _make_open_meteo_response(city: str = "Mumbai") -> Dict[str, Any]:
     """Construct a minimal but realistic Open-Meteo API response."""
     now = datetime.now(timezone.utc)
     # Return 2 hours; the adapter should pick the most recent one <= now
     from datetime import timedelta
+
     t1 = (now - timedelta(hours=2)).strftime("%Y-%m-%dT%H:00")
     t2 = (now - timedelta(hours=1)).strftime("%Y-%m-%dT%H:00")
     return {
@@ -93,7 +95,9 @@ class TestOpenMeteoAdapter:
     def test_missing_hourly_block_returns_none(self):
         """A response without the 'hourly' key must return None gracefully."""
         adapter = self._make_adapter()
-        result = adapter._parse_city_response("Mumbai", "OM-MUM", 19.076, 72.8777, {"latitude": 19.076})
+        result = adapter._parse_city_response(
+            "Mumbai", "OM-MUM", 19.076, 72.8777, {"latitude": 19.076}
+        )
         assert result is None
 
     def test_empty_time_list_returns_none(self):
@@ -120,6 +124,7 @@ class TestOpenMeteoAdapter:
 
         with patch.object(adapter, "_fetch_city", new=AsyncMock(return_value=None)):
             import time
+
             start = time.monotonic()
             await adapter.fetch_raw_events()
             elapsed = time.monotonic() - start
@@ -177,6 +182,7 @@ class TestOpenMeteoAdapter:
 # GDACS Adapter Tests
 # ─────────────────────────────────────────────────────────────────────────────
 
+
 def _make_gdacs_event(
     event_id: str = "1067890",
     event_type: str = "FL",
@@ -229,7 +235,9 @@ class TestGDACSAdapter:
     def test_parse_event_cyclone_red_alert(self):
         """Cyclone red alert should map to SEVERE + CYCLONE_GALE."""
         adapter = self._make_adapter()
-        evt = _make_gdacs_event(event_type="TC", alert_level=3, lat=14.5, lon=80.3, name="Cyclone Biparjoy")
+        evt = _make_gdacs_event(
+            event_type="TC", alert_level=3, lat=14.5, lon=80.3, name="Cyclone Biparjoy"
+        )
         result = adapter._parse_event(evt)
 
         assert result is not None
@@ -328,7 +336,10 @@ class TestGDACSAdapter:
         # Delimited countryname
         assert adapter._matches_country({"countryname": "Nepal | India"}) is True
         # Completely disjoint country
-        assert adapter._matches_country({"country": "Bangladesh, Myanmar", "iso3": "BGD, MMR"}) is False
+        assert (
+            adapter._matches_country({"country": "Bangladesh, Myanmar", "iso3": "BGD, MMR"})
+            is False
+        )
         # Empty/missing fields
         assert adapter._matches_country({}) is False
 
@@ -371,10 +382,14 @@ class TestGDACSAdapter:
         """Should return NormalizedIngestionEvent list from a well-formed GDACS response."""
         mock_response = MagicMock()
         mock_response.status_code = 200
-        mock_response.json.return_value = _make_gdacs_response([
-            _make_gdacs_event(event_id="AAA", event_type="FL", lat=25.5, lon=85.1),
-            _make_gdacs_event(event_id="BBB", event_type="TC", lat=14.5, lon=80.3, alert_level=3),
-        ])
+        mock_response.json.return_value = _make_gdacs_response(
+            [
+                _make_gdacs_event(event_id="AAA", event_type="FL", lat=25.5, lon=85.1),
+                _make_gdacs_event(
+                    event_id="BBB", event_type="TC", lat=14.5, lon=80.3, alert_level=3
+                ),
+            ]
+        )
 
         mock_client = AsyncMock(spec=httpx.AsyncClient)
         mock_client.is_closed = False
@@ -401,11 +416,13 @@ class TestGDACSAdapter:
 # Registry Registration Tests
 # ─────────────────────────────────────────────────────────────────────────────
 
+
 class TestPhase3RegistryIntegration:
     """Verify Phase 3 adapters are registered in the adapter_registry."""
 
     def test_open_meteo_registered_in_registry(self):
         from app.ingestion import adapter_registry
+
         adapter = adapter_registry.get("OPEN_METEO")
         assert adapter is not None
         assert adapter.source_code == "OPEN_METEO"
@@ -413,6 +430,7 @@ class TestPhase3RegistryIntegration:
 
     def test_gdacs_registered_in_registry(self):
         from app.ingestion import adapter_registry
+
         adapter = adapter_registry.get("GDACS_FEED")
         assert adapter is not None
         assert adapter.source_code == "GDACS_FEED"
@@ -420,6 +438,7 @@ class TestPhase3RegistryIntegration:
 
     def test_all_phase3_adapters_in_list(self):
         from app.ingestion import adapter_registry
+
         codes = {a.source_code for a in adapter_registry.list_adapters()}
         assert "OPEN_METEO" in codes
         assert "GDACS_FEED" in codes

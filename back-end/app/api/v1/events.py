@@ -156,7 +156,9 @@ class SSEBroadcaster:
         self._redis_client = AsyncRedisClient()
         try:
             await self._redis_client.connect()
-            latest = await self._redis_client.xrevrange(self.stream_name, max_id="+", min_id="-", count=1)
+            latest = await self._redis_client.xrevrange(
+                self.stream_name, max_id="+", min_id="-", count=1
+            )
             if latest:
                 self._last_stream_id = latest[0][0]
             else:
@@ -407,7 +409,9 @@ async def stream_events(
     if ticket:
         ticket_data = redeem_sse_ticket(ticket)
         if not ticket_data:
-            logger.warning("SSE connection attempted with expired or invalid ticket nonce: %s", ticket[:8])
+            logger.warning(
+                "SSE connection attempted with expired or invalid ticket nonce: %s", ticket[:8]
+            )
 
     # Accept Last-Event-ID from either standard HTTP header or query parameter fallback
     effective_last_id = last_event_id_header or last_event_id_query

@@ -340,7 +340,9 @@ async def test_stream_routing_separation(db_session: AsyncSession) -> None:
     )
 
 
-async def test_observation_joining_completed_incident_updates_score(db_session: AsyncSession) -> None:
+async def test_observation_joining_completed_incident_updates_score(
+    db_session: AsyncSession,
+) -> None:
     """Proves that a new physical observation matching an already-COMPLETED incident still triggers credibility re-scoring."""
     mock_redis, _ = _create_mock_redis_stream_bus()
     mock_realtime = RealtimeService(client=mock_redis)
@@ -402,7 +404,9 @@ async def test_observation_joining_completed_incident_updates_score(db_session: 
     assert float(report.credibility_score) > initial_score
 
 
-async def test_new_report_joining_completed_incident_cluster_updates_score(db_session: AsyncSession) -> None:
+async def test_new_report_joining_completed_incident_cluster_updates_score(
+    db_session: AsyncSession,
+) -> None:
     """Proves that a new duplicate report joining a cluster with an already-COMPLETED incident updates its score."""
     mock_redis, _ = _create_mock_redis_stream_bus()
     mock_realtime = RealtimeService(client=mock_redis)
@@ -443,7 +447,9 @@ async def test_new_report_joining_completed_incident_cluster_updates_score(db_se
     assert float(report1.credibility_score) >= initial_score1
 
 
-async def test_concurrent_inline_and_worker_pipeline_atomic_idempotency(db_session: AsyncSession) -> None:
+async def test_concurrent_inline_and_worker_pipeline_atomic_idempotency(
+    db_session: AsyncSession,
+) -> None:
     """Proves that concurrent inline execution and background worker on two independent DB connections produce exactly one intelligence_ready outbox event and 0 duplicate audit rows."""
     import asyncio
 
@@ -495,7 +501,9 @@ async def test_concurrent_inline_and_worker_pipeline_atomic_idempotency(db_sessi
     assert len(audit_rows) == 0
 
 
-async def test_worker_retries_partial_incident_without_force_to_ready(db_session: AsyncSession) -> None:
+async def test_worker_retries_partial_incident_without_force_to_ready(
+    db_session: AsyncSession,
+) -> None:
     """Proves that an incident left in INTELLIGENCE_PARTIAL is NOT skipped by worker run without force=True,
     retries the failed stage to reach INTELLIGENCE_READY, producing exactly 1 outbox event and 0 duplicate audit rows."""
     from app.db.session import async_session_factory
@@ -589,4 +597,3 @@ async def test_worker_retries_partial_incident_without_force_to_ready(db_session
     # Outbox event count remains exactly 1
     outbox_res = await db_session.execute(outbox_stmt)
     assert len(list(outbox_res.scalars().all())) == 1
-

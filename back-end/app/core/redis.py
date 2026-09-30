@@ -36,7 +36,9 @@ class AsyncRedisClient:
         self._lock_obj: Optional[asyncio.Lock] = None
         self._lock_loop: Optional[asyncio.AbstractEventLoop] = None
 
-        self._pool: Optional[asyncio.Queue[Tuple[asyncio.StreamReader, asyncio.StreamWriter]]] = None
+        self._pool: Optional[asyncio.Queue[Tuple[asyncio.StreamReader, asyncio.StreamWriter]]] = (
+            None
+        )
         self._pool_loop: Optional[asyncio.AbstractEventLoop] = None
         self._pool_created: int = 0
 
@@ -522,12 +524,14 @@ class AsyncRedisClient:
         items = []
         for entry in res:
             if isinstance(entry, list) and len(entry) >= 4:
-                items.append({
-                    "id": str(entry[0]),
-                    "consumer": str(entry[1]),
-                    "idle_ms": int(entry[2]) if entry[2] is not None else 0,
-                    "deliveries": int(entry[3]) if entry[3] is not None else 0,
-                })
+                items.append(
+                    {
+                        "id": str(entry[0]),
+                        "consumer": str(entry[1]),
+                        "idle_ms": int(entry[2]) if entry[2] is not None else 0,
+                        "deliveries": int(entry[3]) if entry[3] is not None else 0,
+                    }
+                )
         return items
 
     async def delete(self, *keys: str) -> int:
@@ -623,4 +627,3 @@ class AsyncRedisClient:
 
 
 redis_client = AsyncRedisClient()
-

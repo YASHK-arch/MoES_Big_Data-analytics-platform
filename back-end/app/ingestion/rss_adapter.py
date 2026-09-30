@@ -88,9 +88,7 @@ class RSSNewsAdapter:
         self.source_type = "RSS"
         self.base_trust_score = 0.70
         self.feed_urls = (
-            feed_urls
-            if feed_urls is not None
-            else getattr(settings, "RSS_NEWS_FEEDS", [])
+            feed_urls if feed_urls is not None else getattr(settings, "RSS_NEWS_FEEDS", [])
         )
         self.min_interval_seconds = (
             min_interval_seconds
@@ -305,7 +303,9 @@ class RSSNewsAdapter:
 
                 # Publication Date
                 date_elem = self._find_elem(item, "pubDate", "published", "updated")
-                raw_date = date_elem.text.strip() if date_elem is not None and date_elem.text else None
+                raw_date = (
+                    date_elem.text.strip() if date_elem is not None and date_elem.text else None
+                )
 
                 parsed_payload = {
                     "title": title,

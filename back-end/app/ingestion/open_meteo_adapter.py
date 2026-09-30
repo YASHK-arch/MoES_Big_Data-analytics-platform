@@ -78,10 +78,16 @@ class OpenMeteoAdapter:
         self.base_trust_score = 0.80
 
         self.cities = cities or DEFAULT_INDIAN_CITIES
-        self.endpoint = endpoint or getattr(settings, "OPEN_METEO_ENDPOINT", self.OPEN_METEO_ENDPOINT)
-        self.timeout_seconds = timeout_seconds or getattr(settings, "OPEN_METEO_TIMEOUT_SECONDS", 15.0)
-        self.min_interval_seconds = min_interval_seconds if min_interval_seconds is not None else getattr(
-            settings, "OPEN_METEO_MIN_REQUEST_INTERVAL_SECONDS", 1.0
+        self.endpoint = endpoint or getattr(
+            settings, "OPEN_METEO_ENDPOINT", self.OPEN_METEO_ENDPOINT
+        )
+        self.timeout_seconds = timeout_seconds or getattr(
+            settings, "OPEN_METEO_TIMEOUT_SECONDS", 15.0
+        )
+        self.min_interval_seconds = (
+            min_interval_seconds
+            if min_interval_seconds is not None
+            else getattr(settings, "OPEN_METEO_MIN_REQUEST_INTERVAL_SECONDS", 1.0)
         )
         self._http_client = http_client
         self._last_request_time: float = 0.0
@@ -132,6 +138,7 @@ class OpenMeteoAdapter:
                 dt_naive = datetime.fromisoformat(t)
                 # Open-Meteo returns times in the requested timezone — assume UTC+5:30 for IST
                 from datetime import timedelta
+
                 dt_utc = dt_naive.replace(tzinfo=timezone.utc) - timedelta(hours=5, minutes=30)
                 if dt_utc <= now_utc:
                     best_idx = i
@@ -225,7 +232,8 @@ class OpenMeteoAdapter:
             if response.status_code != 200:
                 logger.warning(
                     "Open-Meteo returned HTTP %d for city %s.",
-                    response.status_code, city_name,
+                    response.status_code,
+                    city_name,
                 )
                 return None
             data = response.json()
@@ -240,7 +248,9 @@ class OpenMeteoAdapter:
         except Exception as e:
             logger.error(
                 "Unexpected error fetching Open-Meteo data for city %s: %s",
-                city_name, e, exc_info=True,
+                city_name,
+                e,
+                exc_info=True,
             )
             return None
 
@@ -261,7 +271,8 @@ class OpenMeteoAdapter:
 
         logger.info(
             "Open-Meteo ingestion complete: %d/%d city observations fetched.",
-            len(observations), len(self.cities),
+            len(observations),
+            len(self.cities),
         )
         return observations
 

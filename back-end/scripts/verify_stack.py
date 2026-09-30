@@ -65,7 +65,11 @@ async def verify_stack() -> int:
             report, _ = await report_service.create_citizen_report(session, payload)
             report_id = report.id
             if report.processing_status in ("QUEUED", "COMPLETED"):
-                logger.info("[PASS 3/6] Report accepted: %s (status=%s)", report.tracking_id, report.processing_status)
+                logger.info(
+                    "[PASS 3/6] Report accepted: %s (status=%s)",
+                    report.tracking_id,
+                    report.processing_status,
+                )
                 passed += 1
             else:
                 logger.error(
@@ -90,7 +94,10 @@ async def verify_stack() -> int:
                     logger.info("[PASS 4/6] Immediate processing status is QUEUED")
                     passed += 1
             else:
-                logger.error("[FAIL 4/6] Immediate processing status is neither QUEUED nor COMPLETED: %s", report.processing_status)
+                logger.error(
+                    "[FAIL 4/6] Immediate processing status is neither QUEUED nor COMPLETED: %s",
+                    report.processing_status,
+                )
 
             if report_id is not None:
                 await on_incident_ingested(db=session, incident_id=report_id)

@@ -69,7 +69,9 @@ class ObservationService:
         )
         session.add(source)
         await session.flush()
-        logger.info(f"Registered observation source: {normalized_code} (trust: {source.base_trust_score})")
+        logger.info(
+            f"Registered observation source: {normalized_code} (trust: {source.base_trust_score})"
+        )
 
         return source
 

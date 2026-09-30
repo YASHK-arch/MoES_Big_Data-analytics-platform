@@ -10,7 +10,9 @@ from pydantic import BaseModel, ConfigDict, Field
 class ReliefCenterCreateRequest(BaseModel):
     """Payload for registering a new emergency relief center."""
 
-    name: str = Field(..., min_length=3, max_length=255, description="Name of relief center or hospital")
+    name: str = Field(
+        ..., min_length=3, max_length=255, description="Name of relief center or hospital"
+    )
     center_type: str = Field(default="SHELTER", description="SHELTER, HOSPITAL, RELIEF_CAMP")
     address: Optional[str] = None
     district_name: Optional[str] = None

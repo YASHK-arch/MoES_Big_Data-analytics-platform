@@ -751,14 +751,18 @@ async def test_submit_citizen_report_rate_limiting():
         created_at=datetime.now(timezone.utc),
     )
 
-    with patch("app.api.v1.reports.report_service.create_citizen_report", new_callable=AsyncMock) as mock_create, \
-         patch("app.core.rate_limiter.time.time", return_value=1700000000.0):
+    with (
+        patch(
+            "app.api.v1.reports.report_service.create_citizen_report", new_callable=AsyncMock
+        ) as mock_create,
+        patch("app.core.rate_limiter.time.time", return_value=1700000000.0),
+    ):
         mock_create.return_value = (mock_report, 0)
         async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as client:
             # First 10 requests should succeed (HTTP 201)
             for i in range(10):
                 res = await client.post("/api/v1/reports", data=payload)
-                assert res.status_code == 201, f"Request {i+1} failed with {res.status_code}"
+                assert res.status_code == 201, f"Request {i + 1} failed with {res.status_code}"
 
             # 11th request must receive HTTP 429
             res_11th = await client.post("/api/v1/reports", data=payload)
@@ -821,9 +825,13 @@ async def test_new_categories_accepted_and_classified():
             created_at=datetime.now(timezone.utc),
         )
 
-        with patch("app.api.v1.reports.report_service.create_citizen_report", new_callable=AsyncMock) as mock_create:
+        with patch(
+            "app.api.v1.reports.report_service.create_citizen_report", new_callable=AsyncMock
+        ) as mock_create:
             mock_create.return_value = (mock_report, 0)
-            async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as client:
+            async with AsyncClient(
+                transport=ASGITransport(app=app), base_url="http://test"
+            ) as client:
                 res = await client.post(
                     "/api/v1/reports",
                     data={
@@ -840,5 +848,3 @@ async def test_new_categories_accepted_and_classified():
                 assert data["tracking_id"] == f"RPT-{cat_code}-TEST"
                 passed_payload = mock_create.call_args.kwargs.get("payload")
                 assert passed_payload.category_code == cat_code
-
-

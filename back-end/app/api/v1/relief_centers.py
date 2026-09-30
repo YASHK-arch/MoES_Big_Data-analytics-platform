@@ -32,8 +32,12 @@ router = APIRouter()
 async def get_nearby_relief_centers(
     lat: float = Query(..., ge=-90.0, le=90.0, description="Latitude"),
     lng: float = Query(..., ge=-180.0, le=180.0, description="Longitude"),
-    radius_km: float = Query(default=50.0, ge=1.0, le=500.0, description="Search radius in kilometers"),
-    center_type: str = Query(default="ALL", description="Filter by SHELTER, HOSPITAL, RELIEF_CAMP, or ALL"),
+    radius_km: float = Query(
+        default=50.0, ge=1.0, le=500.0, description="Search radius in kilometers"
+    ),
+    center_type: str = Query(
+        default="ALL", description="Filter by SHELTER, HOSPITAL, RELIEF_CAMP, or ALL"
+    ),
     db: AsyncSession = Depends(get_db),
 ) -> ReliefCenterListResponse:
     """Fetch nearby active relief centers ordered by proximity."""
@@ -41,6 +45,7 @@ async def get_nearby_relief_centers(
     radius_meters = radius_km * 1000.0
 
     from geoalchemy2 import Geography
+
     user_geog = cast(user_point, Geography)
     center_geog = cast(ReliefCenter.geom, Geography)
 

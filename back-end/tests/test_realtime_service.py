@@ -379,4 +379,3 @@ async def test_redis_client_xautoclaim_parsing():
     assert len(entries) == 1
     assert entries[0][0] == "1725000000001-0"
     assert entries[0][1]["event_id"] == "evt-789"
-

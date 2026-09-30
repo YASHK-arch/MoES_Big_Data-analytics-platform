@@ -219,7 +219,9 @@ async def seed_active_incidents(session: AsyncSession) -> None:
         await session.flush()
 
     # Ensure categories exist
-    flood_cat = await session.execute(select(EventCategory).where(EventCategory.category_code == "FLOOD_WATERLOGGING"))
+    flood_cat = await session.execute(
+        select(EventCategory).where(EventCategory.category_code == "FLOOD_WATERLOGGING")
+    )
     cat_flood = flood_cat.scalar_one_or_none()
     cat_flood_id = cat_flood.id if cat_flood else None
 
@@ -415,11 +417,16 @@ async def seed_bulk_demo_reports(session: AsyncSession, count: int = 500) -> Non
         return
 
     sample_locations = [
-        (28.6139, 77.2090, "New Delhi"), (19.0760, 72.8777, "Mumbai"),
-        (22.5726, 88.3639, "Kolkata"), (13.0827, 80.2707, "Chennai"),
-        (12.9716, 77.5946, "Bengaluru"), (17.3850, 78.4867, "Hyderabad"),
-        (26.9124, 75.7873, "Jaipur"), (23.0225, 72.5714, "Ahmedabad"),
-        (11.0168, 76.9558, "Coimbatore"), (25.5941, 85.1376, "Patna"),
+        (28.6139, 77.2090, "New Delhi"),
+        (19.0760, 72.8777, "Mumbai"),
+        (22.5726, 88.3639, "Kolkata"),
+        (13.0827, 80.2707, "Chennai"),
+        (12.9716, 77.5946, "Bengaluru"),
+        (17.3850, 78.4867, "Hyderabad"),
+        (26.9124, 75.7873, "Jaipur"),
+        (23.0225, 72.5714, "Ahmedabad"),
+        (11.0168, 76.9558, "Coimbatore"),
+        (25.5941, 85.1376, "Patna"),
     ]
     sample_severities = ["LOW", "MODERATE", "SEVERE", "CRITICAL"]
 

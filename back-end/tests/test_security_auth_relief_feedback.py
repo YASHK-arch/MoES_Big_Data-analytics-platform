@@ -27,6 +27,7 @@ async def test_jwt_token_creation_and_decryption():
     assert token is not None
 
     from app.core.security import decode_access_token
+
     payload = decode_access_token(token)
     assert payload["sub"] == "user_123"
     assert payload["role"] == "OPERATOR"
@@ -35,9 +36,7 @@ async def test_jwt_token_creation_and_decryption():
 @pytest.mark.asyncio
 async def test_auth_login_endpoint_success_and_failure():
     """Test POST /api/v1/auth/login with valid and invalid credentials."""
-    async with AsyncClient(
-        transport=ASGITransport(app=app), base_url="http://testserver"
-    ) as ac:
+    async with AsyncClient(transport=ASGITransport(app=app), base_url="http://testserver") as ac:
         # 1. Failure with invalid password
         fail_res = await ac.post(
             "/api/v1/auth/login",
@@ -61,9 +60,7 @@ async def test_auth_login_endpoint_success_and_failure():
 @pytest.mark.asyncio
 async def test_unauthenticated_verification_queue_access_denied():
     """Test GET /api/v1/verification/queue without token returns 401 Unauthorized."""
-    async with AsyncClient(
-        transport=ASGITransport(app=app), base_url="http://testserver"
-    ) as ac:
+    async with AsyncClient(transport=ASGITransport(app=app), base_url="http://testserver") as ac:
         res = await ac.get("/api/v1/verification/queue")
         assert res.status_code == 401
         assert res.json()["error"]["code"] == "UNAUTHORIZED"
@@ -74,9 +71,7 @@ async def test_authenticated_verification_queue_access_success():
     """Test GET /api/v1/verification/queue with valid Bearer token succeeds."""
     token = create_access_token(subject="a1b2c3d4-e5f6-7890-abcd-1234567890ab", role="OPERATOR")
 
-    async with AsyncClient(
-        transport=ASGITransport(app=app), base_url="http://testserver"
-    ) as ac:
+    async with AsyncClient(transport=ASGITransport(app=app), base_url="http://testserver") as ac:
         res = await ac.get(
             "/api/v1/verification/queue",
             headers={"Authorization": f"Bearer {token}"},
@@ -88,9 +83,7 @@ async def test_authenticated_verification_queue_access_success():
 @pytest.mark.asyncio
 async def test_nearby_relief_centers_endpoint():
     """Test GET /api/v1/geo/relief-centers spatial proximity query."""
-    async with AsyncClient(
-        transport=ASGITransport(app=app), base_url="http://testserver"
-    ) as ac:
+    async with AsyncClient(transport=ASGITransport(app=app), base_url="http://testserver") as ac:
         # Query near Bengaluru (12.9716, 77.5946) within 50 km
         res = await ac.get("/api/v1/geo/relief-centers?lat=12.9716&lng=77.5946&radius_km=50.0")
         assert res.status_code == 200
@@ -133,9 +126,7 @@ async def test_community_feedback_vote_endpoint():
 
         inc_id = str(report.id)
 
-    async with AsyncClient(
-        transport=ASGITransport(app=app), base_url="http://testserver"
-    ) as ac:
+    async with AsyncClient(transport=ASGITransport(app=app), base_url="http://testserver") as ac:
         vote_res = await ac.post(
             f"/api/v1/incidents/{inc_id}/feedback",
             json={"vote_type": "CONFIRM"},
@@ -151,9 +142,7 @@ async def test_community_feedback_vote_endpoint():
 async def test_citizen_signup_forces_citizen_role_and_autologin():
     """Test POST /api/v1/auth/signup registers citizen and always enforces CITIZEN role."""
     unique_email = f"citizen_{uuid.uuid4().hex[:8]}@example.com"
-    async with AsyncClient(
-        transport=ASGITransport(app=app), base_url="http://testserver"
-    ) as ac:
+    async with AsyncClient(transport=ASGITransport(app=app), base_url="http://testserver") as ac:
         res = await ac.post(
             "/api/v1/auth/signup",
             json={
@@ -185,9 +174,7 @@ async def test_citizen_signup_forces_citizen_role_and_autologin():
 async def test_citizen_cannot_access_operator_verification_queue():
     """Test that a valid logged-in citizen is strictly blocked from Operator endpoints (403 Forbidden)."""
     unique_email = f"citizen_{uuid.uuid4().hex[:8]}@example.com"
-    async with AsyncClient(
-        transport=ASGITransport(app=app), base_url="http://testserver"
-    ) as ac:
+    async with AsyncClient(transport=ASGITransport(app=app), base_url="http://testserver") as ac:
         # 1. Signup citizen
         signup_res = await ac.post(
             "/api/v1/auth/signup",
@@ -213,9 +200,7 @@ async def test_citizen_cannot_access_operator_verification_queue():
 async def test_citizen_location_persistence_and_profile():
     """Test PUT /api/v1/citizen/me/location and GET /api/v1/citizen/me."""
     unique_email = f"citizen_{uuid.uuid4().hex[:8]}@example.com"
-    async with AsyncClient(
-        transport=ASGITransport(app=app), base_url="http://testserver"
-    ) as ac:
+    async with AsyncClient(transport=ASGITransport(app=app), base_url="http://testserver") as ac:
         # 1. Signup citizen
         signup_res = await ac.post(
             "/api/v1/auth/signup",

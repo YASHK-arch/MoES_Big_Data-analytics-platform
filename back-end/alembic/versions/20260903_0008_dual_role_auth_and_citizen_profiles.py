@@ -24,19 +24,31 @@ def upgrade() -> None:
     op.add_column("users", sa.Column("home_location_lat", sa.Float(), nullable=True))
     op.add_column("users", sa.Column("home_location_lng", sa.Float(), nullable=True))
     op.add_column("users", sa.Column("home_location_name", sa.String(length=255), nullable=True))
-    op.add_column("users", sa.Column("alert_radius_km", sa.Float(), nullable=True, server_default="25.0"))
+    op.add_column(
+        "users", sa.Column("alert_radius_km", sa.Float(), nullable=True, server_default="25.0")
+    )
 
     # 2. Add user_id foreign key to weather_reports (for citizen "My Reports")
     op.add_column(
         "weather_reports",
-        sa.Column("user_id", postgresql.UUID(as_uuid=True), sa.ForeignKey("users.id", ondelete="SET NULL"), nullable=True),
+        sa.Column(
+            "user_id",
+            postgresql.UUID(as_uuid=True),
+            sa.ForeignKey("users.id", ondelete="SET NULL"),
+            nullable=True,
+        ),
     )
     op.create_index("idx_weather_reports_user_id", "weather_reports", ["user_id"])
 
     # 3. Add user_id foreign key to incident_feedback (for citizen "My Votes")
     op.add_column(
         "incident_feedback",
-        sa.Column("user_id", postgresql.UUID(as_uuid=True), sa.ForeignKey("users.id", ondelete="SET NULL"), nullable=True),
+        sa.Column(
+            "user_id",
+            postgresql.UUID(as_uuid=True),
+            sa.ForeignKey("users.id", ondelete="SET NULL"),
+            nullable=True,
+        ),
     )
     op.create_index("idx_feedback_user_id", "incident_feedback", ["user_id"])
 

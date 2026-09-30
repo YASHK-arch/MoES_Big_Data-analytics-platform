@@ -48,7 +48,9 @@ async def test_route_corridor_check_with_intersecting_hazard():
             severity="SEVERE",
             verification_status="VERIFIED",
             credibility_score=0.92,
-            credibility_explanation={"positive_drivers": ["High trust institutional source IMD_NOWCAST."]},
+            credibility_explanation={
+                "positive_drivers": ["High trust institutional source IMD_NOWCAST."]
+            },
             latitude=12.9700,
             longitude=77.6000,
             geom=from_shape(hazard_point, srid=4326),
@@ -78,7 +80,9 @@ async def test_route_corridor_check_with_intersecting_hazard():
             assert data["corridor_km"] == 2.0
             assert data["highest_severity"] == "SEVERE"
             assert len(data["intersecting_incidents"]) >= 1
-            matching_hazards = [h for h in data["intersecting_incidents"] if h["tracking_id"] == track_id]
+            matching_hazards = [
+                h for h in data["intersecting_incidents"] if h["tracking_id"] == track_id
+            ]
             assert len(matching_hazards) == 1
             assert matching_hazards[0]["distance_to_corridor_center_m"] <= 2000.0
 

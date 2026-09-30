@@ -73,7 +73,8 @@ async def submit_incident_feedback(
             select(IncidentFeedback)
             .where(
                 IncidentFeedback.report_id == report.id,
-                (IncidentFeedback.user_id == current_user.id) | (IncidentFeedback.client_ip == client_ip),
+                (IncidentFeedback.user_id == current_user.id)
+                | (IncidentFeedback.client_ip == client_ip),
             )
             .order_by(IncidentFeedback.created_at.desc())
             .limit(1)
@@ -182,7 +183,8 @@ async def get_incident_feedback_summary(
             select(IncidentFeedback)
             .where(
                 IncidentFeedback.report_id == report.id,
-                (IncidentFeedback.user_id == current_user.id) | (IncidentFeedback.client_ip == client_ip),
+                (IncidentFeedback.user_id == current_user.id)
+                | (IncidentFeedback.client_ip == client_ip),
             )
             .order_by(IncidentFeedback.created_at.desc())
             .limit(1)

@@ -40,11 +40,23 @@ def upgrade() -> None:
         sa.Column("longitude", sa.Float(), nullable=False),
         sa.Column(
             "geom",
-            geoalchemy2.types.Geometry(geometry_type="POINT", srid=4326, from_text="ST_GeomFromEWKT", name="geometry"),
+            geoalchemy2.types.Geometry(
+                geometry_type="POINT", srid=4326, from_text="ST_GeomFromEWKT", name="geometry"
+            ),
             nullable=False,
         ),
-        sa.Column("created_at", sa.DateTime(timezone=True), nullable=False, server_default=sa.text("now()")),
-        sa.Column("updated_at", sa.DateTime(timezone=True), nullable=False, server_default=sa.text("now()")),
+        sa.Column(
+            "created_at",
+            sa.DateTime(timezone=True),
+            nullable=False,
+            server_default=sa.text("now()"),
+        ),
+        sa.Column(
+            "updated_at",
+            sa.DateTime(timezone=True),
+            nullable=False,
+            server_default=sa.text("now()"),
+        ),
     )
     op.create_index("idx_relief_centers_active", "relief_centers", ["is_active"])
     op.create_index("idx_relief_centers_name", "relief_centers", ["name"])
@@ -55,11 +67,21 @@ def upgrade() -> None:
     op.create_table(
         "incident_feedback",
         sa.Column("id", postgresql.UUID(as_uuid=True), primary_key=True, default=uuid.uuid4),
-        sa.Column("report_id", postgresql.UUID(as_uuid=True), sa.ForeignKey("weather_reports.id", ondelete="CASCADE"), nullable=False),
+        sa.Column(
+            "report_id",
+            postgresql.UUID(as_uuid=True),
+            sa.ForeignKey("weather_reports.id", ondelete="CASCADE"),
+            nullable=False,
+        ),
         sa.Column("vote_type", sa.String(length=20), nullable=False),
         sa.Column("client_ip", sa.String(length=45), nullable=True),
         sa.Column("user_agent", sa.String(length=255), nullable=True),
-        sa.Column("created_at", sa.DateTime(timezone=True), nullable=False, server_default=sa.text("now()")),
+        sa.Column(
+            "created_at",
+            sa.DateTime(timezone=True),
+            nullable=False,
+            server_default=sa.text("now()"),
+        ),
     )
     op.create_index("idx_feedback_report_id", "incident_feedback", ["report_id"])
 

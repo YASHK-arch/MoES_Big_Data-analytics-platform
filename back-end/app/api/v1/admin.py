@@ -44,7 +44,9 @@ router = APIRouter()
 async def export_incidents_csv(
     limit: int = Query(default=1000, ge=1, le=50000, description="Max export rows (up to 50,000)"),
     category: Optional[str] = Query(None, description="Filter by event category"),
-    status_filter: Optional[str] = Query(None, alias="status", description="Filter by verification status"),
+    status_filter: Optional[str] = Query(
+        None, alias="status", description="Filter by verification status"
+    ),
     severity: Optional[str] = Query(None, description="Filter by severity level"),
     hide_demo: bool = Query(default=False, description="Exclude simulated demo records"),
     db: AsyncSession = Depends(get_db),
@@ -71,20 +73,22 @@ async def export_incidents_csv(
         writer = csv.writer(output)
 
         # Header row
-        writer.writerow([
-            "id",
-            "tracking_id",
-            "title",
-            "category",
-            "severity",
-            "status",
-            "credibility_score",
-            "latitude",
-            "longitude",
-            "location_name",
-            "occurred_at",
-            "is_demo",
-        ])
+        writer.writerow(
+            [
+                "id",
+                "tracking_id",
+                "title",
+                "category",
+                "severity",
+                "status",
+                "credibility_score",
+                "latitude",
+                "longitude",
+                "location_name",
+                "occurred_at",
+                "is_demo",
+            ]
+        )
         yield output.getvalue()
         output.seek(0)
         output.truncate(0)
@@ -101,20 +105,22 @@ async def export_incidents_csv(
                 break
 
             for r in reports:
-                writer.writerow([
-                    str(r.id),
-                    r.tracking_id,
-                    r.title,
-                    r.reported_category,
-                    r.severity,
-                    r.verification_status,
-                    f"{r.credibility_score:.2f}" if r.credibility_score is not None else "",
-                    f"{r.latitude:.6f}" if r.latitude is not None else "",
-                    f"{r.longitude:.6f}" if r.longitude is not None else "",
-                    r.location_name or "",
-                    r.occurred_at.isoformat() if r.occurred_at else "",
-                    str(r.is_demo),
-                ])
+                writer.writerow(
+                    [
+                        str(r.id),
+                        r.tracking_id,
+                        r.title,
+                        r.reported_category,
+                        r.severity,
+                        r.verification_status,
+                        f"{r.credibility_score:.2f}" if r.credibility_score is not None else "",
+                        f"{r.latitude:.6f}" if r.latitude is not None else "",
+                        f"{r.longitude:.6f}" if r.longitude is not None else "",
+                        r.location_name or "",
+                        r.occurred_at.isoformat() if r.occurred_at else "",
+                        str(r.is_demo),
+                    ]
+                )
                 yield output.getvalue()
                 output.seek(0)
                 output.truncate(0)
@@ -138,7 +144,9 @@ async def export_incidents_csv(
 async def export_incidents_geojson(
     limit: int = Query(default=1000, ge=1, le=50000, description="Max export rows (up to 50,000)"),
     category: Optional[str] = Query(None, description="Filter by event category"),
-    status_filter: Optional[str] = Query(None, alias="status", description="Filter by verification status"),
+    status_filter: Optional[str] = Query(
+        None, alias="status", description="Filter by verification status"
+    ),
     severity: Optional[str] = Query(None, description="Filter by severity level"),
     hide_demo: bool = Query(default=False, description="Exclude simulated demo records"),
     db: AsyncSession = Depends(get_db),

@@ -292,9 +292,7 @@ class EvidenceScorer:
             if c_key in INDIAN_CITIES:
                 inc_state = INDIAN_CITIES[c_key].get("state")
 
-        evi_has_coords = (
-            evi_loc_res.latitude is not None and evi_loc_res.longitude is not None
-        )
+        evi_has_coords = evi_loc_res.latitude is not None and evi_loc_res.longitude is not None
         evi_text_res = location_resolver.resolve(text=evi_full_text)
         evi_city = evi_loc_res.city or evi_text_res.city
         evi_state = evi_loc_res.state or evi_text_res.state
@@ -374,11 +372,7 @@ class EvidenceScorer:
                 entity_score = 1.0 if has_loc_match else 0.8
             else:
                 entity_score = 0.0
-        elif (
-            evi_state
-            and inc_state
-            and evi_state.lower() == inc_state.lower()
-        ):
+        elif evi_state and inc_state and evi_state.lower() == inc_state.lower():
             entity_score = 0.6
         elif evi_loc_res.place_name and inc_loc_res.place_name:
             if evi_loc_res.place_name.lower() in inc_full_text.lower():
@@ -497,11 +491,7 @@ class EvidenceScorer:
             )
 
         # Gate 4b: Both states known and different -> IRRELEVANT
-        if (
-            evi_state
-            and inc_state
-            and evi_state.strip().lower() != inc_state.strip().lower()
-        ):
+        if evi_state and inc_state and evi_state.strip().lower() != inc_state.strip().lower():
             return EvidenceLinkAssessment(
                 incident_id=incident_id,
                 evidence_id=evidence_id,

@@ -463,6 +463,7 @@ async def test_consumer_killed_mid_batch_reclaimed_by_new_worker(db_session: Asy
 
     # Simulate worker 1 dying and idle time passing
     import asyncio
+
     await asyncio.sleep(0.05)
 
     # Dispatcher 2 (Worker 2) starts with claim_idle_ms=10 (10ms)
@@ -484,4 +485,3 @@ async def test_consumer_killed_mid_batch_reclaimed_by_new_worker(db_session: Asy
 
     await client.delete(stream_name)
     await client.close()
-

@@ -30,8 +30,12 @@ api_v1_router.include_router(reports_router, prefix="/reports", tags=["Reports"]
 api_v1_router.include_router(routes_router, prefix="/routes", tags=["Routes"])
 api_v1_router.include_router(verification_router, prefix="/verification", tags=["Verification"])
 api_v1_router.include_router(geo_router, prefix="/geo", tags=["Geospatial"])
-api_v1_router.include_router(relief_centers_router, prefix="/geo/relief-centers", tags=["Relief Centers"])
-api_v1_router.include_router(relief_centers_router, prefix="/relief-centers", tags=["Relief Centers"])
+api_v1_router.include_router(
+    relief_centers_router, prefix="/geo/relief-centers", tags=["Relief Centers"]
+)
+api_v1_router.include_router(
+    relief_centers_router, prefix="/relief-centers", tags=["Relief Centers"]
+)
 api_v1_router.include_router(dashboard_router, prefix="/dashboard", tags=["Dashboard"])
 api_v1_router.include_router(analytics_router, prefix="/analytics", tags=["Analytics"])
 api_v1_router.include_router(metrics_router, tags=["Metrics"])

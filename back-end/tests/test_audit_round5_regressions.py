@@ -19,7 +19,16 @@ async def test_geo_incidents_dropped_unused_readiness(api_client: AsyncClient) -
         props = feat["properties"]
 
         # Required properties used by map / frontend
-        for req in ["id", "tracking_id", "title", "category_code", "severity", "credibility_score", "verification_status", "occurred_at"]:
+        for req in [
+            "id",
+            "tracking_id",
+            "title",
+            "category_code",
+            "severity",
+            "credibility_score",
+            "verification_status",
+            "occurred_at",
+        ]:
             assert req in props, f"Missing required property {req}"
 
         # Dropped property
@@ -27,7 +36,9 @@ async def test_geo_incidents_dropped_unused_readiness(api_client: AsyncClient) -
 
 
 @pytest.mark.asyncio
-async def test_geo_incidents_caching_and_ttl_0_bypass(api_client: AsyncClient, monkeypatch: pytest.MonkeyPatch) -> None:
+async def test_geo_incidents_caching_and_ttl_0_bypass(
+    api_client: AsyncClient, monkeypatch: pytest.MonkeyPatch
+) -> None:
     """Verify GET /api/v1/geo/incidents caches in Redis, honors ETag/304, and bypasses when TTL=0."""
     from app.core.config import settings
 
@@ -39,7 +50,9 @@ async def test_geo_incidents_caching_and_ttl_0_bypass(api_client: AsyncClient, m
     assert etag is not None
 
     # 2. 304 Not Modified when sending ETag
-    resp_304 = await api_client.get("/api/v1/geo/incidents", params={"limit": 5}, headers={"If-None-Match": etag})
+    resp_304 = await api_client.get(
+        "/api/v1/geo/incidents", params={"limit": 5}, headers={"If-None-Match": etag}
+    )
     assert resp_304.status_code == 304
 
     # 3. Second request should hit cache and return 200 with same ETag
@@ -52,4 +65,3 @@ async def test_geo_incidents_caching_and_ttl_0_bypass(api_client: AsyncClient, m
     resp_bypass = await api_client.get("/api/v1/geo/incidents", params={"limit": 5})
     assert resp_bypass.status_code == 200
     assert resp_bypass.headers.get("ETag") is not None
-

@@ -191,9 +191,7 @@ async def test_verified_reports_archival(
 
 
 @pytest.mark.asyncio
-async def test_unverified_reports_hard_deletion(
-    db_session: AsyncSession, sample_source: Source
-):
+async def test_unverified_reports_hard_deletion(db_session: AsyncSession, sample_source: Source):
     """Test that expired unverified reports are hard-deleted without archival."""
     now = datetime.now(timezone.utc)
     retention_days = 6
@@ -231,9 +229,7 @@ async def test_unverified_reports_hard_deletion(
 
 
 @pytest.mark.asyncio
-async def test_observations_and_evidence_deletion(
-    db_session: AsyncSession, sample_source: Source
-):
+async def test_observations_and_evidence_deletion(db_session: AsyncSession, sample_source: Source):
     """Test that expired observations and evidence items are pruned while fresh ones remain."""
     now = datetime.now(timezone.utc)
     retention_days = 6
@@ -301,9 +297,7 @@ async def test_observations_and_evidence_deletion(
 
 
 @pytest.mark.asyncio
-async def test_retention_idempotency_double_run(
-    db_session: AsyncSession, sample_source: Source
-):
+async def test_retention_idempotency_double_run(db_session: AsyncSession, sample_source: Source):
     """Test that running the retention cycle twice consecutively is completely idempotent."""
     now = datetime.now(timezone.utc)
     retention_days = 6
@@ -343,9 +337,8 @@ async def test_retention_idempotency_double_run(
     assert len(res2.errors) == 0
 
     # Ensure exactly 1 copy exists in archive
-    stmt = (
-        select(func.count(WeatherReportArchive.id))
-        .where(WeatherReportArchive.id == verified_rep.id)
+    stmt = select(func.count(WeatherReportArchive.id)).where(
+        WeatherReportArchive.id == verified_rep.id
     )
     count = (await db_session.execute(stmt)).scalar_one()
     assert count == 1

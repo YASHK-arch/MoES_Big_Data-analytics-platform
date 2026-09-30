@@ -81,10 +81,12 @@ async def test_reconnect_with_last_event_id_no_loss_no_duplicates():
         ("1000-3", {"event_type": "report.created", "entity_id": "r3", "payload": "{}"}),
         ("1000-4", {"event_type": "report.created", "entity_id": "r4", "payload": "{}"}),
     ]
-    mock_redis.xrange = AsyncMock(side_effect=[
-        [("1000-1", {})],  # oldest entry check
-        replay_entries,     # replay entries
-    ])
+    mock_redis.xrange = AsyncMock(
+        side_effect=[
+            [("1000-1", {})],  # oldest entry check
+            replay_entries,  # replay entries
+        ]
+    )
 
     request = MagicMock()
     # Let generator yield 3 items then stop
@@ -97,6 +99,7 @@ async def test_reconnect_with_last_event_id_no_loss_no_duplicates():
     request.is_disconnected = is_disconnected
 
     from app.api.v1 import events
+
     # Pre-populate live broadcaster with event 1000-4 (overlap) and 1000-5 (new live)
     generator = events.realtime_event_generator(
         request=request,

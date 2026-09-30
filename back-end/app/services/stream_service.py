@@ -177,7 +177,9 @@ class StreamService:
                             dlq_fields = dict(fields)
                             dlq_fields["original_stream"] = stream
                             dlq_fields["original_msg_id"] = msg_id
-                            dlq_fields["dlq_reason"] = f"Exceeded max delivery attempts ({deliveries})"
+                            dlq_fields["dlq_reason"] = (
+                                f"Exceeded max delivery attempts ({deliveries})"
+                            )
                             await self.client.xadd(self.DEFAULT_DEAD_LETTER_STREAM, dlq_fields)
                             await self.client.xack(stream, group, msg_id)
                         else:
@@ -273,9 +275,7 @@ class StreamService:
                     obs = NormalizedObservationEvent.model_validate(fields)
                 observations.append((msg_id, obs))
             except Exception as e:
-                logger.error(
-                    f"Failed to deserialize observation stream message '{msg_id}': {e}"
-                )
+                logger.error(f"Failed to deserialize observation stream message '{msg_id}': {e}")
                 # Acknowledge unrecoverable malformed message so queue does not block
                 await self.client.xack(stream, group, msg_id)
 

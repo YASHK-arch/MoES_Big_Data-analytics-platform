@@ -54,7 +54,9 @@ def upgrade() -> None:
         sa.Column("processing_status", sa.String(30), server_default="PROCESSED", nullable=False),
         sa.Column("verification_status", sa.String(30), server_default="VERIFIED", nullable=False),
         sa.Column("credibility_score", sa.Float(), server_default="0.0", nullable=False),
-        sa.Column("credibility_explanation", postgresql.JSONB(astext_type=sa.Text()), nullable=True),
+        sa.Column(
+            "credibility_explanation", postgresql.JSONB(astext_type=sa.Text()), nullable=True
+        ),
         sa.Column("text_embedding", sa.ARRAY(sa.Float()), nullable=True),
         sa.Column("raw_payload", postgresql.JSONB(astext_type=sa.Text()), nullable=True),
         sa.Column("original_created_at", sa.DateTime(timezone=True), nullable=False),
@@ -109,7 +111,9 @@ def upgrade() -> None:
 
 def downgrade() -> None:
     op.drop_index("idx_weather_reports_archive_archived_at", table_name="weather_reports_archive")
-    op.drop_index("idx_weather_reports_archive_source_external", table_name="weather_reports_archive")
+    op.drop_index(
+        "idx_weather_reports_archive_source_external", table_name="weather_reports_archive"
+    )
     op.drop_index("idx_weather_reports_archive_credibility", table_name="weather_reports_archive")
     op.drop_index("idx_weather_reports_archive_status_time", table_name="weather_reports_archive")
     op.drop_index("idx_weather_reports_archive_occurred_at", table_name="weather_reports_archive")

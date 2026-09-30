@@ -149,7 +149,9 @@ class EvidenceLinkingEngine:
 
         cat_code = "OTHER"
         if report.category_id:
-            cat_stmt = select(EventCategory.category_code).where(EventCategory.id == report.category_id)
+            cat_stmt = select(EventCategory.category_code).where(
+                EventCategory.id == report.category_id
+            )
             cat_res = await db.execute(cat_stmt)
             cat_val = cat_res.scalar_one_or_none()
             if cat_val:

@@ -53,12 +53,18 @@ class IntersectingHazardDetail(BaseModel):
 class RouteCheckResponseData(BaseModel):
     """Data payload for route blockage check result."""
 
-    is_blocked: bool = Field(..., description="True if any verified hazard intersects the path corridor")
+    is_blocked: bool = Field(
+        ..., description="True if any verified hazard intersects the path corridor"
+    )
     hazard_count: int = Field(..., description="Total count of hazards within the corridor")
     corridor_km: float = Field(..., description="Corridor buffer width used in check")
-    highest_severity: Optional[str] = Field(default=None, description="Highest severity level found along path")
+    highest_severity: Optional[str] = Field(
+        default=None, description="Highest severity level found along path"
+    )
     intersecting_incidents: List[IntersectingHazardDetail] = Field(default_factory=list)
-    path_geojson: Dict[str, Any] = Field(..., description="GeoJSON Feature representation of route line and corridor buffer")
+    path_geojson: Dict[str, Any] = Field(
+        ..., description="GeoJSON Feature representation of route line and corridor buffer"
+    )
 
 
 class RouteCheckResponse(BaseModel):
