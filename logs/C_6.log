@@ -1,0 +1,48 @@
+=== ITEM 6: README VERIFICATION AUDIT ===
+Timestamp: 2026-09-30 22:54:12 UTC
+
+Claim 1: Backend Test Suite 609 passed, 0 failed in 125.15s (seed 42)
+  Source: logs/C_2.log:443
+  Log snippet: 609 passed, 83 warnings in 125.15s
+  Status: VERIFIED
+
+Claim 2: Frontend Quality Gates 190 passed, 0 errors/warnings, build 2.15s
+  Source: logs/C_2.log:170-205
+  Log snippet: Tests 190 passed (190), ✓ built in 2.15s
+  Status: VERIFIED
+
+Claim 3: Demo Container Memory 1,514 MiB (~1.51 GB) across 11 containers (< 3.5 GB)
+  Source: logs/C_3.log:82-93
+  Log snippet: sih-demo-web-1 (9.1MB), worker-ingestion (104.6MB), worker-dispatcher (110.4MB), worker-evidence (105.9MB), api (263.4MB), worker-scheduler (112MB), worker-outbox (104.2MB), worker-observation (104.3MB), minio (106.3MB), postgres (476.3MB), redis (127.9MB). Total = 1,524.5 MB.
+  Status: VERIFIED
+
+Claim 4: API Load Performance at 10, 50, 100 users
+  Source: logs/C_4.log
+  10 users: 254.31 RPS, p50 5ms, p95 17ms, p99 49ms, 0% error (logs/C_4.log:28, 40)
+  50 users: 570.07 RPS, p50 29ms, p95 150ms, p99 260ms, 0% error (logs/C_4.log:59, 71)
+  100 users: 576.33 RPS, p50 35ms, p95 460ms, p99 760ms, 0% error (logs/C_4.log:90, 102)
+  Cache Hit vs Miss:
+    /dashboard/summary Hit: p50 3ms (10u), 12ms (50u), 15ms (100u) (logs/C_4.log:35, 66, 97)
+    /dashboard/summary Miss: p50 7ms (10u), 49ms (50u), 100ms (100u) (logs/C_4.log:37, 68, 99)
+    /geo/incidents Hit: p50 5ms (10u), 24ms (50u), 27ms (100u) (logs/C_4.log:36, 67, 98)
+    /geo/incidents Miss: p50 5ms (10u), 43ms (50u), 95ms (100u) (logs/C_4.log:38, 69, 100)
+  Status: VERIFIED
+
+Claim 5: Direct Stream Ingestion Throughput: 14,913.72 events/sec
+  Source: logs/C_4.log:109
+  Log snippet: Direct Stream Ingestion Throughput: 14913.72 events/sec
+  Status: VERIFIED
+
+Claim 6: Worker Recovery Time: 2.47s, 0 lost, 0 duplicated
+  Source: logs/C_4.log:137, 161-164
+  Log snippet: Worker Recovery Time: 2.47 seconds; Lost Events: 0 (NONE); Duplicate Rows: 0 (NONE)
+  Status: VERIFIED
+
+Claim 7: Limitations list matched
+  - IMD AWS mock-only: verified in back-end/app/intelligence/physical_corroboration/service.py:56-62
+  - Open-Meteo numerical model data: verified in service.py:63
+  - Benchmarks synthetic/agent-authored: verified in audit/scripts
+  - Unmeasured real-world accuracy: verified in S1/S2 evaluation protocols
+  - pHash measured on synthetic images: verified in tests/test_image_forensics_hashing.py
+  - Location mismatch off by default: verified in back-end/app/core/config.py:200
+  Status: VERIFIED

@@ -75,130 +75,79 @@ The platform bridges the gap between high-altitude meteorological observations (
 
 ---
 
-## 4. Current Implementation Status
+## 4. Feature Status Table
 
-| Subsystem / Phase | Scope & Implementation Status | Verification Status |
-| :--- | :--- | :---: |
-| **Phase 0–3: Foundation & Schemas** | PostgreSQL 16 + PostGIS, 15 domain models (17 relational tables), spatial GiST indexes, Alembic migrations (`0001`–`0004`). | **COMPLETED & VERIFIED** |
-| **Phase 4: Citizen Intake** | Multi-part report intake, photo upload to MinIO, GPS geocoding, public tracking. | **COMPLETED & VERIFIED** |
-| **Phase 5–6: Ingestion & Streaming** | Adapters for IMD AWS, NDMA SACHET, CWC, Mastodon, GDELT; Redis Stream workers. | **COMPLETED & VERIFIED** |
-| **Phase 7–9: AI Intelligence Engine** | Deduplication clustering, digital evidence linking, physical station corroboration, explainable credibility scorer. | **COMPLETED & VERIFIED** |
-| **Phase 10: Executive Dashboard** | Live Leaflet map, KPI telemetry cards, category breakdown charts, bounded GeoJSON queries. | **COMPLETED & VERIFIED** |
-| **Phase 11: Verification & Triage** | Priority triage queue, side-by-side evidence inspection, status-aware action drawer, immutable audit log. | **COMPLETED & VERIFIED** |
-| **Incident Intelligence Frontend** | Multi-filter Incident Explorer (`/incidents`), 5-dimension Deep-Dive (`/incidents/:id`), Operator Portal (`/login`). | **COMPLETED & VERIFIED** |
-| **Phase 12: Real-Time Event Streaming** | Transactional outbox pattern, dedicated worker, Redis Streams buffer, FastAPI SSE (`GET /api/v1/events/stream`), and React Query live cache invalidation. | **COMPLETED & VERIFIED** |
-| **Phase 13: Analytics Platform & Map** | Server-aggregated trends (`/api/v1/analytics/trends`), summary metrics, regional demographics (`/api/v1/analytics/regional`), and bounded GeoJSON queries. | **COMPLETED & VERIFIED** |
-| **Phase 14: Ingestion & Intelligence Runtime** | Multi-stream Redis topology, 6 standalone worker processes, continuous Scheduler -> Worker -> DB -> Intelligence -> SSE chains. | **COMPLETED & VERIFIED** |
-| **Phase 15: Truth Audit & Documentation** | Authoritative synchronization of all documentation, contracts, schemas, and runtime procedures. | **COMPLETED & VERIFIED** |
-| **Phase 16: Reactive Late Corroboration** | Late observation & evidence ingestion re-triggers credibility scoring and pushes live updates via SSE to frontend without page reload. | **COMPLETED & VERIFIED** |
-| **Phase 17: Live GDELT & Mastodon Integration** | Genuine live HTTP ingestion from GDELT DOC 2.0 and Mastodon public hashtag timelines; persistence to `evidence_items` and intelligence corroboration. | **COMPLETED & VERIFIED** |
-| **Phase 18: NDMA/CWC Live Proof & Duplicate Truth** | Live HTTP verification of NDMA SACHET and CWC NWDP feeds; verified domain-boosted TF-IDF vectorizer (`sparse_tfidf_ngram_v1`) duplicate path. | **COMPLETED & VERIFIED** |
-| **Phase 19: Round 9b — Classification, Demo, RSS, Admin** | R4: 60-post multilingual fog/dust/wind regression (≥85%); R5: `is_demo` migration + DB filter + DEMO badge + hide-demo toggle; R2: RSS adapter with URL-hash dedupe, place→state resolution; R3: streamed CSV/GeoJSON export (50k), atomic bulk verify/reject (100 ids), audit-log viewer. Tests: 475 passed. | **COMPLETED & VERIFIED** |
-| **S1: Physical Weather Corroboration** | Model-based physical corroboration (Open-Meteo archive/forecast, 15-min cache, pure evaluator, credibility integration with physical component, explainable cards in English/Hindi, Prometheus observability, failure drills, 523 tests passed). Station-based IMD AWS corroboration pending credentials. | **COMPLETED & VERIFIED** |
-| **S2: Image Forensics & Reused-Image Detection** | Perceptual hash reuse detection (pHash DCT-II, dHash) across incidents, safe EXIF consistency (time/location vs declared incident with IST wall-clock normalization), Product Rules P1–P7 (missing EXIF neutral, weak credibility impact capped at $\pm 0.05$, status invariant, privacy preservation, worker decode safety), English/Hindi detail card, SIMULATED demo fixtures, 609 tests passed. | **COMPLETED & VERIFIED** |
-| **Production Auth & Supervision** | Institutional JWT/RBAC authentication and multi-worker process supervision (`systemd`/Kubernetes). | *Deferred Production Hardening* |
+| Feature / Subsystem | Status | Scope & Implementation Details | Configuration / Gate Flag |
+| :--- | :---: | :--- | :--- |
+| **Citizen Incident Reporting** | **Implemented** | Multipart form with GPS location, category selection, severity, photo uploads to MinIO/S3, and public tracking page. | None (Core) |
+| **Operator Triage & Verification** | **Implemented** | Priority-ranked queue (`/admin/triage`), state transition enforcement (`PENDING` -> `UNDER_REVIEW` -> `VERIFIED`/`REJECTED`/`DUPLICATE`), audit logging. | None (Core) |
+| **Geospatial GIS Map Explorer** | **Implemented** | Leaflet interactive map with bounded GeoJSON vector layer (`/api/v1/geo/incidents?limit=500`), severity-coded markers, and PostGIS spatial clustering. | None (Core) |
+| **Deduplication & Clustering** | **Implemented** | Spatial-temporal clustering ($R \le 2.5\text{ km}$, $\Delta T \le 120\text{ min}$) and domain-boosted TF-IDF vectorization (`sparse_tfidf_ngram_v1`). | None (Core) |
+| **Explainable Credibility Scoring** | **Implemented** | Deterministic multi-factor scorer ($0.0000$ to $0.9800$) with source priors, crowd volume, digital evidence, and positive/negative drivers. | None (Core) |
+| **Transactional Outbox & SSE** | **Implemented** | PostgreSQL `realtime_outbox` table with `FOR UPDATE SKIP LOCKED` relay worker to Redis Streams and FastAPI Server-Sent Events (`/api/v1/events/stream`). | None (Core) |
+| **Model-Based Physical Corroboration** | **Flag-gated** | Open-Meteo archive/forecast numerical model corroboration, 15-min grid-hour cache, pure evaluator, UI card with English/Hindi explanations. | `PHYSICAL_CORROBORATION_ENABLED` (demo env `true`, code default `false`) |
+| **IMD Station Corroboration** | **Stub / Mock** | India Meteorological Department (IMD) Automatic Weather Station corroboration operates via deterministic mock/fixture providers. Live station API requires official MoES credentials. | `PHYSICAL_CORROBORATION_DEMO_FIXTURE_ENABLED` |
+| **Image Forensics & Reused Photo Detection** | **Flag-gated** | Perceptual hashing (pHash DCT-II, dHash) across incident photos, safe EXIF timestamp/GPS cross-checks, weak credibility adjustment ($\pm 0.05$). | `IMAGE_FORENSICS_ENABLED` (demo env `true`, code default `false`) |
+| **Location-Mismatch Signal** | **Flag-gated** | Text-to-GPS distance verification and credibility penalty for reports where free-text mentions a distant locality. | `LOCATION_MISMATCH_ENABLED` (default `false`) |
+| **Autonomous Drone & IoT Telemetry** | **Planned** | Autonomous video stream analysis from disaster reconnaissance UAVs and municipal IoT water-level sensor telemetry. | Future Roadmap |
 
 ---
 
-## 5. Quickstart & Local Setup
+## 5. One-Command Demo Stack Start
 
-### Prerequisites
-- Python 3.11+ (or Python 3.14)
-- Node.js 18+ and npm
-- Docker & Docker Compose (for PostgreSQL/PostGIS, Redis, and MinIO)
+The platform includes a containerized demonstration stack running 11 Docker services (Nginx web client at `:8080`, 2 Uvicorn API workers, PostgreSQL 16 + PostGIS, Redis 7, MinIO S3, and 6 background workers).
 
-### 1. Start Infrastructure Containers
 ```bash
-docker compose up -d
+# Start and build the entire demo stack in one command:
+./scripts/demo-up.sh
+
+# Seed default operator accounts and 500 demo incidents:
+./scripts/demo-seed.sh
 ```
 
-### 2. Apply Database Migrations & Start Backend API Server
-```bash
-cd back-end
-source .venv/bin/activate
-
-# Apply Alembic schema migrations (17 relational tables)
-alembic upgrade head
-
-# Start FastAPI server on port 8000
-uvicorn app.main:app --host 127.0.0.1 --port 8000 --reload
-```
-
-### 3. Start Background Workers
-In separate terminal tabs / background sessions:
-```bash
-cd back-end
-source .venv/bin/activate
-
-# Transactional Outbox Relay Worker (Relays DB outbox to Redis Streams)
-python -m app.workers.run_outbox_worker
-
-# Orchestration Dispatcher (Executes 5-Stage Intelligence Pipeline)
-python -m app.workers.run_dispatcher
-
-# Ingestion Stream Consumers
-python -m app.workers.run_ingestion_worker
-python -m app.workers.run_observation_worker
-python -m app.workers.run_evidence_worker
-
-# Ingestion Polling Scheduler (Optional / On-Demand for Live Feeds)
-python -m app.workers.run_scheduler
-```
-
-### Terminal Summary Table
-
-| Terminal | Target Subsystem | Command | Operational Purpose |
-| :---: | :--- | :--- | :--- |
-| **1** | Docker Infrastructure | `docker compose up -d` | PostgreSQL 16 (5432), Redis 7 (6379), MinIO (9000/9001) |
-| **2** | Migrations & Backend API | `alembic upgrade head && uvicorn app.main:app --host 127.0.0.1 --port 8000 --reload` | Database schema initialization & FastAPI REST / SSE server |
-| **3** | Frontend Web Client | `npm run dev` (run `npm install` on first setup) | React 18 / Vite operator dashboard on `http://localhost:5173` |
-| **4** | Outbox Relay Worker | `python -m app.workers.run_outbox_worker` | Polls PostgreSQL `realtime_outbox`, publishes to Redis Streams |
-| **5** | Orchestration Dispatcher | `python -m app.workers.run_dispatcher` | Consumes `stream:weather:orchestration`, runs 5-stage pipeline |
-| **6** | Incident Ingestion Worker | `python -m app.workers.run_ingestion_worker` | Consumes `stream:weather:events`, writes to `weather_reports` |
-| **7** | Observation Worker | `python -m app.workers.run_observation_worker` | Consumes `stream:weather:observations`, writes to `weather_observations` |
-| **8** | Evidence Worker | `python -m app.workers.run_evidence_worker` | Consumes `stream:weather:evidence`, writes to `evidence_items` |
-| **9** | Ingestion Polling Scheduler | `python -m app.workers.run_scheduler` | Polls registered external adapters, dispatches to Redis Streams |
-
-The application is available at `http://localhost:5173`.
-Backend health endpoint: `curl http://127.0.0.1:8000/api/v1/health`
-For detailed configuration, environment variables, and troubleshooting, consult [docs/EXTERNAL_SETUP.md](docs/EXTERNAL_SETUP.md).
+- **Web Dashboard**: [http://localhost:8080](http://localhost:8080)
+- **Operator Credentials**: `operator@weather-platform.gov.in` / `EmergencyOps2026!`
+- **Citizen Demo Account**: `citizen@example.com` / `CitizenPassword2026!`
+- **Health Check**: `curl http://localhost:8080/health`
+- **Readiness Check**: `curl http://localhost:8080/ready`
 
 ---
 
-## 6. Testing & Quality Verification
+## 6. Measured Numbers & Benchmark Evidence
 
-### Backend Quality Gates:
-```bash
-cd back-end
-.venv/bin/pytest -q
-.venv/bin/mypy app tests
-.venv/bin/ruff check .
-.venv/bin/ruff format --check .
-```
+All performance metrics and test results in this section were measured during this session on the isolated demo stack. Raw command outputs are cited with exact log paths.
 
-### Frontend Quality Gates:
-```bash
-cd front-end
-npm run typecheck
-npm run lint
-npx vitest run
-npm run build
-```
+- **Backend Test Suite**: **609 passed**, 0 failed in 125.15s with randomized execution seed 42 (`logs/C_2.log:443`).
+- **Frontend Quality Gates**: **190 tests passed**, 0 TypeScript errors, 0 ESLint warnings, production bundle built in 2.15s (`logs/C_2.log:170-205`).
+- **Demo Container Memory**: **1,514 MiB (~1.51 GB)** total memory across all 11 running containers, comfortably under the 3.5 GB platform deployment ceiling (`logs/C_3.log:82-93`).
+- **API Load Performance** (Measured with Locust 2.46.6 on Apple M4 10-core, 16 GB RAM; `logs/C_4.log`):
+  - **10 Concurrent Users**: 254.31 RPS, median latency 5 ms, p95 17 ms, p99 49 ms, 0.00% error rate (`logs/C_4.log:28-40`).
+  - **50 Concurrent Users**: 570.07 RPS, median latency 29 ms, p95 150 ms, p99 260 ms, 0.00% error rate (`logs/C_4.log:59-71`).
+  - **100 Concurrent Users**: 576.33 RPS, median latency 35 ms, p95 460 ms, p99 760 ms, 0.00% error rate (`logs/C_4.log:90-102`).
+  - **Cache Hit vs. Cache Miss Latencies** (`logs/C_4.log`):
+    - *Cache Hit (`/dashboard/summary`)*: p50 = 3 ms (10u), 12 ms (50u), 15 ms (100u).
+    - *Cache Hit (`/geo/incidents?limit=500`)*: p50 = 5 ms (10u), 24 ms (50u), 27 ms (100u).
+    - *Cache Miss (`/dashboard/summary`)*: p50 = 7 ms (10u), 49 ms (50u), 100 ms (100u).
+    - *Cache Miss (`/geo/incidents?limit=500`)*: p50 = 5 ms (10u), 43 ms (50u), 95 ms (100u).
+- **Direct Stream Ingestion Throughput**: **14,913.72 events/sec** published directly to `stream:weather:events` via Redis Streams pipeline (`logs/C_4.log:109`).
+- **Worker Resiliency & Failure Recovery**: Mid-load abrupt termination of `sih-demo-worker-ingestion-1` recovered to operational health in **2.47 seconds** with **0 lost events** and **0 duplicate records** across the 200-event test batch (`logs/C_4.log:137, 161-164`).
 
 ---
 
-## 7. Live vs. Simulated (Demo) Data
+## 7. System Limitations & Technical Boundaries
 
-To provide a fully deterministic and compelling evaluation environment during Hackathon presentations while ensuring production readiness, the platform strictly segregates live real-world data from simulated test fixtures:
+To maintain rigorous scientific and engineering integrity, the platform explicitly acknowledges the following operational boundaries:
 
-- **Database Flag & Indexing**: The `weather_reports` table includes a dedicated, indexed boolean column `is_demo` (Alembic revision `0017_report_is_demo`).
-- **Automatic Classification & Backfill**: Any incident seeded with the `[DEMO]` title prefix or a `DEMO-` tracking identifier is automatically flagged with `is_demo = true`. Real citizen submissions and operational telemetry default to `is_demo = false`.
-- **Visible Cues**: An amber **DEMO** badge is prominently rendered across the UI:
-  - Situational Awareness Dashboard (recent incident feed)
-  - Interactive Leaflet Map (marker popups and selected incident inspector)
-  - Unified Incident Cards and Incident Detail Hero
-- **"Hide Demo Data" Toggle**:
-  - Available on the Dashboard, Live Map, and Incident Directory filter bars.
-  - **Default**: `OFF` in the demo stack (`docker-compose.demo.yml`) so evaluators immediately see active scenario fixtures.
-  - **Live Filter**: Toggling to `ON` immediately filters out all simulated demo reports, showing only authentic citizen reports and verified field feeds.
-- **REST & Geospatial Filtering**: All query endpoints (`/api/v1/incidents`, `/api/v1/reports`, `/api/v1/geo/incidents`, `/api/v1/dashboard/summary`) accept `?hide_demo=true` for SQL-level filtering without client-side overhead.
+1. **IMD Automatic Weather Station Telemetry is Mock-Only**: Station-based meteorological corroboration against India Meteorological Department (IMD) ground stations currently operates through deterministic simulation fixtures. Direct live telemetry ingestion requires MoES/IMD station credentials and API gateway whitelisting that are not publicly provisioned.
+2. **Open-Meteo Provides Numerical Model Data, Not Station Sensor Data**: Live physical weather corroboration uses Open-Meteo's historical and forecast APIs, which serve numerical weather prediction model runs (ECMWF, GFS, ERA5 reanalysis). These provide gridded meteorological estimates rather than direct physical sensor measurements from ground stations.
+3. **Benchmarks are Synthetic or Agent-Authored**: All performance benchmarks, stress loads, and evaluation datasets (including the 200-incident credibility baseline and the 60-post multilingual classification evaluation) were synthetically generated or curated for verification purposes, not drawn from active emergency operations.
+4. **Real-World Predictive Accuracy is Unmeasured**: The statistical accuracy (precision, recall, false-positive/negative rates) of physical weather corroboration, image forensics, and location-mismatch penalties on authentic, uncurated field disaster data has not been empirically measured or clinically validated.
+5. **Perceptual Hashing (pHash) Was Evaluated on Synthetic Image Perturbations Only**: Hamming distance thresholds (pHash $\le 10$, dHash $\le 8$) were empirically calibrated against controlled synthetic perturbations (rescaling, Gaussian blur, compression). Resilience against aggressive cross-platform transcoding (WhatsApp image re-compression, social media downsampling) remains to be field-tested on real crowdsourced imagery.
+6. **Location-Mismatch Penalty is Disabled by Default**: The `LOCATION_MISMATCH_ENABLED` feature flag defaults to `false` in code and deployment to avoid penalizing legitimate citizen reports until regional geocoding gazetteers, colloquial landmark names, and transliterated district spellings are comprehensively validated.
+
+---
+
+## 8. Manual Local Developer Setup (Without Docker)
+
+For manual step-by-step local development without Docker Compose, see [docs/EXTERNAL_SETUP.md](docs/EXTERNAL_SETUP.md) and [docs/MANUAL_TESTING_GUIDE.md](docs/MANUAL_TESTING_GUIDE.md).
+
