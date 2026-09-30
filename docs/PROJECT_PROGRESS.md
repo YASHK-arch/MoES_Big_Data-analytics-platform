@@ -251,6 +251,7 @@ Keep your edits to this file under 40 lines. In your final reply, only state "PR
 | 2026-09-30 | Re-audit round 5 (E1–E5, 100k rows) | E1: 0/10 neg controls, 80% plausibility; E3: honest B4 (/geo 500 gzip + /reports) 1w 79.2 RPS/p50 488ms vs 4w 77.5 RPS/p50 541ms; E4: c50 RTT p50 0.17–0.38ms, auto-reconnect 0.03s; E5: 18 idxs (52MB), 20k COPY 6978 rps | E1–E5 verified; geo payload reduced -6.5% raw (-16.5KB); local commits cleanly split |
 | 2026-09-30 | Re-audit round 6 (G1–G5, 100k rows) | G1 test isolation (weather_platform_test); G2 geo p50 104.2ms cached (4w)/156.1ms (1w), uncached 487.5ms; G3 bench 100% prec/rec; G5 migration 0013 dropped 2 dup idxs, 20k COPY +26.7% (1237ms) | G1–G5 complete; zero duplicate indexes in DB |
 | 2026-09-30 | Round 8 Deployability (O1–O5, V1–V6) | Web :8080 SPA; API :8000; 11 containers healthy; memory 1097 MiB (< 3.5GB); smoke 10/10 cats + rate limit 429 + SSE pass; prod 404 docs; redis 20s stop 503->200 without api restart; down/up persist 623 rpts; main chunk 24.66 kB | Fully deployed, isolated demo compose stack verified |
+| 2026-09-30 | Round 8b Verification | 452/452 pytest pass; ruff 0; mypy 0; alembic 0015; P0(c) p1 0.19ms / p500 8.01ms; H1 6 backfilled; H2 delta 0.0435 / max 0.1742; H3 prec 5.9%/10.3%/13.3%; scheduler 256m, api 512m; conn budget 23 | All Round 8b checks verified |
 
 ---
 
