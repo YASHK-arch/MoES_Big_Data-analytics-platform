@@ -1029,3 +1029,69 @@ async def test_failure_transaction_safety_and_rollback(db_session: AsyncSession)
     assert refreshed.credibility_explanation.get("is_failure_fallback") is True
     last_err = refreshed.credibility_explanation.get("last_error", "")
     assert "Simulated computational failure" in last_err
+
+
+def test_weak_link_contribution_cap_and_threshold_barrier():
+    """Verify RELATED/weak links cannot increase score by > 0.03 and cannot cross thresholds."""
+    # 1. Base input without evidence
+    base_input = IncidentCredibilityInputs(
+        incident_id=uuid.uuid4(),
+        source_code="CITIZEN_WEB",
+        source_type="CITIZEN",
+        source_base_trust=0.60,
+        origin_family=SourceFamily.CITIZEN,
+        has_coordinates=True,
+        has_timestamp=True,
+        has_location_name=True,
+        has_description=True,
+        has_category=True,
+        cluster_member_count=1,
+        evidence_groups=[],
+        observation_stations=[],
+        negative_contradictions=[],
+    )
+    sig_base = credibility_scorer.score_incident(base_input)
+    base_score = sig_base.final_credibility_score
+
+    # 2. Add 10 weak (RELATED, role_weight=0.35) groups across multiple domains
+    weak_groups = [
+        DigitalEvidenceGroupInput(
+            provenance_key=f"domain_news_{i}.com",
+            max_confidence=0.95,
+            role_weight=0.35,  # RELATED
+            article_count=5,
+            source_family=SourceFamily.NEWS,
+        )
+        for i in range(10)
+    ]
+    weak_input = base_input.model_copy(update={"evidence_groups": weak_groups})
+    sig_weak = credibility_scorer.score_incident(weak_input)
+
+    # Must not exceed base + 0.03
+    delta = sig_weak.final_credibility_score - base_score
+    assert delta <= 0.0300 + 1e-6, f"Weak link delta {delta} exceeded 0.03"
+
+    # Must not cross the next threshold if base_score < threshold
+    for t in (0.45, 0.50, 0.65, 0.70, 0.80, 0.82, 0.85, 0.88):
+        if base_score < t:
+            assert sig_weak.final_credibility_score < t, (
+                f"Weak links crossed threshold {t} from base_score {base_score}"
+            )
+            break
+
+    # 3. Verify strong (SUPPORTING, role_weight=1.0) links are NOT capped at 0.03
+    strong_groups = [
+        DigitalEvidenceGroupInput(
+            provenance_key=f"domain_official_{i}.gov",
+            max_confidence=0.95,
+            role_weight=1.00,  # SUPPORTING
+            article_count=3,
+            source_family=SourceFamily.NEWS,
+        )
+        for i in range(5)
+    ]
+    strong_input = base_input.model_copy(update={"evidence_groups": strong_groups})
+    sig_strong = credibility_scorer.score_incident(strong_input)
+    strong_delta = sig_strong.final_credibility_score - base_score
+    assert strong_delta > 0.05, f"Strong link delta {strong_delta} was unexpectedly capped"
+

@@ -16,6 +16,9 @@ from app.intelligence.schemas import (
     SourceFamily,
 )
 
+VERIFICATION_THRESHOLDS: tuple[float, ...] = (0.45, 0.50, 0.65, 0.70, 0.80, 0.82, 0.85, 0.88)
+MAX_WEAK_LINK_CONTRIBUTION: float = 0.03
+
 
 class CredibilityScorer:
     """Pure deterministic mathematical credibility scoring engine."""
@@ -102,11 +105,11 @@ class CredibilityScorer:
             cap_max_machine if cap_max_machine is not None else settings.CREDIBILITY_CAP_MAX_MACHINE
         )
 
-    def score_incident(
+    def _compute_raw_signals(
         self,
         inputs: IncidentCredibilityInputs,
     ) -> CredibilitySignalBreakdown:
-        """Compute the full mathematical credibility breakdown from normalized inputs."""
+        """Compute the raw mathematical credibility breakdown from normalized inputs."""
         # 1. Source Prior
         s_prior = max(0.10, min(0.95, float(inputs.source_base_trust)))
 
@@ -238,5 +241,43 @@ class CredibilityScorer:
             final_credibility_score=final_score,
         )
 
+    def score_incident(
+        self,
+        inputs: IncidentCredibilityInputs,
+    ) -> CredibilitySignalBreakdown:
+        """Compute incident credibility breakdown with capped weak link contributions."""
+        # Check if there are weak digital evidence groups (role_weight < 0.8)
+        has_weak = any(grp.role_weight < 0.8 for grp in inputs.evidence_groups)
+        if not has_weak:
+            return self._compute_raw_signals(inputs)
+
+        # 1. Compute full raw signals
+        full_signals = self._compute_raw_signals(inputs)
+
+        # 2. Compute signals with only strong evidence (role_weight >= 0.8)
+        strong_groups = [grp for grp in inputs.evidence_groups if grp.role_weight >= 0.8]
+        strong_inputs = inputs.model_copy(update={"evidence_groups": strong_groups})
+        strong_signals = self._compute_raw_signals(strong_inputs)
+
+        s_strong = strong_signals.final_credibility_score
+        s_full = full_signals.final_credibility_score
+
+        if s_full <= s_strong:
+            return full_signals
+
+        # 3. Cap weak link boost: max +0.03 over strong baseline
+        max_allowed = s_strong + MAX_WEAK_LINK_CONTRIBUTION
+
+        # 4. Invariant: weak links can never be the sole reason to cross any verification priority threshold
+        next_thresholds = [t for t in VERIFICATION_THRESHOLDS if t > s_strong]
+        if next_thresholds:
+            t_next = min(next_thresholds)
+            if max_allowed >= t_next:
+                max_allowed = round(t_next - 0.0001, 4)
+
+        capped_score = round(min(s_full, max_allowed), 4)
+        return full_signals.model_copy(update={"final_credibility_score": capped_score})
+
 
 credibility_scorer = CredibilityScorer()
+

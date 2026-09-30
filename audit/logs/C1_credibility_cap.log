@@ -1,0 +1,32 @@
+Loaded 200 incidents from audit DB.
+
+=== MEASUREMENT RESULTS (200 Incidents vs No-Links Baseline) ===
+BEFORE CAP:
+  Mean absolute delta: 0.0659
+  p50 absolute delta:  0.0687
+  p95 absolute delta:  0.1430
+  Max absolute delta:  0.1742
+  Threshold crossings before:
+    Threshold 0.45: 24 (12.0%)
+    Threshold 0.50: 24 (12.0%)
+    Threshold 0.65: 36 (18.0%)
+    Threshold 0.70: 45 (22.5%)
+    Threshold 0.80: 16 (8.0%)
+    Threshold 0.82: 7 (3.5%)
+    Threshold 0.85: 5 (2.5%)
+    Threshold 0.88: 1 (0.5%)
+
+AFTER CAP:
+  Mean absolute delta: 0.0303
+  p50 absolute delta:  0.0300
+  p95 absolute delta:  0.1430
+  Max absolute delta:  0.1742
+  Threshold crossings after:
+    Threshold 0.45: 0 (0.0%)
+    Threshold 0.50: 0 (0.0%)
+    Threshold 0.65: 10 (5.0%)
+    Threshold 0.70: 11 (5.5%)
+    Threshold 0.80: 2 (1.0%)
+    Threshold 0.82: 2 (1.0%)
+    Threshold 0.85: 2 (1.0%)
+    Threshold 0.88: 1 (0.5%)
