@@ -751,7 +751,8 @@ async def test_submit_citizen_report_rate_limiting():
         created_at=datetime.now(timezone.utc),
     )
 
-    with patch("app.api.v1.reports.report_service.create_citizen_report", new_callable=AsyncMock) as mock_create:
+    with patch("app.api.v1.reports.report_service.create_citizen_report", new_callable=AsyncMock) as mock_create, \
+         patch("app.core.rate_limiter.time.time", return_value=1700000000.0):
         mock_create.return_value = (mock_report, 0)
         async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as client:
             # First 10 requests should succeed (HTTP 201)

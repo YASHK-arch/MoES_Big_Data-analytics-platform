@@ -13,9 +13,11 @@ TEST_DB_URL = os.environ.get(
 )
 os.environ["DATABASE_URL"] = TEST_DB_URL
 os.environ["REDIS_URL"] = os.environ.get("TEST_REDIS_URL", "redis://localhost:6379/15")
+os.environ["ENVIRONMENT"] = "test"
 
 from app.core.config import settings  # noqa: E402
 
+settings.ENVIRONMENT = "test"
 settings.DB_DISABLE_POOL = True
 settings.DATABASE_URL = TEST_DB_URL
 settings.REDIS_URL = os.environ["REDIS_URL"]
@@ -78,13 +80,33 @@ async def api_client():
         yield client
 
 
+async def _clear_limiter_async(limiter) -> None:
+    limiter.clear()
+    try:
+        import time
+        from app.core.redis import redis_client
+
+        bucket = int(time.time() // limiter.window_seconds)
+        keys = [
+            f"ratelimit:{k}:{bucket}"
+            for k in (set(limiter._history.keys()) | getattr(limiter, "_active_keys", set()))
+        ]
+        if keys:
+            await redis_client.delete(*keys)
+    except Exception:
+        pass
+    if hasattr(limiter, "_active_keys"):
+        limiter._active_keys.clear()
+
+
 @pytest_asyncio.fixture(autouse=True)
-def reset_rate_limiters():
+async def reset_rate_limiters():
     """Ensure rate limiters do not leak state between test cases."""
     from app.core.rate_limiter import login_rate_limiter, report_rate_limiter
 
-    report_rate_limiter.clear()
-    login_rate_limiter.clear()
+    await _clear_limiter_async(report_rate_limiter)
+    await _clear_limiter_async(login_rate_limiter)
     yield
-    report_rate_limiter.clear()
-    login_rate_limiter.clear()
+    await _clear_limiter_async(report_rate_limiter)
+    await _clear_limiter_async(login_rate_limiter)
+
