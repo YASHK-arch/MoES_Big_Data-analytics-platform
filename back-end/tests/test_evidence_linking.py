@@ -203,7 +203,7 @@ def test_evidence_evaluation_benchmark_all_passed():
     """Verify all 35 synthetic benchmark evaluation pairs pass with 100% precision & recall."""
     metrics = run_evidence_benchmark_evaluation(evidence_scorer)
     assert metrics["dataset_name"] == "Synthetic Evidence-Linking Benchmark Only"
-    assert metrics["total_pairs"] == 35
+    assert metrics["total_pairs"] == 65
     assert metrics["false_positives"] == 0
     assert metrics["false_negatives"] == 0
     assert metrics["precision"] == 1.0
