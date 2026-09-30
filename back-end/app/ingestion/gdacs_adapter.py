@@ -302,7 +302,7 @@ class GDACSAlertAdapter:
 
     def _matches_country(self, event: Dict[str, Any]) -> bool:
         """Keep only events whose GDACS country metadata matches the configured country."""
-        target = self.country_code.strip().upper()
+        target = str(self.country_code).strip().upper()
         target_name = {"IND": "INDIA"}.get(target, target)
 
         def extract_tokens(val: Any) -> set[str]:
@@ -387,7 +387,7 @@ class GDACSAlertAdapter:
         should_close = client != self._http_client
 
         try:
-            response = await client.get(self.endpoint, params=params)
+            response = await client.get(str(self.endpoint), params=params)
 
             if response.status_code == 429:
                 logger.warning("GDACS API rate limit encountered (HTTP 429).")

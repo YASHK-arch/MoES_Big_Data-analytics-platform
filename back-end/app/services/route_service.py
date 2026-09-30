@@ -70,6 +70,7 @@ class RouteCheckService:
             orig.latitude, orig.longitude, dest.latitude, dest.longitude
         )
 
+        path_line: Any  # Either ST_SetSRID or ST_MakeLine
         if road_geom_dict and road_geom_dict.get("type") == "LineString":
             # Real road driving corridor
             road_geojson_str = json.dumps(road_geom_dict)

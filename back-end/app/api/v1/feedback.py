@@ -3,7 +3,7 @@
 from datetime import datetime, timezone
 from typing import Optional
 
-from fastapi import APIRouter, Depends, HTTPException, Path, Request, status
+from fastapi import APIRouter, Body, Depends, HTTPException, Path, Request, status
 from sqlalchemy import String, func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -32,7 +32,7 @@ router = APIRouter()
 async def submit_incident_feedback(
     request: Request,
     id: str = Path(..., min_length=3, max_length=64, description="Incident UUID or Tracking ID"),
-    payload: FeedbackVoteRequest = ...,
+    payload: FeedbackVoteRequest = Body(...),
     db: AsyncSession = Depends(get_db),
     current_user: Optional[User] = Depends(get_optional_user),
 ) -> FeedbackVoteResponse:
@@ -94,11 +94,11 @@ async def submit_incident_feedback(
 
     if existing_vote:
         # Update existing vote if changed
-        existing_vote.vote_type = vote_kind
+        existing_vote.vote_type = vote_kind  # type: ignore[assignment]
         if current_user:
-            existing_vote.user_id = current_user.id
-        existing_vote.user_agent = user_agent
-        existing_vote.created_at = datetime.now(timezone.utc)
+            existing_vote.user_id = current_user.id  # type: ignore[assignment]
+        existing_vote.user_agent = user_agent  # type: ignore[assignment]
+        existing_vote.created_at = datetime.now(timezone.utc)  # type: ignore[assignment]
     else:
         vote = IncidentFeedback(
             report_id=report.id,
@@ -222,8 +222,8 @@ async def get_incident_feedback_summary(
             confirm_count=conf_cnt,
             dispute_count=disp_cnt,
             user_voted=client_vote is not None,
-            voted_type=client_vote.vote_type if client_vote else "",
-            last_voted_at=client_vote.created_at if client_vote else datetime.now(timezone.utc),
+            voted_type=str(client_vote.vote_type) if client_vote else "",
+            last_voted_at=client_vote.created_at if client_vote else datetime.now(timezone.utc),  # type: ignore[arg-type]
         ),
         meta={"timestamp": datetime.now(timezone.utc).isoformat()},
     )

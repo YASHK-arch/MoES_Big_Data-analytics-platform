@@ -138,7 +138,7 @@ async def submit_citizen_report(
     media_files: Optional[List[UploadFile]] = File(
         None, description="Up to 3 attached photos or videos"
     ),
-    request: Request = None,
+    request: Request = None,  # type: ignore[assignment]
     db: AsyncSession = Depends(get_db),
     current_user: Optional[User] = Depends(get_optional_user),
 ) -> ReportSubmitResponse:

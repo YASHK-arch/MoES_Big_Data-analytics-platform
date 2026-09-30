@@ -221,7 +221,7 @@ class OpenMeteoAdapter:
         params = self._build_params(lat, lon)
 
         try:
-            response = await client.get(self.endpoint, params=params)
+            response = await client.get(str(self.endpoint), params=params)
             if response.status_code != 200:
                 logger.warning(
                     "Open-Meteo returned HTTP %d for city %s.",

@@ -130,6 +130,25 @@ async def create_relief_center(
     await db.commit()
     await db.refresh(center)
 
+    avail_created = max(0, int(center.capacity) - int(center.occupied_count))
+    return ReliefCenterItem(
+        id=center.id,  # type: ignore[arg-type]
+        name=str(center.name),
+        center_type=str(center.center_type),
+        address=str(center.address) if center.address else None,
+        district_name=str(center.district_name) if center.district_name else None,
+        state_name=str(center.state_name) if center.state_name else None,
+        capacity=int(center.capacity),
+        occupied_count=int(center.occupied_count),
+        available_capacity=avail_created,
+        contact_phone=str(center.contact_phone) if center.contact_phone else None,
+        latitude=float(center.latitude),
+        longitude=float(center.longitude),
+        distance_km=0.0,
+        is_active=bool(center.is_active),
+        created_at=center.created_at,  # type: ignore[arg-type]
+    )
+
 
 @router.patch(
     "/{id}",
@@ -156,32 +175,32 @@ async def update_relief_center(
         )
 
     if payload.capacity is not None:
-        center.capacity = payload.capacity
+        center.capacity = payload.capacity  # type: ignore[assignment]
     if payload.occupied_count is not None:
-        center.occupied_count = payload.occupied_count
+        center.occupied_count = payload.occupied_count  # type: ignore[assignment]
     if payload.contact_phone is not None:
-        center.contact_phone = payload.contact_phone
+        center.contact_phone = payload.contact_phone  # type: ignore[assignment]
     if payload.is_active is not None:
-        center.is_active = payload.is_active
+        center.is_active = payload.is_active  # type: ignore[assignment]
 
     await db.commit()
     await db.refresh(center)
 
-    avail = max(0, center.capacity - center.occupied_count)
+    avail = max(0, int(center.capacity) - int(center.occupied_count))
     return ReliefCenterItem(
-        id=center.id,
-        name=center.name,
-        center_type=center.center_type,
-        address=center.address,
-        district_name=center.district_name,
-        state_name=center.state_name,
-        capacity=center.capacity,
-        occupied_count=center.occupied_count,
+        id=center.id,  # type: ignore[arg-type]
+        name=str(center.name),
+        center_type=str(center.center_type),
+        address=str(center.address) if center.address else None,
+        district_name=str(center.district_name) if center.district_name else None,
+        state_name=str(center.state_name) if center.state_name else None,
+        capacity=int(center.capacity),
+        occupied_count=int(center.occupied_count),
         available_capacity=avail,
-        contact_phone=center.contact_phone,
-        latitude=center.latitude,
-        longitude=center.longitude,
+        contact_phone=str(center.contact_phone) if center.contact_phone else None,
+        latitude=float(center.latitude),
+        longitude=float(center.longitude),
         distance_km=0.0,
-        is_active=center.is_active,
-        created_at=center.created_at,
+        is_active=bool(center.is_active),
+        created_at=center.created_at,  # type: ignore[arg-type]
     )
