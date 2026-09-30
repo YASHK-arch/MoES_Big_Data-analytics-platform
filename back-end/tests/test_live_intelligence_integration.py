@@ -348,13 +348,13 @@ async def test_observation_joining_completed_incident_updates_score(db_session: 
 
     # 1. Create and ingest initial citizen report at isolated location
     payload = CitizenReportCreate(
-        latitude=21.1458,
-        longitude=79.0882,
+        latitude=23.4567,
+        longitude=85.6789,
         category_code="FLOOD_WATERLOGGING",
         severity="HIGH",
-        title="Sudden Flash Flood on Wardha Road",
+        title="Sudden Flash Flood on Isolated Road",
         description="Rapid water accumulation on roadway causing traffic halt.",
-        location_name="Wardha Road, Nagpur",
+        location_name="Isolated Valley Road, Jharkhand",
     )
     report, _ = await report_svc.create_citizen_report(session=db_session, payload=payload)
     state_initial = await on_incident_ingested(db=db_session, incident_id=report.id, commit=True)

@@ -48,4 +48,4 @@ async def test_sliding_window_rate_limiter_fail_open_on_redis_error(caplog):
         with caplog.at_level("WARNING"):
             allowed = await limiter.is_allowed_async("test_client_key")
             assert allowed is True
-            assert any("Redis unavailable for rate limiter; failing OPEN" in record.message for record in caplog.records)
+            assert "Redis unavailable for rate limiter; failing OPEN" in caplog.text
