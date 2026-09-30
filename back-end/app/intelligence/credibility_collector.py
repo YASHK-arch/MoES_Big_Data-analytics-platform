@@ -330,6 +330,33 @@ class CredibilityCollector:
                     )
                 )
 
+        # 6. Image Forensics Findings (S2)
+        im_adjustment: float = 0.0
+        im_signal: Optional[Dict[str, Any]] = None
+        if getattr(settings, "IMAGE_FORENSICS_ENABLED", False):
+            from app.models.image_forensics import IncidentImageFinding
+
+            img_stmt = select(IncidentImageFinding).where(
+                IncidentImageFinding.incident_id == incident_id
+            )
+            img_res = await db.execute(img_stmt)
+            img_findings = list(img_res.scalars().all())
+            if img_findings:
+                has_contra = any(f.overall_verdict == "CONTRADICTS" for f in img_findings)
+                all_supp = all(f.overall_verdict == "SUPPORTS" for f in img_findings)
+                cap = getattr(settings, "IMAGE_FORENSICS_CAP", 0.05)
+                if has_contra:
+                    im_adjustment = -cap
+                elif all_supp:
+                    im_adjustment = cap
+                im_signal = {
+                    "findings_count": len(img_findings),
+                    "overall_verdict": (
+                        "CONTRADICTS" if has_contra else ("SUPPORTS" if all_supp else "NEUTRAL")
+                    ),
+                    "raw_adjustment": im_adjustment,
+                }
+
         return IncidentCredibilityInputs(
             incident_id=incident_id,
             source_code=source_code,
@@ -345,6 +372,8 @@ class CredibilityCollector:
             evidence_groups=evidence_groups,
             observation_stations=observation_stations,
             negative_contradictions=contradiction_inputs,
+            image_forensic_adjustment=im_adjustment,
+            image_forensic_signal=im_signal,
         )
 
 

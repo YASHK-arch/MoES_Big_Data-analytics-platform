@@ -46,6 +46,7 @@ class CredibilityScorer:
         cap_max_machine: Optional[float] = None,
         total_physical_cap: Optional[float] = None,
         location_mismatch_enabled: Optional[bool] = None,
+        image_forensics_enabled: Optional[bool] = None,
     ) -> None:
         self.quality_floor = (
             quality_floor_factor
@@ -116,6 +117,11 @@ class CredibilityScorer:
             location_mismatch_enabled
             if location_mismatch_enabled is not None
             else getattr(settings, "LOCATION_MISMATCH_ENABLED", False)
+        )
+        self.image_forensics_enabled = (
+            image_forensics_enabled
+            if image_forensics_enabled is not None
+            else getattr(settings, "IMAGE_FORENSICS_ENABLED", False)
         )
 
     def _compute_raw_signals(
@@ -270,6 +276,22 @@ class CredibilityScorer:
                 max(0.0000, min(final_score + lm_adjustment, self.cap_max)), 4
             )
 
+        # 16. Image-Forensics Signal (S2) — single capped component (Product Rule P2)
+        im_adjustment: float = 0.0
+        im_signal_dict = None
+        if self.image_forensics_enabled and inputs.image_forensic_adjustment != 0.0:
+            cap_im = getattr(settings, "IMAGE_FORENSICS_CAP", 0.05)
+            # Strictly bounded by [-cap_im, cap_im]
+            im_adjustment = max(-cap_im, min(cap_im, inputs.image_forensic_adjustment))
+            im_signal_dict = inputs.image_forensic_signal or {
+                "raw_adjustment": inputs.image_forensic_adjustment,
+                "applied_adjustment": im_adjustment,
+                "cap": cap_im,
+            }
+            final_score = round(
+                max(0.0000, min(final_score + im_adjustment, self.cap_max)), 4
+            )
+
         return CredibilitySignalBreakdown(
             source_prior=round(s_prior, 4),
             report_quality_score=round(s_quality, 4),
@@ -287,6 +309,8 @@ class CredibilityScorer:
             final_credibility_score=final_score,
             location_mismatch_adjustment=round(lm_adjustment, 4),
             location_mismatch_signal=lm_signal_dict,
+            image_forensics_adjustment=round(im_adjustment, 4),
+            image_forensics_signal=im_signal_dict,
         )
 
     @staticmethod

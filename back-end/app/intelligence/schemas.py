@@ -493,6 +493,17 @@ class IncidentCredibilityInputs(BaseModel):
         default=None,
         description="Reporter's declared city for mismatch check (optional).",
     )
+    # ── Image Forensics signal inputs (S2) ──────────────────────────────────
+    image_forensic_adjustment: float = Field(
+        default=0.0,
+        ge=-1.0,
+        le=1.0,
+        description="Raw image forensic adjustment before cap (supports or contradicts).",
+    )
+    image_forensic_signal: Optional[Dict[str, Any]] = Field(
+        default=None,
+        description="Explainable image forensic findings dictionary.",
+    )
 
 
 class CredibilitySignalBreakdown(BaseModel):
@@ -550,6 +561,17 @@ class CredibilitySignalBreakdown(BaseModel):
     location_mismatch_signal: Optional[Dict[str, Any]] = Field(
         default=None,
         description="Explainable location-mismatch signal breakdown dict (when active).",
+    )
+    # ── Image Forensics signal (S2) ─────────────────────────────────────────
+    image_forensics_adjustment: float = Field(
+        default=0.0,
+        ge=-1.0,
+        le=1.0,
+        description="Capped adjustment from image forensics (P2: weak signal bounded by cap).",
+    )
+    image_forensics_signal: Optional[Dict[str, Any]] = Field(
+        default=None,
+        description="Explainable image forensics findings dict (verdicts, checks, matches).",
     )
 
 
