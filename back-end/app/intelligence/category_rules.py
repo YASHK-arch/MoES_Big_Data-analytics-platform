@@ -1,5 +1,6 @@
 """Hazard category compatibility matrix and keyword rules for disaster intelligence and duplicate detection."""
 
+import re
 from typing import Dict, List, Tuple
 
 # Comprehensive multilingual category keyword dictionary (English + Hindi / Hinglish)
@@ -8,51 +9,65 @@ CATEGORY_KEYWORDS: Dict[str, List[str]] = {
         "flood", "flooding", "waterlog", "waterlogging", "submerged", "inundation",
         "overflow", "drainage", "water accumulation", "underpass", "danger mark",
         "baadh", "badh", "paani bhara", "jalbharao", "jalbhorao", "sadak par paani",
+        "बाढ़", "जलभराव", "पानी भरा", "डूब गया",
     ],
     "URBAN_FLOOD": [
         "urban flood", "urban flooding", "city inundation", "street flooding",
         "underpass drowned", "traffic flooded", "city waterlogging", "shahri baadh",
+        "शहरी बाढ़",
     ],
     "HEAVY_RAINFALL": [
-        "rain", "rainfall", "downpour", "monsoon", "shower", "cloudburst",
+        "heavy rain", "rainfall", "downpour", "monsoon", "shower", "cloudburst",
         "precipitation", "deluge", "torrential", "baarish", "barish",
         "bhaari barish", "barsat", "musladhar", "pani baras",
+        "भारी बारिश", "बारिश", "बरसात", "मूसलाधार", "बादल फटा",
     ],
     "THUNDERSTORM_LIGHTNING": [
         "thunderstorm", "lightning", "thunder", "squall", "bijli", "bijlee",
-        "aakashvani", "garaj", "badal garajna", "toofan", "tufan", "aandhi",
+        "aakashvani", "garaj", "badal garajna", "बिजली गिरी", "गरज", "तड़ित",
     ],
     "CYCLONE_STORM": [
-        "cyclone", "cyclonic storm", "storm surge", "gale", "depression",
-        "coastal storm", "chakravat", "samudri toofan", "hawa toofan", "toofan",
+        "cyclone", "cyclonic storm", "storm surge", "depression",
+        "coastal storm", "chakravat", "samudri toofan", "चक्रवात", "समुद्री तूफान",
     ],
     "HAILSTORM": [
         "hailstorm", "hail", "hailstones", "ice pellets", "olavrishti",
-        "ole padna", "ola", "ole", "patthar barsat",
+        "ole padna", "ola", "ole", "patthar barsat", "ओलावृष्टि", "ओले",
     ],
     "LANDSLIDE": [
         "landslide", "mudslide", "rockfall", "debris", "mud flow",
         "bhooskhalan", "bhuskhalan", "pahad girna", "mitti dhasna", "ghat road blocked",
+        "भूस्खलन", "पहाड़ खिसकना",
     ],
     "HEATWAVE": [
         "heatwave", "heat wave", "extreme heat", "extreme temperature", "loo",
-        "scorching", "hot", "garmi", "loo lagna", "tapman", "badi garmi", "teekhi dhoop",
+        "scorching", "garmi", "loo lagna", "tapman", "badi garmi", "teekhi dhoop",
+        "भीषण गर्मी", "लू", "तापमान",
     ],
     "DROUGHT": [
         "drought", "dry spell", "water scarcity", "famine", "crop failure",
-        "sookha", "sukha", "akaal", "akal", "pani ki kami",
+        "sookha", "sukha", "akaal", "akal", "pani ki kami", "सूखा", "अकाल",
     ],
     "FOG": [
         "fog", "dense fog", "mist", "smog", "zero visibility", "low visibility",
-        "kohra", "kuhra", "dhund", "dhoond", "foggy",
+        "kohra", "kuhra", "dhund", "dhundh", "dhoondh", "dhoond", "foggy", "pea soup",
+        "visibility dropped", "blinding fog", "kuhasa", "kuasa", "ghana kohra",
+        "कोहरा", "घना कोहरा", "धुंध", "कुहासा", "शून्य दृश्यता", "कम दृश्यता", "कोहरे",
     ],
     "DUST_STORM": [
-        "dust storm", "sandstorm", "dust", "sand", "haboob",
-        "dhool bhari aandhi", "dhool toofan", "retila toofan", "mitti ki aandhi",
+        "dust storm", "sandstorm", "sand storm", "haboob", "duststorm", "flying sand",
+        "dust plume", "wall of dust", "blinding dust",
+        "dhool bhari aandhi", "dhool toofan", "retila toofan", "mitti ki aandhi", "dhool aandhi",
+        "ret ud", "andhi toofan", "dhool bhari hawa", "mitti ka toofan", "dhool",
+        "धूल भरी आंधी", "रेतीला तूफान", "धूल का तूफान", "धूल भरी हवा", "रेत का तूफान", "धूल अंधड़", "अंधड़", "धूल",
     ],
     "STRONG_WIND": [
-        "strong wind", "high wind", "gale", "gust", "gusty wind", "squall",
-        "tez hawa", "hawa", "jhakkad", "tez aandhi", "andhi",
+        "strong wind", "high wind", "high velocity winds", "wind gusts", "gale", "gust", "gusts",
+        "gusty wind", "squall", "windstorm", "winds", "wind", "howling wind", "buffeting wind",
+        "destructive winds", "severe gusts", "tez hawa", "tez hawayen", "tez hawaen", "jhakkad",
+        "tez aandhi", "hawaon", "hawa ka jhonka", "jhonka", "tez jhonka", "badi tez hawa",
+        "tez pawan", "hawa chal rahi", "hawa",
+        "तेज हवा", "तेज हवाएं", "झक्कड़", "भीषण हवाएं", "प्रचंड हवाएं", "तूफानी हवाएं", "हवा के झोंके", "हवाएं", "पवन",
     ],
     "OTHER": [
         "weather", "incident", "hazard", "disaster", "mausam",
@@ -131,12 +146,20 @@ def classify_text_category(text: str) -> str:
         return "OTHER"
 
     best_cat = "OTHER"
-    max_score = 0
+    max_score = 0.0
 
     for cat, kws in CATEGORY_KEYWORDS.items():
         if cat == "OTHER":
             continue
-        score = sum(1 for kw in kws if kw in clean)
+        score = 0.0
+        for kw in kws:
+            kw_clean = kw.lower()
+            if " " in kw_clean:
+                if kw_clean in clean:
+                    score += 3.0
+            else:
+                if re.search(r"(?:\b|^)" + re.escape(kw_clean) + r"(?:\b|$)", clean):
+                    score += 1.0
         if score > max_score:
             max_score = score
             best_cat = cat

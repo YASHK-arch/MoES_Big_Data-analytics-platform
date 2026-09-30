@@ -1,0 +1,24 @@
+
+================ Evaluation: classify_text_category ================
+Overall Accuracy: 60/60 = 100.00%
+  FOG Accuracy: 20/20 = 100.00%
+  DUST_STORM Accuracy: 20/20 = 100.00%
+  STRONG_WIND Accuracy: 20/20 = 100.00%
+
+Confusion Table:
+True \ Pred    FOG            DUST_STORM     STRONG_WIND    OTHER          
+FOG            20             0              0              0              
+DUST_STORM     0              20             0              0              
+STRONG_WIND    0              0              20             0              
+
+================ Evaluation: EventNormalizer.normalize_category(None, title) ================
+Overall Accuracy: 60/60 = 100.00%
+  FOG Accuracy: 20/20 = 100.00%
+  DUST_STORM Accuracy: 20/20 = 100.00%
+  STRONG_WIND Accuracy: 20/20 = 100.00%
+
+Confusion Table:
+True \ Pred    FOG            DUST_STORM     STRONG_WIND    OTHER          
+FOG            20             0              0              0              
+DUST_STORM     0              20             0              0              
+STRONG_WIND    0              0              20             0              

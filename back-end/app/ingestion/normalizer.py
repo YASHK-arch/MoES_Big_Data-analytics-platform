@@ -4,6 +4,7 @@ from typing import Any, Dict, Optional, Union
 
 from app.ingestion.exceptions import NormalizationError
 from app.ingestion.schemas import NormalizedIngestionEvent, RawIngestionEvent
+from app.intelligence.category_rules import classify_text_category
 
 
 class EventNormalizer:
@@ -269,6 +270,10 @@ class EventNormalizer:
                     return mapped
 
         # Fallback inspection on title keywords
+        classified = classify_text_category(title)
+        if classified != "OTHER":
+            return classified
+
         clean_title = title.lower()
         sorted_items = sorted(cls.CATEGORY_MAP.items(), key=lambda x: len(x[0]), reverse=True)
         for key, mapped in sorted_items:
