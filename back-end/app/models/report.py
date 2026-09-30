@@ -27,6 +27,7 @@ if TYPE_CHECKING:
     )
     from app.models.duplicate import DuplicateCluster, DuplicateMember
     from app.models.evidence import IncidentEvidenceLink
+    from app.models.image_forensics import IncidentImageFinding
     from app.models.media import ReportMedia
     from app.models.source import Source
     from app.models.verification import VerificationEvent
@@ -237,6 +238,11 @@ class WeatherReport(Base):
     )
     physical_corroborations: Mapped[List["IncidentPhysicalCorroboration"]] = relationship(
         "IncidentPhysicalCorroboration",
+        back_populates="report",
+        cascade="all, delete-orphan",
+    )
+    image_findings: Mapped[List["IncidentImageFinding"]] = relationship(
+        "IncidentImageFinding",
         back_populates="report",
         cascade="all, delete-orphan",
     )
