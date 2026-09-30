@@ -6,7 +6,7 @@
 - **Problem statement:** SIH 2026 PS 26069 (weather event intelligence platform)
 - **Team status:** Selected from IIT Madras internal round; now competing on this PS with other colleges
 - **Goals of the current phase:** (1) architecture that stays fast after deployment, (2) intact and recoverable pipelines, (3) full PS requirement coverage, (4) standout features
-- **Last updated:** 2026-10-01 (S1 Physical Weather Corroboration close)
+- **Last updated:** 2026-10-01 (A-items 6-8: demo stack enable, SSE event wiring, report_service rollback fix)
 - **Deployment status:** Local isolated Docker compose demo stack (`sih-demo`) tested & operational at `:8080`. Total memory: ~1.07 GB idle across 11 containers. Production guardrails & smoke tests verified.
 - **Legend:** ✅ done · 🟡 in progress · ⬜ todo · ❌ failed / blocked · 🔎 needs verification
 
@@ -270,6 +270,7 @@ Keep your edits to this file under 40 lines. In your final reply, only state "PR
 | 2026-09-30 | O1–O3, O5, V | `d605aa6..b31931a` | Round 8 deployability: Docker multi-stage images, health/ready, metrics Prometheus, React.lazy/chunks, smoke & failure acceptance | BE 442 pass; FE 177 pass; tsc clean; ruff clean |
 | 2026-09-30 | R3, R1–R5, L4 | _working tree_ | Bulk verify/reject emits outbox/SSE event; test DB resets once per session with seeded reference rows; region precedence fixed | R3 SSE regression passes; BE 476/0 ×3; Ruff/mypy clean; format 62 files; Alembic check drift |
 | 2026-10-01 | S1 (1–16) | `s1-physical-corroboration` | S1 Physical Corroboration: pure evaluator, Open-Meteo provider, mig 0019, worker integration, credibility engine, UI card (EN/HI), Prometheus metrics & drills, replay evaluation | BE 523 pass / 0 fail (full & seed 42); FE 182 pass, tsc/lint/build clean; mypy/ruff clean |
+| 2026-10-01 | A (6–8) | `4f74716` | Demo stack: PHYSICAL_CORROBORATION_ENABLED=true in compose, DEMO_FIXTURE opt-in (default false); SSE RealtimeEventType.INCIDENT_PHYSICAL_CORROBORATION_COMPLETED added; report_service rollback fix | 7 passed (corroboration_api + pipeline); enum import OK; logs/A_6.log |
 
 ---
 
