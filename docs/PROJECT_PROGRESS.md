@@ -297,7 +297,7 @@ Keep your edits to this file under 40 lines. In your final reply, only state "PR
 | 23 | H5: Geo gzip size variation (G2: 19-20KB, R5/now: 37KB): explained by row count difference — 2047 geo-tagged reports in 24h window now vs fewer at earlier measurement | Low | — | ✅ (H5) |
 | 24 | H5: Mypy errors a1b95e8→HEAD: **31 → 31** (no regression); all 31 are pre-existing in feedback.py (Column[T] assignment type narrowing) | Low | — | ✅ (H5) |
 | 25 | RELATED evidence links inflate credibility scores by mean 0.0637 without spatial decay (H2) | Medium | — | ⬜ |
-| 26 | No remote Git backup / origin configured (`git push` not backed up upstream) | High | — | ⬜ |
+| 26 | Remote Git backup: pushed all commits up to Round 8 and audit suite to `origin/main` | High | — | ✅ |
 | 27 | Accidental `FLUSHALL` risk on shared Redis instances (mitigated by isolated demo container stack) | High | — | ✅ |
 
 ---
