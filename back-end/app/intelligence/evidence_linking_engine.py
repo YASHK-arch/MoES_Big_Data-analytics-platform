@@ -17,6 +17,7 @@ from app.intelligence.schemas import (
 )
 from app.models.category import EventCategory
 from app.models.evidence import EvidenceItem, IncidentEvidenceLink
+from app.models.report import WeatherReport
 from app.models.source import Source
 
 logger = logging.getLogger(__name__)
@@ -126,6 +127,95 @@ class EvidenceLinkingEngine:
                         link_id=updated_id,
                         incident_id=incident.id,
                         evidence_id=evidence.id,
+                        relationship_type=EvidenceRelationship.IRRELEVANT,
+                        confidence_score=assessment.overall_score,
+                        is_linked=False,
+                        assessment=assessment,
+                    )
+                )
+
+        return results
+
+    async def evaluate_and_link_report(
+        self,
+        db: AsyncSession,
+        report: WeatherReport,
+        candidate_evidence: List[EvidenceItem],
+    ) -> List[EvidenceLinkResult]:
+        """Evaluate candidate evidence items directly against target incident."""
+        results: List[EvidenceLinkResult] = []
+        if not candidate_evidence:
+            return results
+
+        cat_code = "OTHER"
+        if report.category_id:
+            cat_stmt = select(EventCategory.category_code).where(EventCategory.id == report.category_id)
+            cat_res = await db.execute(cat_stmt)
+            cat_val = cat_res.scalar_one_or_none()
+            if cat_val:
+                cat_code = cat_val
+        elif report.reported_category:
+            cat_code = report.reported_category
+
+        for ev in candidate_evidence:
+            source_type = ev.evidence_type
+            if ev.source_id:
+                src_stmt = select(Source.source_type).where(Source.id == ev.source_id)
+                src_res = await db.execute(src_stmt)
+                src_val = src_res.scalar_one_or_none()
+                if src_val:
+                    source_type = src_val
+
+            assessment = self.scorer.score_link(
+                incident_id=report.id,
+                evidence_id=ev.id,
+                incident_title=report.title,
+                incident_desc=report.description,
+                incident_cat=cat_code,
+                incident_lat=report.latitude,
+                incident_lon=report.longitude,
+                incident_time=report.occurred_at,
+                incident_loc_name=report.location_name,
+                evidence_title=ev.title,
+                evidence_snippet=ev.text_snippet,
+                evidence_source_type=source_type,
+                evidence_pub_time=ev.published_at or ev.captured_at,
+                evidence_url=ev.url,
+                evidence_domain=ev.publisher_domain,
+            )
+
+            if assessment.relationship_type != EvidenceRelationship.IRRELEVANT:
+                link_id = await self._persist_link(
+                    db=db,
+                    incident_id=report.id,
+                    evidence_id=ev.id,
+                    relationship=assessment.relationship_type,
+                    confidence=assessment.overall_score,
+                    assessment=assessment,
+                )
+                results.append(
+                    EvidenceLinkResult(
+                        link_id=link_id,
+                        incident_id=report.id,
+                        evidence_id=ev.id,
+                        relationship_type=assessment.relationship_type,
+                        confidence_score=assessment.overall_score,
+                        is_linked=True,
+                        assessment=assessment,
+                    )
+                )
+            else:
+                updated_id = await self._handle_irrelevant_transition(
+                    db=db,
+                    incident_id=report.id,
+                    evidence_id=ev.id,
+                    assessment=assessment,
+                )
+                results.append(
+                    EvidenceLinkResult(
+                        link_id=updated_id,
+                        incident_id=report.id,
+                        evidence_id=ev.id,
                         relationship_type=EvidenceRelationship.IRRELEVANT,
                         confidence_score=assessment.overall_score,
                         is_linked=False,

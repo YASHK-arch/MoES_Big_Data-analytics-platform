@@ -302,14 +302,20 @@ class EvidenceStageHandler:
             res = await db.execute(stmt)
             candidate_evidence = list(res.scalars().all())
 
-            links_count = 0
-            for ev in candidate_evidence:
-                link_results = await self.linking_engine.evaluate_and_link_evidence(
-                    db=db, evidence=ev
+            if hasattr(self.linking_engine, "evaluate_and_link_report"):
+                link_results = await self.linking_engine.evaluate_and_link_report(
+                    db=db, report=report, candidate_evidence=candidate_evidence
                 )
-                for lr in link_results:
-                    if lr.incident_id == report.id and lr.is_linked:
-                        links_count += 1
+                links_count = sum(1 for lr in link_results if lr.is_linked)
+            else:
+                links_count = 0
+                for ev in candidate_evidence:
+                    link_results = await self.linking_engine.evaluate_and_link_evidence(
+                        db=db, evidence=ev
+                    )
+                    for lr in link_results:
+                        if lr.incident_id == report.id and lr.is_linked:
+                            links_count += 1
 
             duration_ms = round((time.perf_counter() - t0) * 1000, 2)
             outcome = (
