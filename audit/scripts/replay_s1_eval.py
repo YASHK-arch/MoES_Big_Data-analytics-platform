@@ -36,7 +36,8 @@ ARCHIVE_URL = "https://archive-api.open-meteo.com/v1/archive"
 def load_events(csv_path: Path) -> list[dict[str, str]]:
     """Synchronously load evaluation events from CSV."""
     with open(csv_path, encoding="utf-8") as f:
-        return list(csv.DictReader(f))
+        valid_lines = [line for line in f if not line.strip().startswith("#")]
+        return list(csv.DictReader(valid_lines))
 
 
 async def fetch_archive_weather(

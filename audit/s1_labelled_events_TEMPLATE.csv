@@ -1,3 +1,4 @@
+# AGENT-AUTHORED, NOT REAL EVENTS
 event_id,category,location,latitude,longitude,event_date,event_time_utc,severity,ground_truth_label,notes
 EVT-2023-001,CYCLONE_HIGH_WIND,Chennai,13.0827,80.2707,2023-12-04,06:00:00,EXTREME,TRUE_POSITIVE,Cyclone Michaung landfall outer bands with extreme winds and rain
 EVT-2023-002,HEAVY_RAINFALL,New Delhi,28.6139,77.2090,2023-07-09,08:30:00,SEVERE,TRUE_POSITIVE,Record 153mm 24h rainfall causing Yamuna flood alert

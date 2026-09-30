@@ -1,0 +1,10 @@
+PROVENANCE: AGENT-AUTHORED (Written by AI agent in S1-15 as evaluation harness template; NOT supplied by user)
+--- FILE HEADER AND FIRST 3 ROWS OF audit/s1_labelled_events_TEMPLATE.csv ---
+# AGENT-AUTHORED, NOT REAL EVENTS
+event_id,category,location,latitude,longitude,event_date,event_time_utc,severity,ground_truth_label,notes
+EVT-2023-001,CYCLONE_HIGH_WIND,Chennai,13.0827,80.2707,2023-12-04,06:00:00,EXTREME,TRUE_POSITIVE,Cyclone Michaung landfall outer bands with extreme winds and rain
+EVT-2023-002,HEAVY_RAINFALL,New Delhi,28.6139,77.2090,2023-07-09,08:30:00,SEVERE,TRUE_POSITIVE,Record 153mm 24h rainfall causing Yamuna flood alert
+EVT-2023-003,CYCLONE_HIGH_WIND,Jakhau Gujarat,23.2389,68.6111,2023-06-15,14:00:00,EXTREME,TRUE_POSITIVE,Cyclone Biparjoy landfall on Saurashtra-Kutch coast
+--- DOCS VERIFICATION ---
+153:3. **Dual-Station / Human Ground-Truth Calibration Required**: Ground-truth precision, recall, and F1 accuracy are stamped `ACCURACY: NOT MEASURED` until an official ground-truth dataset annotation campaign with dual-station calibration is executed. The 10 historical events template (`audit/s1_labelled_events_TEMPLATE.csv`) is **AGENT-AUTHORED, NOT REAL EVENTS**, provided solely as an evaluation harness template, and carries no measured SUPPORTS rate claim.
+SUPPORTS RATE CLAIMS IN DOCS: REMOVED / NONE PRESENT (stamped ACCURACY: NOT MEASURED)
