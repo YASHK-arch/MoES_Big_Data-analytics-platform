@@ -208,6 +208,7 @@ class Settings(BaseSettings):
     # Image Forensics Signals (S2) — ASSUMPTION - unverified magnitudes
     # Feature flag: OFF by default. Enable per-instance via environment variable. (Product Rule P7)
     IMAGE_FORENSICS_ENABLED: bool = False
+    IMAGE_FORENSICS_DEMO_FIXTURE_ENABLED: bool = False
     IMAGE_FORENSICS_CAP: float = 0.05  # Evaluated in Item 7
     IMAGE_FORENSICS_PHASH_THRESHOLD: int = 10  # Measured on synthetic data in Item 3
     IMAGE_FORENSICS_DHASH_THRESHOLD: int = 8   # Measured on synthetic data in Item 3

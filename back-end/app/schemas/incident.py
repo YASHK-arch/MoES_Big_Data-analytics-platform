@@ -139,6 +139,7 @@ class ImageForensicItemDetail(BaseModel):
     overall_verdict: str = "NEUTRAL"
     credibility_adjustment: float = 0.0
     error_reason: Optional[str] = None
+    is_simulated: bool = False
     checks: List[ImageForensicCheckDetail] = Field(default_factory=list)
 
 

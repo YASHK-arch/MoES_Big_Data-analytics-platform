@@ -440,6 +440,7 @@ class IncidentQueryService:
                         overall_verdict=f.overall_verdict,
                         credibility_adjustment=f.credibility_adjustment,
                         error_reason=f.error_reason,
+                        is_simulated=f.is_simulated,
                         checks=checks_list,
                     )
                 )
