@@ -195,6 +195,16 @@ class Settings(BaseSettings):
     PHYSICAL_CORROBORATION_MODEL_WEIGHT: float = 0.60
     PHYSICAL_CORROBORATION_DEMO_FIXTURE_ENABLED: bool = False
 
+    # Location-Mismatch Credibility Signal (L5) — ASSUMPTION - unverified magnitudes
+    # Feature flag: OFF by default. Enable per-instance via environment variable.
+    LOCATION_MISMATCH_ENABLED: bool = False
+    # Raw penalty applied when mismatch detected (ASSUMPTION - unverified)
+    LOCATION_MISMATCH_RAW_PENALTY: float = 0.10
+    # Hard cap on the total adjustment (ASSUMPTION - unverified)
+    LOCATION_MISMATCH_CAP: float = 0.10
+    # Minimum resolver confidence to consider text-side location "known"
+    LOCATION_MISMATCH_MIN_TEXT_CONFIDENCE: float = 0.70
+
     # CORS Configuration
     ALLOWED_ORIGINS: Union[List[str], str] = ["http://localhost:5173", "http://localhost:3000"]
 

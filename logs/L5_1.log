@@ -1,0 +1,95 @@
+L5 Item 1: Baseline evaluation of K1 hoax and genuine posts
+DATE: 2026-10-01
+COMMAND: cd back-end && source .venv/bin/activate && python scripts/l5_baseline.py
+
+L5 Item 1: K1 Baseline (FEATURE FLAG=OFF, pre-signal)
+SYNTHETIC POSTS — AGENT-AUTHORED, NOT REAL INCIDENTS
+
+======================================================================
+GROUP: HOAX (foreign/different-location)
+======================================================================
+
+  Post H1: Foreign-location hoax: text says Kathmandu, declared Mumbai
+  final_credibility_score : 0.6000
+  source_prior            : 0.6000
+  report_quality_score    : 1.0000
+  incident_baseline       : 0.6000
+  crowd_cluster_score     : 0.0000
+  digital_evidence_score  : 0.0000
+  physical_obs_score      : 0.0000
+  synthesized_support     : 0.0000
+  diversity_multiplier    : 1.0000
+  support_delta           : 0.0000
+  positive_score          : 0.6000
+  negative_penalty        : 0.0000
+  penalized_score         : 0.6000
+  applied_cap             : 0.6500
+
+  Post H2: Foreign-location hoax: text says Nepal flooding, declared Delhi
+  final_credibility_score : 0.6000
+  (identical breakdown as H1)
+
+  Post H3: Different-state hoax: text says Bengaluru floods, declared Chennai
+  final_credibility_score : 0.6000
+  (identical breakdown as H1)
+
+  Post H4: Different-state hoax: text says Colombo flood, declared Kochi
+  final_credibility_score : 0.6000
+  (identical breakdown as H1)
+
+  Post H5: Different-state hoax: text says Dhaka cyclone, declared Kolkata
+  final_credibility_score : 0.6000
+  (identical breakdown as H1)
+
+  SUMMARY HOAX (foreign/different-location):
+    mean=0.6000  min=0.6000  max=0.6000
+
+======================================================================
+GROUP: GENUINE (location-consistent)
+======================================================================
+
+  Post G1: Genuine: text says Mumbai flooding, declared Mumbai
+  final_credibility_score : 0.6000
+  (identical breakdown as H1 — signal not present, no differentiation)
+
+  Post G2-G5: All 0.6000 (identical to G1)
+
+  SUMMARY GENUINE (location-consistent):
+    mean=0.6000  min=0.6000  max=0.6000
+
+======================================================================
+CROSS-GROUP SUMMARY
+======================================================================
+  HOAX    mean=0.6000  min=0.6000  max=0.6000
+  GENUINE mean=0.6000  min=0.6000  max=0.6000
+
+  Review line = 0.45
+  HOAX above 0.45: 5/5
+  GENUINE above 0.45: 5/5
+
+======================================================================
+COMPONENT TRACE: H1 (the canonical foreign-location hoax)
+======================================================================
+  source_base_trust=0.60, all metadata=True, cluster=1, no evidence, no obs
+  quality = 0.30*1+0.25*1+0.20*1+0.15*1+0.10*1 = 1.00
+  b_incident = 0.60 * (0.70 + 0.30*1.00) = 0.60 * 1.00 = 0.6000
+  s_crowd=0, s_evidence=0, s_obs=0 -> s_support=0, delta_support=0
+  c_positive = b_incident = 0.6000
+  p_negative = 0 (no contradictions)
+  applicable_cap = cap_citizen = 0.65 (no corroboration)
+  final = min(c_positive=0.6000, cap=0.65) = 0.6000
+
+  RESULT: Signal is absent because no component penalizes location mismatch.
+  The score 0.6000 is purely from source_prior x quality_score x base_factor.
+
+NOTE: K1 previously showed 0.5427 because that dataset had trust=0.60 and
+  quality NOT 1.00 (some fields missing). The 5/5 posts here have ALL metadata
+  complete so b_incident = 0.60*(0.70+0.30*1.00) = 0.60 exactly.
+  The K1 0.5427 result was for posts with quality_score < 1.00.
+  Either way, 0.6000 > 0.45 review line, confirming the problem.
+
+======================================================================
+PYTEST BASELINE COUNT
+======================================================================
+COMMAND: cd back-end && source .venv/bin/activate && python -m pytest tests/ --co -q 2>&1 | tail -3
+523 tests collected in 0.19s

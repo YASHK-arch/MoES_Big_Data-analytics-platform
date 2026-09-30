@@ -1,0 +1,51 @@
+L5 Item 2: Resolver capability probe
+DATE: 2026-10-01
+COMMAND: cd back-end && source .venv/bin/activate && python scripts/l5_resolver_probe.py
+
+=== FULL RAW OUTPUT: see L5_2_raw.txt ===
+
+KEY FINDINGS:
+1. FOREIGN PLACES IN GAZETTEER (10 entries):
+   nepal, bangladesh, sri lanka, germany  (country-level, lat=None)
+   kathmandu, pokhara, rasuwa (Nepal cities)
+   dhaka (Bangladesh), colombo (Sri Lanka), berlin (Germany)
+   -> All resolve via foreign_gazetteer provider
+   -> Country-level entries: confidence=0.0 (no point)
+   -> City-level entries: confidence=0.9
+
+2. FOREIGN PLACES NOT IN GAZETTEER:
+   London, Beijing, Islamabad, Kabul, Bangkok, Paris -> ALL UNRESOLVED
+   status=UNRESOLVED, reason="No geographic entity mentions recognized in text"
+   -> These would be NEUTRAL by P1 (text place unknown)
+
+3. ALIASES (all 13 tested): ALL work correctly
+   bombay->Mumbai, bangalore->Bengaluru, madras->Chennai, calcutta->Kolkata,
+   allahabad->Prayagraj, trivandrum->Thiruvananthapuram, vizag->Visakhapatnam,
+   baroda->Vadodara, poona->Pune, cochin->Kochi, gurgaon->Gurugram,
+   banaras/kashi->Varanasi
+   -> NO ALIAS GAPS for the major city aliases in gazetteer
+
+4. DEVANAGARI/HINGLISH: ALL UNRESOLVED (not in gazetteer)
+   मुंबई, दिल्ली, बेंगलुरु, Dilli, Bambai -> UNRESOLVED
+   -> NEUTRAL by P1 (text place unknown)
+   -> Listed as gap; not adding Devanagari to gazetteer in this item
+
+5. MULTI-PLACE POST:
+   Resolver returns FIRST matched entity only.
+   For P2 compliance, the mismatch function must use extractor.extract_entities()
+   directly to get ALL entity matches, then check if declared state appears among them.
+
+6. GAPS TO REPORT (ASSUMPTION - unverified per instructions):
+   Missing from FOREIGN_LOCATIONS:
+   - Pakistan / Islamabad / Karachi / Lahore
+   - China / Beijing / Kunming
+   - Myanmar / Naypyidaw / Yangon
+   - Afghanistan / Kabul
+   - Bhutan / Thimphu
+   - Maldives / Male
+
+   Will add a curated minimal list in location_mismatch_config.py labelled ASSUMPTION.
+   These will be used only for this signal; resolver.py is NOT modified.
+
+7. AMBIGUOUS PLACES (Rajpur, Bilaspur, Rampur, Aurangabad):
+   resolver returns AMBIGUOUS status, confidence=0.0 -> NEUTRAL by P1
