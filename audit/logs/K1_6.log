@@ -1,0 +1,44 @@
+$ .venv/bin/python - (DATA_GOV_API_KEY configured check; value not printed)
+DATA_GOV_API_KEY_CONFIGURED False
+$ cat ../audit/logs/K0_data_gov_search.log
+K0 data.gov.in catalog check (2026-09-30)
+Queries: title=rainfall; title=weather; title=dust storm.
+Observed: the catalog contains weather-related historical datasets; it is inaccurate to claim there are no weather datasets. Search results include rainfall records and past dust-storm event totals.
+Candidates:
+1. Daily District-wise Rainfall Data (catalog search candidate; resource page extraction failed, so API availability is NOT VERIFIED).
+2. State-wise Details of the Number of Dust Storm Events from 2017 to 2021 (published 2023-05-02; resource page says Sourced Webservices/APIs: NA).
+3. Station-wise Details of the Number of Dust Storm Events Observed from 2020 to 2022 (published 2023-12-26; resource page says Sourced Webservices/APIs: NA).
+Conclusion: weather-related datasets do exist. The searches did not verify a current live weather-observation feed or stable API contract. Local DATA_GOV_API_KEY is absent, so authenticated API access was not attempted.
+$ .venv/bin/python - (GET public catalog/search/resource pages; no API endpoint requests)
+PAGE https://www.data.gov.in/search?title=rainfall HTTP 200 FINAL https://www.data.gov.in/search?title=rainfall BYTES 1012435
+RESOURCE_LINKS []
+API_LINKS []
+RESOURCE_ID_FIELDS []
+VISUALIZATION_INST_IDS []
+WEB-PAGE EXTRACTION (2026-09-30; public catalog pages only; no API endpoint call):
+Queries reopened from K0: title=rainfall; title=weather; title=dust storm.
+K1 page URLs: https://www.data.gov.in/search?title=rainfall ; https://www.data.gov.in/search?title=weather ; https://www.data.gov.in/search?title=dust%20storm ; https://www.data.gov.in/resource/daily-district-wise-rainfall-data ; https://www.data.gov.in/resource/state-wise-details-number-dust-storm-events-2017-2021 ; https://www.data.gov.in/resource/station-wise-details-number-dust-storm-events-observed-2020-2022 ; https://www.data.gov.in/resource/daily-district-wise-rainfall-data#api
+Search result for Daily District-wise Rainfall Data exposed a Data API tab link ending in #api. Direct page extraction timed out; the API tab fetch failed extraction. Endpoint URL and machine resource_id were not exposed. Actual API call: BLOCKED: no key (DATA_GOV_API_KEY_CONFIGURED=False).
+Dust resource pages show Sourced Webservices/APIs: NA and describe historical periods 2017-2021 and 2020-2022.
+Actual API resource IDs found: NONE. Visualization inst IDs (not API resource IDs) exposed in search output: ba059363-c6b5-4199-93a5-e132d1fba02a, 4f0f106f-62fb-4e35-bcc4-9615bdbe3f88, 8cecb8d5-d854-477f-bd3c-aca605dda873, f8c3159b-08ce-455c-b33e-83d1568f260f, a6ac7a88-deeb-457f-bd3c-aca605dda873, 284ed5e1-2366-441f-9f72-8daf82ac1ff8, 59e6c59d-5ae5-4d3a-829a-1861cc751cc7, 21f276a6-b2ba-4019-8240-fd15b4b352c2, c5e501e1-d19a-40d0-8f96-48584ce4614a, d422931b-900d-4b40-9c21-6b2cb2b9e394, 92136bbd-111d-45aa-9b9f-9a851d20a03c, 7488d7f6-ddf1-447f-ad5e-3d85bfb005ed, af9b9576-6b6e-4822-aece-45853551c7d2, 6c05cd1b-ed59-40c2-bc31-e314f39c6971, bd157f13-bf25-499b-afc3-f410ed046c3a, 9a772b35-4c25-410f-860b-ad9c13a6164b, fba3f7f7-03a8-4e04-b365-0b0a51d1d5c9, da428447-700a-41e9-a56a-d7855ffb672f, c9302010-023d-4c91-863e-3177079c0410, 886de4ae-3acc-4907-a748-e1dcecf51306, c7e8c400-e32a-4d65-b515-9f34b269358e, 4c1e8a25-0088-4314-ae01-8c2fc509204c, 14cc3033-3596-4a65-8f5f-bae5115a2428, dbf5c6a2-58aa-4376-ba64-4d0fe0f67b2f, f5fc3381-dfca-4b22-bf10-dd8f03996b05, 1eabf32a-863c-43f6-8f41-bc172e03339a, 14a7c909-0cf0-486a-a4dd-637caa526c5a, 6e38d0c0-045e-4dce-81d0-eca39519bb07, 70fd52c3-8a46-4814-b21e-939e4eaeb79d, e6860bae-b730-4891-ab23-4fe21b46b6e8.
+PAGE https://www.data.gov.in/search?title=weather HTTP 200 FINAL https://www.data.gov.in/search?title=weather BYTES 1012435
+RESOURCE_LINKS []
+API_LINKS []
+RESOURCE_ID_FIELDS []
+VISUALIZATION_INST_IDS []
+PAGE https://www.data.gov.in/search?title=dust%20storm HTTP 200 FINAL https://www.data.gov.in/search?title=dust%20storm BYTES 1012435
+RESOURCE_LINKS []
+API_LINKS []
+RESOURCE_ID_FIELDS []
+VISUALIZATION_INST_IDS []
+PAGE https://www.data.gov.in/resource/daily-district-wise-rainfall-data ERROR ReadTimeout The read operation timed out
+PAGE https://www.data.gov.in/resource/state-wise-details-number-dust-storm-events-2017-2021 HTTP 200 FINAL https://www.data.gov.in/resource/state-wise-details-number-dust-storm-events-2017-2021 BYTES 1014717
+RESOURCE_LINKS []
+API_LINKS []
+RESOURCE_ID_FIELDS []
+VISUALIZATION_INST_IDS []
+PAGE https://www.data.gov.in/resource/station-wise-details-number-dust-storm-events-observed-2020-2022 HTTP 200 FINAL https://www.data.gov.in/resource/station-wise-details-number-dust-storm-events-observed-2020-2022 BYTES 1014298
+RESOURCE_LINKS []
+API_LINKS []
+RESOURCE_ID_FIELDS []
+VISUALIZATION_INST_IDS []
