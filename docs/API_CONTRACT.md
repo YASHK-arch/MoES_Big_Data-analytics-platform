@@ -3,8 +3,8 @@
 **Platform**: National Weather Big Data Analytics Platform (`SIH26069`)
 **Base URL**: `/api/v1`
 **Standard Response Format**: All responses adhere to a consistent JSON envelope.
-**Total Operations**: 23 operations across 22 canonical paths.
-**Status**: **SYNCHRONIZED WITH CURRENT CODE & OPENAPI SPECIFICATION**
+**Total Operations**: 31 operations across 30 canonical paths.
+**Status**: **SYNCHRONIZED WITH CURRENT CODE & OPENAPI SPECIFICATION (Round 9b)**
 
 ---
 
@@ -63,9 +63,10 @@
 ## 2. Authentication & Authorization Model
 
 > [!NOTE]
-> **Current MVP Architecture**: Operator verification endpoints are currently unauthenticated for the MVP/demo environment. Production JWT/RBAC is deferred.
+> **Authentication**: Operator endpoints under `/api/v1/verification/*` and `/api/v1/admin/*` require a JWT Bearer token obtained from `POST /api/v1/auth/login`. The `get_current_operator` FastAPI dependency enforces this. Unauthenticated requests return `401 Unauthorized`. Citizen-facing read endpoints and report submission are public.
 
----
+> [!TIP]
+> **Demo Data Filter**: All list/map/dashboard endpoints accept `?hide_demo=true` (SQL-level `WHERE is_demo = false` filter). Default is `false` (demo data visible). Set `HIDE_DEMO_DEFAULT=true` in `docker-compose.demo.yml` to flip the default for evaluation stacks.
 
 ## 3. Complete API Catalog (22 Paths / 23 Operations)
 
@@ -243,3 +244,57 @@
   : ping
   ```
 - **Delivery Guarantee**: **At-least-once delivery with bounded client-side deduplication (1,000 items). No exactly-once guarantee.**
+
+---
+
+### 3.7 Operator Admin — Export, Bulk Actions & Audit Log (R3)
+
+> All endpoints in this section require `Authorization: Bearer <token>` and the `operator` role. Returns `401` without a valid token, `403` for non-operator roles, `422` if limits are exceeded.
+
+#### 24. Export Incidents as CSV
+- **Method & Path**: `GET /api/v1/admin/export/csv`
+- **Auth**: Operator JWT required.
+- **Query Params**: Same filter set as `/api/v1/incidents` (`status`, `category`, `state`, `date_from`, `date_to`, `hide_demo`). Hard limit: 50,000 rows.
+- **Response** (`200 OK`): `Content-Type: text/csv; charset=utf-8` streamed response. Each row: `id, tracking_id, title, category, status, credibility_score, state, city, latitude, longitude, is_demo, created_at`.
+- **Error** (`422`): `{ "detail": "Row limit exceeded" }` if query would return > 50,000 rows.
+
+#### 25. Export Incidents as GeoJSON
+- **Method & Path**: `GET /api/v1/admin/export/geojson`
+- **Auth**: Operator JWT required.
+- **Query Params**: Same as CSV export. Hard limit: 50,000 features.
+- **Response** (`200 OK`): `Content-Type: application/geo+json` streamed `FeatureCollection`. Each feature: `geometry: Point [lon, lat]`, properties mirror CSV fields.
+
+#### 26. Bulk Verify / Reject
+- **Method & Path**: `POST /api/v1/admin/bulk-verify`
+- **Auth**: Operator JWT required.
+- **Request Body**:
+  ```json
+  {
+    "incident_ids": ["uuid1", "uuid2"],
+    "action": "VERIFIED",
+    "reason": "Cross-checked with field officer report"
+  }
+  ```
+- **Constraints**: `incident_ids` max 100 items. `action` must be `VERIFIED` or `REJECTED`.
+- **Atomicity**: Two-pass strategy — Pass 1 resolves and validates all IDs (returns `400` if any ID missing); Pass 2 applies all mutations in a single transaction with a single `session.commit()`. One `AuditLog` row is written per incident.
+- **Response** (`200 OK`): `{ "updated": 5, "action": "VERIFIED", "incident_ids": [...] }`
+- **Error** (`422`): `{ "detail": "Maximum 100 IDs per bulk request" }`
+- **Error** (`400`): `{ "detail": "Incident <uuid> not found" }` — no mutations applied.
+
+#### 27. Get Audit Log
+- **Method & Path**: `GET /api/v1/admin/audit-log`
+- **Auth**: Operator JWT required.
+- **Query Params**: `action` (string filter), `entity_id` (UUID filter), `operator` (string filter), `page` (default 1), `page_size` (default 50, max 200).
+- **Response** (`200 OK`): Paginated list of `AuditLogItem`:
+  ```json
+  {
+    "id": "uuid",
+    "action": "BULK_VERIFIED",
+    "entity_id": "incident-uuid",
+    "entity_type": "incident",
+    "operator": "ops@ndrf.gov.in",
+    "reason": "Cross-checked with field officer",
+    "metadata": {},
+    "created_at": "2026-09-30T12:34:56Z"
+  }
+  ```

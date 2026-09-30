@@ -1,7 +1,7 @@
 # Data Model & Entity Specifications
 
 **Platform**: National Weather Big Data Analytics Platform (`SIH26069`)
-**Status**: **SYNCHRONIZED WITH CURRENT CODE & MIGRATIONS** (Alembic Head: `0004_realtime_outbox_schema`)
+**Status**: **SYNCHRONIZED WITH CURRENT CODE & MIGRATIONS** (Alembic Head: `0017_report_is_demo`)
 **Database**: PostgreSQL 16+ with PostGIS 3.4+ (`SRID 4326`)
 
 ---
@@ -80,6 +80,7 @@ Primary domain entity for citizen submissions and normalized external incident e
 | `credibility_score`| `FLOAT` | Not Null, Default `0.0`, Range `[0.0, 1.0]` | Computed explainable credibility score |
 | `credibility_explanation`| `JSONB` | Nullable | Multi-factor breakdown of positive/negative drivers |
 | `raw_payload` | `JSONB` | Nullable | Original raw ingestion document |
+| `is_demo` | `BOOLEAN` | Not Null, Default `false`, Indexed (`ix_weather_reports_is_demo`) | Marks synthetically seeded demo fixtures. Backfilled from `[DEMO]` title prefix or `DEMO-` tracking ID prefix. All list/map/dashboard endpoints accept `?hide_demo=true` to SQL-filter these rows. |
 | `created_at` | `TIMESTAMPTZ` | Not Null, Default `NOW()`, Indexed | Ingestion timestamp |
 | `updated_at` | `TIMESTAMPTZ` | Not Null, Default `NOW()` | Last modification timestamp |
 

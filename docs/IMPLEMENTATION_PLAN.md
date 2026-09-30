@@ -1,8 +1,8 @@
 # Implementation History & Engineering Delivery Record
 
 **Platform**: National Weather Big Data Analytics Platform (`SIH26069`)
-**Status**: **SYNCHRONIZED WITH COMPLETED PHASES 0 THROUGH 14**
-**Last Updated**: 2026-08-31
+**Status**: **SYNCHRONIZED WITH COMPLETED PHASES 0 THROUGH 19**
+**Last Updated**: 2026-09-30
 
 ---
 
@@ -110,6 +110,15 @@
   - **CWC NWDP Live Verification**: Real HTTP GET to `https://nwdp.nwic.gov.in/api/3/action/datastore_search` on resource `d80798b9-4b11-4626-8b63-964202ba7216`, 5 live hydrological telemetry records parsed in controlled Phase 18 proof (adapter default fetch limit: 50), normalized, streamed to `stream:weather:observations`, persisted as `WeatherObservation` in PostgreSQL.
   - **Duplicate Algorithm Truth**: Verified exact duplicate pipeline using PostGIS GiST index-assisted spatial bounding ($R \le 2500\text{m}$), temporal windowing ($\Delta T \le 3\text{h}$), and `SemanticVectorizer` (`sparse_tfidf_ngram_v1`) composite scoring with 4 hard gates. Confirmed zero FastEmbed/ONNX dependencies in live duplicate path.
   - **GDELT Rate Limit Enforcement**: Verified `GDELT_MIN_REQUEST_INTERVAL_SECONDS = 5.0` is strictly enforced in `GDELTNewsAdapter._apply_rate_limit()` before every outbound HTTP request.
+
+### Phase 19: Round 9b — Classification Regression, Demo Segregation, RSS Adapter, Admin Portal
+- **Status**: **COMPLETED & VERIFIED**
+- **Deliverables**:
+  - **R4 — Multilingual Classification Regression** (`test_r4_classification_regression.py`): 60-post dataset (20 fog, 20 dust storm, 20 strong wind) covering English and Hinglish/Hindi (Devanagari + Roman script). Run through production `classify_text()` code path. Per-category accuracy and confusion table generated at test time. Minimum 85% accuracy gate enforced. 10 hoax-style posts (old video claim, foreign location) verified to receive credibility scores < 0.45. Keyword rules in `category_rules.py` patched with a minimal diff for misses.
+  - **R5 — Demo Data Segregation** (`0017_report_is_demo` migration): `is_demo` boolean column on `weather_reports` with index; SQL backfill from `[DEMO]` title prefix and `DEMO-` tracking IDs. Amber **DEMO** badge rendered on Dashboard feed, Map popups, and Incident Detail hero. "Hide Demo Data" toggle on Dashboard, Map, and Incident Directory filter bars (default `OFF` in demo stack). All query endpoints (`/api/v1/incidents`, `/api/v1/reports`, `/api/v1/geo/incidents`, `/api/v1/dashboard/summary`) accept `?hide_demo=true` for SQL-level filtering.
+  - **R2 — Indian Weather RSS News Adapter** (`rss_adapter.py`): Configurable list of Indian weather news feed URLs. Implements `BaseIngestionAdapter` interface. URL SHA-256 deduplication. `robots.txt` compliance and per-feed rate limiting. Place-name → state/city resolution via gazetteer for L1 spatial gate. Locality isolation test: Puri article must not link to a Mumbai incident. Mocked-HTTP test suite (298 lines).
+  - **R3 — Operator Admin Portal** (`admin.py`): Streamed CSV and GeoJSON export of filtered incident list (max 50,000 rows, chunked `StreamingResponse`). Atomic bulk verify/reject (max 100 IDs, single `session.commit()`, one `AuditLog` row per incident). Two-pass strategy: validate all IDs first, then mutate, ensuring true rollback on any failure. Paginated `GET /api/v1/admin/audit-log` with `action`, `entity_id`, `operator` filters. `AdminAuditLogPage.tsx` viewer and export + bulk buttons in `AdminVerificationQueuePage`. Full test coverage: 401 without token, 422 on limit breach, streaming structure, atomic audit rows, rollback on invalid ID.
+  - **R1 — data.gov.in Stub**: `DATA_GOV_API_KEY` config key pre-exists. No live weather dataset with a stable public API shape was identified on data.gov.in as of 2026-09-30. Adapter stubs with a clear disabled log rather than silently failing or inventing an API shape.
 
 ---
 

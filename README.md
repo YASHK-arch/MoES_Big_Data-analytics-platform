@@ -3,7 +3,7 @@
 **Smart India Hackathon 2026 — Problem Statement ID**: `SIH26069`
 **Domain**: Big Data Analytics / Disaster Management / Geospatial Intelligence
 **Status**: **SYNCHRONIZED WITH CURRENT CODE & WORKER RUNTIMES**
-**Baseline Git Commit**: `cca26615d1743078932527ec1e89507ac417fa03`
+**Baseline Git Commit**: `ee8e17d` (Round 9b — R2 RSS · R3 Admin · R4 Classification · R5 Demo · R1 data.gov stub)
 
 ---
 
@@ -23,10 +23,11 @@ The platform bridges the gap between high-altitude meteorological observations (
 ## 2. High-Level Architecture
 
 ```
-[Citizen Reports, IMD Telemetry, CWC, NDMA, Mastodon, GDELT, DemoSeed]
+[Citizen Reports, IMD Telemetry, CWC, NDMA, Mastodon, GDELT, RSS News, DemoSeed]
                               │
                               ▼
             [Ingestion Scheduler & Ingestion Adapters]
+            (IMD, NDMA, CWC, Mastodon, GDELT, RSS, OpenMeteo, DemoSeed)
                               │
                               ▼
          [Redis Streams Buffering Tier (6 Streams)]
@@ -92,6 +93,7 @@ The platform bridges the gap between high-altitude meteorological observations (
 | **Phase 16: Reactive Late Corroboration** | Late observation & evidence ingestion re-triggers credibility scoring and pushes live updates via SSE to frontend without page reload. | **COMPLETED & VERIFIED** |
 | **Phase 17: Live GDELT & Mastodon Integration** | Genuine live HTTP ingestion from GDELT DOC 2.0 and Mastodon public hashtag timelines; persistence to `evidence_items` and intelligence corroboration. | **COMPLETED & VERIFIED** |
 | **Phase 18: NDMA/CWC Live Proof & Duplicate Truth** | Live HTTP verification of NDMA SACHET and CWC NWDP feeds; verified domain-boosted TF-IDF vectorizer (`sparse_tfidf_ngram_v1`) duplicate path. | **COMPLETED & VERIFIED** |
+| **Phase 19: Round 9b — Classification, Demo, RSS, Admin** | R4: 60-post multilingual fog/dust/wind regression (≥85%); R5: `is_demo` migration + DB filter + DEMO badge + hide-demo toggle; R2: RSS adapter with URL-hash dedupe, place→state resolution; R3: streamed CSV/GeoJSON export (50k), atomic bulk verify/reject (100 ids), audit-log viewer. Tests: 475 passed. | **COMPLETED & VERIFIED** |
 | **Production Auth & Supervision** | Institutional JWT/RBAC authentication and multi-worker process supervision (`systemd`/Kubernetes). | *Deferred Production Hardening* |
 
 ---

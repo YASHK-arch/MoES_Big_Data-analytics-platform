@@ -3,7 +3,7 @@
 **Problem Statement ID**: `SIH26069`
 **Platform**: National Weather Big Data Analytics Platform
 **Status**: **SYNCHRONIZED WITH CURRENT CODE & WORKER RUNTIMES**
-**Baseline Git Commit**: `cca26615d1743078932527ec1e89507ac417fa03`
+**Baseline Git Commit**: `ee8e17d` (Round 9b)
 
 ---
 
@@ -21,6 +21,8 @@ flowchart TD
         CWC["CWC River Flood Gauge Adapter"]
         MAST["Mastodon Emergency Social Adapter"]
         GDELT["GDELT Disaster News Adapter"]
+        RSS["RSS Indian Weather News Adapter (R2)"]
+        OMETEO["OpenMeteo Forecast Adapter"]
         SEED["Demo Seed Ingestion Adapter"]
     end
 
@@ -62,12 +64,13 @@ flowchart TD
         DASH["Dashboard & KPI Telemetry (/dashboard)"]
         MAP["Live GIS Leaflet Map (/map)"]
         QUEUE["Verification Queue (/admin/queue)"]
+        ADMIN["Admin Export / Bulk / Audit Log (/admin/audit-log)"]
         ANALYTICS["Weather Analytics Platform (/analytics)"]
         EXPLORER["Incident Explorer & Deep-Dive (/incidents)"]
     end
 
     %% Ingestion to Streams
-    SCHED --> IMD & NDMA & CWC & MAST & GDELT & SEED
+    SCHED --> IMD & NDMA & CWC & MAST & GDELT & RSS & OMETEO & SEED
     SCHED -->|Normalized Events| STR_EVT
     SCHED -->|Sensor Metrics| STR_OBS
     SCHED -->|News / Media| STR_EVD

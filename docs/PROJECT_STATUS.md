@@ -2,8 +2,8 @@
 
 **Platform**: National Weather Big Data Analytics Platform (Smart India Hackathon 2026 — Problem Statement ID: `SIH26069`)
 **Domain**: Big Data Analytics / Disaster Management / Geospatial Intelligence
-**Document Status**: **ACTIVE SOURCE OF TRUTH (ENGINEERING FREEZE AT COMMIT `cca2661`)**
-**Last Synchronized**: 2026-09-01
+**Document Status**: **ACTIVE SOURCE OF TRUTH (ENGINEERING BASELINE: COMMIT `ee8e17d`)**
+**Last Synchronized**: 2026-09-30
 
 ---
 
@@ -12,13 +12,13 @@
 | Attribute | Current Value / State |
 | :--- | :--- |
 | **Git Branch** | `main` |
-| **Current HEAD Commit** | `cca26615d1743078932527ec1e89507ac417fa03` (`cca2661`) |
-| **Commit Subject** | `docs: complete Phase 17 GDELT & Mastodon live provider integration audit` |
+| **Current HEAD Commit** | `ee8e17d` |
+| **Commit Subject** | `feat(admin): operator-only CSV/GeoJSON export, atomic bulk verify/reject, audit-log table + viewer, frontend buttons (R3)` |
 | **Working Tree State** | **Clean** (`0` uncommitted changes, synchronized with `origin/main`) |
-| **Backend Test Baseline** | **345 passed, 1 skipped** (`pytest` across 24 test files) |
-| **Frontend Test Baseline** | **160 passed** (`vitest run` across 11 test suites) |
-| **Backend Static Gates** | `mypy` (0 issues across 144 source files), `ruff check` (0 errors), `ruff format` (144 files clean) |
-| **Frontend Static Gates** | `npm run typecheck` (0 errors), `npm run lint` (0 warnings/errors), `npm run build` (built clean in ~1.8s) |
+| **Backend Test Baseline** | **475 passed, 0 failed** (`pytest` across 55 test files) |
+| **Frontend Test Baseline** | **180 passed** (`vitest run` across 16 test suites) |
+| **Backend Static Gates** | `mypy` (0 issues across 137 source files), `ruff check` (0 errors), `ruff format` (clean) |
+| **Frontend Static Gates** | `tsc --noEmit` (0 errors), `npm run lint` (0 warnings/errors) |
 
 ---
 
@@ -28,7 +28,8 @@
 | :--- | :--- | :---: | :--- |
 | **Citizen Intake** | Mobile-friendly reporting form, photo upload to MinIO, PostGIS spatial point generation, instant tracking ID. | **MANUALLY & RUNTIME VERIFIED** | [CitizenReportForm.tsx](file:///Users/akshatjain/Documents/SIH/front-end/src/features/reports/CitizenReportForm.tsx), `POST /api/v1/reports`, report `RPT-20260831-B848D18A`. |
 | **Public Tracking** | Public tracking lookup for status, timeline, and administrative resolution. | **RUNTIME VERIFIED** | [ReportTrackingPage.tsx](file:///Users/akshatjain/Documents/SIH/front-end/src/pages/ReportTrackingPage.tsx), `GET /api/v1/reports/{id}`. |
-| **External Ingestion Framework** | Multi-source adapter framework (IMD, NDMA, CWC, Mastodon, GDELT, DemoSeed). | **BUILT & TESTED** | [back-end/app/ingestion/](file:///Users/akshatjain/Documents/SIH/back-end/app/ingestion/), `registry.py`, `test_external_ingestion_integration.py`. |
+| **External Ingestion Framework** | Multi-source adapter framework: IMD, NDMA, CWC, Mastodon, GDELT, OpenMeteo, RSS News, DemoSeed. | **BUILT & TESTED** | [back-end/app/ingestion/](file:///Users/akshatjain/Documents/SIH/back-end/app/ingestion/), `registry.py`, `test_external_ingestion_integration.py`. |
+| **RSS News Adapter (R2)** | Indian weather news from configurable feed list; URL-SHA256 dedupe; robots + rate-limit compliance; place-name → state/city resolution for L1 spatial gate; mocked-HTTP tests. Puri article must not match Mumbai incident — locality gate verified. | **BUILT & TESTED** | [rss_adapter.py](file:///Users/akshatjain/Documents/SIH/back-end/app/ingestion/rss_adapter.py), `test_rss_adapter.py` (298 lines). |
 | **NDMA SACHET Feed** | Official national disaster alert CAP/JSON feed adapter. | **LIVE PROVIDER VERIFIED** | Real HTTP POST to `https://sachet.ndma.gov.in/cap_public_website/FetchAllAlertDetails` (HTTP 200, 66 alerts parsed, normalized, streamed to `stream:weather:events`, persisted to PostgreSQL). |
 | **CWC NWDP River Feed** | Official river water level telemetry adapter. | **LIVE PROVIDER VERIFIED** | Real HTTP GET to `https://nwdp.nwic.gov.in/api/3/action/datastore_search` (HTTP 200, resource `d80798b9-4b11-4626-8b63-964202ba7216`, telemetry parsed, normalized, streamed to `stream:weather:observations`, persisted to PostgreSQL). |
 | **GDELT News Feed** | News feed ingestion adapter for disaster headlines. | **LIVE PROVIDER VERIFIED** | Live HTTP query verified (`http://api.gdeltproject.org/api/v2/doc/doc`), rate limited ($\ge 5.0\text{s}$ interval), normalized, persisted to `evidence_items`, and verified in corroboration pipeline. |
@@ -40,6 +41,7 @@
 | **Observation Worker** | Consumes `stream:weather:observations`, persists to `weather_observations`. | **RUNTIME VERIFIED** | [run_observation_worker.py](file:///Users/akshatjain/Documents/SIH/back-end/app/workers/run_observation_worker.py), `ObservationWorker`. |
 | **Evidence Worker** | Consumes `stream:weather:evidence`, persists to `evidence_items`. | **RUNTIME VERIFIED** | [run_evidence_worker.py](file:///Users/akshatjain/Documents/SIH/back-end/app/workers/run_evidence_worker.py), `EvidenceWorker`. |
 | **Intelligence Pipeline** | 5-stage deterministic pipeline (`LOCATION`, `DUPLICATE`, `EVIDENCE`, `OBSERVATION`, `CREDIBILITY`). | **RUNTIME VERIFIED** | [pipeline.py](file:///Users/akshatjain/Documents/SIH/back-end/app/intelligence/pipeline.py), `IncidentPipeline`, `test_live_intelligence_integration.py`. |
+| **Multilingual Classification (R4)** | Keyword rule engine with Hindi/Hinglish (Devanagari + Roman) support for `FOG`, `DUST_STORM`, `STRONG_WIND`, `FLOOD_WATERLOGGING`, `CYCLONE_HIGH_WIND`, etc. 60-post regression suite ≥85% accuracy; 10 hoax posts credibility < 0.45. | **BUILT & TESTED** | [category_rules.py](file:///Users/akshatjain/Documents/SIH/back-end/app/intelligence/category_rules.py), `test_r4_classification_regression.py` (154 lines). |
 | **Duplicate Detection Engine** | Spatial ($R \le 2500\text{m}$) + Temporal ($\Delta T \le 3\text{h}$) + Domain-Boosted TF-IDF Vectorizer (`sparse_tfidf_ngram_v1`). | **RUNTIME VERIFIED** | [duplicate_scorer.py](file:///Users/akshatjain/Documents/SIH/back-end/app/intelligence/duplicate_scorer.py), [semantic_similarity.py](file:///Users/akshatjain/Documents/SIH/back-end/app/intelligence/semantic_similarity.py). Zero FastEmbed/ONNX dependencies in live duplicate path. |
 | **Orchestration Dispatcher** | Consumes `stream:weather:orchestration`, runs pipeline or single stages, transitions reports to `COMPLETED`. | **RUNTIME VERIFIED** | [run_dispatcher.py](file:///Users/akshatjain/Documents/SIH/back-end/app/workers/run_dispatcher.py), `OrchestrationDispatcher`. |
 | **Transactional Outbox** | PostgreSQL `realtime_outbox` with `SKIP LOCKED` batch claiming and 72h historical pruning. | **RUNTIME VERIFIED** | [run_outbox_worker.py](file:///Users/akshatjain/Documents/SIH/back-end/app/workers/run_outbox_worker.py), `RealtimeOutboxWorker`. |
@@ -48,7 +50,9 @@
 | **Frontend Realtime Manager** | Singleton `RealtimeService` with bounded deduplication (1,000 items) and React Query invalidation. | **MANUALLY & RUNTIME VERIFIED** | [realtimeService.ts](file:///Users/akshatjain/Documents/SIH/front-end/src/services/realtimeService.ts), live dashboard update without refresh. |
 | **Late Reactive Corroboration** | Late evidence/observation ingestion re-triggers credibility scoring and pushes SSE updates to UI. | **MANUALLY & RUNTIME VERIFIED** | Evidence/Observation $\rightarrow$ Outbox $\rightarrow$ Redis $\rightarrow$ Dispatcher $\rightarrow$ Recalculation $\rightarrow$ SSE $\rightarrow$ UI without refresh. |
 | **Executive Dashboard & Map** | Live Leaflet map with bounded GeoJSON (`GET /api/v1/geo/incidents`, 500-bound), macro KPI cards. | **MANUALLY & RUNTIME VERIFIED** | [DashboardPage.tsx](file:///Users/akshatjain/Documents/SIH/front-end/src/pages/DashboardPage.tsx), [LiveMapPage.tsx](file:///Users/akshatjain/Documents/SIH/front-end/src/pages/LiveMapPage.tsx). |
+| **Demo Data Segregation (R5)** | `is_demo` boolean column on `weather_reports` (Alembic `0017_report_is_demo`); backfill from `[DEMO]` title prefix and `DEMO-` tracking IDs; amber **DEMO** badge on dashboard feed, map popups, and incident detail; "Hide Demo Data" toggle on Dashboard, Map, and Incident Directory (default OFF in demo stack); `?hide_demo=true` SQL filter on all query endpoints. | **BUILT & TESTED** | [migration 0017](file:///Users/akshatjain/Documents/SIH/back-end/alembic/versions/20260930_0017_weather_reports_is_demo.py), `test_demo_filter.py` (123 lines). |
 | **Verification & Triage Queue** | Priority triage queue with side-by-side evidence inspection and immutable audit logging. | **MANUALLY & RUNTIME VERIFIED** | [AdminVerificationQueuePage.tsx](file:///Users/akshatjain/Documents/SIH/front-end/src/pages/AdminVerificationQueuePage.tsx), `POST /api/v1/verification/*`. |
+| **Admin Export, Bulk & Audit (R3)** | Operator-only streamed CSV & GeoJSON export (max 50k rows); atomic bulk verify/reject (max 100 IDs, single transaction, one `AuditLog` row per incident); paginated audit-log `GET` with filters; `AdminAuditLogPage` frontend viewer; export + bulk buttons in queue page. Auth: `get_current_operator` JWT guard. Tests: 401 without token, 422 on limit breach, CSV/GeoJSON structure, atomic audit rows, rollback on invalid ID. | **BUILT & TESTED** | [admin.py](file:///Users/akshatjain/Documents/SIH/back-end/app/api/v1/admin.py), [AdminAuditLogPage.tsx](file:///Users/akshatjain/Documents/SIH/front-end/src/pages/AdminAuditLogPage.tsx), `test_admin_endpoints.py` (7/7 pass). |
 | **Analytics Platform** | Server-aggregated activity trends and two-tier regional demographics. | **RUNTIME VERIFIED** | [AnalyticsPage.tsx](file:///Users/akshatjain/Documents/SIH/front-end/src/pages/AnalyticsPage.tsx), `GET /api/v1/analytics/*`. |
 | **Operator Auth & Route Guard (Part 5)** | JWT access token creation/validation (`pyjwt`) and bcrypt password hashing (`users` table). `POST /api/v1/auth/login` endpoint; `get_current_operator` FastAPI dependency locking `/api/v1/verification/*`; `ProtectedRoute.tsx` frontend route guard. | **IMPLEMENTED & RUNTIME VERIFIED** | [security.py](file:///Users/akshatjain/Documents/SIH/back-end/app/core/security.py), [deps.py](file:///Users/akshatjain/Documents/SIH/back-end/app/api/deps.py), [auth.py](file:///Users/akshatjain/Documents/SIH/back-end/app/api/v1/auth.py), [AuthContext.tsx](file:///Users/akshatjain/Documents/SIH/front-end/src/context/AuthContext.tsx), [ProtectedRoute.tsx](file:///Users/akshatjain/Documents/SIH/front-end/src/components/auth/ProtectedRoute.tsx). |
 | **Location Onboarding Gate (Feature 1)** | Geolocation detection with Nominatim reverse-geocode fallback, session storage persistence, and manual city search prompt. | **IMPLEMENTED & RUNTIME VERIFIED** | [LocationContext.tsx](file:///Users/akshatjain/Documents/SIH/front-end/src/context/LocationContext.tsx), [LocationGateModal.tsx](file:///Users/akshatjain/Documents/SIH/front-end/src/components/common/LocationGateModal.tsx). |
@@ -88,3 +92,4 @@
 4. **Map Query 500-Feature Bound**: GeoJSON map queries enforce a 500-feature bound (`LIMIT 500`) to protect browser memory and rendering performance. Macro totals remain authoritatively computed via server summary endpoints.
 5. **Worker Supervision**: The 6 worker processes run as standalone Python CLI modules. Production supervisor configuration (`systemd`, Kubernetes) remains an infrastructure deployment responsibility.
 6. **Dead-Letter Handling**: The `stream:weather:dead_letter` stream stores unroutable messages. Dead letter inspection and replay are performed programmatically/manually, with no continuous monitor daemon unless running.
+7. **data.gov.in Adapter**: `DATA_GOV_API_KEY` config key exists. No live weather dataset with a stable public API shape exists on data.gov.in as of 2026-09-30. The adapter stubs gracefully with a disabled-log when the key is absent rather than silently failing.
