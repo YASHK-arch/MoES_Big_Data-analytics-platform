@@ -109,11 +109,7 @@ class CredibilityScorer:
         self.cap_max = (
             cap_max_machine if cap_max_machine is not None else settings.CREDIBILITY_CAP_MAX_MACHINE
         )
-        self.total_physical_cap = (
-            total_physical_cap
-            if total_physical_cap is not None
-            else getattr(settings, "PHYSICAL_CORROBORATION_TOTAL_CAP", 0.10)
-        )
+        self.total_physical_cap = total_physical_cap
 
     def _compute_raw_signals(
         self,
@@ -164,8 +160,14 @@ class CredibilityScorer:
                 y_v = min(1.0, stn.corroboration_score * stn.relationship_weight)
                 prod_o *= 1.0 - 0.60 * y_v
             raw_s_observation = max(0.0, min(1.0, 1.0 - prod_o))
-            # P5: Total physical credibility contribution capped by config (no double counting)
-            s_observation = min(self.total_physical_cap, raw_s_observation)
+            # P5: Total physical credibility contribution capped by config when enabled
+            if self.total_physical_cap is not None:
+                s_observation = min(self.total_physical_cap, raw_s_observation)
+            elif getattr(settings, "PHYSICAL_CORROBORATION_ENABLED", False):
+                cap = getattr(settings, "PHYSICAL_CORROBORATION_TOTAL_CAP", 0.10)
+                s_observation = min(cap, raw_s_observation)
+            else:
+                s_observation = raw_s_observation
         else:
             s_observation = 0.0
 

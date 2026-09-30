@@ -55,11 +55,11 @@ class SingleFlightGridHourCache:
 
         # 1. Check in-memory cache
         if cache_key in self._in_memory_cache:
-            obs, expire_at = self._in_memory_cache[cache_key]
+            cached_obs, expire_at = self._in_memory_cache[cache_key]
             if now < expire_at:
                 self.cache_hits += 1
                 physical_cache_requests_total.labels(result="hit").inc()
-                return obs, ProviderStatus.OK, None, True
+                return cached_obs, ProviderStatus.OK, None, True
             else:
                 del self._in_memory_cache[cache_key]
 

@@ -58,7 +58,7 @@ class TestPhysicalWeatherProvidersAndCache:
             max_retries=1,
             initial_backoff_seconds=0.01,
         )
-        provider._execute_fetch = slow_fetch
+        provider._execute_fetch = slow_fetch  # type: ignore[method-assign]
 
         target_time = datetime(2026, 7, 15, 12, 0, tzinfo=timezone.utc)
         obs, status, err = await provider.fetch_observation(
@@ -206,6 +206,7 @@ class TestPhysicalWeatherProvidersAndCache:
         obs1, status1, err1, is_hit1 = await cache.get_or_fetch(lat, lon, target_time, mock_fetch)
         assert is_hit1 is False
         assert call_count == 1
+        assert obs1 is not None
         assert obs1.rainfall_1h_mm == 50.0
 
         # Call 2: Hit
@@ -213,6 +214,7 @@ class TestPhysicalWeatherProvidersAndCache:
         assert is_hit2 is True
         assert call_count == 1
         assert cache.cache_hits == 1
+        assert obs2 is not None
         assert obs2.rainfall_1h_mm == 50.0
 
     async def test_single_flight_concurrent_deduplication(self) -> None:

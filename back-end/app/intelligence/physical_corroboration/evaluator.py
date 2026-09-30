@@ -72,7 +72,7 @@ CATEGORY_PRIMARY_VARIABLES = {
 
 def evaluate(
     category: str,
-    observation: PhysicalObservation,
+    observation: Optional[PhysicalObservation],
     incident_time: datetime,
     incident_coords: Tuple[float, float],
     config: Optional[PhysicalCorroborationConfig] = None,

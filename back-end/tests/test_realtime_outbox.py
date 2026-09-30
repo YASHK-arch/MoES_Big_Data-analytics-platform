@@ -226,6 +226,9 @@ async def test_outbox_worker_handles_redis_failure_with_exponential_backoff(
     db_session: AsyncSession,
 ):
     """Verify Redis outage increments attempts, records last_error, and calculates next_retry_at."""
+    await db_session.execute(delete(RealtimeOutbox))
+    await db_session.commit()
+
     mock_redis = MagicMock(spec=AsyncRedisClient)
     mock_redis.xadd = AsyncMock(side_effect=ConnectionError("Redis connection refused"))
 
@@ -300,6 +303,9 @@ async def test_outbox_worker_moves_to_dead_letter_on_max_attempts(db_session: As
 @pytest.mark.asyncio
 async def test_outbox_worker_preserves_stable_event_id_across_retries(db_session: AsyncSession):
     """Verify the exact same stable event_id is transmitted on publication retries."""
+    await db_session.execute(delete(RealtimeOutbox))
+    await db_session.commit()
+
     mock_redis = MagicMock(spec=AsyncRedisClient)
     mock_redis.xadd = AsyncMock(return_value="1725000000020-0")
 

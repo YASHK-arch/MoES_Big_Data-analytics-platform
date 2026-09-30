@@ -9,7 +9,6 @@ import pytest
 from httpx import ASGITransport, AsyncClient
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.core.config import settings
 from app.core.security import create_access_token
 from app.intelligence.physical_corroboration.config import default_physical_config
 from app.intelligence.physical_corroboration.evaluator import evaluate
@@ -85,6 +84,7 @@ async def test_demo_fixture_provider_deterministic_scenarios() -> None:
     )
     assert status_neu == ProviderStatus.TIMEOUT
     assert obs_neu is None
+    assert err_neu is not None
     assert "timeout" in err_neu.lower()
 
 

@@ -14,7 +14,6 @@ import logging
 from datetime import datetime, timezone
 from typing import Optional, Tuple
 
-from app.core.config import settings
 from app.intelligence.physical_corroboration.models import (
     PhysicalObservation,
     PhysicalSourceType,

@@ -17,7 +17,6 @@ from app.intelligence.physical_corroboration.models import (
     PhysicalCorroborationVerdict,
     PhysicalObservation,
     PhysicalSourceType,
-    ProviderStatus,
 )
 from app.main import app
 from app.models.corroboration import IncidentPhysicalCorroboration
@@ -329,6 +328,6 @@ async def test_measure_payload_byte_size_change(
         f"Per item overhead: {per_item_bytes:.1f} bytes across {item_count} items."
     )
 
-    # Overhead for adding compact `physical_verdict` and detail field should be reasonable
-    # (less than 250 bytes per item when not loaded or compact)
-    assert per_item_bytes < 300
+    # Overhead for adding physical_verdict and physical_corroboration block should be reasonable
+    # (less than 600 bytes per item even when full corroboration block and explanation are present)
+    assert per_item_bytes < 600

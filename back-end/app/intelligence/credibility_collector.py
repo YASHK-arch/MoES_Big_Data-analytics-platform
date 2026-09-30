@@ -15,6 +15,7 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
+from app.core.config import settings
 from app.intelligence.schemas import (
     ContradictionInput,
     DigitalEvidenceGroupInput,

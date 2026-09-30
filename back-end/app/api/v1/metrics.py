@@ -26,7 +26,6 @@ from prometheus_client import (
 )
 from sqlalchemy import text
 
-from app.core import metrics as physical_metrics
 from app.core.config import settings
 from app.core.redis import redis_client
 from app.db.session import async_session_factory, engine

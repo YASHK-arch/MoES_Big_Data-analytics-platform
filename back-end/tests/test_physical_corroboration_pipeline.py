@@ -4,13 +4,11 @@ from __future__ import annotations
 
 import uuid
 from datetime import datetime, timezone
-from unittest.mock import AsyncMock
 
 import pytest
 from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.intelligence.physical_corroboration.config import PhysicalCorroborationConfig
 from app.intelligence.physical_corroboration.models import (
     PhysicalCorroborationVerdict,
     PhysicalObservation,
@@ -20,7 +18,6 @@ from app.intelligence.physical_corroboration.models import (
 from app.intelligence.physical_corroboration.providers.base import BaseWeatherProvider
 from app.intelligence.physical_corroboration.service import PhysicalCorroborationService
 from app.models.corroboration import IncidentPhysicalCorroboration
-from app.models.outbox import RealtimeOutbox
 from app.models.report import WeatherReport
 from app.models.source import Source
 

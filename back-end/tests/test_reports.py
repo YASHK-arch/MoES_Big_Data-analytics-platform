@@ -578,8 +578,8 @@ async def test_list_reports_privacy_no_internal_leak():
             assert "source_id" not in first
             assert "raw_payload" not in first
             assert "text_embedding" not in first
-        assert "credibility_explanation" not in first
-        assert "audit_logs" not in first
+            assert "credibility_explanation" not in first
+            assert "audit_logs" not in first
 
 
 @pytest.mark.asyncio
@@ -725,8 +725,8 @@ async def test_submit_citizen_report_rate_limiting():
 
     from app.core.rate_limiter import report_rate_limiter
 
-    report_rate_limiter.reset("reports:127.0.0.1")
-    report_rate_limiter.reset("reports:testclient")
+    await report_rate_limiter.reset_async("reports:127.0.0.1")
+    await report_rate_limiter.reset_async("reports:testclient")
 
     payload = {
         "latitude": "19.0760",
@@ -758,6 +758,8 @@ async def test_submit_citizen_report_rate_limiting():
         patch("app.core.rate_limiter.time.time", return_value=1700000000.0),
     ):
         mock_create.return_value = (mock_report, 0)
+        await report_rate_limiter.reset_async("reports:127.0.0.1")
+        await report_rate_limiter.reset_async("reports:testclient")
         async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as client:
             # First 10 requests should succeed (HTTP 201)
             for i in range(10):

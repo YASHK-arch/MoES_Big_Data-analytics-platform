@@ -10,7 +10,7 @@ import logging
 import time
 import uuid
 from datetime import datetime, timezone
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, Optional
 
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -30,9 +30,6 @@ from app.intelligence.physical_corroboration.config import (
 from app.intelligence.physical_corroboration.evaluator import evaluate
 from app.intelligence.physical_corroboration.models import (
     PhysicalCorroborationResult,
-    PhysicalCorroborationVerdict,
-    PhysicalObservation,
-    PhysicalSourceType,
     ProviderStatus,
 )
 from app.intelligence.physical_corroboration.providers.base import BaseWeatherProvider

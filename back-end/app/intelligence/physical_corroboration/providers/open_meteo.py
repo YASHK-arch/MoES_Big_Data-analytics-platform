@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import logging
 from datetime import datetime, timezone
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Optional, Tuple
 
 import httpx
 
@@ -100,7 +100,7 @@ class OpenMeteoProvider(BaseWeatherProvider):
 
         client = await self._get_client()
         try:
-            response = await client.get(endpoint, params=params)
+            response = await client.get(endpoint, params=params)  # type: ignore[arg-type]
         except httpx.TimeoutException:
             raise
         except httpx.RequestError as exc:

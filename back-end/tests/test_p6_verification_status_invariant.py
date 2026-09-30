@@ -14,10 +14,10 @@ import pytest
 from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.orchestration.handlers import StageName
-from app.orchestration.incident_pipeline import incident_pipeline
 from app.models.report import WeatherReport
 from app.models.source import Source
+from app.orchestration.handlers import StageName
+from app.orchestration.incident_pipeline import incident_pipeline
 
 
 @pytest.mark.asyncio

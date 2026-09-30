@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-import asyncio
 import time
 import uuid
 from datetime import datetime, timezone
@@ -14,15 +13,6 @@ from httpx import ASGITransport, AsyncClient
 from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.core.config import settings
-from app.core.metrics import (
-    physical_cache_requests_total,
-    physical_eval_duration_seconds,
-    physical_fetch_duration_seconds,
-    physical_provider_fetch_total,
-    physical_recomputes_total,
-    physical_verdicts_total,
-)
 from app.core.security import create_access_token
 from app.intelligence.physical_corroboration.config import default_physical_config
 from app.intelligence.physical_corroboration.models import (
@@ -298,7 +288,7 @@ async def test_drill_latency_benchmark() -> None:
     """Benchmark p50 and p95 latencies: With vs Without feature, Cache Hit vs Cache Miss."""
     provider = MockFailingProvider(mode="HEALTHY")
     cache = SingleFlightGridHourCache(ttl_seconds=3600)
-    service = PhysicalCorroborationService(provider=provider, cache=cache)
+    _ = PhysicalCorroborationService(provider=provider, cache=cache)
     now = datetime.now(timezone.utc)
     iterations = 50
 
