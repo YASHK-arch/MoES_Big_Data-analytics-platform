@@ -121,12 +121,11 @@ class Settings(BaseSettings):
     GDACS_REQUEST_TIMEOUT_SECONDS: float = 15.0
 
     # Phase 3 / Round 9b: Indian Weather & Disaster RSS News Ingestion Adapter
+    # IMD and NDTV feeds were disabled after K1 live checks returned HTTP 404 on 2026-09-30.
     RSS_NEWS_FEEDS: List[str] = [
-        "https://mausam.imd.gov.in/responsive/rssFeed.php",
         "https://www.thehindu.com/news/national/feeder/default.rss",
         "https://indianexpress.com/section/india/feed/",
         "https://timesofindia.indiatimes.com/rssfeeds/-2128936835.cms",
-        "https://feeds.feedburner.com/ndtvnews-india-weather",
     ]
     RSS_USER_AGENT: str = (
         "NationalWeatherPlatform-RSS/1.0 (+https://weather.platform.gov.in; disaster-monitoring)"

@@ -123,6 +123,23 @@ class TestRSSNewsAdapter:
         assert shimla_raw.payload["url"] == "https://disaster-bulletin.in/bulletins/shimla-rain-alert"
         assert "Landslide warning" in shimla_raw.payload["description"]
 
+    def test_parse_article_caps_persisted_summary_and_raw_payload(self):
+        adapter = RSSNewsAdapter()
+        full_description = "x" * 700
+
+        evidence = adapter.parse_article(
+            {
+                "title": "Heavy rain report in Puri",
+                "url": "https://weather-news.in/puri-rain",
+                "description": full_description,
+            }
+        )
+
+        assert evidence.text_snippet is not None
+        assert len(evidence.text_snippet) == 500
+        assert evidence.raw_payload["description"] == evidence.text_snippet
+        assert len(evidence.raw_payload["description"]) == 500
+
     @pytest.mark.asyncio
     async def test_robots_txt_respect(self):
         """Verify robots.txt compliance skips disallowed feed paths."""

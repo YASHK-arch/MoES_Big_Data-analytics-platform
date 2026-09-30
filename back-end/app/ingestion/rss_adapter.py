@@ -19,6 +19,7 @@ from app.ingestion.schemas import NormalizedEvidenceEvent, RawIngestionEvent
 from app.intelligence.resolver import location_resolver
 
 logger = logging.getLogger(__name__)
+RSS_SUMMARY_MAX_LENGTH = 500
 
 
 class RobotsTxtChecker:
@@ -385,6 +386,7 @@ class RSSNewsAdapter:
         external_id = f"RSS-{url_hash}"
 
         description = payload.get("description", "").strip()
+        summary = description[:RSS_SUMMARY_MAX_LENGTH]
         pub_date = self.parse_datetime(payload.get("pub_date_raw"))
 
         # Domain extraction
@@ -405,6 +407,7 @@ class RSSNewsAdapter:
         }
 
         raw_payload = dict(payload)
+        raw_payload["description"] = summary
         raw_payload["location"] = resolved_location
 
         return NormalizedEvidenceEvent(
@@ -416,7 +419,7 @@ class RSSNewsAdapter:
             publisher_domain=domain or None,
             language="English",
             published_at=pub_date,
-            text_snippet=description or None,
+            text_snippet=summary or None,
             sha256_hash=url_hash,
             raw_payload=raw_payload,
         )
