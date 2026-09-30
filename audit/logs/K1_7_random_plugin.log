@@ -1,0 +1,15 @@
+$ .venv/bin/python -m pip show pytest-randomly
+NOT INSTALLED: installing pytest-randomly
+Collecting pytest-randomly
+  Downloading pytest_randomly-5.0.0-py3-none-any.whl.metadata (8.9 kB)
+Requirement already satisfied: pytest>=8 in ./.venv/lib/python3.14/site-packages (from pytest-randomly) (8.4.2)
+Requirement already satisfied: iniconfig>=1 in ./.venv/lib/python3.14/site-packages (from pytest>=8->pytest-randomly) (2.3.0)
+Requirement already satisfied: packaging>=20 in ./.venv/lib/python3.14/site-packages (from pytest>=8->pytest-randomly) (26.3)
+Requirement already satisfied: pluggy<2,>=1.5 in ./.venv/lib/python3.14/site-packages (from pytest>=8->pytest-randomly) (1.6.0)
+Requirement already satisfied: pygments>=2.7.2 in ./.venv/lib/python3.14/site-packages (from pytest>=8->pytest-randomly) (2.21.0)
+Downloading pytest_randomly-5.0.0-py3-none-any.whl (8.9 kB)
+Installing collected packages: pytest-randomly
+Successfully installed pytest-randomly-5.0.0
+
+[notice] A new release of pip is available: 25.2 -> 26.2.1
+[notice] To update, run: /Users/akshatjain/Documents/SIH/back-end/.venv/bin/python -m pip install --upgrade pip

@@ -140,7 +140,7 @@ async def seed_test_operator(db_session: AsyncSession, clean_test_database: None
             is_active=True,
         )
         db_session.add(user)
-        await db_session.commit()
+    await db_session.commit()
 
 
 @pytest_asyncio.fixture

@@ -3,7 +3,7 @@
 import uuid
 from datetime import datetime, timezone
 
-from sqlalchemy import Column, DateTime, ForeignKey, String
+from sqlalchemy import Column, DateTime, ForeignKey, Index, String
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import relationship
 
@@ -16,8 +16,8 @@ class IncidentFeedback(Base):
     __tablename__ = "incident_feedback"
 
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
-    report_id = Column(UUID(as_uuid=True), ForeignKey("weather_reports.id", ondelete="CASCADE"), nullable=False, index=True)
-    user_id = Column(UUID(as_uuid=True), ForeignKey("users.id", ondelete="SET NULL"), nullable=True, index=True)
+    report_id = Column(UUID(as_uuid=True), ForeignKey("weather_reports.id", ondelete="CASCADE"), nullable=False)
+    user_id = Column(UUID(as_uuid=True), ForeignKey("users.id", ondelete="SET NULL"), nullable=True)
 
     vote_type = Column(String(20), nullable=False)  # CONFIRM, DISPUTE
     client_ip = Column(String(45), nullable=True)
@@ -27,3 +27,8 @@ class IncidentFeedback(Base):
 
     # Relationships
     report = relationship("WeatherReport", backref="feedback_votes")
+
+    __table_args__ = (
+        Index("idx_feedback_report_id", "report_id"),
+        Index("idx_feedback_user_id", "user_id"),
+    )

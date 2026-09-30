@@ -25,7 +25,6 @@ class User(Base):
         String(255),
         unique=True,
         nullable=False,
-        index=True,
     )
     full_name: Mapped[str] = mapped_column(
         String(150),

@@ -237,7 +237,8 @@ class TestAdminEndpoints:
 
         from unittest.mock import AsyncMock, MagicMock
 
-        from app.api.v1.events import broadcaster, get_redis_client
+        from app.api.v1 import events as events_module
+        from app.api.v1.events import SSEBroadcaster, get_redis_client
         from app.core.redis import AsyncRedisClient, redis_client
 
         stream_entries = await redis_client.xrevrange(
@@ -259,6 +260,9 @@ class TestAdminEndpoints:
         sse_redis.close = AsyncMock()
         sse_redis.xrange = AsyncMock(side_effect=[[('0-0', {})], [matching_entry]])
         sse_redis.xread = AsyncMock(side_effect=ConnectionError("End SSE test stream"))
+        original_broadcaster = events_module.broadcaster
+        test_broadcaster = SSEBroadcaster()
+        events_module.broadcaster = test_broadcaster
         app.dependency_overrides[get_redis_client] = lambda: sse_redis
         try:
             async with AsyncClient(
@@ -273,7 +277,8 @@ class TestAdminEndpoints:
             assert "event: report.verification_changed" in sse_lines
         finally:
             app.dependency_overrides.pop(get_redis_client, None)
-            await broadcaster.stop()
+            await test_broadcaster.stop()
+            events_module.broadcaster = original_broadcaster
 
         res_logs = await api_client.get("/api/v1/admin/audit-logs?action=VERIFY")
         assert res_logs.status_code == 200

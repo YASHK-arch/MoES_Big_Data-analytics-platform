@@ -41,7 +41,6 @@ class WeatherReport(Base):
         String(32),
         unique=True,
         nullable=False,
-        index=True,
     )
     source_id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True),
@@ -52,7 +51,6 @@ class WeatherReport(Base):
         UUID(as_uuid=True),
         ForeignKey("users.id", ondelete="SET NULL"),
         nullable=True,
-        index=True,
     )
     external_id: Mapped[Optional[str]] = mapped_column(
         String(255),
@@ -117,7 +115,6 @@ class WeatherReport(Base):
         Float,
         nullable=False,
         default=0.0,
-        index=True,
     )
     credibility_explanation: Mapped[Optional[Dict[str, Any]]] = mapped_column(
         JSONB,
@@ -237,6 +234,28 @@ class WeatherReport(Base):
     )
 
     __table_args__ = (
+        Index("idx_weather_reports_cat_occ", "reported_category", "occurred_at"),
+        Index("idx_weather_reports_sev_occ", "severity", "occurred_at"),
+        Index(
+            "idx_weather_reports_dashboard_summary",
+            "occurred_at",
+            "verification_status",
+            "severity",
+            "reported_category",
+        ),
+        Index(
+            "idx_weather_reports_summary_cov",
+            "verification_status",
+            "severity",
+            postgresql_include=["credibility_score", "id"],
+        ),
+        Index(
+            "idx_weather_reports_geo_sort",
+            occurred_at.desc().nulls_last(),
+            created_at.desc(),
+            postgresql_where=geom.is_not(None),
+        ),
+        Index("idx_weather_reports_user_id", "user_id"),
         Index("idx_weather_reports_status_time", "verification_status", occurred_at.desc()),
         Index("idx_weather_reports_credibility", credibility_score.desc()),
         Index("idx_weather_reports_source_external", "source_id", "external_id"),

@@ -1,0 +1,46 @@
+INFO  [alembic.runtime.migration] Context impl PostgresqlImpl.
+INFO  [alembic.runtime.migration] Will assume transactional DDL.
+INFO  [alembic.runtime.plugins] setting up autogenerate plugin alembic.autogenerate.schemas
+INFO  [alembic.runtime.plugins] setting up autogenerate plugin alembic.autogenerate.tables
+INFO  [alembic.runtime.plugins] setting up autogenerate plugin alembic.autogenerate.types
+INFO  [alembic.runtime.plugins] setting up autogenerate plugin alembic.autogenerate.constraints
+INFO  [alembic.runtime.plugins] setting up autogenerate plugin alembic.autogenerate.defaults
+INFO  [alembic.runtime.plugins] setting up autogenerate plugin alembic.autogenerate.comments
+INFO  [alembic.runtime.plugins] setting up autogenerate plugin alembic.autogenerate.checkconstraint_byname
+INFO  [alembic.autogenerate.compare.constraints] Detected added index 'ix_forecast_advisories_valid_from' on '('valid_from',)'
+INFO  [alembic.autogenerate.compare.constraints] Detected added index 'ix_forecast_advisories_valid_until' on '('valid_until',)'
+INFO  [alembic.autogenerate.compare.constraints] Detected added index 'ix_realtime_outbox_next_retry_at' on '('next_retry_at',)'
+INFO  [alembic.autogenerate.compare.constraints] Detected removed index 'ix_users_email' on 'users'
+INFO  [alembic.autogenerate.compare.constraints] Detected changed index 'idx_weather_reports_archive_credibility' on 'weather_reports_archive': expression #1 'credibility_score' to 'credibility_score DESC'
+INFO  [alembic.autogenerate.compare.constraints] Detected changed index 'idx_weather_reports_archive_status_time' on 'weather_reports_archive': expression #2 'occurred_at' to 'occurred_at DESC'
+INFO  [alembic.autogenerate.compare.constraints] Detected added index 'ix_weather_reports_archive_external_id' on '('external_id',)'
+ERROR [alembic.util.messaging] New upgrade operations detected: [('add_index', Index('ix_forecast_advisories_valid_from', Column('valid_from', DateTime(timezone=True), table=<forecast_advisories>, nullable=False))), ('add_index', Index('ix_forecast_advisories_valid_until', Column('valid_until', DateTime(timezone=True), table=<forecast_advisories>, nullable=False))), ('add_index', Index('ix_realtime_outbox_next_retry_at', Column('next_retry_at', DateTime(timezone=True), table=<realtime_outbox>))), ('remove_index', Index('ix_users_email', Column('email', VARCHAR(length=255), table=<users>, nullable=False), unique=True)), ('remove_index', Index('idx_weather_reports_archive_credibility', Column('credibility_score', DOUBLE_PRECISION(precision=53), table=<weather_reports_archive>, nullable=False, server_default=DefaultClause(<sqlalchemy.sql.elements.TextClause object at 0x10bd53d50>, for_update=False)))), ('add_index', Index('idx_weather_reports_archive_credibility', <sqlalchemy.sql.elements.UnaryExpression object at 0x10bbc12e0>)), ('remove_index', Index('idx_weather_reports_archive_status_time', Column('verification_status', VARCHAR(length=30), table=<weather_reports_archive>, nullable=False, server_default=DefaultClause(<sqlalchemy.sql.elements.TextClause object at 0x10bd53cd0>, for_update=False)), Column('occurred_at', TIMESTAMP(timezone=True), table=<weather_reports_archive>, nullable=False))), ('add_index', Index('idx_weather_reports_archive_status_time', Column('verification_status', String(length=30), table=<weather_reports_archive>, nullable=False, default=ScalarElementColumnDefault('VERIFIED')), <sqlalchemy.sql.elements.UnaryExpression object at 0x10bbc15b0>)), ('add_index', Index('ix_weather_reports_archive_external_id', Column('external_id', String(length=255), table=<weather_reports_archive>)))]
+  FAILED: New upgrade operations detected: [('add_index',
+  Index('ix_forecast_advisories_valid_from', Column('valid_from',
+  DateTime(timezone=True), table=<forecast_advisories>, nullable=False))),
+  ('add_index', Index('ix_forecast_advisories_valid_until',
+  Column('valid_until', DateTime(timezone=True), table=<forecast_advisories>,
+  nullable=False))), ('add_index', Index('ix_realtime_outbox_next_retry_at',
+  Column('next_retry_at', DateTime(timezone=True), table=<realtime_outbox>))),
+  ('remove_index', Index('ix_users_email', Column('email', VARCHAR(length=255),
+  table=<users>, nullable=False), unique=True)), ('remove_index',
+  Index('idx_weather_reports_archive_credibility', Column('credibility_score',
+  DOUBLE_PRECISION(precision=53), table=<weather_reports_archive>,
+  nullable=False,
+  server_default=DefaultClause(<sqlalchemy.sql.elements.TextClause object at
+  0x10bd53d50>, for_update=False)))), ('add_index',
+  Index('idx_weather_reports_archive_credibility',
+  <sqlalchemy.sql.elements.UnaryExpression object at 0x10bbc12e0>)),
+  ('remove_index', Index('idx_weather_reports_archive_status_time',
+  Column('verification_status', VARCHAR(length=30),
+  table=<weather_reports_archive>, nullable=False,
+  server_default=DefaultClause(<sqlalchemy.sql.elements.TextClause object at
+  0x10bd53cd0>, for_update=False)), Column('occurred_at',
+  TIMESTAMP(timezone=True), table=<weather_reports_archive>, nullable=False))),
+  ('add_index', Index('idx_weather_reports_archive_status_time',
+  Column('verification_status', String(length=30),
+  table=<weather_reports_archive>, nullable=False,
+  default=ScalarElementColumnDefault('VERIFIED')),
+  <sqlalchemy.sql.elements.UnaryExpression object at 0x10bbc15b0>)),
+  ('add_index', Index('ix_weather_reports_archive_external_id',
+  Column('external_id', String(length=255), table=<weather_reports_archive>)))]

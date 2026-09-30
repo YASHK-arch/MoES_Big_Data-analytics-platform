@@ -28,7 +28,6 @@ class WeatherReportArchive(Base):
     tracking_id: Mapped[str] = mapped_column(
         String(32),
         nullable=False,
-        index=True,
     )
     source_id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True),
@@ -79,7 +78,6 @@ class WeatherReportArchive(Base):
     occurred_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True),
         nullable=False,
-        index=True,
     )
     processing_status: Mapped[str] = mapped_column(
         String(30),
@@ -90,13 +88,11 @@ class WeatherReportArchive(Base):
         String(30),
         nullable=False,
         default="VERIFIED",
-        index=True,
     )
     credibility_score: Mapped[float] = mapped_column(
         Float,
         nullable=False,
         default=0.0,
-        index=True,
     )
     credibility_explanation: Mapped[Optional[Dict[str, Any]]] = mapped_column(
         JSONB,
@@ -118,11 +114,13 @@ class WeatherReportArchive(Base):
         DateTime(timezone=True),
         server_default=func.now(),
         nullable=False,
-        index=True,
     )
 
     __table_args__ = (
+        Index("idx_weather_reports_archive_tracking_id", "tracking_id"),
+        Index("idx_weather_reports_archive_occurred_at", "occurred_at"),
         Index("idx_weather_reports_archive_status_time", "verification_status", occurred_at.desc()),
         Index("idx_weather_reports_archive_credibility", credibility_score.desc()),
         Index("idx_weather_reports_archive_source_external", "source_id", "external_id"),
+        Index("idx_weather_reports_archive_archived_at", "archived_at"),
     )

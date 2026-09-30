@@ -263,6 +263,9 @@ async def test_outbox_worker_handles_redis_failure_with_exponential_backoff(
 @pytest.mark.asyncio
 async def test_outbox_worker_moves_to_dead_letter_on_max_attempts(db_session: AsyncSession):
     """Verify outbox row moves to DEAD_LETTER after exceeding max_attempts."""
+    await db_session.execute(delete(RealtimeOutbox))
+    await db_session.commit()
+
     mock_redis = MagicMock(spec=AsyncRedisClient)
     mock_redis.xadd = AsyncMock(side_effect=ConnectionError("Persistent Redis Outage"))
 

@@ -23,12 +23,10 @@ class ForecastAdvisory(Base):
     source_code: Mapped[str] = mapped_column(
         String(50),
         nullable=False,
-        index=True,
     )
     hazard_type: Mapped[str] = mapped_column(
         String(100),
         nullable=False,
-        index=True,
     )
     severity: Mapped[str] = mapped_column(
         String(20),
@@ -72,5 +70,7 @@ class ForecastAdvisory(Base):
     )
 
     __table_args__ = (
+        Index("idx_forecast_advisories_source", "source_code"),
+        Index("idx_forecast_advisories_hazard", "hazard_type"),
         Index("idx_forecast_advisories_validity", "valid_until", "hazard_type"),
     )

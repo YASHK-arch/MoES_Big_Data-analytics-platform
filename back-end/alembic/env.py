@@ -32,6 +32,10 @@ target_metadata = Base.metadata
 
 def include_object(object, name, type_, reflected, compare_to):
     """Filter out PostGIS system tables and non-public schemas from Alembic migrations."""
+    table = object if type_ == "table" else getattr(object, "table", None)
+    schema = getattr(object, "schema", None) or getattr(table, "schema", None)
+    if schema in ("tiger", "tiger_data", "topology"):
+        return False
     if type_ == "table":
         # Ignore PostGIS internal / Tiger / Topology tables
         if name in (
@@ -41,8 +45,6 @@ def include_object(object, name, type_, reflected, compare_to):
             "raster_columns",
             "raster_overviews",
         ):
-            return False
-        if getattr(object, "schema", None) in ("tiger", "tiger_data", "topology"):
             return False
     return True
 

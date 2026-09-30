@@ -1,0 +1,1432 @@
+$ .venv/bin/mypy app tests
+scripts/seed_demo_data.py:82: error: Incompatible types in assignment (expression has type "object", variable has type "SQLCoreOperations[str] | str")  [assignment]
+scripts/seed_demo_data.py:83: error: Incompatible types in assignment (expression has type "object", variable has type "SQLCoreOperations[str] | str")  [assignment]
+scripts/seed_demo_data.py:198: error: Incompatible types in assignment (expression has type "object", variable has type "Column[int]")  [assignment]
+scripts/seed_demo_data.py:199: error: Incompatible types in assignment (expression has type "object", variable has type "Column[int]")  [assignment]
+tests/test_live_intelligence_integration.py:535: error: Invalid index type "str" for "dict[StageName, StageStateModel]"; expected type "StageName"  [index]
+tests/test_live_intelligence_integration.py:536: error: Invalid index type "str" for "dict[StageName, StageStateModel]"; expected type "StageName"  [index]
+tests/test_live_intelligence_integration.py:561: error: Invalid index type "str" for "dict[StageName, StageStateModel]"; expected type "StageName"  [index]
+tests/test_live_intelligence_integration.py:562: error: Invalid index type "str" for "dict[StageName, StageStateModel]"; expected type "StageName"  [index]
+tests/test_live_intelligence_integration.py:564: error: Invalid index type "str" for "dict[StageName, StageStateModel]"; expected type "StageName"  [index]
+tests/test_realtime_sse.py:149: note: By default the bodies of untyped functions are not checked, consider using --check-untyped-defs  [annotation-unchecked]
+tests/test_realtime_sse.py:191: note: By default the bodies of untyped functions are not checked, consider using --check-untyped-defs  [annotation-unchecked]
+tests/test_realtime_sse.py:220: note: By default the bodies of untyped functions are not checked, consider using --check-untyped-defs  [annotation-unchecked]
+tests/test_realtime_sse.py:245: note: By default the bodies of untyped functions are not checked, consider using --check-untyped-defs  [annotation-unchecked]
+tests/test_realtime_sse.py:353: note: By default the bodies of untyped functions are not checked, consider using --check-untyped-defs  [annotation-unchecked]
+tests/test_realtime_sse.py:406: note: By default the bodies of untyped functions are not checked, consider using --check-untyped-defs  [annotation-unchecked]
+tests/test_realtime_sse.py:407: note: By default the bodies of untyped functions are not checked, consider using --check-untyped-defs  [annotation-unchecked]
+tests/test_realtime_sse.py:436: note: By default the bodies of untyped functions are not checked, consider using --check-untyped-defs  [annotation-unchecked]
+tests/test_realtime_sse.py:477: note: By default the bodies of untyped functions are not checked, consider using --check-untyped-defs  [annotation-unchecked]
+Found 9 errors in 2 files (checked 192 source files)
+$ DATABASE_URL=weather_platform_audit .venv/bin/alembic check
+INFO  [alembic.autogenerate.compare.constraints] Detected added index 'ix_realtime_outbox_event_id' on '('event_id',)'
+INFO  [alembic.autogenerate.compare.constraints] Detected added index 'ix_realtime_outbox_event_type' on '('event_type',)'
+INFO  [alembic.autogenerate.compare.constraints] Detected added index 'ix_realtime_outbox_next_retry_at' on '('next_retry_at',)'
+INFO  [alembic.autogenerate.compare.constraints] Detected added index 'ix_realtime_outbox_status' on '('status',)'
+INFO  [alembic.autogenerate.compare.constraints] Detected removed index 'idx_relief_centers_active' on 'relief_centers'
+INFO  [alembic.autogenerate.compare.constraints] Detected removed index 'idx_relief_centers_district' on 'relief_centers'
+INFO  [alembic.autogenerate.compare.constraints] Detected removed index 'idx_relief_centers_name' on 'relief_centers'
+INFO  [alembic.autogenerate.compare.constraints] Detected removed index 'idx_relief_centers_state' on 'relief_centers'
+INFO  [alembic.autogenerate.compare.constraints] Detected added index 'ix_relief_centers_district_name' on '('district_name',)'
+INFO  [alembic.autogenerate.compare.constraints] Detected added index 'ix_relief_centers_is_active' on '('is_active',)'
+INFO  [alembic.autogenerate.compare.constraints] Detected added index 'ix_relief_centers_name' on '('name',)'
+INFO  [alembic.autogenerate.compare.constraints] Detected added index 'ix_relief_centers_state_name' on '('state_name',)'
+INFO  [alembic.autogenerate.compare.constraints] Detected removed unique constraint 'users_email_key' on 'users'
+INFO  [alembic.autogenerate.compare.constraints] Detected removed index 'idx_weather_reports_cat_occ' on 'weather_reports'
+INFO  [alembic.autogenerate.compare.constraints] Detected removed index 'idx_weather_reports_dashboard_summary' on 'weather_reports'
+INFO  [alembic.autogenerate.compare.constraints] Detected removed index 'idx_weather_reports_geo_sort' on 'weather_reports'
+INFO  [alembic.autogenerate.compare.constraints] Detected removed index 'idx_weather_reports_sev_occ' on 'weather_reports'
+INFO  [alembic.autogenerate.compare.constraints] Detected removed index 'idx_weather_reports_summary_cov' on 'weather_reports'
+INFO  [alembic.autogenerate.compare.constraints] Detected removed index 'idx_weather_reports_user_id' on 'weather_reports'
+INFO  [alembic.autogenerate.compare.constraints] Detected removed unique constraint 'weather_reports_tracking_id_key' on 'weather_reports'
+INFO  [alembic.autogenerate.compare.constraints] Detected added index 'ix_weather_reports_credibility_score' on '('credibility_score',)'
+INFO  [alembic.autogenerate.compare.constraints] Detected added index 'ix_weather_reports_tracking_id' on '('tracking_id',)'
+INFO  [alembic.autogenerate.compare.constraints] Detected added index 'ix_weather_reports_user_id' on '('user_id',)'
+INFO  [alembic.autogenerate.compare.constraints] Detected removed index 'idx_weather_reports_archive_archived_at' on 'weather_reports_archive'
+INFO  [alembic.autogenerate.compare.constraints] Detected removed index 'idx_weather_reports_archive_occurred_at' on 'weather_reports_archive'
+INFO  [alembic.autogenerate.compare.constraints] Detected removed index 'idx_weather_reports_archive_tracking_id' on 'weather_reports_archive'
+INFO  [alembic.autogenerate.compare.constraints] Detected changed index 'idx_weather_reports_archive_credibility' on 'weather_reports_archive': expression #1 'credibility_score' to 'credibility_score DESC'
+INFO  [alembic.autogenerate.compare.constraints] Detected changed index 'idx_weather_reports_archive_status_time' on 'weather_reports_archive': expression #2 'occurred_at' to 'occurred_at DESC'
+INFO  [alembic.autogenerate.compare.constraints] Detected added index 'ix_weather_reports_archive_archived_at' on '('archived_at',)'
+INFO  [alembic.autogenerate.compare.constraints] Detected added index 'ix_weather_reports_archive_credibility_score' on '('credibility_score',)'
+INFO  [alembic.autogenerate.compare.constraints] Detected added index 'ix_weather_reports_archive_external_id' on '('external_id',)'
+INFO  [alembic.autogenerate.compare.constraints] Detected added index 'ix_weather_reports_archive_occurred_at' on '('occurred_at',)'
+INFO  [alembic.autogenerate.compare.constraints] Detected added index 'ix_weather_reports_archive_tracking_id' on '('tracking_id',)'
+INFO  [alembic.autogenerate.compare.constraints] Detected added index 'ix_weather_reports_archive_verification_status' on '('verification_status',)'
+ERROR [alembic.util.messaging] New upgrade operations detected: [('remove_index', Index('idx_forecast_advisories_hazard', Column('hazard_type', VARCHAR(length=100), table=<forecast_advisories>, nullable=False))), ('remove_index', Index('idx_forecast_advisories_source', Column('source_code', VARCHAR(length=50), table=<forecast_advisories>, nullable=False))), ('add_index', Index('ix_forecast_advisories_hazard_type', Column('hazard_type', String(length=100), table=<forecast_advisories>, nullable=False))), ('add_index', Index('ix_forecast_advisories_source_code', Column('source_code', String(length=50), table=<forecast_advisories>, nullable=False))), ('add_index', Index('ix_forecast_advisories_valid_from', Column('valid_from', DateTime(timezone=True), table=<forecast_advisories>, nullable=False))), ('add_index', Index('ix_forecast_advisories_valid_until', Column('valid_until', DateTime(timezone=True), table=<forecast_advisories>, nullable=False))), ('remove_index', Index('idx_feedback_report_id', Column('report_id', UUID(), table=<incident_feedback>, nullable=False))), ('remove_index', Index('idx_feedback_user_id', Column('user_id', UUID(), table=<incident_feedback>))), ('add_index', Index('ix_incident_feedback_report_id', Column('report_id', UUID(), table=<incident_feedback>, nullable=False))), ('add_index', Index('ix_incident_feedback_user_id', Column('user_id', UUID(), table=<incident_feedback>))), ('remove_index', Index('idx_realtime_outbox_created_at', Column('created_at', TIMESTAMP(timezone=True), table=<realtime_outbox>, nullable=False, server_default=DefaultClause(<sqlalchemy.sql.elements.TextClause object at 0x10bc2a650>, for_update=False)))), ('remove_index', Index('idx_realtime_outbox_entity_id', Column('entity_id', VARCHAR(length=100), table=<realtime_outbox>, nullable=False))), ('remove_index', Index('idx_realtime_outbox_event_id', Column('event_id', UUID(), table=<realtime_outbox>, nullable=False), unique=True)), ('remove_index', Index('idx_realtime_outbox_event_type', Column('event_type', VARCHAR(length=50), table=<realtime_outbox>, nullable=False))), ('remove_index', Index('idx_realtime_outbox_status', Column('status', VARCHAR(length=20), table=<realtime_outbox>, nullable=False, server_default=DefaultClause(<sqlalchemy.sql.elements.TextClause object at 0x10bc2a050>, for_update=False)))), ('remove_constraint', UniqueConstraint(Column('event_id', NullType(), table=<realtime_outbox>))), ('add_index', Index('ix_realtime_outbox_created_at', Column('created_at', DateTime(timezone=True), table=<realtime_outbox>, nullable=False, server_default=DefaultClause(<sqlalchemy.sql.functions.now at 0x10b8f9e90; now>, for_update=False)))), ('add_index', Index('ix_realtime_outbox_entity_id', Column('entity_id', String(length=100), table=<realtime_outbox>, nullable=False))), ('add_index', Index('ix_realtime_outbox_event_id', Column('event_id', UUID(), table=<realtime_outbox>, nullable=False), unique=True)), ('add_index', Index('ix_realtime_outbox_event_type', Column('event_type', String(length=50), table=<realtime_outbox>, nullable=False))), ('add_index', Index('ix_realtime_outbox_next_retry_at', Column('next_retry_at', DateTime(timezone=True), table=<realtime_outbox>))), ('add_index', Index('ix_realtime_outbox_status', Column('status', String(length=20), table=<realtime_outbox>, nullable=False, default=ScalarElementColumnDefault('PENDING')))), ('remove_index', Index('idx_relief_centers_active', Column('is_active', BOOLEAN(), table=<relief_centers>, nullable=False, server_default=DefaultClause(<sqlalchemy.sql.elements.TextClause object at 0x10bbd57b0>, for_update=False)))), ('remove_index', Index('idx_relief_centers_district', Column('district_name', VARCHAR(length=100), table=<relief_centers>))), ('remove_index', Index('idx_relief_centers_name', Column('name', VARCHAR(length=255), table=<relief_centers>, nullable=False))), ('remove_index', Index('idx_relief_centers_state', Column('state_name', VARCHAR(length=100), table=<relief_centers>))), ('add_index', Index('ix_relief_centers_district_name', Column('district_name', String(length=100), table=<relief_centers>))), ('add_index', Index('ix_relief_centers_is_active', Column('is_active', Boolean(), table=<relief_centers>, nullable=False, default=ScalarElementColumnDefault(True)))), ('add_index', Index('ix_relief_centers_name', Column('name', String(length=255), table=<relief_centers>, nullable=False))), ('add_index', Index('ix_relief_centers_state_name', Column('state_name', String(length=100), table=<relief_centers>))), ('remove_constraint', UniqueConstraint(Column('email', NullType(), table=<users>))), ('remove_index', Index('idx_weather_reports_cat_occ', Column('reported_category', VARCHAR(length=100), table=<weather_reports>), Column('occurred_at', TIMESTAMP(timezone=True), table=<weather_reports>, nullable=False))), ('remove_index', Index('idx_weather_reports_dashboard_summary', Column('occurred_at', TIMESTAMP(timezone=True), table=<weather_reports>, nullable=False), Column('verification_status', VARCHAR(length=30), table=<weather_reports>, nullable=False, server_default=DefaultClause(<sqlalchemy.sql.elements.TextClause object at 0x10bc18050>, for_update=False)), Column('severity', VARCHAR(length=20), table=<weather_reports>, nullable=False, server_default=DefaultClause(<sqlalchemy.sql.elements.TextClause object at 0x10bb528b0>, for_update=False)), Column('reported_category', VARCHAR(length=100), table=<weather_reports>))), ('remove_index', Index('idx_weather_reports_geo_sort', <sqlalchemy.sql.elements.UnaryExpression object at 0x10bae7d10>, <sqlalchemy.sql.elements.UnaryExpression object at 0x10bae7e30>)), ('remove_index', Index('idx_weather_reports_sev_occ', Column('severity', VARCHAR(length=20), table=<weather_reports>, nullable=False, server_default=DefaultClause(<sqlalchemy.sql.elements.TextClause object at 0x10bb528b0>, for_update=False)), Column('occurred_at', TIMESTAMP(timezone=True), table=<weather_reports>, nullable=False))), ('remove_index', Index('idx_weather_reports_summary_cov', Column('verification_status', VARCHAR(length=30), table=<weather_reports>, nullable=False, server_default=DefaultClause(<sqlalchemy.sql.elements.TextClause object at 0x10bc18050>, for_update=False)), Column('severity', VARCHAR(length=20), table=<weather_reports>, nullable=False, server_default=DefaultClause(<sqlalchemy.sql.elements.TextClause object at 0x10bb528b0>, for_update=False)))), ('remove_index', Index('idx_weather_reports_user_id', Column('user_id', UUID(), table=<weather_reports>))), ('remove_constraint', UniqueConstraint(Column('tracking_id', NullType(), table=<weather_reports>))), ('add_index', Index('ix_weather_reports_credibility_score', Column('credibility_score', Float(), table=<weather_reports>, nullable=False, default=ScalarElementColumnDefault(0.0)))), ('add_index', Index('ix_weather_reports_tracking_id', Column('tracking_id', String(length=32), table=<weather_reports>, nullable=False), unique=True)), ('add_index', Index('ix_weather_reports_user_id', Column('user_id', UUID(), table=<weather_reports>))), ('remove_index', Index('idx_weather_reports_archive_archived_at', Column('archived_at', TIMESTAMP(timezone=True), table=<weather_reports_archive>, nullable=False, server_default=DefaultClause(<sqlalchemy.sql.elements.TextClause object at 0x10bc292d0>, for_update=False)))), ('remove_index', Index('idx_weather_reports_archive_occurred_at', Column('occurred_at', TIMESTAMP(timezone=True), table=<weather_reports_archive>, nullable=False))), ('remove_index', Index('idx_weather_reports_archive_tracking_id', Column('tracking_id', VARCHAR(length=32), table=<weather_reports_archive>, nullable=False))), ('remove_index', Index('idx_weather_reports_archive_credibility', Column('credibility_score', DOUBLE_PRECISION(precision=53), table=<weather_reports_archive>, nullable=False, server_default=DefaultClause(<sqlalchemy.sql.elements.TextClause object at 0x10bc296d0>, for_update=False)))), ('add_index', Index('idx_weather_reports_archive_credibility', <sqlalchemy.sql.elements.UnaryExpression object at 0x10bdc84d0>)), ('remove_index', Index('idx_weather_reports_archive_status_time', Column('verification_status', VARCHAR(length=30), table=<weather_reports_archive>, nullable=False, server_default=DefaultClause(<sqlalchemy.sql.elements.TextClause object at 0x10bc29650>, for_update=False)), Column('occurred_at', TIMESTAMP(timezone=True), table=<weather_reports_archive>, nullable=False))), ('add_index', Index('idx_weather_reports_archive_status_time', Column('verification_status', String(length=30), table=<weather_reports_archive>, nullable=False, default=ScalarElementColumnDefault('VERIFIED')), <sqlalchemy.sql.elements.UnaryExpression object at 0x10bdc8680>)), ('add_index', Index('ix_weather_reports_archive_archived_at', Column('archived_at', DateTime(timezone=True), table=<weather_reports_archive>, nullable=False, server_default=DefaultClause(<sqlalchemy.sql.functions.now at 0x10b811940; now>, for_update=False)))), ('add_index', Index('ix_weather_reports_archive_credibility_score', Column('credibility_score', Float(), table=<weather_reports_archive>, nullable=False, default=ScalarElementColumnDefault(0.0)))), ('add_index', Index('ix_weather_reports_archive_external_id', Column('external_id', String(length=255), table=<weather_reports_archive>))), ('add_index', Index('ix_weather_reports_archive_occurred_at', Column('occurred_at', DateTime(timezone=True), table=<weather_reports_archive>, nullable=False))), ('add_index', Index('ix_weather_reports_archive_tracking_id', Column('tracking_id', String(length=32), table=<weather_reports_archive>, nullable=False))), ('add_index', Index('ix_weather_reports_archive_verification_status', Column('verification_status', String(length=30), table=<weather_reports_archive>, nullable=False, default=ScalarElementColumnDefault('VERIFIED'))))]
+EXIT_CODE 255
+$ DATABASE_URL=weather_platform_audit PYTHONPATH=back-end back-end/.venv/bin/python (read extension-owned relations)
+AUDIT_DATABASE weather_platform_audit
+EXTENSION_OWNED_RELATION_COUNT 0
+$ DATABASE_URL=weather_platform_audit (read PostGIS extension/schema inventory)
+EXTENSIONS [('plpgsql', 'pg_catalog'), ('postgis', 'public')]
+EXTENSION_CONFIG []
+GEOCODER_SCHEMAS []
+$ back-end/.venv/bin/python (parse Alembic log summary; no database access)
+DETECTED_OPERATION_LINES 52
+OP removed idx_forecast_advisories_hazard forecast_advisories
+OP removed idx_forecast_advisories_source forecast_advisories
+OP added ix_forecast_advisories_hazard_type (
+OP added ix_forecast_advisories_source_code (
+OP added ix_forecast_advisories_valid_from (
+OP added ix_forecast_advisories_valid_until (
+OP removed idx_feedback_report_id incident_feedback
+OP removed idx_feedback_user_id incident_feedback
+OP added ix_incident_feedback_report_id (
+OP added ix_incident_feedback_user_id (
+OP removed idx_realtime_outbox_created_at realtime_outbox
+OP removed idx_realtime_outbox_entity_id realtime_outbox
+OP removed idx_realtime_outbox_event_id realtime_outbox
+OP removed idx_realtime_outbox_event_type realtime_outbox
+OP removed idx_realtime_outbox_status realtime_outbox
+OP added ix_realtime_outbox_created_at (
+OP added ix_realtime_outbox_entity_id (
+OP added ix_realtime_outbox_event_id (
+OP added ix_realtime_outbox_event_type (
+OP added ix_realtime_outbox_next_retry_at (
+OP added ix_realtime_outbox_status (
+OP removed idx_relief_centers_active relief_centers
+OP removed idx_relief_centers_district relief_centers
+OP removed idx_relief_centers_name relief_centers
+OP removed idx_relief_centers_state relief_centers
+OP added ix_relief_centers_district_name (
+OP added ix_relief_centers_is_active (
+OP added ix_relief_centers_name (
+OP added ix_relief_centers_state_name (
+OP removed idx_weather_reports_cat_occ weather_reports
+OP removed idx_weather_reports_dashboard_summary weather_reports
+OP removed idx_weather_reports_geo_sort weather_reports
+OP removed idx_weather_reports_sev_occ weather_reports
+OP removed idx_weather_reports_summary_cov weather_reports
+OP removed idx_weather_reports_user_id weather_reports
+OP added ix_weather_reports_credibility_score (
+OP added ix_weather_reports_tracking_id (
+OP added ix_weather_reports_user_id (
+OP removed idx_weather_reports_archive_archived_at weather_reports_archive
+OP removed idx_weather_reports_archive_occurred_at weather_reports_archive
+OP removed idx_weather_reports_archive_tracking_id weather_reports_archive
+OP changed idx_weather_reports_archive_credibility weather_reports_archive
+OP changed idx_weather_reports_archive_status_time weather_reports_archive
+OP added ix_weather_reports_archive_archived_at (
+OP added ix_weather_reports_archive_credibility_score (
+OP added ix_weather_reports_archive_external_id (
+OP added ix_weather_reports_archive_occurred_at (
+OP added ix_weather_reports_archive_tracking_id (
+OP added ix_weather_reports_archive_verification_status (
+OP removed realtime_outbox_event_id_key realtime_outbox
+OP removed users_email_key users
+OP removed weather_reports_tracking_id_key weather_reports
+ALEMBIC_ERROR New upgrade operations detected
+$ DATABASE_URL=weather_platform_audit .venv/bin/alembic check
+INFO  [alembic.autogenerate.compare.constraints] Detected added index 'ix_forecast_advisories_valid_from' on '('valid_from',)'
+INFO  [alembic.autogenerate.compare.constraints] Detected added index 'ix_forecast_advisories_valid_until' on '('valid_until',)'
+INFO  [alembic.autogenerate.compare.constraints] Detected added index 'ix_realtime_outbox_next_retry_at' on '('next_retry_at',)'
+INFO  [alembic.autogenerate.compare.constraints] Detected removed index 'ix_users_email' on 'users'
+INFO  [alembic.autogenerate.compare.constraints] Detected changed index 'idx_weather_reports_archive_credibility' on 'weather_reports_archive': expression #1 'credibility_score' to 'credibility_score DESC'
+INFO  [alembic.autogenerate.compare.constraints] Detected changed index 'idx_weather_reports_archive_status_time' on 'weather_reports_archive': expression #2 'occurred_at' to 'occurred_at DESC'
+INFO  [alembic.autogenerate.compare.constraints] Detected added index 'ix_weather_reports_archive_external_id' on '('external_id',)'
+ERROR [alembic.util.messaging] New upgrade operations detected: [('add_index', Index('ix_forecast_advisories_valid_from', Column('valid_from', DateTime(timezone=True), table=<forecast_advisories>, nullable=False))), ('add_index', Index('ix_forecast_advisories_valid_until', Column('valid_until', DateTime(timezone=True), table=<forecast_advisories>, nullable=False))), ('add_index', Index('ix_realtime_outbox_next_retry_at', Column('next_retry_at', DateTime(timezone=True), table=<realtime_outbox>))), ('remove_index', Index('ix_users_email', Column('email', VARCHAR(length=255), table=<users>, nullable=False), unique=True)), ('remove_index', Index('idx_weather_reports_archive_credibility', Column('credibility_score', DOUBLE_PRECISION(precision=53), table=<weather_reports_archive>, nullable=False, server_default=DefaultClause(<sqlalchemy.sql.elements.TextClause object at 0x10bd53d50>, for_update=False)))), ('add_index', Index('idx_weather_reports_archive_credibility', <sqlalchemy.sql.elements.UnaryExpression object at 0x10bbc12e0>)), ('remove_index', Index('idx_weather_reports_archive_status_time', Column('verification_status', VARCHAR(length=30), table=<weather_reports_archive>, nullable=False, server_default=DefaultClause(<sqlalchemy.sql.elements.TextClause object at 0x10bd53cd0>, for_update=False)), Column('occurred_at', TIMESTAMP(timezone=True), table=<weather_reports_archive>, nullable=False))), ('add_index', Index('idx_weather_reports_archive_status_time', Column('verification_status', String(length=30), table=<weather_reports_archive>, nullable=False, default=ScalarElementColumnDefault('VERIFIED')), <sqlalchemy.sql.elements.UnaryExpression object at 0x10bbc15b0>)), ('add_index', Index('ix_weather_reports_archive_external_id', Column('external_id', String(length=255), table=<weather_reports_archive>)))]
+EXIT_CODE 255
+$ DATABASE_URL=weather_platform_audit .venv/bin/alembic revision --autogenerate -m "align ORM indexes and archive metadata"
+INFO  [alembic.runtime.migration] Context impl PostgresqlImpl.
+INFO  [alembic.runtime.migration] Will assume transactional DDL.
+INFO  [alembic.runtime.plugins] setting up autogenerate plugin alembic.autogenerate.schemas
+INFO  [alembic.runtime.plugins] setting up autogenerate plugin alembic.autogenerate.tables
+INFO  [alembic.runtime.plugins] setting up autogenerate plugin alembic.autogenerate.types
+INFO  [alembic.runtime.plugins] setting up autogenerate plugin alembic.autogenerate.constraints
+INFO  [alembic.runtime.plugins] setting up autogenerate plugin alembic.autogenerate.defaults
+INFO  [alembic.runtime.plugins] setting up autogenerate plugin alembic.autogenerate.comments
+INFO  [alembic.runtime.plugins] setting up autogenerate plugin alembic.autogenerate.checkconstraint_byname
+INFO  [alembic.autogenerate.compare.constraints] Detected added index 'ix_forecast_advisories_valid_from' on '('valid_from',)'
+INFO  [alembic.autogenerate.compare.constraints] Detected added index 'ix_forecast_advisories_valid_until' on '('valid_until',)'
+INFO  [alembic.autogenerate.compare.constraints] Detected added index 'ix_realtime_outbox_next_retry_at' on '('next_retry_at',)'
+INFO  [alembic.autogenerate.compare.constraints] Detected removed index 'ix_users_email' on 'users'
+INFO  [alembic.autogenerate.compare.constraints] Detected changed index 'idx_weather_reports_archive_credibility' on 'weather_reports_archive': expression #1 'credibility_score' to 'credibility_score DESC'
+INFO  [alembic.autogenerate.compare.constraints] Detected changed index 'idx_weather_reports_archive_status_time' on 'weather_reports_archive': expression #2 'occurred_at' to 'occurred_at DESC'
+INFO  [alembic.autogenerate.compare.constraints] Detected added index 'ix_weather_reports_archive_external_id' on '('external_id',)'
+  Generating /Users/akshatjain/Documents/SIH/back-end/alembic/versions/20260930_
+  1826_55a8c9364506_align_orm_indexes_and_archive_metadata.py ...  done
+EXIT_CODE 0
+$ DATABASE_URL=weather_platform_audit back-end/.venv/bin/alembic upgrade head
+  FAILED: No 'script_location' key found in configuration.
+EXIT_CODE 255
+$ DATABASE_URL=weather_platform_audit .venv/bin/alembic upgrade head (from back-end)
+INFO  [alembic.runtime.migration] Context impl PostgresqlImpl.
+INFO  [alembic.runtime.migration] Will assume transactional DDL.
+INFO  [alembic.runtime.migration] Running upgrade 0017_report_is_demo -> 0018_archive_metadata, align ORM indexes and archive metadata
+EXIT_CODE 0
+$ DATABASE_URL=weather_platform_audit .venv/bin/alembic check (after upgrade head)
+No new upgrade operations detected.
+EXIT_CODE 0
+$ DATABASE_URL=weather_platform_audit .venv/bin/alembic downgrade -1
+INFO  [alembic.runtime.migration] Context impl PostgresqlImpl.
+INFO  [alembic.runtime.migration] Will assume transactional DDL.
+INFO  [alembic.runtime.migration] Running downgrade 0018_archive_metadata -> 0017_report_is_demo, align ORM indexes and archive metadata
+EXIT_CODE 0
+$ DATABASE_URL=weather_platform_audit .venv/bin/alembic upgrade head (after downgrade)
+INFO  [alembic.runtime.migration] Context impl PostgresqlImpl.
+INFO  [alembic.runtime.migration] Will assume transactional DDL.
+INFO  [alembic.runtime.migration] Running upgrade 0017_report_is_demo -> 0018_archive_metadata, align ORM indexes and archive metadata
+EXIT_CODE 0
+$ DATABASE_URL=weather_platform_test .venv/bin/alembic upgrade head
+INFO  [alembic.runtime.migration] Context impl PostgresqlImpl.
+INFO  [alembic.runtime.migration] Will assume transactional DDL.
+INFO  [alembic.runtime.migration] Running upgrade 0017_report_is_demo -> 0018_archive_metadata, align ORM indexes and archive metadata
+EXIT_CODE 0
+Prior attempt: terminal was already in back-end, so repo-root audit/logs paths failed before alembic ran.
+$ DATABASE_URL=weather_platform_test .venv/bin/alembic upgrade head
+INFO  [alembic.runtime.migration] Context impl PostgresqlImpl.
+INFO  [alembic.runtime.migration] Will assume transactional DDL.
+INFO  [alembic.runtime.migration] Running upgrade 0011_summary_covering_index -> 0012_report_list_index, Add composite index on (occurred_at DESC, created_at DESC) for fast incident listing.
+INFO  [alembic.runtime.migration] Running upgrade 0012_report_list_index -> 0013_drop_duplicate_indexes, Drop exact duplicate indexes on weather_reports table.
+INFO  [alembic.runtime.migration] Running upgrade 0013_drop_duplicate_indexes -> 0014_backfill_categories, Insert missing event_categories and backfill weather_reports.category_id.
+INFO  [alembic.runtime.migration] Running upgrade 0014_backfill_categories -> 0015_geo_sort_index, Add partial geo-sort index on weather_reports for occurred_at DESC NULLS LAST.
+INFO  [alembic.runtime.migration] Running upgrade 0015_geo_sort_index -> 0016_evidence_test_fixture, Add is_test_fixture column to evidence_items.
+INFO  [alembic.runtime.migration] Running upgrade 0016_evidence_test_fixture -> 0017_report_is_demo, Add is_demo column to weather_reports with backfill and index.
+INFO  [alembic.runtime.migration] Running upgrade 0017_report_is_demo -> 0018_archive_metadata, align ORM indexes and archive metadata
+EXIT_CODE 0
+$ DATABASE_URL=weather_platform_test .venv/bin/alembic current
+INFO  [alembic.runtime.migration] Context impl PostgresqlImpl.
+INFO  [alembic.runtime.migration] Will assume transactional DDL.
+0018_archive_metadata (head)
+$ query weather_reports.is_demo column
+DB weather_platform_test
+IS_DEMO [('is_demo',)]
+$ .venv/bin/pytest -q tests/test_audit_round4_regressions.py::test_migration_0012_downgrade_and_upgrade
+.                                                                        [100%]
+=============================== warnings summary ===============================
+tests/test_audit_round4_regressions.py::test_migration_0012_downgrade_and_upgrade
+  /Users/akshatjain/Documents/SIH/back-end/.venv/lib/python3.14/site-packages/pytest_asyncio/plugin.py:1216: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+    return asyncio.get_event_loop_policy()
+
+tests/test_audit_round4_regressions.py::test_migration_0012_downgrade_and_upgrade
+tests/test_audit_round4_regressions.py::test_migration_0012_downgrade_and_upgrade
+  /Users/akshatjain/Documents/SIH/back-end/.venv/lib/python3.14/site-packages/pytest_asyncio/plugin.py:772: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+    old_loop_policy = asyncio.get_event_loop_policy()
+
+tests/test_audit_round4_regressions.py::test_migration_0012_downgrade_and_upgrade
+tests/test_audit_round4_regressions.py::test_migration_0012_downgrade_and_upgrade
+  /Users/akshatjain/Documents/SIH/back-end/.venv/lib/python3.14/site-packages/pytest_asyncio/plugin.py:777: DeprecationWarning: 'asyncio.set_event_loop_policy' is deprecated and slated for removal in Python 3.16
+    asyncio.set_event_loop_policy(policy)
+
+tests/test_audit_round4_regressions.py::test_migration_0012_downgrade_and_upgrade
+tests/test_audit_round4_regressions.py::test_migration_0012_downgrade_and_upgrade
+  /Users/akshatjain/Documents/SIH/back-end/.venv/lib/python3.14/site-packages/pytest_asyncio/plugin.py:1183: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+    loop = asyncio.get_event_loop_policy().new_event_loop()
+
+tests/test_audit_round4_regressions.py::test_migration_0012_downgrade_and_upgrade
+  /Users/akshatjain/Documents/SIH/back-end/.venv/lib/python3.14/site-packages/pytest_asyncio/plugin.py:874: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+    _restore_event_loop_policy(asyncio.get_event_loop_policy()),
+
+tests/test_audit_round4_regressions.py::test_migration_0012_downgrade_and_upgrade
+  /Users/akshatjain/Documents/SIH/back-end/.venv/lib/python3.14/site-packages/pytest_asyncio/plugin.py:889: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+    policy = asyncio.get_event_loop_policy()
+
+tests/test_audit_round4_regressions.py::test_migration_0012_downgrade_and_upgrade
+tests/test_audit_round4_regressions.py::test_migration_0012_downgrade_and_upgrade
+  /Users/akshatjain/Documents/SIH/back-end/.venv/lib/python3.14/site-packages/pytest_asyncio/plugin.py:794: DeprecationWarning: 'asyncio.set_event_loop_policy' is deprecated and slated for removal in Python 3.16
+    asyncio.set_event_loop_policy(old_loop_policy)
+
+tests/test_audit_round4_regressions.py::test_migration_0012_downgrade_and_upgrade
+  /Users/akshatjain/Documents/SIH/back-end/.venv/lib/python3.14/site-packages/pytest_asyncio/plugin.py:942: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+    policy = asyncio.get_event_loop_policy()
+
+tests/test_audit_round4_regressions.py::test_migration_0012_downgrade_and_upgrade
+  /Users/akshatjain/Documents/SIH/back-end/.venv/lib/python3.14/site-packages/pytest_asyncio/plugin.py:966: DeprecationWarning: 'asyncio.set_event_loop_policy' is deprecated and slated for removal in Python 3.16
+    asyncio.set_event_loop_policy(previous_policy)
+
+tests/test_audit_round4_regressions.py::test_migration_0012_downgrade_and_upgrade
+  /Users/akshatjain/Documents/SIH/back-end/.venv/lib/python3.14/site-packages/pytest_asyncio/plugin.py:978: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+    policy = asyncio.get_event_loop_policy()
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+1 passed, 14 warnings in 1.57s
+EXIT_CODE 0
+
+$ PYTEST_RANDOMLY_SEED=20261001 .venv/bin/pytest -q --randomly-seed=20261001
+........................................................................ [ 15%]
+........................................................................ [ 30%]
+........................................................................ [ 45%]
+........................................................................ [ 60%]
+........................................................................ [ 75%]
+........................................................................ [ 90%]
+...............................................                          [100%]
+=============================== warnings summary ===============================
+tests/test_live_intelligence_integration.py::test_new_report_joining_completed_incident_cluster_updates_score
+  /Users/akshatjain/Documents/SIH/back-end/.venv/lib/python3.14/site-packages/pytest_asyncio/plugin.py:1216: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+    return asyncio.get_event_loop_policy()
+
+tests/test_live_intelligence_integration.py: 9 warnings
+tests/test_source_trust_score_audit.py: 6 warnings
+tests/test_realtime_sse.py: 15 warnings
+tests/test_verification_state_machine.py: 11 warnings
+tests/test_ndma_adapter.py: 12 warnings
+tests/test_orchestration_pipeline.py: 8 warnings
+tests/test_imd_adapter.py: 9 warnings
+tests/test_credibility_engine.py: 22 warnings
+tests/test_rss_adapter.py: 9 warnings
+tests/test_external_ingestion_integration.py: 7 warnings
+tests/test_demo_filter.py: 1 warning
+tests/test_orchestration_dispatcher.py: 5 warnings
+tests/test_evidence_observation_schema.py: 4 warnings
+tests/test_gdelt_adapter.py: 16 warnings
+tests/test_security_audit_hardening.py: 9 warnings
+tests/test_admin_endpoints.py: 10 warnings
+tests/test_response_speed.py: 3 warnings
+tests/test_dashboard_analytics_api.py: 7 warnings
+tests/test_audit_round5_regressions.py: 2 warnings
+tests/test_o2_health.py: 6 warnings
+tests/test_security_auth_relief_feedback.py: 10 warnings
+tests/test_dashboard_analytics_service.py: 5 warnings
+tests/test_realtime_outbox.py: 9 warnings
+tests/test_stream_recovery.py: 2 warnings
+tests/test_cwc_adapter.py: 14 warnings
+tests/test_route_and_citizen_geo_api.py: 3 warnings
+tests/test_realtime_service.py: 12 warnings
+tests/test_observation_corroboration.py: 46 warnings
+tests/test_phase3_adapters.py: 24 warnings
+tests/test_duplicate_detection.py: 13 warnings
+tests/test_r4_classification_regression.py: 2 warnings
+tests/test_orchestration_events_and_graph.py: 5 warnings
+tests/test_audit_round4_regressions.py: 4 warnings
+tests/test_incident_intelligence_api.py: 23 warnings
+tests/test_db_pool.py: 2 warnings
+tests/test_evidence_linking.py: 14 warnings
+tests/test_sse_fanout.py: 3 warnings
+tests/test_late_corroboration_wiring.py: 9 warnings
+tests/test_o3_metrics.py: 3 warnings
+tests/test_mastodon_adapter.py: 13 warnings
+tests/test_reports.py: 28 warnings
+tests/test_redis_pool.py: 1 warning
+tests/test_db_schema.py: 4 warnings
+tests/test_data_retention.py: 6 warnings
+tests/test_outbox_worker_runtime.py: 8 warnings
+tests/test_rate_limiter.py: 3 warnings
+tests/test_ingestion.py: 9 warnings
+tests/test_location_resolution.py: 15 warnings
+tests/test_health.py: 3 warnings
+tests/test_orchestration_benchmark.py: 1 warning
+tests/test_realtime_integration.py: 4 warnings
+tests/test_config.py: 7 warnings
+tests/test_dashboard_cache.py: 4 warnings
+  /Users/akshatjain/Documents/SIH/back-end/.venv/lib/python3.14/site-packages/pytest_asyncio/plugin.py:772: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+    old_loop_policy = asyncio.get_event_loop_policy()
+
+tests/test_live_intelligence_integration.py: 9 warnings
+tests/test_source_trust_score_audit.py: 6 warnings
+tests/test_realtime_sse.py: 15 warnings
+tests/test_verification_state_machine.py: 11 warnings
+tests/test_ndma_adapter.py: 12 warnings
+tests/test_orchestration_pipeline.py: 8 warnings
+tests/test_imd_adapter.py: 9 warnings
+tests/test_credibility_engine.py: 22 warnings
+tests/test_rss_adapter.py: 9 warnings
+tests/test_external_ingestion_integration.py: 7 warnings
+tests/test_demo_filter.py: 1 warning
+tests/test_orchestration_dispatcher.py: 5 warnings
+tests/test_evidence_observation_schema.py: 4 warnings
+tests/test_gdelt_adapter.py: 16 warnings
+tests/test_security_audit_hardening.py: 9 warnings
+tests/test_admin_endpoints.py: 10 warnings
+tests/test_response_speed.py: 3 warnings
+tests/test_dashboard_analytics_api.py: 7 warnings
+tests/test_audit_round5_regressions.py: 2 warnings
+tests/test_o2_health.py: 6 warnings
+tests/test_security_auth_relief_feedback.py: 10 warnings
+tests/test_dashboard_analytics_service.py: 5 warnings
+tests/test_realtime_outbox.py: 9 warnings
+tests/test_stream_recovery.py: 2 warnings
+tests/test_cwc_adapter.py: 14 warnings
+tests/test_route_and_citizen_geo_api.py: 3 warnings
+tests/test_realtime_service.py: 12 warnings
+tests/test_observation_corroboration.py: 46 warnings
+tests/test_phase3_adapters.py: 24 warnings
+tests/test_duplicate_detection.py: 13 warnings
+tests/test_r4_classification_regression.py: 2 warnings
+tests/test_orchestration_events_and_graph.py: 5 warnings
+tests/test_audit_round4_regressions.py: 4 warnings
+tests/test_incident_intelligence_api.py: 23 warnings
+tests/test_db_pool.py: 2 warnings
+tests/test_evidence_linking.py: 14 warnings
+tests/test_sse_fanout.py: 3 warnings
+tests/test_late_corroboration_wiring.py: 9 warnings
+tests/test_o3_metrics.py: 3 warnings
+tests/test_mastodon_adapter.py: 13 warnings
+tests/test_reports.py: 28 warnings
+tests/test_redis_pool.py: 1 warning
+tests/test_db_schema.py: 4 warnings
+tests/test_data_retention.py: 6 warnings
+tests/test_outbox_worker_runtime.py: 8 warnings
+tests/test_rate_limiter.py: 3 warnings
+tests/test_ingestion.py: 9 warnings
+tests/test_location_resolution.py: 15 warnings
+tests/test_health.py: 3 warnings
+tests/test_orchestration_benchmark.py: 1 warning
+tests/test_realtime_integration.py: 4 warnings
+tests/test_config.py: 7 warnings
+tests/test_dashboard_cache.py: 4 warnings
+  /Users/akshatjain/Documents/SIH/back-end/.venv/lib/python3.14/site-packages/pytest_asyncio/plugin.py:777: DeprecationWarning: 'asyncio.set_event_loop_policy' is deprecated and slated for removal in Python 3.16
+    asyncio.set_event_loop_policy(policy)
+
+tests/test_live_intelligence_integration.py: 9 warnings
+tests/test_source_trust_score_audit.py: 6 warnings
+tests/test_realtime_sse.py: 15 warnings
+tests/test_verification_state_machine.py: 11 warnings
+tests/test_ndma_adapter.py: 12 warnings
+tests/test_orchestration_pipeline.py: 8 warnings
+tests/test_imd_adapter.py: 9 warnings
+tests/test_credibility_engine.py: 22 warnings
+tests/test_rss_adapter.py: 9 warnings
+tests/test_external_ingestion_integration.py: 7 warnings
+tests/test_demo_filter.py: 1 warning
+tests/test_orchestration_dispatcher.py: 5 warnings
+tests/test_evidence_observation_schema.py: 4 warnings
+tests/test_gdelt_adapter.py: 16 warnings
+tests/test_security_audit_hardening.py: 9 warnings
+tests/test_admin_endpoints.py: 10 warnings
+tests/test_response_speed.py: 3 warnings
+tests/test_dashboard_analytics_api.py: 7 warnings
+tests/test_audit_round5_regressions.py: 2 warnings
+tests/test_o2_health.py: 6 warnings
+tests/test_security_auth_relief_feedback.py: 10 warnings
+tests/test_dashboard_analytics_service.py: 5 warnings
+tests/test_realtime_outbox.py: 9 warnings
+tests/test_stream_recovery.py: 2 warnings
+tests/test_cwc_adapter.py: 14 warnings
+tests/test_route_and_citizen_geo_api.py: 3 warnings
+tests/test_realtime_service.py: 12 warnings
+tests/test_observation_corroboration.py: 46 warnings
+tests/test_phase3_adapters.py: 24 warnings
+tests/test_duplicate_detection.py: 13 warnings
+tests/test_r4_classification_regression.py: 2 warnings
+tests/test_orchestration_events_and_graph.py: 5 warnings
+tests/test_audit_round4_regressions.py: 4 warnings
+tests/test_incident_intelligence_api.py: 23 warnings
+tests/test_db_pool.py: 2 warnings
+tests/test_evidence_linking.py: 14 warnings
+tests/test_sse_fanout.py: 3 warnings
+tests/test_late_corroboration_wiring.py: 9 warnings
+tests/test_o3_metrics.py: 3 warnings
+tests/test_mastodon_adapter.py: 13 warnings
+tests/test_reports.py: 28 warnings
+tests/test_redis_pool.py: 1 warning
+tests/test_db_schema.py: 4 warnings
+tests/test_data_retention.py: 6 warnings
+tests/test_outbox_worker_runtime.py: 8 warnings
+tests/test_rate_limiter.py: 3 warnings
+tests/test_ingestion.py: 9 warnings
+tests/test_location_resolution.py: 15 warnings
+tests/test_health.py: 3 warnings
+tests/test_orchestration_benchmark.py: 1 warning
+tests/test_realtime_integration.py: 4 warnings
+tests/test_config.py: 7 warnings
+tests/test_dashboard_cache.py: 4 warnings
+  /Users/akshatjain/Documents/SIH/back-end/.venv/lib/python3.14/site-packages/pytest_asyncio/plugin.py:1183: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+    loop = asyncio.get_event_loop_policy().new_event_loop()
+
+tests/test_live_intelligence_integration.py: 8 warnings
+tests/test_source_trust_score_audit.py: 6 warnings
+tests/test_realtime_sse.py: 15 warnings
+tests/test_verification_state_machine.py: 11 warnings
+tests/test_ndma_adapter.py: 12 warnings
+tests/test_orchestration_pipeline.py: 8 warnings
+tests/test_imd_adapter.py: 9 warnings
+tests/test_credibility_engine.py: 22 warnings
+tests/test_rss_adapter.py: 9 warnings
+tests/test_external_ingestion_integration.py: 7 warnings
+tests/test_demo_filter.py: 1 warning
+tests/test_orchestration_dispatcher.py: 5 warnings
+tests/test_evidence_observation_schema.py: 4 warnings
+tests/test_gdelt_adapter.py: 16 warnings
+tests/test_security_audit_hardening.py: 9 warnings
+tests/test_admin_endpoints.py: 10 warnings
+tests/test_response_speed.py: 3 warnings
+tests/test_dashboard_analytics_api.py: 7 warnings
+tests/test_audit_round5_regressions.py: 2 warnings
+tests/test_o2_health.py: 6 warnings
+tests/test_security_auth_relief_feedback.py: 10 warnings
+tests/test_dashboard_analytics_service.py: 5 warnings
+tests/test_realtime_outbox.py: 9 warnings
+tests/test_stream_recovery.py: 2 warnings
+tests/test_cwc_adapter.py: 14 warnings
+tests/test_route_and_citizen_geo_api.py: 3 warnings
+tests/test_realtime_service.py: 12 warnings
+tests/test_observation_corroboration.py: 46 warnings
+tests/test_phase3_adapters.py: 24 warnings
+tests/test_duplicate_detection.py: 13 warnings
+tests/test_r4_classification_regression.py: 2 warnings
+tests/test_orchestration_events_and_graph.py: 5 warnings
+tests/test_audit_round4_regressions.py: 4 warnings
+tests/test_incident_intelligence_api.py: 23 warnings
+tests/test_db_pool.py: 2 warnings
+tests/test_evidence_linking.py: 14 warnings
+tests/test_sse_fanout.py: 3 warnings
+tests/test_late_corroboration_wiring.py: 9 warnings
+tests/test_o3_metrics.py: 3 warnings
+tests/test_mastodon_adapter.py: 13 warnings
+tests/test_reports.py: 28 warnings
+tests/test_redis_pool.py: 1 warning
+tests/test_db_schema.py: 4 warnings
+tests/test_data_retention.py: 6 warnings
+tests/test_outbox_worker_runtime.py: 8 warnings
+tests/test_rate_limiter.py: 3 warnings
+tests/test_ingestion.py: 9 warnings
+tests/test_location_resolution.py: 15 warnings
+tests/test_health.py: 3 warnings
+tests/test_orchestration_benchmark.py: 1 warning
+tests/test_realtime_integration.py: 4 warnings
+tests/test_config.py: 7 warnings
+tests/test_dashboard_cache.py: 4 warnings
+  /Users/akshatjain/Documents/SIH/back-end/.venv/lib/python3.14/site-packages/pytest_asyncio/plugin.py:874: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+    _restore_event_loop_policy(asyncio.get_event_loop_policy()),
+
+tests/test_live_intelligence_integration.py: 8 warnings
+tests/test_source_trust_score_audit.py: 6 warnings
+tests/test_realtime_sse.py: 15 warnings
+tests/test_verification_state_machine.py: 11 warnings
+tests/test_ndma_adapter.py: 12 warnings
+tests/test_orchestration_pipeline.py: 8 warnings
+tests/test_imd_adapter.py: 9 warnings
+tests/test_credibility_engine.py: 22 warnings
+tests/test_rss_adapter.py: 9 warnings
+tests/test_external_ingestion_integration.py: 7 warnings
+tests/test_demo_filter.py: 1 warning
+tests/test_orchestration_dispatcher.py: 5 warnings
+tests/test_evidence_observation_schema.py: 4 warnings
+tests/test_gdelt_adapter.py: 16 warnings
+tests/test_security_audit_hardening.py: 9 warnings
+tests/test_admin_endpoints.py: 10 warnings
+tests/test_response_speed.py: 3 warnings
+tests/test_dashboard_analytics_api.py: 7 warnings
+tests/test_audit_round5_regressions.py: 2 warnings
+tests/test_o2_health.py: 6 warnings
+tests/test_security_auth_relief_feedback.py: 10 warnings
+tests/test_dashboard_analytics_service.py: 5 warnings
+tests/test_realtime_outbox.py: 9 warnings
+tests/test_stream_recovery.py: 2 warnings
+tests/test_cwc_adapter.py: 14 warnings
+tests/test_route_and_citizen_geo_api.py: 3 warnings
+tests/test_realtime_service.py: 12 warnings
+tests/test_observation_corroboration.py: 46 warnings
+tests/test_phase3_adapters.py: 24 warnings
+tests/test_duplicate_detection.py: 13 warnings
+tests/test_r4_classification_regression.py: 2 warnings
+tests/test_orchestration_events_and_graph.py: 5 warnings
+tests/test_audit_round4_regressions.py: 4 warnings
+tests/test_incident_intelligence_api.py: 23 warnings
+tests/test_db_pool.py: 2 warnings
+tests/test_evidence_linking.py: 14 warnings
+tests/test_sse_fanout.py: 3 warnings
+tests/test_late_corroboration_wiring.py: 9 warnings
+tests/test_o3_metrics.py: 3 warnings
+tests/test_mastodon_adapter.py: 13 warnings
+tests/test_reports.py: 28 warnings
+tests/test_redis_pool.py: 1 warning
+tests/test_db_schema.py: 4 warnings
+tests/test_data_retention.py: 6 warnings
+tests/test_outbox_worker_runtime.py: 8 warnings
+tests/test_rate_limiter.py: 3 warnings
+tests/test_ingestion.py: 9 warnings
+tests/test_location_resolution.py: 15 warnings
+tests/test_health.py: 3 warnings
+tests/test_orchestration_benchmark.py: 1 warning
+tests/test_realtime_integration.py: 4 warnings
+tests/test_config.py: 7 warnings
+tests/test_dashboard_cache.py: 4 warnings
+  /Users/akshatjain/Documents/SIH/back-end/.venv/lib/python3.14/site-packages/pytest_asyncio/plugin.py:889: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+    policy = asyncio.get_event_loop_policy()
+
+tests/test_live_intelligence_integration.py: 8 warnings
+tests/test_source_trust_score_audit.py: 6 warnings
+tests/test_realtime_sse.py: 15 warnings
+tests/test_verification_state_machine.py: 11 warnings
+tests/test_ndma_adapter.py: 12 warnings
+tests/test_orchestration_pipeline.py: 8 warnings
+tests/test_imd_adapter.py: 9 warnings
+tests/test_credibility_engine.py: 22 warnings
+tests/test_rss_adapter.py: 9 warnings
+tests/test_external_ingestion_integration.py: 7 warnings
+tests/test_demo_filter.py: 1 warning
+tests/test_orchestration_dispatcher.py: 5 warnings
+tests/test_evidence_observation_schema.py: 4 warnings
+tests/test_gdelt_adapter.py: 16 warnings
+tests/test_security_audit_hardening.py: 9 warnings
+tests/test_admin_endpoints.py: 10 warnings
+tests/test_response_speed.py: 3 warnings
+tests/test_dashboard_analytics_api.py: 7 warnings
+tests/test_audit_round5_regressions.py: 2 warnings
+tests/test_o2_health.py: 6 warnings
+tests/test_security_auth_relief_feedback.py: 10 warnings
+tests/test_dashboard_analytics_service.py: 5 warnings
+tests/test_realtime_outbox.py: 9 warnings
+tests/test_stream_recovery.py: 2 warnings
+tests/test_cwc_adapter.py: 14 warnings
+tests/test_route_and_citizen_geo_api.py: 3 warnings
+tests/test_realtime_service.py: 12 warnings
+tests/test_observation_corroboration.py: 46 warnings
+tests/test_phase3_adapters.py: 24 warnings
+tests/test_duplicate_detection.py: 13 warnings
+tests/test_r4_classification_regression.py: 2 warnings
+tests/test_orchestration_events_and_graph.py: 5 warnings
+tests/test_audit_round4_regressions.py: 4 warnings
+tests/test_incident_intelligence_api.py: 23 warnings
+tests/test_db_pool.py: 2 warnings
+tests/test_evidence_linking.py: 14 warnings
+tests/test_sse_fanout.py: 3 warnings
+tests/test_late_corroboration_wiring.py: 9 warnings
+tests/test_o3_metrics.py: 3 warnings
+tests/test_mastodon_adapter.py: 13 warnings
+tests/test_reports.py: 28 warnings
+tests/test_redis_pool.py: 1 warning
+tests/test_db_schema.py: 4 warnings
+tests/test_data_retention.py: 6 warnings
+tests/test_outbox_worker_runtime.py: 8 warnings
+tests/test_rate_limiter.py: 3 warnings
+tests/test_ingestion.py: 9 warnings
+tests/test_location_resolution.py: 15 warnings
+tests/test_health.py: 3 warnings
+tests/test_orchestration_benchmark.py: 1 warning
+tests/test_realtime_integration.py: 4 warnings
+tests/test_config.py: 7 warnings
+tests/test_dashboard_cache.py: 5 warnings
+  /Users/akshatjain/Documents/SIH/back-end/.venv/lib/python3.14/site-packages/pytest_asyncio/plugin.py:794: DeprecationWarning: 'asyncio.set_event_loop_policy' is deprecated and slated for removal in Python 3.16
+    asyncio.set_event_loop_policy(old_loop_policy)
+
+tests/test_live_intelligence_integration.py: 8 warnings
+tests/test_source_trust_score_audit.py: 6 warnings
+tests/test_realtime_sse.py: 15 warnings
+tests/test_verification_state_machine.py: 11 warnings
+tests/test_ndma_adapter.py: 12 warnings
+tests/test_orchestration_pipeline.py: 8 warnings
+tests/test_imd_adapter.py: 9 warnings
+tests/test_credibility_engine.py: 22 warnings
+tests/test_rss_adapter.py: 9 warnings
+tests/test_external_ingestion_integration.py: 7 warnings
+tests/test_demo_filter.py: 1 warning
+tests/test_orchestration_dispatcher.py: 5 warnings
+tests/test_evidence_observation_schema.py: 4 warnings
+tests/test_gdelt_adapter.py: 16 warnings
+tests/test_security_audit_hardening.py: 9 warnings
+tests/test_admin_endpoints.py: 10 warnings
+tests/test_response_speed.py: 3 warnings
+tests/test_dashboard_analytics_api.py: 7 warnings
+tests/test_audit_round5_regressions.py: 2 warnings
+tests/test_o2_health.py: 6 warnings
+tests/test_security_auth_relief_feedback.py: 10 warnings
+tests/test_dashboard_analytics_service.py: 5 warnings
+tests/test_realtime_outbox.py: 9 warnings
+tests/test_stream_recovery.py: 2 warnings
+tests/test_cwc_adapter.py: 14 warnings
+tests/test_route_and_citizen_geo_api.py: 3 warnings
+tests/test_realtime_service.py: 12 warnings
+tests/test_observation_corroboration.py: 46 warnings
+tests/test_phase3_adapters.py: 24 warnings
+tests/test_duplicate_detection.py: 13 warnings
+tests/test_r4_classification_regression.py: 2 warnings
+tests/test_orchestration_events_and_graph.py: 5 warnings
+tests/test_audit_round4_regressions.py: 4 warnings
+tests/test_incident_intelligence_api.py: 23 warnings
+tests/test_db_pool.py: 2 warnings
+tests/test_evidence_linking.py: 14 warnings
+tests/test_sse_fanout.py: 3 warnings
+tests/test_late_corroboration_wiring.py: 9 warnings
+tests/test_o3_metrics.py: 3 warnings
+tests/test_mastodon_adapter.py: 13 warnings
+tests/test_reports.py: 28 warnings
+tests/test_redis_pool.py: 1 warning
+tests/test_db_schema.py: 4 warnings
+tests/test_data_retention.py: 6 warnings
+tests/test_outbox_worker_runtime.py: 8 warnings
+tests/test_rate_limiter.py: 3 warnings
+tests/test_ingestion.py: 9 warnings
+tests/test_location_resolution.py: 15 warnings
+tests/test_health.py: 3 warnings
+tests/test_orchestration_benchmark.py: 1 warning
+tests/test_realtime_integration.py: 4 warnings
+tests/test_config.py: 7 warnings
+tests/test_dashboard_cache.py: 4 warnings
+  /Users/akshatjain/Documents/SIH/back-end/.venv/lib/python3.14/site-packages/pytest_asyncio/plugin.py:942: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+    policy = asyncio.get_event_loop_policy()
+
+tests/test_live_intelligence_integration.py: 8 warnings
+tests/test_source_trust_score_audit.py: 6 warnings
+tests/test_realtime_sse.py: 15 warnings
+tests/test_verification_state_machine.py: 11 warnings
+tests/test_ndma_adapter.py: 12 warnings
+tests/test_orchestration_pipeline.py: 8 warnings
+tests/test_imd_adapter.py: 9 warnings
+tests/test_credibility_engine.py: 22 warnings
+tests/test_rss_adapter.py: 9 warnings
+tests/test_external_ingestion_integration.py: 7 warnings
+tests/test_demo_filter.py: 1 warning
+tests/test_orchestration_dispatcher.py: 5 warnings
+tests/test_evidence_observation_schema.py: 4 warnings
+tests/test_gdelt_adapter.py: 16 warnings
+tests/test_security_audit_hardening.py: 9 warnings
+tests/test_admin_endpoints.py: 10 warnings
+tests/test_response_speed.py: 3 warnings
+tests/test_dashboard_analytics_api.py: 7 warnings
+tests/test_audit_round5_regressions.py: 2 warnings
+tests/test_o2_health.py: 6 warnings
+tests/test_security_auth_relief_feedback.py: 10 warnings
+tests/test_dashboard_analytics_service.py: 5 warnings
+tests/test_realtime_outbox.py: 9 warnings
+tests/test_stream_recovery.py: 2 warnings
+tests/test_cwc_adapter.py: 14 warnings
+tests/test_route_and_citizen_geo_api.py: 3 warnings
+tests/test_realtime_service.py: 12 warnings
+tests/test_observation_corroboration.py: 46 warnings
+tests/test_phase3_adapters.py: 24 warnings
+tests/test_duplicate_detection.py: 13 warnings
+tests/test_r4_classification_regression.py: 2 warnings
+tests/test_orchestration_events_and_graph.py: 5 warnings
+tests/test_audit_round4_regressions.py: 4 warnings
+tests/test_incident_intelligence_api.py: 23 warnings
+tests/test_db_pool.py: 2 warnings
+tests/test_evidence_linking.py: 14 warnings
+tests/test_sse_fanout.py: 3 warnings
+tests/test_late_corroboration_wiring.py: 9 warnings
+tests/test_o3_metrics.py: 3 warnings
+tests/test_mastodon_adapter.py: 13 warnings
+tests/test_reports.py: 28 warnings
+tests/test_redis_pool.py: 1 warning
+tests/test_db_schema.py: 4 warnings
+tests/test_data_retention.py: 6 warnings
+tests/test_outbox_worker_runtime.py: 8 warnings
+tests/test_rate_limiter.py: 3 warnings
+tests/test_ingestion.py: 9 warnings
+tests/test_location_resolution.py: 15 warnings
+tests/test_health.py: 3 warnings
+tests/test_orchestration_benchmark.py: 1 warning
+tests/test_realtime_integration.py: 4 warnings
+tests/test_config.py: 7 warnings
+tests/test_dashboard_cache.py: 4 warnings
+  /Users/akshatjain/Documents/SIH/back-end/.venv/lib/python3.14/site-packages/pytest_asyncio/plugin.py:966: DeprecationWarning: 'asyncio.set_event_loop_policy' is deprecated and slated for removal in Python 3.16
+    asyncio.set_event_loop_policy(previous_policy)
+
+tests/test_live_intelligence_integration.py: 8 warnings
+tests/test_source_trust_score_audit.py: 6 warnings
+tests/test_realtime_sse.py: 15 warnings
+tests/test_verification_state_machine.py: 11 warnings
+tests/test_ndma_adapter.py: 12 warnings
+tests/test_orchestration_pipeline.py: 8 warnings
+tests/test_imd_adapter.py: 9 warnings
+tests/test_credibility_engine.py: 22 warnings
+tests/test_rss_adapter.py: 9 warnings
+tests/test_external_ingestion_integration.py: 7 warnings
+tests/test_demo_filter.py: 1 warning
+tests/test_orchestration_dispatcher.py: 5 warnings
+tests/test_evidence_observation_schema.py: 4 warnings
+tests/test_gdelt_adapter.py: 16 warnings
+tests/test_security_audit_hardening.py: 9 warnings
+tests/test_admin_endpoints.py: 10 warnings
+tests/test_response_speed.py: 3 warnings
+tests/test_dashboard_analytics_api.py: 7 warnings
+tests/test_audit_round5_regressions.py: 2 warnings
+tests/test_o2_health.py: 6 warnings
+tests/test_security_auth_relief_feedback.py: 10 warnings
+tests/test_dashboard_analytics_service.py: 5 warnings
+tests/test_realtime_outbox.py: 9 warnings
+tests/test_stream_recovery.py: 2 warnings
+tests/test_cwc_adapter.py: 14 warnings
+tests/test_route_and_citizen_geo_api.py: 3 warnings
+tests/test_realtime_service.py: 12 warnings
+tests/test_observation_corroboration.py: 46 warnings
+tests/test_phase3_adapters.py: 24 warnings
+tests/test_duplicate_detection.py: 13 warnings
+tests/test_r4_classification_regression.py: 2 warnings
+tests/test_orchestration_events_and_graph.py: 5 warnings
+tests/test_audit_round4_regressions.py: 4 warnings
+tests/test_incident_intelligence_api.py: 23 warnings
+tests/test_db_pool.py: 2 warnings
+tests/test_evidence_linking.py: 14 warnings
+tests/test_sse_fanout.py: 3 warnings
+tests/test_late_corroboration_wiring.py: 9 warnings
+tests/test_o3_metrics.py: 3 warnings
+tests/test_mastodon_adapter.py: 13 warnings
+tests/test_reports.py: 28 warnings
+tests/test_redis_pool.py: 1 warning
+tests/test_db_schema.py: 4 warnings
+tests/test_data_retention.py: 6 warnings
+tests/test_outbox_worker_runtime.py: 8 warnings
+tests/test_rate_limiter.py: 3 warnings
+tests/test_ingestion.py: 9 warnings
+tests/test_location_resolution.py: 15 warnings
+tests/test_health.py: 3 warnings
+tests/test_orchestration_benchmark.py: 1 warning
+tests/test_realtime_integration.py: 4 warnings
+tests/test_config.py: 7 warnings
+tests/test_dashboard_cache.py: 4 warnings
+  /Users/akshatjain/Documents/SIH/back-end/.venv/lib/python3.14/site-packages/pytest_asyncio/plugin.py:978: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+    policy = asyncio.get_event_loop_policy()
+
+tests/test_verification_state_machine.py: 5 warnings
+tests/test_demo_filter.py: 1 warning
+tests/test_admin_endpoints.py: 2 warnings
+tests/test_dashboard_analytics_api.py: 4 warnings
+tests/test_o2_health.py: 2 warnings
+tests/test_security_auth_relief_feedback.py: 7 warnings
+tests/test_route_and_citizen_geo_api.py: 1 warning
+tests/test_audit_round4_regressions.py: 1 warning
+tests/test_incident_intelligence_api.py: 17 warnings
+tests/test_o3_metrics.py: 1 warning
+tests/test_reports.py: 20 warnings
+tests/test_health.py: 2 warnings
+tests/test_dashboard_cache.py: 1 warning
+  /Users/akshatjain/Documents/SIH/back-end/.venv/lib/python3.14/site-packages/fastapi/routing.py:144: FastAPIDeprecationWarning: ORJSONResponse is deprecated, FastAPI now serializes data directly to JSON bytes via Pydantic when a return type or response model is set, which is faster and doesn't need a custom response class. Read more in the FastAPI docs: https://fastapi.tiangolo.com/advanced/custom-response/#orjson-or-response-model and https://fastapi.tiangolo.com/tutorial/response-model/
+    response = await f(request)
+
+tests/test_admin_endpoints.py::TestAdminEndpoints::test_bulk_verification_limit_enforced_422
+tests/test_admin_endpoints.py::TestAdminEndpoints::test_export_limits_enforced_422
+tests/test_audit_round4_regressions.py::test_geo_endpoint_honors_limit
+tests/test_incident_intelligence_api.py::test_no_duplicate_citizen_intake_route
+tests/test_reports.py::test_submit_report_missing_title
+  /Users/akshatjain/Documents/SIH/back-end/.venv/lib/python3.14/site-packages/starlette/_exception_handler.py:59: StarletteDeprecationWarning: 'HTTP_422_UNPROCESSABLE_ENTITY' is deprecated. Use 'HTTP_422_UNPROCESSABLE_CONTENT' instead.
+    response = await handler(conn, exc)  # type: ignore[arg-type]
+
+tests/test_dashboard_analytics_api.py::test_dashboard_summary_api_validation_errors
+tests/test_dashboard_analytics_api.py::test_analytics_trends_api_validation_errors
+tests/test_dashboard_analytics_api.py::test_analytics_regional_api_validation_errors
+tests/test_incident_intelligence_api.py::test_geo_incidents_valid_bbox_and_safety_checks
+tests/test_reports.py::test_submit_report_invalid_longitude
+tests/test_reports.py::test_list_reports_invalid_bbox
+tests/test_reports.py::test_get_report_malformed_id_returns_422
+tests/test_reports.py::test_submit_report_invalid_latitude
+tests/test_reports.py::test_list_reports_invalid_date_range
+  /Users/akshatjain/Documents/SIH/back-end/.venv/lib/python3.14/site-packages/fastapi/routing.py:352: StarletteDeprecationWarning: 'HTTP_422_UNPROCESSABLE_ENTITY' is deprecated. Use 'HTTP_422_UNPROCESSABLE_CONTENT' instead.
+    return await dependant.call(**values)
+
+tests/test_dashboard_analytics_api.py::test_dashboard_summary_api_validation_errors
+  /Users/akshatjain/Documents/SIH/back-end/app/api/v1/dashboard.py:137: StarletteDeprecationWarning: 'HTTP_422_UNPROCESSABLE_ENTITY' is deprecated. Use 'HTTP_422_UNPROCESSABLE_CONTENT' instead.
+    parsed_bbox = _parse_bbox(bbox)
+
+tests/test_dashboard_analytics_api.py::test_analytics_trends_api_validation_errors
+  /Users/akshatjain/Documents/SIH/back-end/app/api/v1/analytics.py:145: StarletteDeprecationWarning: 'HTTP_422_UNPROCESSABLE_ENTITY' is deprecated. Use 'HTTP_422_UNPROCESSABLE_CONTENT' instead.
+    parsed_bbox = _parse_bbox(bbox)
+
+tests/test_dashboard_analytics_api.py::test_analytics_regional_api_validation_errors
+  /Users/akshatjain/Documents/SIH/back-end/app/api/v1/analytics.py:231: StarletteDeprecationWarning: 'HTTP_422_UNPROCESSABLE_ENTITY' is deprecated. Use 'HTTP_422_UNPROCESSABLE_CONTENT' instead.
+    parsed_bbox = _parse_bbox(bbox)
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+479 passed, 4397 warnings in 108.46s (0:01:48)
+Task was destroyed but it is pending!
+task: <Task pending name='Task-4219' coro=<AsyncRedisClient.delete() running at /Users/akshatjain/Documents/SIH/back-end/app/core/redis.py:537> wait_for=<Future pending cb=[Task.task_wakeup()]>>
+Task was destroyed but it is pending!
+task: <Task pending name='Task-4266' coro=<AsyncRedisClient.delete() running at /Users/akshatjain/Documents/SIH/back-end/app/core/redis.py:537> wait_for=<Future pending cb=[Task.task_wakeup()]>>
+Task was destroyed but it is pending!
+task: <Task pending name='Task-4366' coro=<AsyncRedisClient.delete() running at /Users/akshatjain/Documents/SIH/back-end/app/core/redis.py:537> wait_for=<Future pending cb=[Task.task_wakeup()]>>
+Task was destroyed but it is pending!
+task: <Task pending name='Task-4386' coro=<AsyncRedisClient.delete() running at /Users/akshatjain/Documents/SIH/back-end/app/core/redis.py:537> wait_for=<Future pending cb=[Task.task_wakeup()]>>
+Task was destroyed but it is pending!
+task: <Task pending name='Task-4429' coro=<AsyncRedisClient.delete() running at /Users/akshatjain/Documents/SIH/back-end/app/core/redis.py:537> wait_for=<Future pending cb=[Task.task_wakeup()]>>
+Task was destroyed but it is pending!
+task: <Task pending name='Task-4539' coro=<AsyncRedisClient.delete() running at /Users/akshatjain/Documents/SIH/back-end/app/core/redis.py:537> wait_for=<Future pending cb=[Task.task_wakeup()]>>
+Task was destroyed but it is pending!
+task: <Task pending name='Task-4556' coro=<AsyncRedisClient.delete() running at /Users/akshatjain/Documents/SIH/back-end/app/core/redis.py:537> wait_for=<Future pending cb=[Task.task_wakeup()]>>
+Task was destroyed but it is pending!
+task: <Task pending name='Task-4588' coro=<AsyncRedisClient.delete() running at /Users/akshatjain/Documents/SIH/back-end/app/core/redis.py:537> wait_for=<Future pending cb=[Task.task_wakeup()]>>
+Task was destroyed but it is pending!
+task: <Task pending name='Task-4631' coro=<AsyncRedisClient.delete() running at /Users/akshatjain/Documents/SIH/back-end/app/core/redis.py:537> wait_for=<Future pending cb=[Task.task_wakeup()]>>
+Task was destroyed but it is pending!
+task: <Task pending name='Task-4677' coro=<AsyncRedisClient.delete() running at /Users/akshatjain/Documents/SIH/back-end/app/core/redis.py:537> wait_for=<Future pending cb=[Task.task_wakeup()]>>
+Task was destroyed but it is pending!
+task: <Task pending name='Task-4728' coro=<AsyncRedisClient.delete() running at /Users/akshatjain/Documents/SIH/back-end/app/core/redis.py:537> wait_for=<Future pending cb=[Task.task_wakeup()]>>
+Task was destroyed but it is pending!
+task: <Task pending name='Task-4782' coro=<AsyncRedisClient.delete() running at /Users/akshatjain/Documents/SIH/back-end/app/core/redis.py:537> wait_for=<Future pending cb=[Task.task_wakeup()]>>
+
+$ .venv/bin/pytest -q -p no:randomly
+........................................................................ [ 15%]
+........................................................................ [ 30%]
+........................................................................ [ 45%]
+........................................................................ [ 60%]
+........................................................................ [ 75%]
+........................................................................ [ 90%]
+...............................................                          [100%]Task was destroyed but it is pending!
+task: <Task pending name='Task-4179' coro=<AsyncRedisClient.delete() running at /Users/akshatjain/Documents/SIH/back-end/app/core/redis.py:537> wait_for=<Future pending cb=[Task.task_wakeup()]>>
+Task was destroyed but it is pending!
+task: <Task pending name='Task-4230' coro=<AsyncRedisClient.delete() running at /Users/akshatjain/Documents/SIH/back-end/app/core/redis.py:537> wait_for=<Future pending cb=[Task.task_wakeup()]>>
+Task was destroyed but it is pending!
+task: <Task pending name='Task-4333' coro=<AsyncRedisClient.delete() running at /Users/akshatjain/Documents/SIH/back-end/app/core/redis.py:537> wait_for=<Future pending cb=[Task.task_wakeup()]>>
+Task was destroyed but it is pending!
+task: <Task pending name='Task-4353' coro=<AsyncRedisClient.delete() running at /Users/akshatjain/Documents/SIH/back-end/app/core/redis.py:537> wait_for=<Future pending cb=[Task.task_wakeup()]>>
+Task was destroyed but it is pending!
+task: <Task pending name='Task-4372' coro=<AsyncRedisClient.delete() running at /Users/akshatjain/Documents/SIH/back-end/app/core/redis.py:537> wait_for=<Future pending cb=[Task.task_wakeup()]>>
+Task was destroyed but it is pending!
+task: <Task pending name='Task-4412' coro=<AsyncRedisClient.delete() running at /Users/akshatjain/Documents/SIH/back-end/app/core/redis.py:537> wait_for=<Future pending cb=[Task.task_wakeup()]>>
+Task was destroyed but it is pending!
+task: <Task pending name='Task-4457' coro=<AsyncRedisClient.delete() running at /Users/akshatjain/Documents/SIH/back-end/app/core/redis.py:537> wait_for=<Future pending cb=[Task.task_wakeup()]>>
+Task was destroyed but it is pending!
+task: <Task pending name='Task-4482' coro=<AsyncRedisClient.delete() running at /Users/akshatjain/Documents/SIH/back-end/app/core/redis.py:537> wait_for=<Future pending cb=[Task.task_wakeup()]>>
+Task was destroyed but it is pending!
+task: <Task pending name='Task-4515' coro=<AsyncRedisClient.delete() running at /Users/akshatjain/Documents/SIH/back-end/app/core/redis.py:537> wait_for=<Future pending cb=[Task.task_wakeup()]>>
+Task was destroyed but it is pending!
+task: <Task pending name='Task-4556' coro=<AsyncRedisClient.delete() running at /Users/akshatjain/Documents/SIH/back-end/app/core/redis.py:537> wait_for=<Future pending cb=[Task.task_wakeup()]>>
+Task was destroyed but it is pending!
+task: <Task pending name='Task-4686' coro=<AsyncRedisClient.delete() running at /Users/akshatjain/Documents/SIH/back-end/app/core/redis.py:537> wait_for=<Future pending cb=[Task.task_wakeup()]>>
+Task was destroyed but it is pending!
+task: <Task pending name='Task-4732' coro=<AsyncRedisClient.delete() running at /Users/akshatjain/Documents/SIH/back-end/app/core/redis.py:537> wait_for=<Future pending cb=[Task.task_wakeup()]>>
+Task was destroyed but it is pending!
+task: <Task pending name='Task-4760' coro=<AsyncRedisClient.delete() running at /Users/akshatjain/Documents/SIH/back-end/app/core/redis.py:537> wait_for=<Future pending cb=[Task.task_wakeup()]>>
+Task was destroyed but it is pending!
+task: <Task pending name='Task-5017' coro=<AsyncRedisClient.delete() running at /Users/akshatjain/Documents/SIH/back-end/app/core/redis.py:537> wait_for=<Future pending cb=[Task.task_wakeup()]>>
+
+=============================== warnings summary ===============================
+tests/test_admin_endpoints.py::TestAdminEndpoints::test_admin_endpoints_require_auth_401
+  /Users/akshatjain/Documents/SIH/back-end/.venv/lib/python3.14/site-packages/pytest_asyncio/plugin.py:1216: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+    return asyncio.get_event_loop_policy()
+
+tests/test_admin_endpoints.py: 11 warnings
+tests/test_audit_round4_regressions.py: 4 warnings
+tests/test_audit_round5_regressions.py: 2 warnings
+tests/test_config.py: 7 warnings
+tests/test_credibility_engine.py: 22 warnings
+tests/test_cwc_adapter.py: 14 warnings
+tests/test_dashboard_analytics_api.py: 7 warnings
+tests/test_dashboard_analytics_service.py: 5 warnings
+tests/test_dashboard_cache.py: 4 warnings
+tests/test_data_retention.py: 6 warnings
+tests/test_db_pool.py: 2 warnings
+tests/test_db_schema.py: 4 warnings
+tests/test_demo_filter.py: 1 warning
+tests/test_duplicate_detection.py: 13 warnings
+tests/test_evidence_linking.py: 14 warnings
+tests/test_evidence_observation_schema.py: 4 warnings
+tests/test_external_ingestion_integration.py: 7 warnings
+tests/test_gdelt_adapter.py: 16 warnings
+tests/test_health.py: 3 warnings
+tests/test_imd_adapter.py: 9 warnings
+tests/test_incident_intelligence_api.py: 23 warnings
+tests/test_ingestion.py: 9 warnings
+tests/test_late_corroboration_wiring.py: 9 warnings
+tests/test_live_intelligence_integration.py: 8 warnings
+tests/test_location_resolution.py: 15 warnings
+tests/test_mastodon_adapter.py: 13 warnings
+tests/test_ndma_adapter.py: 12 warnings
+tests/test_o2_health.py: 6 warnings
+tests/test_o3_metrics.py: 3 warnings
+tests/test_observation_corroboration.py: 46 warnings
+tests/test_orchestration_benchmark.py: 1 warning
+tests/test_orchestration_dispatcher.py: 5 warnings
+tests/test_orchestration_events_and_graph.py: 5 warnings
+tests/test_orchestration_pipeline.py: 8 warnings
+tests/test_outbox_worker_runtime.py: 8 warnings
+tests/test_phase3_adapters.py: 24 warnings
+tests/test_r4_classification_regression.py: 2 warnings
+tests/test_rate_limiter.py: 3 warnings
+tests/test_realtime_integration.py: 4 warnings
+tests/test_realtime_outbox.py: 9 warnings
+tests/test_realtime_service.py: 12 warnings
+tests/test_realtime_sse.py: 15 warnings
+tests/test_redis_pool.py: 1 warning
+tests/test_reports.py: 28 warnings
+tests/test_response_speed.py: 3 warnings
+tests/test_route_and_citizen_geo_api.py: 3 warnings
+tests/test_rss_adapter.py: 9 warnings
+tests/test_security_audit_hardening.py: 9 warnings
+tests/test_security_auth_relief_feedback.py: 10 warnings
+tests/test_source_trust_score_audit.py: 6 warnings
+tests/test_sse_fanout.py: 3 warnings
+tests/test_stream_recovery.py: 2 warnings
+tests/test_verification_state_machine.py: 11 warnings
+  /Users/akshatjain/Documents/SIH/back-end/.venv/lib/python3.14/site-packages/pytest_asyncio/plugin.py:772: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+    old_loop_policy = asyncio.get_event_loop_policy()
+
+tests/test_admin_endpoints.py: 11 warnings
+tests/test_audit_round4_regressions.py: 4 warnings
+tests/test_audit_round5_regressions.py: 2 warnings
+tests/test_config.py: 7 warnings
+tests/test_credibility_engine.py: 22 warnings
+tests/test_cwc_adapter.py: 14 warnings
+tests/test_dashboard_analytics_api.py: 7 warnings
+tests/test_dashboard_analytics_service.py: 5 warnings
+tests/test_dashboard_cache.py: 4 warnings
+tests/test_data_retention.py: 6 warnings
+tests/test_db_pool.py: 2 warnings
+tests/test_db_schema.py: 4 warnings
+tests/test_demo_filter.py: 1 warning
+tests/test_duplicate_detection.py: 13 warnings
+tests/test_evidence_linking.py: 14 warnings
+tests/test_evidence_observation_schema.py: 4 warnings
+tests/test_external_ingestion_integration.py: 7 warnings
+tests/test_gdelt_adapter.py: 16 warnings
+tests/test_health.py: 3 warnings
+tests/test_imd_adapter.py: 9 warnings
+tests/test_incident_intelligence_api.py: 23 warnings
+tests/test_ingestion.py: 9 warnings
+tests/test_late_corroboration_wiring.py: 9 warnings
+tests/test_live_intelligence_integration.py: 8 warnings
+tests/test_location_resolution.py: 15 warnings
+tests/test_mastodon_adapter.py: 13 warnings
+tests/test_ndma_adapter.py: 12 warnings
+tests/test_o2_health.py: 6 warnings
+tests/test_o3_metrics.py: 3 warnings
+tests/test_observation_corroboration.py: 46 warnings
+tests/test_orchestration_benchmark.py: 1 warning
+tests/test_orchestration_dispatcher.py: 5 warnings
+tests/test_orchestration_events_and_graph.py: 5 warnings
+tests/test_orchestration_pipeline.py: 8 warnings
+tests/test_outbox_worker_runtime.py: 8 warnings
+tests/test_phase3_adapters.py: 24 warnings
+tests/test_r4_classification_regression.py: 2 warnings
+tests/test_rate_limiter.py: 3 warnings
+tests/test_realtime_integration.py: 4 warnings
+tests/test_realtime_outbox.py: 9 warnings
+tests/test_realtime_service.py: 12 warnings
+tests/test_realtime_sse.py: 15 warnings
+tests/test_redis_pool.py: 1 warning
+tests/test_reports.py: 28 warnings
+tests/test_response_speed.py: 3 warnings
+tests/test_route_and_citizen_geo_api.py: 3 warnings
+tests/test_rss_adapter.py: 9 warnings
+tests/test_security_audit_hardening.py: 9 warnings
+tests/test_security_auth_relief_feedback.py: 10 warnings
+tests/test_source_trust_score_audit.py: 6 warnings
+tests/test_sse_fanout.py: 3 warnings
+tests/test_stream_recovery.py: 2 warnings
+tests/test_verification_state_machine.py: 11 warnings
+  /Users/akshatjain/Documents/SIH/back-end/.venv/lib/python3.14/site-packages/pytest_asyncio/plugin.py:777: DeprecationWarning: 'asyncio.set_event_loop_policy' is deprecated and slated for removal in Python 3.16
+    asyncio.set_event_loop_policy(policy)
+
+tests/test_admin_endpoints.py: 11 warnings
+tests/test_audit_round4_regressions.py: 4 warnings
+tests/test_audit_round5_regressions.py: 2 warnings
+tests/test_config.py: 7 warnings
+tests/test_credibility_engine.py: 22 warnings
+tests/test_cwc_adapter.py: 14 warnings
+tests/test_dashboard_analytics_api.py: 7 warnings
+tests/test_dashboard_analytics_service.py: 5 warnings
+tests/test_dashboard_cache.py: 4 warnings
+tests/test_data_retention.py: 6 warnings
+tests/test_db_pool.py: 2 warnings
+tests/test_db_schema.py: 4 warnings
+tests/test_demo_filter.py: 1 warning
+tests/test_duplicate_detection.py: 13 warnings
+tests/test_evidence_linking.py: 14 warnings
+tests/test_evidence_observation_schema.py: 4 warnings
+tests/test_external_ingestion_integration.py: 7 warnings
+tests/test_gdelt_adapter.py: 16 warnings
+tests/test_health.py: 3 warnings
+tests/test_imd_adapter.py: 9 warnings
+tests/test_incident_intelligence_api.py: 23 warnings
+tests/test_ingestion.py: 9 warnings
+tests/test_late_corroboration_wiring.py: 9 warnings
+tests/test_live_intelligence_integration.py: 8 warnings
+tests/test_location_resolution.py: 15 warnings
+tests/test_mastodon_adapter.py: 13 warnings
+tests/test_ndma_adapter.py: 12 warnings
+tests/test_o2_health.py: 6 warnings
+tests/test_o3_metrics.py: 3 warnings
+tests/test_observation_corroboration.py: 46 warnings
+tests/test_orchestration_benchmark.py: 1 warning
+tests/test_orchestration_dispatcher.py: 5 warnings
+tests/test_orchestration_events_and_graph.py: 5 warnings
+tests/test_orchestration_pipeline.py: 8 warnings
+tests/test_outbox_worker_runtime.py: 8 warnings
+tests/test_phase3_adapters.py: 24 warnings
+tests/test_r4_classification_regression.py: 2 warnings
+tests/test_rate_limiter.py: 3 warnings
+tests/test_realtime_integration.py: 4 warnings
+tests/test_realtime_outbox.py: 9 warnings
+tests/test_realtime_service.py: 12 warnings
+tests/test_realtime_sse.py: 15 warnings
+tests/test_redis_pool.py: 1 warning
+tests/test_reports.py: 28 warnings
+tests/test_response_speed.py: 3 warnings
+tests/test_route_and_citizen_geo_api.py: 3 warnings
+tests/test_rss_adapter.py: 9 warnings
+tests/test_security_audit_hardening.py: 9 warnings
+tests/test_security_auth_relief_feedback.py: 10 warnings
+tests/test_source_trust_score_audit.py: 6 warnings
+tests/test_sse_fanout.py: 3 warnings
+tests/test_stream_recovery.py: 2 warnings
+tests/test_verification_state_machine.py: 11 warnings
+  /Users/akshatjain/Documents/SIH/back-end/.venv/lib/python3.14/site-packages/pytest_asyncio/plugin.py:1183: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+    loop = asyncio.get_event_loop_policy().new_event_loop()
+
+tests/test_admin_endpoints.py: 10 warnings
+tests/test_audit_round4_regressions.py: 4 warnings
+tests/test_audit_round5_regressions.py: 2 warnings
+tests/test_config.py: 7 warnings
+tests/test_credibility_engine.py: 22 warnings
+tests/test_cwc_adapter.py: 14 warnings
+tests/test_dashboard_analytics_api.py: 7 warnings
+tests/test_dashboard_analytics_service.py: 5 warnings
+tests/test_dashboard_cache.py: 4 warnings
+tests/test_data_retention.py: 6 warnings
+tests/test_db_pool.py: 2 warnings
+tests/test_db_schema.py: 4 warnings
+tests/test_demo_filter.py: 1 warning
+tests/test_duplicate_detection.py: 13 warnings
+tests/test_evidence_linking.py: 14 warnings
+tests/test_evidence_observation_schema.py: 4 warnings
+tests/test_external_ingestion_integration.py: 7 warnings
+tests/test_gdelt_adapter.py: 16 warnings
+tests/test_health.py: 3 warnings
+tests/test_imd_adapter.py: 9 warnings
+tests/test_incident_intelligence_api.py: 23 warnings
+tests/test_ingestion.py: 9 warnings
+tests/test_late_corroboration_wiring.py: 9 warnings
+tests/test_live_intelligence_integration.py: 8 warnings
+tests/test_location_resolution.py: 15 warnings
+tests/test_mastodon_adapter.py: 13 warnings
+tests/test_ndma_adapter.py: 12 warnings
+tests/test_o2_health.py: 6 warnings
+tests/test_o3_metrics.py: 3 warnings
+tests/test_observation_corroboration.py: 46 warnings
+tests/test_orchestration_benchmark.py: 1 warning
+tests/test_orchestration_dispatcher.py: 5 warnings
+tests/test_orchestration_events_and_graph.py: 5 warnings
+tests/test_orchestration_pipeline.py: 8 warnings
+tests/test_outbox_worker_runtime.py: 8 warnings
+tests/test_phase3_adapters.py: 24 warnings
+tests/test_r4_classification_regression.py: 2 warnings
+tests/test_rate_limiter.py: 3 warnings
+tests/test_realtime_integration.py: 4 warnings
+tests/test_realtime_outbox.py: 9 warnings
+tests/test_realtime_service.py: 12 warnings
+tests/test_realtime_sse.py: 15 warnings
+tests/test_redis_pool.py: 1 warning
+tests/test_reports.py: 28 warnings
+tests/test_response_speed.py: 3 warnings
+tests/test_route_and_citizen_geo_api.py: 3 warnings
+tests/test_rss_adapter.py: 9 warnings
+tests/test_security_audit_hardening.py: 9 warnings
+tests/test_security_auth_relief_feedback.py: 10 warnings
+tests/test_source_trust_score_audit.py: 6 warnings
+tests/test_sse_fanout.py: 3 warnings
+tests/test_stream_recovery.py: 2 warnings
+tests/test_verification_state_machine.py: 11 warnings
+  /Users/akshatjain/Documents/SIH/back-end/.venv/lib/python3.14/site-packages/pytest_asyncio/plugin.py:874: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+    _restore_event_loop_policy(asyncio.get_event_loop_policy()),
+
+tests/test_admin_endpoints.py: 10 warnings
+tests/test_audit_round4_regressions.py: 4 warnings
+tests/test_audit_round5_regressions.py: 2 warnings
+tests/test_config.py: 7 warnings
+tests/test_credibility_engine.py: 22 warnings
+tests/test_cwc_adapter.py: 14 warnings
+tests/test_dashboard_analytics_api.py: 7 warnings
+tests/test_dashboard_analytics_service.py: 5 warnings
+tests/test_dashboard_cache.py: 4 warnings
+tests/test_data_retention.py: 6 warnings
+tests/test_db_pool.py: 2 warnings
+tests/test_db_schema.py: 4 warnings
+tests/test_demo_filter.py: 1 warning
+tests/test_duplicate_detection.py: 13 warnings
+tests/test_evidence_linking.py: 14 warnings
+tests/test_evidence_observation_schema.py: 4 warnings
+tests/test_external_ingestion_integration.py: 7 warnings
+tests/test_gdelt_adapter.py: 16 warnings
+tests/test_health.py: 3 warnings
+tests/test_imd_adapter.py: 9 warnings
+tests/test_incident_intelligence_api.py: 23 warnings
+tests/test_ingestion.py: 9 warnings
+tests/test_late_corroboration_wiring.py: 9 warnings
+tests/test_live_intelligence_integration.py: 8 warnings
+tests/test_location_resolution.py: 15 warnings
+tests/test_mastodon_adapter.py: 13 warnings
+tests/test_ndma_adapter.py: 12 warnings
+tests/test_o2_health.py: 6 warnings
+tests/test_o3_metrics.py: 3 warnings
+tests/test_observation_corroboration.py: 46 warnings
+tests/test_orchestration_benchmark.py: 1 warning
+tests/test_orchestration_dispatcher.py: 5 warnings
+tests/test_orchestration_events_and_graph.py: 5 warnings
+tests/test_orchestration_pipeline.py: 8 warnings
+tests/test_outbox_worker_runtime.py: 8 warnings
+tests/test_phase3_adapters.py: 24 warnings
+tests/test_r4_classification_regression.py: 2 warnings
+tests/test_rate_limiter.py: 3 warnings
+tests/test_realtime_integration.py: 4 warnings
+tests/test_realtime_outbox.py: 9 warnings
+tests/test_realtime_service.py: 12 warnings
+tests/test_realtime_sse.py: 15 warnings
+tests/test_redis_pool.py: 1 warning
+tests/test_reports.py: 28 warnings
+tests/test_response_speed.py: 3 warnings
+tests/test_route_and_citizen_geo_api.py: 3 warnings
+tests/test_rss_adapter.py: 9 warnings
+tests/test_security_audit_hardening.py: 9 warnings
+tests/test_security_auth_relief_feedback.py: 10 warnings
+tests/test_source_trust_score_audit.py: 6 warnings
+tests/test_sse_fanout.py: 3 warnings
+tests/test_stream_recovery.py: 2 warnings
+tests/test_verification_state_machine.py: 11 warnings
+  /Users/akshatjain/Documents/SIH/back-end/.venv/lib/python3.14/site-packages/pytest_asyncio/plugin.py:889: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+    policy = asyncio.get_event_loop_policy()
+
+tests/test_admin_endpoints.py: 10 warnings
+tests/test_audit_round4_regressions.py: 4 warnings
+tests/test_audit_round5_regressions.py: 2 warnings
+tests/test_config.py: 7 warnings
+tests/test_credibility_engine.py: 22 warnings
+tests/test_cwc_adapter.py: 14 warnings
+tests/test_dashboard_analytics_api.py: 7 warnings
+tests/test_dashboard_analytics_service.py: 5 warnings
+tests/test_dashboard_cache.py: 4 warnings
+tests/test_data_retention.py: 6 warnings
+tests/test_db_pool.py: 2 warnings
+tests/test_db_schema.py: 4 warnings
+tests/test_demo_filter.py: 1 warning
+tests/test_duplicate_detection.py: 13 warnings
+tests/test_evidence_linking.py: 14 warnings
+tests/test_evidence_observation_schema.py: 4 warnings
+tests/test_external_ingestion_integration.py: 7 warnings
+tests/test_gdelt_adapter.py: 16 warnings
+tests/test_health.py: 3 warnings
+tests/test_imd_adapter.py: 9 warnings
+tests/test_incident_intelligence_api.py: 23 warnings
+tests/test_ingestion.py: 9 warnings
+tests/test_late_corroboration_wiring.py: 9 warnings
+tests/test_live_intelligence_integration.py: 8 warnings
+tests/test_location_resolution.py: 15 warnings
+tests/test_mastodon_adapter.py: 13 warnings
+tests/test_ndma_adapter.py: 12 warnings
+tests/test_o2_health.py: 6 warnings
+tests/test_o3_metrics.py: 3 warnings
+tests/test_observation_corroboration.py: 46 warnings
+tests/test_orchestration_benchmark.py: 1 warning
+tests/test_orchestration_dispatcher.py: 5 warnings
+tests/test_orchestration_events_and_graph.py: 5 warnings
+tests/test_orchestration_pipeline.py: 8 warnings
+tests/test_outbox_worker_runtime.py: 8 warnings
+tests/test_phase3_adapters.py: 24 warnings
+tests/test_r4_classification_regression.py: 2 warnings
+tests/test_rate_limiter.py: 3 warnings
+tests/test_realtime_integration.py: 4 warnings
+tests/test_realtime_outbox.py: 9 warnings
+tests/test_realtime_service.py: 12 warnings
+tests/test_realtime_sse.py: 15 warnings
+tests/test_redis_pool.py: 1 warning
+tests/test_reports.py: 28 warnings
+tests/test_response_speed.py: 3 warnings
+tests/test_route_and_citizen_geo_api.py: 3 warnings
+tests/test_rss_adapter.py: 9 warnings
+tests/test_security_audit_hardening.py: 9 warnings
+tests/test_security_auth_relief_feedback.py: 10 warnings
+tests/test_source_trust_score_audit.py: 6 warnings
+tests/test_sse_fanout.py: 3 warnings
+tests/test_stream_recovery.py: 2 warnings
+tests/test_verification_state_machine.py: 12 warnings
+  /Users/akshatjain/Documents/SIH/back-end/.venv/lib/python3.14/site-packages/pytest_asyncio/plugin.py:794: DeprecationWarning: 'asyncio.set_event_loop_policy' is deprecated and slated for removal in Python 3.16
+    asyncio.set_event_loop_policy(old_loop_policy)
+
+tests/test_admin_endpoints.py: 10 warnings
+tests/test_audit_round4_regressions.py: 4 warnings
+tests/test_audit_round5_regressions.py: 2 warnings
+tests/test_config.py: 7 warnings
+tests/test_credibility_engine.py: 22 warnings
+tests/test_cwc_adapter.py: 14 warnings
+tests/test_dashboard_analytics_api.py: 7 warnings
+tests/test_dashboard_analytics_service.py: 5 warnings
+tests/test_dashboard_cache.py: 4 warnings
+tests/test_data_retention.py: 6 warnings
+tests/test_db_pool.py: 2 warnings
+tests/test_db_schema.py: 4 warnings
+tests/test_demo_filter.py: 1 warning
+tests/test_duplicate_detection.py: 13 warnings
+tests/test_evidence_linking.py: 14 warnings
+tests/test_evidence_observation_schema.py: 4 warnings
+tests/test_external_ingestion_integration.py: 7 warnings
+tests/test_gdelt_adapter.py: 16 warnings
+tests/test_health.py: 3 warnings
+tests/test_imd_adapter.py: 9 warnings
+tests/test_incident_intelligence_api.py: 23 warnings
+tests/test_ingestion.py: 9 warnings
+tests/test_late_corroboration_wiring.py: 9 warnings
+tests/test_live_intelligence_integration.py: 8 warnings
+tests/test_location_resolution.py: 15 warnings
+tests/test_mastodon_adapter.py: 13 warnings
+tests/test_ndma_adapter.py: 12 warnings
+tests/test_o2_health.py: 6 warnings
+tests/test_o3_metrics.py: 3 warnings
+tests/test_observation_corroboration.py: 46 warnings
+tests/test_orchestration_benchmark.py: 1 warning
+tests/test_orchestration_dispatcher.py: 5 warnings
+tests/test_orchestration_events_and_graph.py: 5 warnings
+tests/test_orchestration_pipeline.py: 8 warnings
+tests/test_outbox_worker_runtime.py: 8 warnings
+tests/test_phase3_adapters.py: 24 warnings
+tests/test_r4_classification_regression.py: 2 warnings
+tests/test_rate_limiter.py: 3 warnings
+tests/test_realtime_integration.py: 4 warnings
+tests/test_realtime_outbox.py: 9 warnings
+tests/test_realtime_service.py: 12 warnings
+tests/test_realtime_sse.py: 15 warnings
+tests/test_redis_pool.py: 1 warning
+tests/test_reports.py: 28 warnings
+tests/test_response_speed.py: 3 warnings
+tests/test_route_and_citizen_geo_api.py: 3 warnings
+tests/test_rss_adapter.py: 9 warnings
+tests/test_security_audit_hardening.py: 9 warnings
+tests/test_security_auth_relief_feedback.py: 10 warnings
+tests/test_source_trust_score_audit.py: 6 warnings
+tests/test_sse_fanout.py: 3 warnings
+tests/test_stream_recovery.py: 2 warnings
+tests/test_verification_state_machine.py: 11 warnings
+  /Users/akshatjain/Documents/SIH/back-end/.venv/lib/python3.14/site-packages/pytest_asyncio/plugin.py:942: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+    policy = asyncio.get_event_loop_policy()
+
+tests/test_admin_endpoints.py: 10 warnings
+tests/test_audit_round4_regressions.py: 4 warnings
+tests/test_audit_round5_regressions.py: 2 warnings
+tests/test_config.py: 7 warnings
+tests/test_credibility_engine.py: 22 warnings
+tests/test_cwc_adapter.py: 14 warnings
+tests/test_dashboard_analytics_api.py: 7 warnings
+tests/test_dashboard_analytics_service.py: 5 warnings
+tests/test_dashboard_cache.py: 4 warnings
+tests/test_data_retention.py: 6 warnings
+tests/test_db_pool.py: 2 warnings
+tests/test_db_schema.py: 4 warnings
+tests/test_demo_filter.py: 1 warning
+tests/test_duplicate_detection.py: 13 warnings
+tests/test_evidence_linking.py: 14 warnings
+tests/test_evidence_observation_schema.py: 4 warnings
+tests/test_external_ingestion_integration.py: 7 warnings
+tests/test_gdelt_adapter.py: 16 warnings
+tests/test_health.py: 3 warnings
+tests/test_imd_adapter.py: 9 warnings
+tests/test_incident_intelligence_api.py: 23 warnings
+tests/test_ingestion.py: 9 warnings
+tests/test_late_corroboration_wiring.py: 9 warnings
+tests/test_live_intelligence_integration.py: 8 warnings
+tests/test_location_resolution.py: 15 warnings
+tests/test_mastodon_adapter.py: 13 warnings
+tests/test_ndma_adapter.py: 12 warnings
+tests/test_o2_health.py: 6 warnings
+tests/test_o3_metrics.py: 3 warnings
+tests/test_observation_corroboration.py: 46 warnings
+tests/test_orchestration_benchmark.py: 1 warning
+tests/test_orchestration_dispatcher.py: 5 warnings
+tests/test_orchestration_events_and_graph.py: 5 warnings
+tests/test_orchestration_pipeline.py: 8 warnings
+tests/test_outbox_worker_runtime.py: 8 warnings
+tests/test_phase3_adapters.py: 24 warnings
+tests/test_r4_classification_regression.py: 2 warnings
+tests/test_rate_limiter.py: 3 warnings
+tests/test_realtime_integration.py: 4 warnings
+tests/test_realtime_outbox.py: 9 warnings
+tests/test_realtime_service.py: 12 warnings
+tests/test_realtime_sse.py: 15 warnings
+tests/test_redis_pool.py: 1 warning
+tests/test_reports.py: 28 warnings
+tests/test_response_speed.py: 3 warnings
+tests/test_route_and_citizen_geo_api.py: 3 warnings
+tests/test_rss_adapter.py: 9 warnings
+tests/test_security_audit_hardening.py: 9 warnings
+tests/test_security_auth_relief_feedback.py: 10 warnings
+tests/test_source_trust_score_audit.py: 6 warnings
+tests/test_sse_fanout.py: 3 warnings
+tests/test_stream_recovery.py: 2 warnings
+tests/test_verification_state_machine.py: 11 warnings
+  /Users/akshatjain/Documents/SIH/back-end/.venv/lib/python3.14/site-packages/pytest_asyncio/plugin.py:966: DeprecationWarning: 'asyncio.set_event_loop_policy' is deprecated and slated for removal in Python 3.16
+    asyncio.set_event_loop_policy(previous_policy)
+
+tests/test_admin_endpoints.py: 10 warnings
+tests/test_audit_round4_regressions.py: 4 warnings
+tests/test_audit_round5_regressions.py: 2 warnings
+tests/test_config.py: 7 warnings
+tests/test_credibility_engine.py: 22 warnings
+tests/test_cwc_adapter.py: 14 warnings
+tests/test_dashboard_analytics_api.py: 7 warnings
+tests/test_dashboard_analytics_service.py: 5 warnings
+tests/test_dashboard_cache.py: 4 warnings
+tests/test_data_retention.py: 6 warnings
+tests/test_db_pool.py: 2 warnings
+tests/test_db_schema.py: 4 warnings
+tests/test_demo_filter.py: 1 warning
+tests/test_duplicate_detection.py: 13 warnings
+tests/test_evidence_linking.py: 14 warnings
+tests/test_evidence_observation_schema.py: 4 warnings
+tests/test_external_ingestion_integration.py: 7 warnings
+tests/test_gdelt_adapter.py: 16 warnings
+tests/test_health.py: 3 warnings
+tests/test_imd_adapter.py: 9 warnings
+tests/test_incident_intelligence_api.py: 23 warnings
+tests/test_ingestion.py: 9 warnings
+tests/test_late_corroboration_wiring.py: 9 warnings
+tests/test_live_intelligence_integration.py: 8 warnings
+tests/test_location_resolution.py: 15 warnings
+tests/test_mastodon_adapter.py: 13 warnings
+tests/test_ndma_adapter.py: 12 warnings
+tests/test_o2_health.py: 6 warnings
+tests/test_o3_metrics.py: 3 warnings
+tests/test_observation_corroboration.py: 46 warnings
+tests/test_orchestration_benchmark.py: 1 warning
+tests/test_orchestration_dispatcher.py: 5 warnings
+tests/test_orchestration_events_and_graph.py: 5 warnings
+tests/test_orchestration_pipeline.py: 8 warnings
+tests/test_outbox_worker_runtime.py: 8 warnings
+tests/test_phase3_adapters.py: 24 warnings
+tests/test_r4_classification_regression.py: 2 warnings
+tests/test_rate_limiter.py: 3 warnings
+tests/test_realtime_integration.py: 4 warnings
+tests/test_realtime_outbox.py: 9 warnings
+tests/test_realtime_service.py: 12 warnings
+tests/test_realtime_sse.py: 15 warnings
+tests/test_redis_pool.py: 1 warning
+tests/test_reports.py: 28 warnings
+tests/test_response_speed.py: 3 warnings
+tests/test_route_and_citizen_geo_api.py: 3 warnings
+tests/test_rss_adapter.py: 9 warnings
+tests/test_security_audit_hardening.py: 9 warnings
+tests/test_security_auth_relief_feedback.py: 10 warnings
+tests/test_source_trust_score_audit.py: 6 warnings
+tests/test_sse_fanout.py: 3 warnings
+tests/test_stream_recovery.py: 2 warnings
+tests/test_verification_state_machine.py: 11 warnings
+  /Users/akshatjain/Documents/SIH/back-end/.venv/lib/python3.14/site-packages/pytest_asyncio/plugin.py:978: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+    policy = asyncio.get_event_loop_policy()
+
+tests/test_admin_endpoints.py::TestAdminEndpoints::test_export_limits_enforced_422
+tests/test_admin_endpoints.py::TestAdminEndpoints::test_bulk_verification_limit_enforced_422
+tests/test_audit_round4_regressions.py::test_geo_endpoint_honors_limit
+tests/test_incident_intelligence_api.py::test_no_duplicate_citizen_intake_route
+tests/test_reports.py::test_submit_report_missing_title
+  /Users/akshatjain/Documents/SIH/back-end/.venv/lib/python3.14/site-packages/starlette/_exception_handler.py:59: StarletteDeprecationWarning: 'HTTP_422_UNPROCESSABLE_ENTITY' is deprecated. Use 'HTTP_422_UNPROCESSABLE_CONTENT' instead.
+    response = await handler(conn, exc)  # type: ignore[arg-type]
+
+tests/test_admin_endpoints.py: 3 warnings
+tests/test_audit_round4_regressions.py: 1 warning
+tests/test_dashboard_analytics_api.py: 4 warnings
+tests/test_dashboard_cache.py: 1 warning
+tests/test_demo_filter.py: 1 warning
+tests/test_health.py: 2 warnings
+tests/test_incident_intelligence_api.py: 17 warnings
+tests/test_o2_health.py: 2 warnings
+tests/test_o3_metrics.py: 1 warning
+tests/test_reports.py: 20 warnings
+tests/test_route_and_citizen_geo_api.py: 1 warning
+tests/test_security_auth_relief_feedback.py: 7 warnings
+tests/test_verification_state_machine.py: 5 warnings
+  /Users/akshatjain/Documents/SIH/back-end/.venv/lib/python3.14/site-packages/fastapi/routing.py:144: FastAPIDeprecationWarning: ORJSONResponse is deprecated, FastAPI now serializes data directly to JSON bytes via Pydantic when a return type or response model is set, which is faster and doesn't need a custom response class. Read more in the FastAPI docs: https://fastapi.tiangolo.com/advanced/custom-response/#orjson-or-response-model and https://fastapi.tiangolo.com/tutorial/response-model/
+    response = await f(request)
+
+tests/test_dashboard_analytics_api.py::test_dashboard_summary_api_validation_errors
+tests/test_dashboard_analytics_api.py::test_analytics_trends_api_validation_errors
+tests/test_dashboard_analytics_api.py::test_analytics_regional_api_validation_errors
+tests/test_incident_intelligence_api.py::test_geo_incidents_valid_bbox_and_safety_checks
+tests/test_reports.py::test_submit_report_invalid_latitude
+tests/test_reports.py::test_submit_report_invalid_longitude
+tests/test_reports.py::test_get_report_malformed_id_returns_422
+tests/test_reports.py::test_list_reports_invalid_bbox
+tests/test_reports.py::test_list_reports_invalid_date_range
+  /Users/akshatjain/Documents/SIH/back-end/.venv/lib/python3.14/site-packages/fastapi/routing.py:352: StarletteDeprecationWarning: 'HTTP_422_UNPROCESSABLE_ENTITY' is deprecated. Use 'HTTP_422_UNPROCESSABLE_CONTENT' instead.
+    return await dependant.call(**values)
+
+tests/test_dashboard_analytics_api.py::test_dashboard_summary_api_validation_errors
+  /Users/akshatjain/Documents/SIH/back-end/app/api/v1/dashboard.py:137: StarletteDeprecationWarning: 'HTTP_422_UNPROCESSABLE_ENTITY' is deprecated. Use 'HTTP_422_UNPROCESSABLE_CONTENT' instead.
+    parsed_bbox = _parse_bbox(bbox)
+
+tests/test_dashboard_analytics_api.py::test_analytics_trends_api_validation_errors
+  /Users/akshatjain/Documents/SIH/back-end/app/api/v1/analytics.py:145: StarletteDeprecationWarning: 'HTTP_422_UNPROCESSABLE_ENTITY' is deprecated. Use 'HTTP_422_UNPROCESSABLE_CONTENT' instead.
+    parsed_bbox = _parse_bbox(bbox)
+
+tests/test_dashboard_analytics_api.py::test_analytics_regional_api_validation_errors
+  /Users/akshatjain/Documents/SIH/back-end/app/api/v1/analytics.py:231: StarletteDeprecationWarning: 'HTTP_422_UNPROCESSABLE_ENTITY' is deprecated. Use 'HTTP_422_UNPROCESSABLE_CONTENT' instead.
+    parsed_bbox = _parse_bbox(bbox)
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+479 passed, 4398 warnings in 104.43s (0:01:44)

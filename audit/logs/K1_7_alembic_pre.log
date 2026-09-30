@@ -1,0 +1,219 @@
+INFO  [alembic.runtime.migration] Context impl PostgresqlImpl.
+INFO  [alembic.runtime.migration] Will assume transactional DDL.
+INFO  [alembic.runtime.plugins] setting up autogenerate plugin alembic.autogenerate.schemas
+INFO  [alembic.runtime.plugins] setting up autogenerate plugin alembic.autogenerate.tables
+INFO  [alembic.runtime.plugins] setting up autogenerate plugin alembic.autogenerate.types
+INFO  [alembic.runtime.plugins] setting up autogenerate plugin alembic.autogenerate.constraints
+INFO  [alembic.runtime.plugins] setting up autogenerate plugin alembic.autogenerate.defaults
+INFO  [alembic.runtime.plugins] setting up autogenerate plugin alembic.autogenerate.comments
+INFO  [alembic.runtime.plugins] setting up autogenerate plugin alembic.autogenerate.checkconstraint_byname
+INFO  [alembic.autogenerate.compare.constraints] Detected removed index 'idx_forecast_advisories_hazard' on 'forecast_advisories'
+INFO  [alembic.autogenerate.compare.constraints] Detected removed index 'idx_forecast_advisories_source' on 'forecast_advisories'
+INFO  [alembic.autogenerate.compare.constraints] Detected added index 'ix_forecast_advisories_hazard_type' on '('hazard_type',)'
+INFO  [alembic.autogenerate.compare.constraints] Detected added index 'ix_forecast_advisories_source_code' on '('source_code',)'
+INFO  [alembic.autogenerate.compare.constraints] Detected added index 'ix_forecast_advisories_valid_from' on '('valid_from',)'
+INFO  [alembic.autogenerate.compare.constraints] Detected added index 'ix_forecast_advisories_valid_until' on '('valid_until',)'
+INFO  [alembic.autogenerate.compare.constraints] Detected removed index 'idx_feedback_report_id' on 'incident_feedback'
+INFO  [alembic.autogenerate.compare.constraints] Detected removed index 'idx_feedback_user_id' on 'incident_feedback'
+INFO  [alembic.autogenerate.compare.constraints] Detected added index 'ix_incident_feedback_report_id' on '('report_id',)'
+INFO  [alembic.autogenerate.compare.constraints] Detected added index 'ix_incident_feedback_user_id' on '('user_id',)'
+INFO  [alembic.autogenerate.compare.constraints] Detected removed index 'idx_realtime_outbox_created_at' on 'realtime_outbox'
+INFO  [alembic.autogenerate.compare.constraints] Detected removed index 'idx_realtime_outbox_entity_id' on 'realtime_outbox'
+INFO  [alembic.autogenerate.compare.constraints] Detected removed index 'idx_realtime_outbox_event_id' on 'realtime_outbox'
+INFO  [alembic.autogenerate.compare.constraints] Detected removed index 'idx_realtime_outbox_event_type' on 'realtime_outbox'
+INFO  [alembic.autogenerate.compare.constraints] Detected removed index 'idx_realtime_outbox_status' on 'realtime_outbox'
+INFO  [alembic.autogenerate.compare.constraints] Detected removed unique constraint 'realtime_outbox_event_id_key' on 'realtime_outbox'
+INFO  [alembic.autogenerate.compare.constraints] Detected added index 'ix_realtime_outbox_created_at' on '('created_at',)'
+INFO  [alembic.autogenerate.compare.constraints] Detected added index 'ix_realtime_outbox_entity_id' on '('entity_id',)'
+INFO  [alembic.autogenerate.compare.constraints] Detected added index 'ix_realtime_outbox_event_id' on '('event_id',)'
+INFO  [alembic.autogenerate.compare.constraints] Detected added index 'ix_realtime_outbox_event_type' on '('event_type',)'
+INFO  [alembic.autogenerate.compare.constraints] Detected added index 'ix_realtime_outbox_next_retry_at' on '('next_retry_at',)'
+INFO  [alembic.autogenerate.compare.constraints] Detected added index 'ix_realtime_outbox_status' on '('status',)'
+INFO  [alembic.autogenerate.compare.constraints] Detected removed index 'idx_relief_centers_active' on 'relief_centers'
+INFO  [alembic.autogenerate.compare.constraints] Detected removed index 'idx_relief_centers_district' on 'relief_centers'
+INFO  [alembic.autogenerate.compare.constraints] Detected removed index 'idx_relief_centers_name' on 'relief_centers'
+INFO  [alembic.autogenerate.compare.constraints] Detected removed index 'idx_relief_centers_state' on 'relief_centers'
+INFO  [alembic.autogenerate.compare.constraints] Detected added index 'ix_relief_centers_district_name' on '('district_name',)'
+INFO  [alembic.autogenerate.compare.constraints] Detected added index 'ix_relief_centers_is_active' on '('is_active',)'
+INFO  [alembic.autogenerate.compare.constraints] Detected added index 'ix_relief_centers_name' on '('name',)'
+INFO  [alembic.autogenerate.compare.constraints] Detected added index 'ix_relief_centers_state_name' on '('state_name',)'
+INFO  [alembic.autogenerate.compare.constraints] Detected removed unique constraint 'users_email_key' on 'users'
+INFO  [alembic.autogenerate.compare.constraints] Detected removed index 'idx_weather_reports_cat_occ' on 'weather_reports'
+INFO  [alembic.autogenerate.compare.constraints] Detected removed index 'idx_weather_reports_dashboard_summary' on 'weather_reports'
+INFO  [alembic.autogenerate.compare.constraints] Detected removed index 'idx_weather_reports_geo_sort' on 'weather_reports'
+INFO  [alembic.autogenerate.compare.constraints] Detected removed index 'idx_weather_reports_sev_occ' on 'weather_reports'
+INFO  [alembic.autogenerate.compare.constraints] Detected removed index 'idx_weather_reports_summary_cov' on 'weather_reports'
+INFO  [alembic.autogenerate.compare.constraints] Detected removed index 'idx_weather_reports_user_id' on 'weather_reports'
+INFO  [alembic.autogenerate.compare.constraints] Detected removed unique constraint 'weather_reports_tracking_id_key' on 'weather_reports'
+INFO  [alembic.autogenerate.compare.constraints] Detected added index 'ix_weather_reports_credibility_score' on '('credibility_score',)'
+INFO  [alembic.autogenerate.compare.constraints] Detected added index 'ix_weather_reports_tracking_id' on '('tracking_id',)'
+INFO  [alembic.autogenerate.compare.constraints] Detected added index 'ix_weather_reports_user_id' on '('user_id',)'
+INFO  [alembic.autogenerate.compare.constraints] Detected removed index 'idx_weather_reports_archive_archived_at' on 'weather_reports_archive'
+INFO  [alembic.autogenerate.compare.constraints] Detected removed index 'idx_weather_reports_archive_occurred_at' on 'weather_reports_archive'
+INFO  [alembic.autogenerate.compare.constraints] Detected removed index 'idx_weather_reports_archive_tracking_id' on 'weather_reports_archive'
+INFO  [alembic.autogenerate.compare.constraints] Detected changed index 'idx_weather_reports_archive_credibility' on 'weather_reports_archive': expression #1 'credibility_score' to 'credibility_score DESC'
+INFO  [alembic.autogenerate.compare.constraints] Detected changed index 'idx_weather_reports_archive_status_time' on 'weather_reports_archive': expression #2 'occurred_at' to 'occurred_at DESC'
+INFO  [alembic.autogenerate.compare.constraints] Detected added index 'ix_weather_reports_archive_archived_at' on '('archived_at',)'
+INFO  [alembic.autogenerate.compare.constraints] Detected added index 'ix_weather_reports_archive_credibility_score' on '('credibility_score',)'
+INFO  [alembic.autogenerate.compare.constraints] Detected added index 'ix_weather_reports_archive_external_id' on '('external_id',)'
+INFO  [alembic.autogenerate.compare.constraints] Detected added index 'ix_weather_reports_archive_occurred_at' on '('occurred_at',)'
+INFO  [alembic.autogenerate.compare.constraints] Detected added index 'ix_weather_reports_archive_tracking_id' on '('tracking_id',)'
+INFO  [alembic.autogenerate.compare.constraints] Detected added index 'ix_weather_reports_archive_verification_status' on '('verification_status',)'
+ERROR [alembic.util.messaging] New upgrade operations detected: [('remove_index', Index('idx_forecast_advisories_hazard', Column('hazard_type', VARCHAR(length=100), table=<forecast_advisories>, nullable=False))), ('remove_index', Index('idx_forecast_advisories_source', Column('source_code', VARCHAR(length=50), table=<forecast_advisories>, nullable=False))), ('add_index', Index('ix_forecast_advisories_hazard_type', Column('hazard_type', String(length=100), table=<forecast_advisories>, nullable=False))), ('add_index', Index('ix_forecast_advisories_source_code', Column('source_code', String(length=50), table=<forecast_advisories>, nullable=False))), ('add_index', Index('ix_forecast_advisories_valid_from', Column('valid_from', DateTime(timezone=True), table=<forecast_advisories>, nullable=False))), ('add_index', Index('ix_forecast_advisories_valid_until', Column('valid_until', DateTime(timezone=True), table=<forecast_advisories>, nullable=False))), ('remove_index', Index('idx_feedback_report_id', Column('report_id', UUID(), table=<incident_feedback>, nullable=False))), ('remove_index', Index('idx_feedback_user_id', Column('user_id', UUID(), table=<incident_feedback>))), ('add_index', Index('ix_incident_feedback_report_id', Column('report_id', UUID(), table=<incident_feedback>, nullable=False))), ('add_index', Index('ix_incident_feedback_user_id', Column('user_id', UUID(), table=<incident_feedback>))), ('remove_index', Index('idx_realtime_outbox_created_at', Column('created_at', TIMESTAMP(timezone=True), table=<realtime_outbox>, nullable=False, server_default=DefaultClause(<sqlalchemy.sql.elements.TextClause object at 0x10bc2a650>, for_update=False)))), ('remove_index', Index('idx_realtime_outbox_entity_id', Column('entity_id', VARCHAR(length=100), table=<realtime_outbox>, nullable=False))), ('remove_index', Index('idx_realtime_outbox_event_id', Column('event_id', UUID(), table=<realtime_outbox>, nullable=False), unique=True)), ('remove_index', Index('idx_realtime_outbox_event_type', Column('event_type', VARCHAR(length=50), table=<realtime_outbox>, nullable=False))), ('remove_index', Index('idx_realtime_outbox_status', Column('status', VARCHAR(length=20), table=<realtime_outbox>, nullable=False, server_default=DefaultClause(<sqlalchemy.sql.elements.TextClause object at 0x10bc2a050>, for_update=False)))), ('remove_constraint', UniqueConstraint(Column('event_id', NullType(), table=<realtime_outbox>))), ('add_index', Index('ix_realtime_outbox_created_at', Column('created_at', DateTime(timezone=True), table=<realtime_outbox>, nullable=False, server_default=DefaultClause(<sqlalchemy.sql.functions.now at 0x10b8f9e90; now>, for_update=False)))), ('add_index', Index('ix_realtime_outbox_entity_id', Column('entity_id', String(length=100), table=<realtime_outbox>, nullable=False))), ('add_index', Index('ix_realtime_outbox_event_id', Column('event_id', UUID(), table=<realtime_outbox>, nullable=False), unique=True)), ('add_index', Index('ix_realtime_outbox_event_type', Column('event_type', String(length=50), table=<realtime_outbox>, nullable=False))), ('add_index', Index('ix_realtime_outbox_next_retry_at', Column('next_retry_at', DateTime(timezone=True), table=<realtime_outbox>))), ('add_index', Index('ix_realtime_outbox_status', Column('status', String(length=20), table=<realtime_outbox>, nullable=False, default=ScalarElementColumnDefault('PENDING')))), ('remove_index', Index('idx_relief_centers_active', Column('is_active', BOOLEAN(), table=<relief_centers>, nullable=False, server_default=DefaultClause(<sqlalchemy.sql.elements.TextClause object at 0x10bbd57b0>, for_update=False)))), ('remove_index', Index('idx_relief_centers_district', Column('district_name', VARCHAR(length=100), table=<relief_centers>))), ('remove_index', Index('idx_relief_centers_name', Column('name', VARCHAR(length=255), table=<relief_centers>, nullable=False))), ('remove_index', Index('idx_relief_centers_state', Column('state_name', VARCHAR(length=100), table=<relief_centers>))), ('add_index', Index('ix_relief_centers_district_name', Column('district_name', String(length=100), table=<relief_centers>))), ('add_index', Index('ix_relief_centers_is_active', Column('is_active', Boolean(), table=<relief_centers>, nullable=False, default=ScalarElementColumnDefault(True)))), ('add_index', Index('ix_relief_centers_name', Column('name', String(length=255), table=<relief_centers>, nullable=False))), ('add_index', Index('ix_relief_centers_state_name', Column('state_name', String(length=100), table=<relief_centers>))), ('remove_constraint', UniqueConstraint(Column('email', NullType(), table=<users>))), ('remove_index', Index('idx_weather_reports_cat_occ', Column('reported_category', VARCHAR(length=100), table=<weather_reports>), Column('occurred_at', TIMESTAMP(timezone=True), table=<weather_reports>, nullable=False))), ('remove_index', Index('idx_weather_reports_dashboard_summary', Column('occurred_at', TIMESTAMP(timezone=True), table=<weather_reports>, nullable=False), Column('verification_status', VARCHAR(length=30), table=<weather_reports>, nullable=False, server_default=DefaultClause(<sqlalchemy.sql.elements.TextClause object at 0x10bc18050>, for_update=False)), Column('severity', VARCHAR(length=20), table=<weather_reports>, nullable=False, server_default=DefaultClause(<sqlalchemy.sql.elements.TextClause object at 0x10bb528b0>, for_update=False)), Column('reported_category', VARCHAR(length=100), table=<weather_reports>))), ('remove_index', Index('idx_weather_reports_geo_sort', <sqlalchemy.sql.elements.UnaryExpression object at 0x10bae7d10>, <sqlalchemy.sql.elements.UnaryExpression object at 0x10bae7e30>)), ('remove_index', Index('idx_weather_reports_sev_occ', Column('severity', VARCHAR(length=20), table=<weather_reports>, nullable=False, server_default=DefaultClause(<sqlalchemy.sql.elements.TextClause object at 0x10bb528b0>, for_update=False)), Column('occurred_at', TIMESTAMP(timezone=True), table=<weather_reports>, nullable=False))), ('remove_index', Index('idx_weather_reports_summary_cov', Column('verification_status', VARCHAR(length=30), table=<weather_reports>, nullable=False, server_default=DefaultClause(<sqlalchemy.sql.elements.TextClause object at 0x10bc18050>, for_update=False)), Column('severity', VARCHAR(length=20), table=<weather_reports>, nullable=False, server_default=DefaultClause(<sqlalchemy.sql.elements.TextClause object at 0x10bb528b0>, for_update=False)))), ('remove_index', Index('idx_weather_reports_user_id', Column('user_id', UUID(), table=<weather_reports>))), ('remove_constraint', UniqueConstraint(Column('tracking_id', NullType(), table=<weather_reports>))), ('add_index', Index('ix_weather_reports_credibility_score', Column('credibility_score', Float(), table=<weather_reports>, nullable=False, default=ScalarElementColumnDefault(0.0)))), ('add_index', Index('ix_weather_reports_tracking_id', Column('tracking_id', String(length=32), table=<weather_reports>, nullable=False), unique=True)), ('add_index', Index('ix_weather_reports_user_id', Column('user_id', UUID(), table=<weather_reports>))), ('remove_index', Index('idx_weather_reports_archive_archived_at', Column('archived_at', TIMESTAMP(timezone=True), table=<weather_reports_archive>, nullable=False, server_default=DefaultClause(<sqlalchemy.sql.elements.TextClause object at 0x10bc292d0>, for_update=False)))), ('remove_index', Index('idx_weather_reports_archive_occurred_at', Column('occurred_at', TIMESTAMP(timezone=True), table=<weather_reports_archive>, nullable=False))), ('remove_index', Index('idx_weather_reports_archive_tracking_id', Column('tracking_id', VARCHAR(length=32), table=<weather_reports_archive>, nullable=False))), ('remove_index', Index('idx_weather_reports_archive_credibility', Column('credibility_score', DOUBLE_PRECISION(precision=53), table=<weather_reports_archive>, nullable=False, server_default=DefaultClause(<sqlalchemy.sql.elements.TextClause object at 0x10bc296d0>, for_update=False)))), ('add_index', Index('idx_weather_reports_archive_credibility', <sqlalchemy.sql.elements.UnaryExpression object at 0x10bdc84d0>)), ('remove_index', Index('idx_weather_reports_archive_status_time', Column('verification_status', VARCHAR(length=30), table=<weather_reports_archive>, nullable=False, server_default=DefaultClause(<sqlalchemy.sql.elements.TextClause object at 0x10bc29650>, for_update=False)), Column('occurred_at', TIMESTAMP(timezone=True), table=<weather_reports_archive>, nullable=False))), ('add_index', Index('idx_weather_reports_archive_status_time', Column('verification_status', String(length=30), table=<weather_reports_archive>, nullable=False, default=ScalarElementColumnDefault('VERIFIED')), <sqlalchemy.sql.elements.UnaryExpression object at 0x10bdc8680>)), ('add_index', Index('ix_weather_reports_archive_archived_at', Column('archived_at', DateTime(timezone=True), table=<weather_reports_archive>, nullable=False, server_default=DefaultClause(<sqlalchemy.sql.functions.now at 0x10b811940; now>, for_update=False)))), ('add_index', Index('ix_weather_reports_archive_credibility_score', Column('credibility_score', Float(), table=<weather_reports_archive>, nullable=False, default=ScalarElementColumnDefault(0.0)))), ('add_index', Index('ix_weather_reports_archive_external_id', Column('external_id', String(length=255), table=<weather_reports_archive>))), ('add_index', Index('ix_weather_reports_archive_occurred_at', Column('occurred_at', DateTime(timezone=True), table=<weather_reports_archive>, nullable=False))), ('add_index', Index('ix_weather_reports_archive_tracking_id', Column('tracking_id', String(length=32), table=<weather_reports_archive>, nullable=False))), ('add_index', Index('ix_weather_reports_archive_verification_status', Column('verification_status', String(length=30), table=<weather_reports_archive>, nullable=False, default=ScalarElementColumnDefault('VERIFIED'))))]
+  FAILED: New upgrade operations detected: [('remove_index',
+  Index('idx_forecast_advisories_hazard', Column('hazard_type',
+  VARCHAR(length=100), table=<forecast_advisories>, nullable=False))),
+  ('remove_index', Index('idx_forecast_advisories_source', Column('source_code',
+  VARCHAR(length=50), table=<forecast_advisories>, nullable=False))),
+  ('add_index', Index('ix_forecast_advisories_hazard_type',
+  Column('hazard_type', String(length=100), table=<forecast_advisories>,
+  nullable=False))), ('add_index', Index('ix_forecast_advisories_source_code',
+  Column('source_code', String(length=50), table=<forecast_advisories>,
+  nullable=False))), ('add_index', Index('ix_forecast_advisories_valid_from',
+  Column('valid_from', DateTime(timezone=True), table=<forecast_advisories>,
+  nullable=False))), ('add_index', Index('ix_forecast_advisories_valid_until',
+  Column('valid_until', DateTime(timezone=True), table=<forecast_advisories>,
+  nullable=False))), ('remove_index', Index('idx_feedback_report_id',
+  Column('report_id', UUID(), table=<incident_feedback>, nullable=False))),
+  ('remove_index', Index('idx_feedback_user_id', Column('user_id', UUID(),
+  table=<incident_feedback>))), ('add_index',
+  Index('ix_incident_feedback_report_id', Column('report_id', UUID(),
+  table=<incident_feedback>, nullable=False))), ('add_index',
+  Index('ix_incident_feedback_user_id', Column('user_id', UUID(),
+  table=<incident_feedback>))), ('remove_index',
+  Index('idx_realtime_outbox_created_at', Column('created_at',
+  TIMESTAMP(timezone=True), table=<realtime_outbox>, nullable=False,
+  server_default=DefaultClause(<sqlalchemy.sql.elements.TextClause object at
+  0x10bc2a650>, for_update=False)))), ('remove_index',
+  Index('idx_realtime_outbox_entity_id', Column('entity_id',
+  VARCHAR(length=100), table=<realtime_outbox>, nullable=False))),
+  ('remove_index', Index('idx_realtime_outbox_event_id', Column('event_id',
+  UUID(), table=<realtime_outbox>, nullable=False), unique=True)),
+  ('remove_index', Index('idx_realtime_outbox_event_type', Column('event_type',
+  VARCHAR(length=50), table=<realtime_outbox>, nullable=False))),
+  ('remove_index', Index('idx_realtime_outbox_status', Column('status',
+  VARCHAR(length=20), table=<realtime_outbox>, nullable=False,
+  server_default=DefaultClause(<sqlalchemy.sql.elements.TextClause object at
+  0x10bc2a050>, for_update=False)))), ('remove_constraint',
+  UniqueConstraint(Column('event_id', NullType(), table=<realtime_outbox>))),
+  ('add_index', Index('ix_realtime_outbox_created_at', Column('created_at',
+  DateTime(timezone=True), table=<realtime_outbox>, nullable=False,
+  server_default=DefaultClause(<sqlalchemy.sql.functions.now at 0x10b8f9e90;
+  now>, for_update=False)))), ('add_index',
+  Index('ix_realtime_outbox_entity_id', Column('entity_id', String(length=100),
+  table=<realtime_outbox>, nullable=False))), ('add_index',
+  Index('ix_realtime_outbox_event_id', Column('event_id', UUID(),
+  table=<realtime_outbox>, nullable=False), unique=True)), ('add_index',
+  Index('ix_realtime_outbox_event_type', Column('event_type', String(length=50),
+  table=<realtime_outbox>, nullable=False))), ('add_index',
+  Index('ix_realtime_outbox_next_retry_at', Column('next_retry_at',
+  DateTime(timezone=True), table=<realtime_outbox>))), ('add_index',
+  Index('ix_realtime_outbox_status', Column('status', String(length=20),
+  table=<realtime_outbox>, nullable=False,
+  default=ScalarElementColumnDefault('PENDING')))), ('remove_index',
+  Index('idx_relief_centers_active', Column('is_active', BOOLEAN(),
+  table=<relief_centers>, nullable=False,
+  server_default=DefaultClause(<sqlalchemy.sql.elements.TextClause object at
+  0x10bbd57b0>, for_update=False)))), ('remove_index',
+  Index('idx_relief_centers_district', Column('district_name',
+  VARCHAR(length=100), table=<relief_centers>))), ('remove_index',
+  Index('idx_relief_centers_name', Column('name', VARCHAR(length=255),
+  table=<relief_centers>, nullable=False))), ('remove_index',
+  Index('idx_relief_centers_state', Column('state_name', VARCHAR(length=100),
+  table=<relief_centers>))), ('add_index',
+  Index('ix_relief_centers_district_name', Column('district_name',
+  String(length=100), table=<relief_centers>))), ('add_index',
+  Index('ix_relief_centers_is_active', Column('is_active', Boolean(),
+  table=<relief_centers>, nullable=False,
+  default=ScalarElementColumnDefault(True)))), ('add_index',
+  Index('ix_relief_centers_name', Column('name', String(length=255),
+  table=<relief_centers>, nullable=False))), ('add_index',
+  Index('ix_relief_centers_state_name', Column('state_name', String(length=100),
+  table=<relief_centers>))), ('remove_constraint',
+  UniqueConstraint(Column('email', NullType(), table=<users>))),
+  ('remove_index', Index('idx_weather_reports_cat_occ',
+  Column('reported_category', VARCHAR(length=100), table=<weather_reports>),
+  Column('occurred_at', TIMESTAMP(timezone=True), table=<weather_reports>,
+  nullable=False))), ('remove_index',
+  Index('idx_weather_reports_dashboard_summary', Column('occurred_at',
+  TIMESTAMP(timezone=True), table=<weather_reports>, nullable=False),
+  Column('verification_status', VARCHAR(length=30), table=<weather_reports>,
+  nullable=False,
+  server_default=DefaultClause(<sqlalchemy.sql.elements.TextClause object at
+  0x10bc18050>, for_update=False)), Column('severity', VARCHAR(length=20),
+  table=<weather_reports>, nullable=False,
+  server_default=DefaultClause(<sqlalchemy.sql.elements.TextClause object at
+  0x10bb528b0>, for_update=False)), Column('reported_category',
+  VARCHAR(length=100), table=<weather_reports>))), ('remove_index',
+  Index('idx_weather_reports_geo_sort', <sqlalchemy.sql.elements.UnaryExpression
+  object at 0x10bae7d10>, <sqlalchemy.sql.elements.UnaryExpression object at
+  0x10bae7e30>)), ('remove_index', Index('idx_weather_reports_sev_occ',
+  Column('severity', VARCHAR(length=20), table=<weather_reports>,
+  nullable=False,
+  server_default=DefaultClause(<sqlalchemy.sql.elements.TextClause object at
+  0x10bb528b0>, for_update=False)), Column('occurred_at',
+  TIMESTAMP(timezone=True), table=<weather_reports>, nullable=False))),
+  ('remove_index', Index('idx_weather_reports_summary_cov',
+  Column('verification_status', VARCHAR(length=30), table=<weather_reports>,
+  nullable=False,
+  server_default=DefaultClause(<sqlalchemy.sql.elements.TextClause object at
+  0x10bc18050>, for_update=False)), Column('severity', VARCHAR(length=20),
+  table=<weather_reports>, nullable=False,
+  server_default=DefaultClause(<sqlalchemy.sql.elements.TextClause object at
+  0x10bb528b0>, for_update=False)))), ('remove_index',
+  Index('idx_weather_reports_user_id', Column('user_id', UUID(),
+  table=<weather_reports>))), ('remove_constraint',
+  UniqueConstraint(Column('tracking_id', NullType(), table=<weather_reports>))),
+  ('add_index', Index('ix_weather_reports_credibility_score',
+  Column('credibility_score', Float(), table=<weather_reports>, nullable=False,
+  default=ScalarElementColumnDefault(0.0)))), ('add_index',
+  Index('ix_weather_reports_tracking_id', Column('tracking_id',
+  String(length=32), table=<weather_reports>, nullable=False), unique=True)),
+  ('add_index', Index('ix_weather_reports_user_id', Column('user_id', UUID(),
+  table=<weather_reports>))), ('remove_index',
+  Index('idx_weather_reports_archive_archived_at', Column('archived_at',
+  TIMESTAMP(timezone=True), table=<weather_reports_archive>, nullable=False,
+  server_default=DefaultClause(<sqlalchemy.sql.elements.TextClause object at
+  0x10bc292d0>, for_update=False)))), ('remove_index',
+  Index('idx_weather_reports_archive_occurred_at', Column('occurred_at',
+  TIMESTAMP(timezone=True), table=<weather_reports_archive>, nullable=False))),
+  ('remove_index', Index('idx_weather_reports_archive_tracking_id',
+  Column('tracking_id', VARCHAR(length=32), table=<weather_reports_archive>,
+  nullable=False))), ('remove_index',
+  Index('idx_weather_reports_archive_credibility', Column('credibility_score',
+  DOUBLE_PRECISION(precision=53), table=<weather_reports_archive>,
+  nullable=False,
+  server_default=DefaultClause(<sqlalchemy.sql.elements.TextClause object at
+  0x10bc296d0>, for_update=False)))), ('add_index',
+  Index('idx_weather_reports_archive_credibility',
+  <sqlalchemy.sql.elements.UnaryExpression object at 0x10bdc84d0>)),
+  ('remove_index', Index('idx_weather_reports_archive_status_time',
+  Column('verification_status', VARCHAR(length=30),
+  table=<weather_reports_archive>, nullable=False,
+  server_default=DefaultClause(<sqlalchemy.sql.elements.TextClause object at
+  0x10bc29650>, for_update=False)), Column('occurred_at',
+  TIMESTAMP(timezone=True), table=<weather_reports_archive>, nullable=False))),
+  ('add_index', Index('idx_weather_reports_archive_status_time',
+  Column('verification_status', String(length=30),
+  table=<weather_reports_archive>, nullable=False,
+  default=ScalarElementColumnDefault('VERIFIED')),
+  <sqlalchemy.sql.elements.UnaryExpression object at 0x10bdc8680>)),
+  ('add_index', Index('ix_weather_reports_archive_archived_at',
+  Column('archived_at', DateTime(timezone=True),
+  table=<weather_reports_archive>, nullable=False,
+  server_default=DefaultClause(<sqlalchemy.sql.functions.now at 0x10b811940;
+  now>, for_update=False)))), ('add_index',
+  Index('ix_weather_reports_archive_credibility_score',
+  Column('credibility_score', Float(), table=<weather_reports_archive>,
+  nullable=False, default=ScalarElementColumnDefault(0.0)))), ('add_index',
+  Index('ix_weather_reports_archive_external_id', Column('external_id',
+  String(length=255), table=<weather_reports_archive>))), ('add_index',
+  Index('ix_weather_reports_archive_occurred_at', Column('occurred_at',
+  DateTime(timezone=True), table=<weather_reports_archive>, nullable=False))),
+  ('add_index', Index('ix_weather_reports_archive_tracking_id',
+  Column('tracking_id', String(length=32), table=<weather_reports_archive>,
+  nullable=False))), ('add_index',
+  Index('ix_weather_reports_archive_verification_status',
+  Column('verification_status', String(length=30),
+  table=<weather_reports_archive>, nullable=False,
+  default=ScalarElementColumnDefault('VERIFIED'))))]

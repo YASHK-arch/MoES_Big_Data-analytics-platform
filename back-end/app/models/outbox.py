@@ -31,17 +31,14 @@ class RealtimeOutbox(Base):
         UUID(as_uuid=True),
         nullable=False,
         unique=True,
-        index=True,
     )
     event_type: Mapped[str] = mapped_column(
         String(50),
         nullable=False,
-        index=True,
     )
     entity_id: Mapped[str] = mapped_column(
         String(100),
         nullable=False,
-        index=True,
     )
     tracking_id: Mapped[Optional[str]] = mapped_column(
         String(50),
@@ -60,7 +57,6 @@ class RealtimeOutbox(Base):
         String(20),
         nullable=False,
         default="PENDING",
-        index=True,
     )
     attempts: Mapped[int] = mapped_column(
         Integer,
@@ -80,7 +76,6 @@ class RealtimeOutbox(Base):
         DateTime(timezone=True),
         server_default=func.now(),
         nullable=False,
-        index=True,
     )
     published_at: Mapped[Optional[datetime]] = mapped_column(
         DateTime(timezone=True),
@@ -93,6 +88,11 @@ class RealtimeOutbox(Base):
     )
 
     __table_args__ = (
+        Index("idx_realtime_outbox_event_id", "event_id", unique=True),
+        Index("idx_realtime_outbox_event_type", "event_type"),
+        Index("idx_realtime_outbox_entity_id", "entity_id"),
+        Index("idx_realtime_outbox_status", "status"),
+        Index("idx_realtime_outbox_created_at", "created_at"),
         Index(
             "idx_realtime_outbox_pending_retry",
             "status",

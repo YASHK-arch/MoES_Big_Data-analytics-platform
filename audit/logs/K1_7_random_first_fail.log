@@ -1,0 +1,401 @@
+$ PYTEST_RANDOMLY_SEED=20261001 back-end/.venv/bin/pytest -q -x --randomly-seed=20261001
+F
+=================================== FAILURES ===================================
+_________ test_worker_retries_partial_incident_without_force_to_ready __________
+
+self = <sqlalchemy.dialects.postgresql.asyncpg.AsyncAdapt_asyncpg_cursor object at 0x114d2f880>
+operation = 'INSERT INTO weather_reports (id, tracking_id, source_id, user_id, external_id, category_id, reported_category, severi...$17::VARCHAR, $18::FLOAT, $19::FLOAT[], $20::BOOLEAN) RETURNING weather_reports.created_at, weather_reports.updated_at'
+parameters = (UUID('15a26ed1-0135-4991-9bd4-10d19eda4753'), 'RPT-20260930-BA37AE38', UUID('57a63050-4545-445f-9ad9-592e19151295'), None, None, None, ...)
+
+    async def _prepare_and_execute(self, operation, parameters):
+        adapt_connection = self._adapt_connection
+    
+        async with adapt_connection._execute_mutex:
+            if not adapt_connection._started:
+                await adapt_connection._start_transaction()
+    
+            if parameters is None:
+                parameters = ()
+    
+            try:
+>               prepared_stmt, attributes = await adapt_connection._prepare(
+                    operation, self._invalidate_schema_cache_asof
+                )
+
+back-end/.venv/lib/python3.14/site-packages/sqlalchemy/dialects/postgresql/asyncpg.py:526: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+back-end/.venv/lib/python3.14/site-packages/sqlalchemy/dialects/postgresql/asyncpg.py:773: in _prepare
+    prepared_stmt = await self._connection.prepare(
+back-end/.venv/lib/python3.14/site-packages/asyncpg/connection.py:638: in prepare
+    return await self._prepare(
+back-end/.venv/lib/python3.14/site-packages/asyncpg/connection.py:657: in _prepare
+    stmt = await self._get_statement(
+back-end/.venv/lib/python3.14/site-packages/asyncpg/connection.py:443: in _get_statement
+    statement = await self._protocol.prepare(
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+>   ???
+E   asyncpg.exceptions.UndefinedColumnError: column "is_demo" of relation "weather_reports" does not exist
+
+asyncpg/protocol/protocol.pyx:165: UndefinedColumnError
+
+The above exception was the direct cause of the following exception:
+
+self = <sqlalchemy.engine.base.Connection object at 0x114d04050>
+dialect = <sqlalchemy.dialects.postgresql.asyncpg.PGDialect_asyncpg object at 0x114be3820>
+context = <sqlalchemy.dialects.postgresql.asyncpg.PGExecutionContext_asyncpg object at 0x114b8bce0>
+statement = <sqlalchemy.dialects.postgresql.asyncpg.PGCompiler_asyncpg object at 0x114d09590>
+parameters = [(UUID('15a26ed1-0135-4991-9bd4-10d19eda4753'), 'RPT-20260930-BA37AE38', UUID('57a63050-4545-445f-9ad9-592e19151295'), None, None, None, ...)]
+
+    def _exec_single_context(
+        self,
+        dialect: Dialect,
+        context: ExecutionContext,
+        statement: Union[str, Compiled],
+        parameters: Optional[_AnyMultiExecuteParams],
+    ) -> CursorResult[Any]:
+        """continue the _execute_context() method for a single DBAPI
+        cursor.execute() or cursor.executemany() call.
+    
+        """
+        if dialect.bind_typing is BindTyping.SETINPUTSIZES:
+            generic_setinputsizes = context._prepare_set_input_sizes()
+    
+            if generic_setinputsizes:
+                try:
+                    dialect.do_set_input_sizes(
+                        context.cursor, generic_setinputsizes, context
+                    )
+                except BaseException as e:
+                    self._handle_dbapi_exception(
+                        e, str(statement), parameters, None, context
+                    )
+    
+        cursor, str_statement, parameters = (
+            context.cursor,
+            context.statement,
+            context.parameters,
+        )
+    
+        effective_parameters: Optional[_AnyExecuteParams]
+    
+        if not context.executemany:
+            effective_parameters = parameters[0]
+        else:
+            effective_parameters = parameters
+    
+        if self._has_events or self.engine._has_events:
+            for fn in self.dispatch.before_cursor_execute:
+                str_statement, effective_parameters = fn(
+                    self,
+                    cursor,
+                    str_statement,
+                    effective_parameters,
+                    context,
+                    context.executemany,
+                )
+    
+        if self._echo:
+            self._log_info(str_statement)
+    
+            stats = context._get_cache_stats()
+    
+            if not self.engine.hide_parameters:
+                self._log_info(
+                    "[%s] %r",
+                    stats,
+                    sql_util._repr_params(
+                        effective_parameters,
+                        batches=10,
+                        ismulti=context.executemany,
+                    ),
+                )
+            else:
+                self._log_info(
+                    "[%s] [SQL parameters hidden due to hide_parameters=True]",
+                    stats,
+                )
+    
+        evt_handled: bool = False
+        try:
+            if context.execute_style is ExecuteStyle.EXECUTEMANY:
+                effective_parameters = cast(
+                    "_CoreMultiExecuteParams", effective_parameters
+                )
+                if self.dialect._has_events:
+                    for fn in self.dialect.dispatch.do_executemany:
+                        if fn(
+                            cursor,
+                            str_statement,
+                            effective_parameters,
+                            context,
+                        ):
+                            evt_handled = True
+                            break
+                if not evt_handled:
+                    self.dialect.do_executemany(
+                        cursor,
+                        str_statement,
+                        effective_parameters,
+                        context,
+                    )
+            elif not effective_parameters and context.no_parameters:
+                if self.dialect._has_events:
+                    for fn in self.dialect.dispatch.do_execute_no_params:
+                        if fn(cursor, str_statement, context):
+                            evt_handled = True
+                            break
+                if not evt_handled:
+                    self.dialect.do_execute_no_params(
+                        cursor, str_statement, context
+                    )
+            else:
+                effective_parameters = cast(
+                    "_CoreSingleExecuteParams", effective_parameters
+                )
+                if self.dialect._has_events:
+                    for fn in self.dialect.dispatch.do_execute:
+                        if fn(
+                            cursor,
+                            str_statement,
+                            effective_parameters,
+                            context,
+                        ):
+                            evt_handled = True
+                            break
+                if not evt_handled:
+>                   self.dialect.do_execute(
+                        cursor, str_statement, effective_parameters, context
+                    )
+
+back-end/.venv/lib/python3.14/site-packages/sqlalchemy/engine/base.py:1969: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+back-end/.venv/lib/python3.14/site-packages/sqlalchemy/engine/default.py:952: in do_execute
+    cursor.execute(statement, parameters)
+back-end/.venv/lib/python3.14/site-packages/sqlalchemy/dialects/postgresql/asyncpg.py:585: in execute
+    self._adapt_connection.await_(
+back-end/.venv/lib/python3.14/site-packages/sqlalchemy/util/_concurrency_py3k.py:132: in await_only
+    return current.parent.switch(awaitable)  # type: ignore[no-any-return,attr-defined] # noqa: E501
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+back-end/.venv/lib/python3.14/site-packages/sqlalchemy/util/_concurrency_py3k.py:196: in greenlet_spawn
+    value = await result
+            ^^^^^^^^^^^^
+back-end/.venv/lib/python3.14/site-packages/sqlalchemy/dialects/postgresql/asyncpg.py:563: in _prepare_and_execute
+    self._handle_exception(error)
+back-end/.venv/lib/python3.14/site-packages/sqlalchemy/dialects/postgresql/asyncpg.py:513: in _handle_exception
+    self._adapt_connection._handle_exception(error)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <AdaptedConnection <asyncpg.connection.Connection object at 0x114cbb2f0>>
+error = UndefinedColumnError('column "is_demo" of relation "weather_reports" does not exist')
+
+    def _handle_exception(self, error):
+        if self._connection.is_closed():
+            self._transaction = None
+            self._started = False
+    
+        if not isinstance(error, AsyncAdapt_asyncpg_dbapi.Error):
+            exception_mapping = self.dbapi._asyncpg_error_translate
+    
+            for super_ in type(error).__mro__:
+                if super_ in exception_mapping:
+                    translated_error = exception_mapping[super_](
+                        "%s: %s" % (type(error), error)
+                    )
+                    translated_error.pgcode = translated_error.sqlstate = (
+                        getattr(error, "sqlstate", None)
+                    )
+>                   raise translated_error from error
+E                   sqlalchemy.dialects.postgresql.asyncpg.AsyncAdapt_asyncpg_dbapi.ProgrammingError: <class 'asyncpg.exceptions.UndefinedColumnError'>: column "is_demo" of relation "weather_reports" does not exist
+
+back-end/.venv/lib/python3.14/site-packages/sqlalchemy/dialects/postgresql/asyncpg.py:797: ProgrammingError
+
+The above exception was the direct cause of the following exception:
+
+db_session = <sqlalchemy.ext.asyncio.session.AsyncSession object at 0x114a82210>
+
+    async def test_worker_retries_partial_incident_without_force_to_ready(db_session: AsyncSession) -> None:
+        """Proves that an incident left in INTELLIGENCE_PARTIAL is NOT skipped by worker run without force=True,
+        retries the failed stage to reach INTELLIGENCE_READY, producing exactly 1 outbox event and 0 duplicate audit rows."""
+        from app.db.session import async_session_factory
+        from app.orchestration.state import SUCCESS_OUTCOMES, load_orchestration_state
+    
+        mock_redis, _ = _create_mock_redis_stream_bus()
+        mock_realtime = RealtimeService(client=mock_redis)
+        report_svc = ReportService(realtime_svc=mock_realtime)
+    
+        # 1. Create base report with failing EVIDENCE stage to simulate partial inline failure
+        payload = CitizenReportCreate(
+            latitude=12.9716,
+            longitude=77.5946,
+            category_code="URBAN_FLOODING",
+            severity="SEVERE",
+            title="Severe Inundation at MG Road",
+            description="Road completely submerged under 3 feet of water.",
+            location_name="MG Road, Bengaluru",
+        )
+        original_evidence_handler = incident_pipeline.handlers[StageName.EVIDENCE]
+    
+        class FailingEvidenceHandler:
+            async def execute(self, db: AsyncSession, report: WeatherReport):
+                raise ConnectionError("Simulated temporary network error querying evidence index")
+    
+        try:
+            incident_pipeline.handlers[StageName.EVIDENCE] = FailingEvidenceHandler()  # type: ignore[assignment]
+    
+            # Inline execution leaves report in PARTIAL_INTELLIGENCE
+>           report, _ = await report_svc.create_citizen_report(session=db_session, payload=payload)
+                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+back-end/tests/test_live_intelligence_integration.py:528: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+back-end/app/services/report_service.py:296: in create_citizen_report
+    await session.commit()
+back-end/.venv/lib/python3.14/site-packages/sqlalchemy/ext/asyncio/session.py:999: in commit
+    await greenlet_spawn(self.sync_session.commit)
+back-end/.venv/lib/python3.14/site-packages/sqlalchemy/util/_concurrency_py3k.py:203: in greenlet_spawn
+    result = context.switch(value)
+             ^^^^^^^^^^^^^^^^^^^^^
+back-end/.venv/lib/python3.14/site-packages/sqlalchemy/orm/session.py:2035: in commit
+    trans.commit(_to_root=True)
+<string>:2: in commit
+    ???
+back-end/.venv/lib/python3.14/site-packages/sqlalchemy/orm/state_changes.py:137: in _go
+    ret_value = fn(self, *arg, **kw)
+                ^^^^^^^^^^^^^^^^^^^^
+back-end/.venv/lib/python3.14/site-packages/sqlalchemy/orm/session.py:1316: in commit
+    self._prepare_impl()
+<string>:2: in _prepare_impl
+    ???
+back-end/.venv/lib/python3.14/site-packages/sqlalchemy/orm/state_changes.py:137: in _go
+    ret_value = fn(self, *arg, **kw)
+                ^^^^^^^^^^^^^^^^^^^^
+back-end/.venv/lib/python3.14/site-packages/sqlalchemy/orm/session.py:1290: in _prepare_impl
+    self.session.flush()
+back-end/.venv/lib/python3.14/site-packages/sqlalchemy/orm/session.py:4353: in flush
+    self._flush(objects)
+back-end/.venv/lib/python3.14/site-packages/sqlalchemy/orm/session.py:4488: in _flush
+    with util.safe_reraise():
+         ^^^^^^^^^^^^^^^^^^^
+back-end/.venv/lib/python3.14/site-packages/sqlalchemy/util/langhelpers.py:122: in __exit__
+    raise exc_value.with_traceback(exc_tb)
+back-end/.venv/lib/python3.14/site-packages/sqlalchemy/orm/session.py:4449: in _flush
+    flush_context.execute()
+back-end/.venv/lib/python3.14/site-packages/sqlalchemy/orm/unitofwork.py:465: in execute
+    rec.execute(self)
+back-end/.venv/lib/python3.14/site-packages/sqlalchemy/orm/unitofwork.py:641: in execute
+    util.preloaded.orm_persistence.save_obj(
+back-end/.venv/lib/python3.14/site-packages/sqlalchemy/orm/persistence.py:94: in save_obj
+    _emit_insert_statements(
+back-end/.venv/lib/python3.14/site-packages/sqlalchemy/orm/persistence.py:1234: in _emit_insert_statements
+    result = connection.execute(
+back-end/.venv/lib/python3.14/site-packages/sqlalchemy/engine/base.py:1421: in execute
+    return meth(
+back-end/.venv/lib/python3.14/site-packages/sqlalchemy/sql/elements.py:526: in _execute_on_connection
+    return connection._execute_clauseelement(
+back-end/.venv/lib/python3.14/site-packages/sqlalchemy/engine/base.py:1643: in _execute_clauseelement
+    ret = self._execute_context(
+back-end/.venv/lib/python3.14/site-packages/sqlalchemy/engine/base.py:1848: in _execute_context
+    return self._exec_single_context(
+back-end/.venv/lib/python3.14/site-packages/sqlalchemy/engine/base.py:1988: in _exec_single_context
+    self._handle_dbapi_exception(
+back-end/.venv/lib/python3.14/site-packages/sqlalchemy/engine/base.py:2365: in _handle_dbapi_exception
+    raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+back-end/.venv/lib/python3.14/site-packages/sqlalchemy/engine/base.py:1969: in _exec_single_context
+    self.dialect.do_execute(
+back-end/.venv/lib/python3.14/site-packages/sqlalchemy/engine/default.py:952: in do_execute
+    cursor.execute(statement, parameters)
+back-end/.venv/lib/python3.14/site-packages/sqlalchemy/dialects/postgresql/asyncpg.py:585: in execute
+    self._adapt_connection.await_(
+back-end/.venv/lib/python3.14/site-packages/sqlalchemy/util/_concurrency_py3k.py:132: in await_only
+    return current.parent.switch(awaitable)  # type: ignore[no-any-return,attr-defined] # noqa: E501
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+back-end/.venv/lib/python3.14/site-packages/sqlalchemy/util/_concurrency_py3k.py:196: in greenlet_spawn
+    value = await result
+            ^^^^^^^^^^^^
+back-end/.venv/lib/python3.14/site-packages/sqlalchemy/dialects/postgresql/asyncpg.py:563: in _prepare_and_execute
+    self._handle_exception(error)
+back-end/.venv/lib/python3.14/site-packages/sqlalchemy/dialects/postgresql/asyncpg.py:513: in _handle_exception
+    self._adapt_connection._handle_exception(error)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <AdaptedConnection <asyncpg.connection.Connection object at 0x114cbb2f0>>
+error = UndefinedColumnError('column "is_demo" of relation "weather_reports" does not exist')
+
+    def _handle_exception(self, error):
+        if self._connection.is_closed():
+            self._transaction = None
+            self._started = False
+    
+        if not isinstance(error, AsyncAdapt_asyncpg_dbapi.Error):
+            exception_mapping = self.dbapi._asyncpg_error_translate
+    
+            for super_ in type(error).__mro__:
+                if super_ in exception_mapping:
+                    translated_error = exception_mapping[super_](
+                        "%s: %s" % (type(error), error)
+                    )
+                    translated_error.pgcode = translated_error.sqlstate = (
+                        getattr(error, "sqlstate", None)
+                    )
+>                   raise translated_error from error
+E                   sqlalchemy.exc.ProgrammingError: (sqlalchemy.dialects.postgresql.asyncpg.ProgrammingError) <class 'asyncpg.exceptions.UndefinedColumnError'>: column "is_demo" of relation "weather_reports" does not exist
+E                   [SQL: INSERT INTO weather_reports (id, tracking_id, source_id, user_id, external_id, category_id, reported_category, severity, title, description, location_name, geom, latitude, longitude, occurred_at, processing_status, verification_status, credibility_score, text_embedding, is_demo) VALUES ($1::UUID, $2::VARCHAR, $3::UUID, $4::UUID, $5::VARCHAR, $6::UUID, $7::VARCHAR, $8::VARCHAR, $9::VARCHAR, $10::VARCHAR, $11::VARCHAR, ST_GeomFromEWKT($12), $13::FLOAT, $14::FLOAT, $15::TIMESTAMP WITH TIME ZONE, $16::VARCHAR, $17::VARCHAR, $18::FLOAT, $19::FLOAT[], $20::BOOLEAN) RETURNING weather_reports.created_at, weather_reports.updated_at]
+E                   [parameters: (UUID('15a26ed1-0135-4991-9bd4-10d19eda4753'), 'RPT-20260930-BA37AE38', UUID('57a63050-4545-445f-9ad9-592e19151295'), None, None, None, 'URBAN_FLOODING', 'SEVERE', 'Severe Inundation at MG Road', 'Road completely submerged under 3 feet of water.', 'MG Road, Bengaluru', 'SRID=4326;POINT(77.5946 12.9716)', 12.9716, 77.5946, datetime.datetime(2026, 9, 30, 18, 36, 40, 634125, tzinfo=datetime.timezone.utc), 'QUEUED', 'PENDING', 0.0, None, False)]
+E                   (Background on this error at: https://sqlalche.me/e/20/f405)
+
+back-end/.venv/lib/python3.14/site-packages/sqlalchemy/dialects/postgresql/asyncpg.py:797: ProgrammingError
+---------------------------- Captured stdout setup -----------------------------
+✅ Seeded Admin, Operator, and Citizen accounts.
+✅ Seeded 6 Metropolitan Relief Shelters.
+=============================== warnings summary ===============================
+back-end/tests/test_live_intelligence_integration.py::test_worker_retries_partial_incident_without_force_to_ready
+  /Users/akshatjain/Documents/SIH/back-end/.venv/lib/python3.14/site-packages/pytest_asyncio/plugin.py:1216: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+    return asyncio.get_event_loop_policy()
+
+back-end/tests/test_live_intelligence_integration.py::test_worker_retries_partial_incident_without_force_to_ready
+back-end/tests/test_live_intelligence_integration.py::test_worker_retries_partial_incident_without_force_to_ready
+  /Users/akshatjain/Documents/SIH/back-end/.venv/lib/python3.14/site-packages/pytest_asyncio/plugin.py:772: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+    old_loop_policy = asyncio.get_event_loop_policy()
+
+back-end/tests/test_live_intelligence_integration.py::test_worker_retries_partial_incident_without_force_to_ready
+back-end/tests/test_live_intelligence_integration.py::test_worker_retries_partial_incident_without_force_to_ready
+  /Users/akshatjain/Documents/SIH/back-end/.venv/lib/python3.14/site-packages/pytest_asyncio/plugin.py:777: DeprecationWarning: 'asyncio.set_event_loop_policy' is deprecated and slated for removal in Python 3.16
+    asyncio.set_event_loop_policy(policy)
+
+back-end/tests/test_live_intelligence_integration.py::test_worker_retries_partial_incident_without_force_to_ready
+back-end/tests/test_live_intelligence_integration.py::test_worker_retries_partial_incident_without_force_to_ready
+  /Users/akshatjain/Documents/SIH/back-end/.venv/lib/python3.14/site-packages/pytest_asyncio/plugin.py:1183: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+    loop = asyncio.get_event_loop_policy().new_event_loop()
+
+back-end/tests/test_live_intelligence_integration.py::test_worker_retries_partial_incident_without_force_to_ready
+  /Users/akshatjain/Documents/SIH/back-end/.venv/lib/python3.14/site-packages/pytest_asyncio/plugin.py:874: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+    _restore_event_loop_policy(asyncio.get_event_loop_policy()),
+
+back-end/tests/test_live_intelligence_integration.py::test_worker_retries_partial_incident_without_force_to_ready
+  /Users/akshatjain/Documents/SIH/back-end/.venv/lib/python3.14/site-packages/pytest_asyncio/plugin.py:889: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+    policy = asyncio.get_event_loop_policy()
+
+back-end/tests/test_live_intelligence_integration.py::test_worker_retries_partial_incident_without_force_to_ready
+back-end/tests/test_live_intelligence_integration.py::test_worker_retries_partial_incident_without_force_to_ready
+  /Users/akshatjain/Documents/SIH/back-end/.venv/lib/python3.14/site-packages/pytest_asyncio/plugin.py:794: DeprecationWarning: 'asyncio.set_event_loop_policy' is deprecated and slated for removal in Python 3.16
+    asyncio.set_event_loop_policy(old_loop_policy)
+
+back-end/tests/test_live_intelligence_integration.py::test_worker_retries_partial_incident_without_force_to_ready
+  /Users/akshatjain/Documents/SIH/back-end/.venv/lib/python3.14/site-packages/pytest_asyncio/plugin.py:942: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+    policy = asyncio.get_event_loop_policy()
+
+back-end/tests/test_live_intelligence_integration.py::test_worker_retries_partial_incident_without_force_to_ready
+  /Users/akshatjain/Documents/SIH/back-end/.venv/lib/python3.14/site-packages/pytest_asyncio/plugin.py:966: DeprecationWarning: 'asyncio.set_event_loop_policy' is deprecated and slated for removal in Python 3.16
+    asyncio.set_event_loop_policy(previous_policy)
+
+back-end/tests/test_live_intelligence_integration.py::test_worker_retries_partial_incident_without_force_to_ready
+  /Users/akshatjain/Documents/SIH/back-end/.venv/lib/python3.14/site-packages/pytest_asyncio/plugin.py:978: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+    policy = asyncio.get_event_loop_policy()
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED back-end/tests/test_live_intelligence_integration.py::test_worker_retries_partial_incident_without_force_to_ready
+!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!
+1 failed, 14 warnings in 2.15s
+EXIT_CODE 1
