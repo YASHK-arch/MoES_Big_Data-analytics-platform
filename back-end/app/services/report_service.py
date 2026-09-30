@@ -342,6 +342,7 @@ class ReportService:
             selectinload(WeatherReport.category),
             selectinload(WeatherReport.media),
             selectinload(WeatherReport.verification_events),
+            selectinload(WeatherReport.physical_corroborations),
         )
 
         if parsed_uuid is not None:
@@ -376,6 +377,7 @@ class ReportService:
             joinedload(WeatherReport.category),
             selectinload(WeatherReport.media),
             selectinload(WeatherReport.verification_events),
+            selectinload(WeatherReport.physical_corroborations),
         )
         count_stmt = select(func.count(WeatherReport.id))
 

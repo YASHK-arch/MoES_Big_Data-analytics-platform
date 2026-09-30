@@ -4,6 +4,8 @@ from typing import Any, Dict, List, Literal, Optional
 
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 
+from app.schemas.physical_corroboration import PhysicalCorroborationBlock
+
 SeverityType = Literal["LOW", "MODERATE", "HIGH", "SEVERE"]
 
 
@@ -193,6 +195,8 @@ class ReportDetailData(BaseModel):
     is_demo: bool = False
     media: List[MediaDetail] = []
     verification_history: List[VerificationEventDetail] = []
+    physical_corroboration: Optional[PhysicalCorroborationBlock] = None
+    physical_verdict: Optional[str] = None
     created_at: datetime
 
 
