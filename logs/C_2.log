@@ -55,7 +55,7 @@ Found 20 errors in 3 files (checked 224 source files)
 > vitest run
 
 
- RUN  v1.6.1 /Users/akshatjain/Documents/SIH/front-end
+ RUN  v1.6.1 front-end
 
  ✓ src/tests/analyticsCardsMigration.test.ts  (13 tests) 6ms
  ✓ src/tests/triageCacheInvalidation.test.ts  (10 tests) 8ms
@@ -172,7 +172,7 @@ dist/assets/recharts-JHQzr8Ab.js                    399.66 kB │ gzip: 108.40 k
 ============================= test session starts ==============================
 platform darwin -- Python 3.14.0, pytest-8.4.2, pluggy-1.6.0
 Using --randomly-seed=42
-rootdir: /Users/akshatjain/Documents/SIH/back-end
+rootdir: back-end
 configfile: pyproject.toml
 testpaths: tests
 plugins: randomly-5.0.0, cov-4.1.0, anyio-4.14.2, asyncio-0.26.0
@@ -250,7 +250,7 @@ tests/test_mastodon_adapter.py .............                             [100%]
 
 =============================== warnings summary ===============================
 tests/test_dashboard_cache.py::test_api_dashboard_summary_caching
-  /Users/akshatjain/Documents/SIH/back-end/.venv/lib/python3.14/site-packages/pytest_asyncio/plugin.py:1216: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  back-end/.venv/lib/python3.14/site-packages/pytest_asyncio/plugin.py:1216: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
     return asyncio.get_event_loop_policy()
 
 tests/test_dashboard_cache.py: 5 warnings
@@ -319,7 +319,7 @@ tests/test_location_resolution.py: 15 warnings
 tests/test_rss_adapter.py: 9 warnings
 tests/test_location_mismatch_integration.py: 20 warnings
 tests/test_mastodon_adapter.py: 13 warnings
-  /Users/akshatjain/Documents/SIH/back-end/.venv/lib/python3.14/site-packages/pytest_asyncio/plugin.py:772: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  back-end/.venv/lib/python3.14/site-packages/pytest_asyncio/plugin.py:772: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
     old_loop_policy = asyncio.get_event_loop_policy()
 
 tests/test_dashboard_cache.py: 5 warnings
@@ -388,7 +388,7 @@ tests/test_location_resolution.py: 15 warnings
 tests/test_rss_adapter.py: 9 warnings
 tests/test_location_mismatch_integration.py: 20 warnings
 tests/test_mastodon_adapter.py: 13 warnings
-  /Users/akshatjain/Documents/SIH/back-end/.venv/lib/python3.14/site-packages/pytest_asyncio/plugin.py:777: DeprecationWarning: 'asyncio.set_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  back-end/.venv/lib/python3.14/site-packages/pytest_asyncio/plugin.py:777: DeprecationWarning: 'asyncio.set_event_loop_policy' is deprecated and slated for removal in Python 3.16
     asyncio.set_event_loop_policy(policy)
 
 tests/test_dashboard_cache.py: 5 warnings
@@ -457,7 +457,7 @@ tests/test_location_resolution.py: 15 warnings
 tests/test_rss_adapter.py: 9 warnings
 tests/test_location_mismatch_integration.py: 20 warnings
 tests/test_mastodon_adapter.py: 13 warnings
-  /Users/akshatjain/Documents/SIH/back-end/.venv/lib/python3.14/site-packages/pytest_asyncio/plugin.py:1183: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  back-end/.venv/lib/python3.14/site-packages/pytest_asyncio/plugin.py:1183: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
     loop = asyncio.get_event_loop_policy().new_event_loop()
 
 tests/test_dashboard_cache.py: 4 warnings
@@ -526,7 +526,7 @@ tests/test_location_resolution.py: 15 warnings
 tests/test_rss_adapter.py: 9 warnings
 tests/test_location_mismatch_integration.py: 20 warnings
 tests/test_mastodon_adapter.py: 13 warnings
-  /Users/akshatjain/Documents/SIH/back-end/.venv/lib/python3.14/site-packages/pytest_asyncio/plugin.py:874: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  back-end/.venv/lib/python3.14/site-packages/pytest_asyncio/plugin.py:874: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
     _restore_event_loop_policy(asyncio.get_event_loop_policy()),
 
 tests/test_dashboard_cache.py: 4 warnings
@@ -595,7 +595,7 @@ tests/test_location_resolution.py: 15 warnings
 tests/test_rss_adapter.py: 9 warnings
 tests/test_location_mismatch_integration.py: 20 warnings
 tests/test_mastodon_adapter.py: 13 warnings
-  /Users/akshatjain/Documents/SIH/back-end/.venv/lib/python3.14/site-packages/pytest_asyncio/plugin.py:889: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  back-end/.venv/lib/python3.14/site-packages/pytest_asyncio/plugin.py:889: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
     policy = asyncio.get_event_loop_policy()
 
 tests/test_dashboard_cache.py: 1 warning
@@ -615,7 +615,7 @@ tests/test_demo_fixtures.py: 1 warning
 tests/test_health.py: 2 warnings
 tests/test_demo_filter.py: 1 warning
 tests/test_dashboard_analytics_api.py: 4 warnings
-  /Users/akshatjain/Documents/SIH/back-end/.venv/lib/python3.14/site-packages/fastapi/routing.py:144: FastAPIDeprecationWarning: ORJSONResponse is deprecated, FastAPI now serializes data directly to JSON bytes via Pydantic when a return type or response model is set, which is faster and doesn't need a custom response class. Read more in the FastAPI docs: https://fastapi.tiangolo.com/advanced/custom-response/#orjson-or-response-model and https://fastapi.tiangolo.com/tutorial/response-model/
+  back-end/.venv/lib/python3.14/site-packages/fastapi/routing.py:144: FastAPIDeprecationWarning: ORJSONResponse is deprecated, FastAPI now serializes data directly to JSON bytes via Pydantic when a return type or response model is set, which is faster and doesn't need a custom response class. Read more in the FastAPI docs: https://fastapi.tiangolo.com/advanced/custom-response/#orjson-or-response-model and https://fastapi.tiangolo.com/tutorial/response-model/
     response = await f(request)
 
 tests/test_dashboard_cache.py: 4 warnings
@@ -684,7 +684,7 @@ tests/test_location_resolution.py: 15 warnings
 tests/test_rss_adapter.py: 9 warnings
 tests/test_location_mismatch_integration.py: 20 warnings
 tests/test_mastodon_adapter.py: 14 warnings
-  /Users/akshatjain/Documents/SIH/back-end/.venv/lib/python3.14/site-packages/pytest_asyncio/plugin.py:794: DeprecationWarning: 'asyncio.set_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  back-end/.venv/lib/python3.14/site-packages/pytest_asyncio/plugin.py:794: DeprecationWarning: 'asyncio.set_event_loop_policy' is deprecated and slated for removal in Python 3.16
     asyncio.set_event_loop_policy(old_loop_policy)
 
 tests/test_dashboard_cache.py: 4 warnings
@@ -753,7 +753,7 @@ tests/test_location_resolution.py: 15 warnings
 tests/test_rss_adapter.py: 9 warnings
 tests/test_location_mismatch_integration.py: 20 warnings
 tests/test_mastodon_adapter.py: 13 warnings
-  /Users/akshatjain/Documents/SIH/back-end/.venv/lib/python3.14/site-packages/pytest_asyncio/plugin.py:942: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  back-end/.venv/lib/python3.14/site-packages/pytest_asyncio/plugin.py:942: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
     policy = asyncio.get_event_loop_policy()
 
 tests/test_dashboard_cache.py: 4 warnings
@@ -822,7 +822,7 @@ tests/test_location_resolution.py: 15 warnings
 tests/test_rss_adapter.py: 9 warnings
 tests/test_location_mismatch_integration.py: 20 warnings
 tests/test_mastodon_adapter.py: 13 warnings
-  /Users/akshatjain/Documents/SIH/back-end/.venv/lib/python3.14/site-packages/pytest_asyncio/plugin.py:966: DeprecationWarning: 'asyncio.set_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  back-end/.venv/lib/python3.14/site-packages/pytest_asyncio/plugin.py:966: DeprecationWarning: 'asyncio.set_event_loop_policy' is deprecated and slated for removal in Python 3.16
     asyncio.set_event_loop_policy(previous_policy)
 
 tests/test_dashboard_cache.py: 4 warnings
@@ -891,7 +891,7 @@ tests/test_location_resolution.py: 15 warnings
 tests/test_rss_adapter.py: 9 warnings
 tests/test_location_mismatch_integration.py: 20 warnings
 tests/test_mastodon_adapter.py: 13 warnings
-  /Users/akshatjain/Documents/SIH/back-end/.venv/lib/python3.14/site-packages/pytest_asyncio/plugin.py:978: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  back-end/.venv/lib/python3.14/site-packages/pytest_asyncio/plugin.py:978: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
     policy = asyncio.get_event_loop_policy()
 
 tests/test_observability_and_drills.py: 77 warnings
@@ -899,7 +899,7 @@ tests/test_physical_corroboration_api.py: 1 warning
 tests/test_physical_corroboration_pipeline.py: 10 warnings
 tests/test_physical_corroboration_logic.py: 30 warnings
 tests/test_demo_fixtures.py: 2 warnings
-  /Users/akshatjain/Documents/SIH/back-end/.venv/lib/python3.14/site-packages/pydantic/main.py:263: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+  back-end/.venv/lib/python3.14/site-packages/pydantic/main.py:263: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
     validated_self = self.__pydantic_validator__.validate_python(data, self_instance=self)
 
 tests/test_audit_round4_regressions.py::test_geo_endpoint_honors_limit
@@ -907,7 +907,7 @@ tests/test_incident_intelligence_api.py::test_no_duplicate_citizen_intake_route
 tests/test_admin_endpoints.py::TestAdminEndpoints::test_export_limits_enforced_422
 tests/test_admin_endpoints.py::TestAdminEndpoints::test_bulk_verification_limit_enforced_422
 tests/test_reports.py::test_submit_report_missing_title
-  /Users/akshatjain/Documents/SIH/back-end/.venv/lib/python3.14/site-packages/starlette/_exception_handler.py:59: StarletteDeprecationWarning: 'HTTP_422_UNPROCESSABLE_ENTITY' is deprecated. Use 'HTTP_422_UNPROCESSABLE_CONTENT' instead.
+  back-end/.venv/lib/python3.14/site-packages/starlette/_exception_handler.py:59: StarletteDeprecationWarning: 'HTTP_422_UNPROCESSABLE_ENTITY' is deprecated. Use 'HTTP_422_UNPROCESSABLE_CONTENT' instead.
     response = await handler(conn, exc)  # type: ignore[arg-type]
 
 tests/test_incident_intelligence_api.py::test_geo_incidents_valid_bbox_and_safety_checks
@@ -919,19 +919,19 @@ tests/test_reports.py::test_get_report_malformed_id_returns_422
 tests/test_dashboard_analytics_api.py::test_dashboard_summary_api_validation_errors
 tests/test_dashboard_analytics_api.py::test_analytics_trends_api_validation_errors
 tests/test_dashboard_analytics_api.py::test_analytics_regional_api_validation_errors
-  /Users/akshatjain/Documents/SIH/back-end/.venv/lib/python3.14/site-packages/fastapi/routing.py:352: StarletteDeprecationWarning: 'HTTP_422_UNPROCESSABLE_ENTITY' is deprecated. Use 'HTTP_422_UNPROCESSABLE_CONTENT' instead.
+  back-end/.venv/lib/python3.14/site-packages/fastapi/routing.py:352: StarletteDeprecationWarning: 'HTTP_422_UNPROCESSABLE_ENTITY' is deprecated. Use 'HTTP_422_UNPROCESSABLE_CONTENT' instead.
     return await dependant.call(**values)
 
 tests/test_dashboard_analytics_api.py::test_dashboard_summary_api_validation_errors
-  /Users/akshatjain/Documents/SIH/back-end/app/api/v1/dashboard.py:137: StarletteDeprecationWarning: 'HTTP_422_UNPROCESSABLE_ENTITY' is deprecated. Use 'HTTP_422_UNPROCESSABLE_CONTENT' instead.
+  back-end/app/api/v1/dashboard.py:137: StarletteDeprecationWarning: 'HTTP_422_UNPROCESSABLE_ENTITY' is deprecated. Use 'HTTP_422_UNPROCESSABLE_CONTENT' instead.
     parsed_bbox = _parse_bbox(bbox)
 
 tests/test_dashboard_analytics_api.py::test_analytics_trends_api_validation_errors
-  /Users/akshatjain/Documents/SIH/back-end/app/api/v1/analytics.py:145: StarletteDeprecationWarning: 'HTTP_422_UNPROCESSABLE_ENTITY' is deprecated. Use 'HTTP_422_UNPROCESSABLE_CONTENT' instead.
+  back-end/app/api/v1/analytics.py:145: StarletteDeprecationWarning: 'HTTP_422_UNPROCESSABLE_ENTITY' is deprecated. Use 'HTTP_422_UNPROCESSABLE_CONTENT' instead.
     parsed_bbox = _parse_bbox(bbox)
 
 tests/test_dashboard_analytics_api.py::test_analytics_regional_api_validation_errors
-  /Users/akshatjain/Documents/SIH/back-end/app/api/v1/analytics.py:231: StarletteDeprecationWarning: 'HTTP_422_UNPROCESSABLE_ENTITY' is deprecated. Use 'HTTP_422_UNPROCESSABLE_CONTENT' instead.
+  back-end/app/api/v1/analytics.py:231: StarletteDeprecationWarning: 'HTTP_422_UNPROCESSABLE_ENTITY' is deprecated. Use 'HTTP_422_UNPROCESSABLE_CONTENT' instead.
     parsed_bbox = _parse_bbox(bbox)
 
 -- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
