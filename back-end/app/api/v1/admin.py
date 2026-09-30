@@ -15,7 +15,6 @@ from sqlalchemy.orm import selectinload
 from app.api.deps import get_current_operator
 from app.db.session import get_db
 from app.models.audit import AuditLog
-from app.models.outbox import RealtimeOutbox
 from app.models.report import WeatherReport
 from app.models.user import User
 from app.schemas.admin import (
@@ -285,46 +284,41 @@ async def bulk_verification_action(
 
     # ── Pass 2: Apply mutations and commit once ──────────────────────────────────
     affected_ids: list[str] = []
+    staged_outbox_rows = []
     try:
         for report in resolved:
-            await report_service.update_verification_status(
+            audit_action = action_clean if action_clean == "VERIFY" else f"BULK_{action_clean}"
+            audit_payload = {
+                "tracking_id": report.tracking_id,
+                "action": action_clean,
+                "target_status": target_status,
+                "notes": payload.notes,
+            }
+            if action_clean == "REJECT":
+                audit_payload["rejection_reason"] = payload.rejection_reason
+
+            _, outbox_row = await report_service.stage_verification_status(
                 session=db,
                 report_id_or_tracking=str(report.id),
                 new_status=target_status,
                 notes=payload.notes,
-                action_metadata={
-                    "bulk": True,
-                    "rejection_reason": payload.rejection_reason,
-                    "operator_email": current_operator.email,
-                },
-                commit=False,
+                action_metadata=(
+                    None
+                    if action_clean == "VERIFY"
+                    else {
+                        "bulk": True,
+                        "rejection_reason": payload.rejection_reason,
+                        "operator_email": current_operator.email,
+                    }
+                ),
+                audit_user_id=current_operator.id,
+                audit_action=audit_action,
+                audit_payload=audit_payload,
             )
-
-            audit_log = AuditLog(
-                user_id=current_operator.id,
-                action=f"BULK_{action_clean}",
-                entity_type="WEATHER_REPORT",
-                entity_id=report.id,
-                payload={
-                    "tracking_id": report.tracking_id,
-                    "action": action_clean,
-                    "target_status": target_status,
-                    "notes": payload.notes,
-                    "rejection_reason": payload.rejection_reason,
-                },
-            )
-            db.add(audit_log)
+            staged_outbox_rows.append(outbox_row)
             affected_ids.append(str(report.id))
 
         await db.flush()
-        outbox_result = await db.execute(
-            select(RealtimeOutbox).where(
-                RealtimeOutbox.entity_id.in_(affected_ids),
-                RealtimeOutbox.event_type == "report.verification_changed",
-                RealtimeOutbox.status == "PENDING",
-            )
-        )
-        staged_outbox_rows = list(outbox_result.scalars().all())
         await db.commit()
 
         for outbox_row in staged_outbox_rows:

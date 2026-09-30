@@ -1,9 +1,10 @@
+import json
 import uuid
 from datetime import datetime, timezone
 
 import pytest
 from httpx import ASGITransport, AsyncClient
-from sqlalchemy import select
+from sqlalchemy import func, inspect, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.main import app
@@ -218,7 +219,7 @@ class TestAdminEndpoints:
 
         a_res = await db_session.execute(
             select(AuditLog).where(
-                AuditLog.action == "BULK_VERIFY",
+                AuditLog.action == "VERIFY",
                 AuditLog.entity_id.in_([str(inc_1.id), str(inc_2.id)]),
             )
         )
@@ -274,14 +275,217 @@ class TestAdminEndpoints:
             app.dependency_overrides.pop(get_redis_client, None)
             await broadcaster.stop()
 
-        res_logs = await api_client.get("/api/v1/admin/audit-logs?action=BULK_VERIFY")
+        res_logs = await api_client.get("/api/v1/admin/audit-logs?action=VERIFY")
         assert res_logs.status_code == 200
         logs_data = res_logs.json()
         assert logs_data["success"] is True
         assert len(logs_data["data"]) >= 2
         first_log = logs_data["data"][0]
-        assert first_log["action"] == "BULK_VERIFY"
+        assert first_log["action"] == "VERIFY"
         assert first_log["user_email"] is not None
+
+    async def test_single_and_bulk_verify_parity(
+        self, api_client: AsyncClient, db_session: AsyncSession
+    ):
+        from app.services.report_service import report_service
+
+        source = await report_service.get_or_create_source(db_session, source_code="CITIZEN")
+        occurred_at = datetime(2026, 9, 30, 12, 0, tzinfo=timezone.utc)
+
+        def make_report(tracking_id: str) -> WeatherReport:
+            return WeatherReport(
+                id=uuid.uuid4(),
+                tracking_id=tracking_id,
+                source_id=source.id,
+                title="Parity verification incident",
+                description="Matching data for single and bulk verification.",
+                reported_category="FLOOD_WATERLOGGING",
+                severity="HIGH",
+                verification_status="PENDING",
+                processing_status="PENDING",
+                latitude=19.0760,
+                longitude=72.8777,
+                location_name="Mumbai, Maharashtra",
+                geom="SRID=4326;POINT(72.8777 19.0760)",
+                occurred_at=occurred_at,
+                is_demo=False,
+            )
+
+        single_report = make_report(f"K1-SINGLE-{uuid.uuid4().hex[:8]}")
+        bulk_report = make_report(f"K1-BULK-{uuid.uuid4().hex[:8]}")
+        db_session.add_all([single_report, bulk_report])
+        await db_session.commit()
+
+        single_response = await api_client.post(
+            f"/api/v1/verification/{single_report.id}/verify",
+            json={"notes": "K1 parity"},
+        )
+        bulk_response = await api_client.post(
+            "/api/v1/admin/verification/bulk",
+            json={
+                "incident_ids": [str(bulk_report.id)],
+                "action": "VERIFY",
+                "notes": "K1 parity",
+            },
+        )
+        assert single_response.status_code == 200
+        assert bulk_response.status_code == 200
+
+        report_ids = [single_report.id, bulk_report.id]
+        tracking_ids = {single_report.tracking_id, bulk_report.tracking_id}
+        string_ids = {str(report_id) for report_id in report_ids}
+
+        def normalize(value):
+            if isinstance(value, (uuid.UUID, datetime)):
+                return "<id-or-timestamp>"
+            if isinstance(value, str) and value in string_ids | tracking_ids:
+                return "<id-or-tracking-id>"
+            if isinstance(value, dict):
+                return {key: normalize(item) for key, item in value.items()}
+            if isinstance(value, list):
+                return [normalize(item) for item in value]
+            return value
+
+        def columns(row, excluded):
+            return {
+                attribute.key: normalize(getattr(row, attribute.key))
+                for attribute in inspect(type(row)).column_attrs
+                if attribute.key not in excluded
+            }
+
+        single_db_report = await db_session.get(WeatherReport, single_report.id)
+        bulk_db_report = await db_session.get(WeatherReport, bulk_report.id)
+        assert single_db_report is not None and bulk_db_report is not None
+        single_events = list(
+            (
+                await db_session.scalars(
+                    select(VerificationEvent).where(
+                        VerificationEvent.report_id == single_report.id
+                    )
+                )
+            ).all()
+        )
+        bulk_events = list(
+            (
+                await db_session.scalars(
+                    select(VerificationEvent).where(VerificationEvent.report_id == bulk_report.id)
+                )
+            ).all()
+        )
+        outbox_rows = list(
+            (
+                await db_session.scalars(
+                    select(RealtimeOutbox).where(
+                        RealtimeOutbox.entity_id.in_(string_ids),
+                        RealtimeOutbox.event_type == "report.verification_changed",
+                    )
+                )
+            ).all()
+        )
+        single_outbox_rows = [row for row in outbox_rows if row.entity_id == str(single_report.id)]
+        bulk_outbox_rows = [row for row in outbox_rows if row.entity_id == str(bulk_report.id)]
+        assert len(single_outbox_rows) == len(bulk_outbox_rows) == 1
+        assert single_outbox_rows[0].event_type == bulk_outbox_rows[0].event_type
+        assert set(single_outbox_rows[0].payload) == set(bulk_outbox_rows[0].payload)
+        print(
+            "OUTBOX_PARITY",
+            single_outbox_rows[0].event_type,
+            sorted(single_outbox_rows[0].payload),
+        )
+        audit_rows = list(
+            (
+                await db_session.scalars(
+                    select(AuditLog).where(AuditLog.entity_id.in_(report_ids))
+                )
+            ).all()
+        )
+        sections = {
+            "incident": (
+                columns(single_db_report, {"id", "tracking_id", "created_at", "updated_at"}),
+                columns(bulk_db_report, {"id", "tracking_id", "created_at", "updated_at"}),
+            ),
+            "verification_events": (
+                [columns(row, {"id", "report_id", "created_at"}) for row in single_events],
+                [columns(row, {"id", "report_id", "created_at"}) for row in bulk_events],
+            ),
+            "realtime_outbox": (
+                [columns(row, {"id", "event_id", "entity_id", "tracking_id", "occurred_at", "created_at"}) for row in outbox_rows if row.entity_id == str(single_report.id)],
+                [columns(row, {"id", "event_id", "entity_id", "tracking_id", "occurred_at", "created_at"}) for row in outbox_rows if row.entity_id == str(bulk_report.id)],
+            ),
+            "audit_logs": (
+                [columns(row, {"id", "entity_id", "created_at"}) for row in audit_rows if row.entity_id == single_report.id],
+                [columns(row, {"id", "entity_id", "created_at"}) for row in audit_rows if row.entity_id == bulk_report.id],
+            ),
+        }
+        differences = {
+            section: {"single": single_value, "bulk": bulk_value}
+            for section, (single_value, bulk_value) in sections.items()
+            if single_value != bulk_value
+        }
+        print("PARITY_DIFF", json.dumps(differences, sort_keys=True, default=str))
+        assert differences == {}
+        assert len(single_events) == len(bulk_events) == 1
+        assert len([row for row in outbox_rows if row.entity_id in string_ids]) == 2
+        assert len(audit_rows) == 2
+
+    async def test_bulk_invalid_id_changes_zero_of_four_record_groups(
+        self, api_client: AsyncClient, db_session: AsyncSession
+    ):
+        from app.services.report_service import report_service
+
+        source = await report_service.get_or_create_source(db_session, source_code="CITIZEN")
+        report = WeatherReport(
+            id=uuid.uuid4(),
+            tracking_id=f"K1-ATOMIC-{uuid.uuid4().hex[:8]}",
+            source_id=source.id,
+            title="K1 invalid batch atomicity incident",
+            reported_category="FLOOD_WATERLOGGING",
+            severity="HIGH",
+            verification_status="PENDING",
+            processing_status="PENDING",
+            latitude=19.0760,
+            longitude=72.8777,
+            geom="SRID=4326;POINT(72.8777 19.0760)",
+            occurred_at=datetime.now(timezone.utc),
+            is_demo=False,
+        )
+        db_session.add(report)
+        await db_session.commit()
+
+        response = await api_client.post(
+            "/api/v1/admin/verification/bulk",
+            json={"incident_ids": [str(report.id), str(uuid.uuid4())], "action": "VERIFY"},
+        )
+        assert response.status_code == 400
+        await db_session.refresh(report)
+        changed_incidents = int(
+            report.verification_status != "PENDING" or report.processing_status != "PENDING"
+        )
+        verification_events = await db_session.scalar(
+            select(func.count()).select_from(VerificationEvent).where(
+                VerificationEvent.report_id == report.id
+            )
+        )
+        outbox_rows = await db_session.scalar(
+            select(func.count()).select_from(RealtimeOutbox).where(
+                RealtimeOutbox.entity_id == str(report.id),
+                RealtimeOutbox.event_type == "report.verification_changed",
+            )
+        )
+        audit_rows = await db_session.scalar(
+            select(func.count()).select_from(AuditLog).where(AuditLog.entity_id == report.id)
+        )
+        print(
+            "ATOMIC_COUNTS",
+            f"changed_incidents={changed_incidents}",
+            f"verification_events={verification_events}",
+            f"realtime_outbox={outbox_rows}",
+            f"audit_logs={audit_rows}",
+        )
+        assert changed_incidents == 0
+        assert verification_events == 0
+        assert outbox_rows == 0
+        assert audit_rows == 0
 
     async def test_bulk_verify_rollback_on_invalid_id(
         self, api_client: AsyncClient, db_session: AsyncSession

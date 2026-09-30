@@ -103,13 +103,22 @@ async def verify_incident(
         )
 
     try:
-        updated = await report_service.update_verification_status(
+        updated, outbox_row = await report_service.stage_verification_status(
             session=db,
             report_id_or_tracking=clean_id,
             new_status="VERIFIED",
             notes=payload.notes if payload else None,
-            action_metadata={"broadcast_alert": payload.broadcast_alert} if payload else None,
+            action_metadata=(
+                {"broadcast_alert": True}
+                if payload and payload.broadcast_alert
+                else None
+            ),
+            audit_user_id=current_operator.id,
+            audit_action="VERIFY",
         )
+        await db.flush()
+        await db.commit()
+        await report_service.realtime_svc.publish_staged_outbox(outbox_row)
     except InvalidStateTransitionError as e:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,

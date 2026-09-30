@@ -1,0 +1,511 @@
+$ .venv/bin/pytest -q -s tests/test_admin_endpoints.py::TestAdminEndpoints::test_single_and_bulk_verify_parity tests/test_admin_endpoints.py::TestAdminEndpoints::test_bulk_invalid_id_changes_zero_of_four_record_groups
+✅ Seeded Admin, Operator, and Citizen accounts.
+✅ Seeded 6 Metropolitan Relief Shelters.
+PARITY_DIFF {"audit_logs": {"bulk": [{"action": "BULK_VERIFY", "entity_type": "WEATHER_REPORT", "ip_address": null, "payload": {"action": "VERIFY", "notes": "K1 parity", "rejection_reason": null, "target_status": "VERIFIED", "tracking_id": "<id-or-tracking-id>"}, "user_id": "<id-or-timestamp>"}], "single": []}, "verification_events": {"bulk": [{"action_metadata": {"bulk": true, "operator_email": "operator@weather-platform.gov.in", "rejection_reason": null}, "new_status": "VERIFIED", "notes": "K1 parity", "previous_status": "PENDING", "user_id": "<id-or-timestamp>"}], "single": [{"action_metadata": {"broadcast_alert": false}, "new_status": "VERIFIED", "notes": "K1 parity", "previous_status": "PENDING", "user_id": "<id-or-timestamp>"}]}}
+FF
+=================================== FAILURES ===================================
+____________ TestAdminEndpoints.test_single_and_bulk_verify_parity _____________
+
+self = <tests.test_admin_endpoints.TestAdminEndpoints object at 0x110dcef10>
+api_client = <httpx.AsyncClient object at 0x116030590>
+db_session = <sqlalchemy.ext.asyncio.session.AsyncSession object at 0x110e91f90>
+
+    async def test_single_and_bulk_verify_parity(
+        self, api_client: AsyncClient, db_session: AsyncSession
+    ):
+        from app.services.report_service import report_service
+    
+        source = await report_service.get_or_create_source(db_session, source_code="CITIZEN")
+        occurred_at = datetime(2026, 9, 30, 12, 0, tzinfo=timezone.utc)
+    
+        def make_report(tracking_id: str) -> WeatherReport:
+            return WeatherReport(
+                id=uuid.uuid4(),
+                tracking_id=tracking_id,
+                source_id=source.id,
+                title="Parity verification incident",
+                description="Matching data for single and bulk verification.",
+                reported_category="FLOOD_WATERLOGGING",
+                severity="HIGH",
+                verification_status="PENDING",
+                processing_status="PENDING",
+                latitude=19.0760,
+                longitude=72.8777,
+                location_name="Mumbai, Maharashtra",
+                geom="SRID=4326;POINT(72.8777 19.0760)",
+                occurred_at=occurred_at,
+                is_demo=False,
+            )
+    
+        single_report = make_report(f"K1-SINGLE-{uuid.uuid4().hex[:8]}")
+        bulk_report = make_report(f"K1-BULK-{uuid.uuid4().hex[:8]}")
+        db_session.add_all([single_report, bulk_report])
+        await db_session.commit()
+    
+        single_response = await api_client.post(
+            f"/api/v1/verification/{single_report.id}/verify",
+            json={"notes": "K1 parity"},
+        )
+        bulk_response = await api_client.post(
+            "/api/v1/admin/verification/bulk",
+            json={
+                "incident_ids": [str(bulk_report.id)],
+                "action": "VERIFY",
+                "notes": "K1 parity",
+            },
+        )
+        assert single_response.status_code == 200
+        assert bulk_response.status_code == 200
+    
+        report_ids = [single_report.id, bulk_report.id]
+        tracking_ids = {single_report.tracking_id, bulk_report.tracking_id}
+        string_ids = {str(report_id) for report_id in report_ids}
+    
+        def normalize(value):
+            if isinstance(value, (uuid.UUID, datetime)):
+                return "<id-or-timestamp>"
+            if isinstance(value, str) and value in string_ids | tracking_ids:
+                return "<id-or-tracking-id>"
+            if isinstance(value, dict):
+                return {key: normalize(item) for key, item in value.items()}
+            if isinstance(value, list):
+                return [normalize(item) for item in value]
+            return value
+    
+        def columns(row, excluded):
+            return {
+                attribute.key: normalize(getattr(row, attribute.key))
+                for attribute in inspect(type(row)).column_attrs
+                if attribute.key not in excluded
+            }
+    
+        single_db_report = await db_session.get(WeatherReport, single_report.id)
+        bulk_db_report = await db_session.get(WeatherReport, bulk_report.id)
+        assert single_db_report is not None and bulk_db_report is not None
+        single_events = list(
+            (
+                await db_session.scalars(
+                    select(VerificationEvent).where(
+                        VerificationEvent.report_id == single_report.id
+                    )
+                )
+            ).all()
+        )
+        bulk_events = list(
+            (
+                await db_session.scalars(
+                    select(VerificationEvent).where(VerificationEvent.report_id == bulk_report.id)
+                )
+            ).all()
+        )
+        outbox_rows = list(
+            (
+                await db_session.scalars(
+                    select(RealtimeOutbox).where(
+                        RealtimeOutbox.entity_id.in_(string_ids),
+                        RealtimeOutbox.event_type == "report.verification_changed",
+                    )
+                )
+            ).all()
+        )
+        audit_rows = list(
+            (
+                await db_session.scalars(
+                    select(AuditLog).where(AuditLog.entity_id.in_(report_ids))
+                )
+            ).all()
+        )
+        sections = {
+            "incident": (
+                columns(single_db_report, {"id", "tracking_id", "created_at", "updated_at"}),
+                columns(bulk_db_report, {"id", "tracking_id", "created_at", "updated_at"}),
+            ),
+            "verification_events": (
+                [columns(row, {"id", "report_id", "created_at"}) for row in single_events],
+                [columns(row, {"id", "report_id", "created_at"}) for row in bulk_events],
+            ),
+            "realtime_outbox": (
+                [columns(row, {"id", "event_id", "entity_id", "tracking_id", "occurred_at", "created_at"}) for row in outbox_rows if row.entity_id == str(single_report.id)],
+                [columns(row, {"id", "event_id", "entity_id", "tracking_id", "occurred_at", "created_at"}) for row in outbox_rows if row.entity_id == str(bulk_report.id)],
+            ),
+            "audit_logs": (
+                [columns(row, {"id", "entity_id", "created_at"}) for row in audit_rows if row.entity_id == single_report.id],
+                [columns(row, {"id", "entity_id", "created_at"}) for row in audit_rows if row.entity_id == bulk_report.id],
+            ),
+        }
+        differences = {
+            section: {"single": single_value, "bulk": bulk_value}
+            for section, (single_value, bulk_value) in sections.items()
+            if single_value != bulk_value
+        }
+        print("PARITY_DIFF", json.dumps(differences, sort_keys=True, default=str))
+>       assert differences == {}
+E       AssertionError: assert {'audit_logs'...DING', ...}]}} == {}
+E         
+E         Left contains 2 more items:
+E         {'audit_logs': {'bulk': [{'action': 'BULK_VERIFY',
+E                                   'entity_type': 'WEATHER_REPORT',
+E                                   'ip_address': None,
+E                                   'payload': {'action': 'VERIFY',
+E                                               'notes': 'K1 parity',...
+E         
+E         ...Full output truncated (18 lines hidden), use '-vv' to show
+
+tests/test_admin_endpoints.py:416: AssertionError
+__ TestAdminEndpoints.test_bulk_invalid_id_changes_zero_of_four_record_groups __
+
+self = <tests.test_admin_endpoints.TestAdminEndpoints object at 0x110e32250>
+api_client = <httpx.AsyncClient object at 0x110fa74d0>
+db_session = <sqlalchemy.ext.asyncio.session.AsyncSession object at 0x110f2f6f0>
+
+    async def test_bulk_invalid_id_changes_zero_of_four_record_groups(
+        self, api_client: AsyncClient, db_session: AsyncSession
+    ):
+        from app.services.report_service import report_service
+    
+        source = await report_service.get_or_create_source(db_session, source_code="CITIZEN")
+        report = WeatherReport(
+            id=uuid.uuid4(),
+            tracking_id=f"K1-ATOMIC-{uuid.uuid4().hex[:8]}",
+            source_id=source.id,
+            title="K1 invalid batch atomicity incident",
+            reported_category="FLOOD_WATERLOGGING",
+            severity="HIGH",
+            verification_status="PENDING",
+            processing_status="PENDING",
+            latitude=19.0760,
+            longitude=72.8777,
+            geom="SRID=4326;POINT(72.8777 19.0760)",
+            occurred_at=datetime.now(timezone.utc),
+            is_demo=False,
+        )
+        db_session.add(report)
+        await db_session.commit()
+    
+        response = await api_client.post(
+            "/api/v1/admin/verification/bulk",
+            json={"incident_ids": [str(report.id), str(uuid.uuid4())], "action": "VERIFY"},
+        )
+        assert response.status_code == 400
+        await db_session.refresh(report)
+        changed_incidents = int(
+            report.verification_status != "PENDING" or report.processing_status != "PENDING"
+        )
+        verification_events = await db_session.scalar(
+>           select(func.count()).select_from(VerificationEvent).where(
+                   ^^^^
+                VerificationEvent.report_id == report.id
+            )
+        )
+E       NameError: name 'func' is not defined
+
+tests/test_admin_endpoints.py:455: NameError
+=============================== warnings summary ===============================
+tests/test_admin_endpoints.py::TestAdminEndpoints::test_single_and_bulk_verify_parity
+  /Users/akshatjain/Documents/SIH/back-end/.venv/lib/python3.14/site-packages/pytest_asyncio/plugin.py:1216: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+    return asyncio.get_event_loop_policy()
+
+tests/test_admin_endpoints.py::TestAdminEndpoints::test_single_and_bulk_verify_parity
+tests/test_admin_endpoints.py::TestAdminEndpoints::test_single_and_bulk_verify_parity
+tests/test_admin_endpoints.py::TestAdminEndpoints::test_bulk_invalid_id_changes_zero_of_four_record_groups
+  /Users/akshatjain/Documents/SIH/back-end/.venv/lib/python3.14/site-packages/pytest_asyncio/plugin.py:772: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+    old_loop_policy = asyncio.get_event_loop_policy()
+
+tests/test_admin_endpoints.py::TestAdminEndpoints::test_single_and_bulk_verify_parity
+tests/test_admin_endpoints.py::TestAdminEndpoints::test_single_and_bulk_verify_parity
+tests/test_admin_endpoints.py::TestAdminEndpoints::test_bulk_invalid_id_changes_zero_of_four_record_groups
+  /Users/akshatjain/Documents/SIH/back-end/.venv/lib/python3.14/site-packages/pytest_asyncio/plugin.py:777: DeprecationWarning: 'asyncio.set_event_loop_policy' is deprecated and slated for removal in Python 3.16
+    asyncio.set_event_loop_policy(policy)
+
+tests/test_admin_endpoints.py::TestAdminEndpoints::test_single_and_bulk_verify_parity
+tests/test_admin_endpoints.py::TestAdminEndpoints::test_single_and_bulk_verify_parity
+tests/test_admin_endpoints.py::TestAdminEndpoints::test_bulk_invalid_id_changes_zero_of_four_record_groups
+  /Users/akshatjain/Documents/SIH/back-end/.venv/lib/python3.14/site-packages/pytest_asyncio/plugin.py:1183: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+    loop = asyncio.get_event_loop_policy().new_event_loop()
+
+tests/test_admin_endpoints.py::TestAdminEndpoints::test_single_and_bulk_verify_parity
+tests/test_admin_endpoints.py::TestAdminEndpoints::test_bulk_invalid_id_changes_zero_of_four_record_groups
+  /Users/akshatjain/Documents/SIH/back-end/.venv/lib/python3.14/site-packages/pytest_asyncio/plugin.py:874: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+    _restore_event_loop_policy(asyncio.get_event_loop_policy()),
+
+tests/test_admin_endpoints.py::TestAdminEndpoints::test_single_and_bulk_verify_parity
+tests/test_admin_endpoints.py::TestAdminEndpoints::test_bulk_invalid_id_changes_zero_of_four_record_groups
+  /Users/akshatjain/Documents/SIH/back-end/.venv/lib/python3.14/site-packages/pytest_asyncio/plugin.py:889: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+    policy = asyncio.get_event_loop_policy()
+
+tests/test_admin_endpoints.py::TestAdminEndpoints::test_single_and_bulk_verify_parity
+  /Users/akshatjain/Documents/SIH/back-end/.venv/lib/python3.14/site-packages/fastapi/routing.py:144: FastAPIDeprecationWarning: ORJSONResponse is deprecated, FastAPI now serializes data directly to JSON bytes via Pydantic when a return type or response model is set, which is faster and doesn't need a custom response class. Read more in the FastAPI docs: https://fastapi.tiangolo.com/advanced/custom-response/#orjson-or-response-model and https://fastapi.tiangolo.com/tutorial/response-model/
+    response = await f(request)
+
+tests/test_admin_endpoints.py::TestAdminEndpoints::test_single_and_bulk_verify_parity
+tests/test_admin_endpoints.py::TestAdminEndpoints::test_bulk_invalid_id_changes_zero_of_four_record_groups
+tests/test_admin_endpoints.py::TestAdminEndpoints::test_bulk_invalid_id_changes_zero_of_four_record_groups
+  /Users/akshatjain/Documents/SIH/back-end/.venv/lib/python3.14/site-packages/pytest_asyncio/plugin.py:794: DeprecationWarning: 'asyncio.set_event_loop_policy' is deprecated and slated for removal in Python 3.16
+    asyncio.set_event_loop_policy(old_loop_policy)
+
+tests/test_admin_endpoints.py::TestAdminEndpoints::test_single_and_bulk_verify_parity
+tests/test_admin_endpoints.py::TestAdminEndpoints::test_bulk_invalid_id_changes_zero_of_four_record_groups
+  /Users/akshatjain/Documents/SIH/back-end/.venv/lib/python3.14/site-packages/pytest_asyncio/plugin.py:942: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+    policy = asyncio.get_event_loop_policy()
+
+tests/test_admin_endpoints.py::TestAdminEndpoints::test_single_and_bulk_verify_parity
+tests/test_admin_endpoints.py::TestAdminEndpoints::test_bulk_invalid_id_changes_zero_of_four_record_groups
+  /Users/akshatjain/Documents/SIH/back-end/.venv/lib/python3.14/site-packages/pytest_asyncio/plugin.py:966: DeprecationWarning: 'asyncio.set_event_loop_policy' is deprecated and slated for removal in Python 3.16
+    asyncio.set_event_loop_policy(previous_policy)
+
+tests/test_admin_endpoints.py::TestAdminEndpoints::test_single_and_bulk_verify_parity
+tests/test_admin_endpoints.py::TestAdminEndpoints::test_bulk_invalid_id_changes_zero_of_four_record_groups
+  /Users/akshatjain/Documents/SIH/back-end/.venv/lib/python3.14/site-packages/pytest_asyncio/plugin.py:978: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+    policy = asyncio.get_event_loop_policy()
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED tests/test_admin_endpoints.py::TestAdminEndpoints::test_single_and_bulk_verify_parity
+FAILED tests/test_admin_endpoints.py::TestAdminEndpoints::test_bulk_invalid_id_changes_zero_of_four_record_groups
+2 failed, 24 warnings in 2.21s
+$ .venv/bin/pytest -q -s tests/test_admin_endpoints.py::TestAdminEndpoints::test_single_and_bulk_verify_parity
+✅ Seeded Admin, Operator, and Citizen accounts.
+✅ Seeded 6 Metropolitan Relief Shelters.
+PARITY_DIFF {}
+.
+=============================== warnings summary ===============================
+tests/test_admin_endpoints.py::TestAdminEndpoints::test_single_and_bulk_verify_parity
+  /Users/akshatjain/Documents/SIH/back-end/.venv/lib/python3.14/site-packages/pytest_asyncio/plugin.py:1216: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+    return asyncio.get_event_loop_policy()
+
+tests/test_admin_endpoints.py::TestAdminEndpoints::test_single_and_bulk_verify_parity
+tests/test_admin_endpoints.py::TestAdminEndpoints::test_single_and_bulk_verify_parity
+  /Users/akshatjain/Documents/SIH/back-end/.venv/lib/python3.14/site-packages/pytest_asyncio/plugin.py:772: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+    old_loop_policy = asyncio.get_event_loop_policy()
+
+tests/test_admin_endpoints.py::TestAdminEndpoints::test_single_and_bulk_verify_parity
+tests/test_admin_endpoints.py::TestAdminEndpoints::test_single_and_bulk_verify_parity
+  /Users/akshatjain/Documents/SIH/back-end/.venv/lib/python3.14/site-packages/pytest_asyncio/plugin.py:777: DeprecationWarning: 'asyncio.set_event_loop_policy' is deprecated and slated for removal in Python 3.16
+    asyncio.set_event_loop_policy(policy)
+
+tests/test_admin_endpoints.py::TestAdminEndpoints::test_single_and_bulk_verify_parity
+tests/test_admin_endpoints.py::TestAdminEndpoints::test_single_and_bulk_verify_parity
+  /Users/akshatjain/Documents/SIH/back-end/.venv/lib/python3.14/site-packages/pytest_asyncio/plugin.py:1183: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+    loop = asyncio.get_event_loop_policy().new_event_loop()
+
+tests/test_admin_endpoints.py::TestAdminEndpoints::test_single_and_bulk_verify_parity
+  /Users/akshatjain/Documents/SIH/back-end/.venv/lib/python3.14/site-packages/pytest_asyncio/plugin.py:874: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+    _restore_event_loop_policy(asyncio.get_event_loop_policy()),
+
+tests/test_admin_endpoints.py::TestAdminEndpoints::test_single_and_bulk_verify_parity
+  /Users/akshatjain/Documents/SIH/back-end/.venv/lib/python3.14/site-packages/pytest_asyncio/plugin.py:889: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+    policy = asyncio.get_event_loop_policy()
+
+tests/test_admin_endpoints.py::TestAdminEndpoints::test_single_and_bulk_verify_parity
+  /Users/akshatjain/Documents/SIH/back-end/.venv/lib/python3.14/site-packages/fastapi/routing.py:144: FastAPIDeprecationWarning: ORJSONResponse is deprecated, FastAPI now serializes data directly to JSON bytes via Pydantic when a return type or response model is set, which is faster and doesn't need a custom response class. Read more in the FastAPI docs: https://fastapi.tiangolo.com/advanced/custom-response/#orjson-or-response-model and https://fastapi.tiangolo.com/tutorial/response-model/
+    response = await f(request)
+
+tests/test_admin_endpoints.py::TestAdminEndpoints::test_single_and_bulk_verify_parity
+tests/test_admin_endpoints.py::TestAdminEndpoints::test_single_and_bulk_verify_parity
+  /Users/akshatjain/Documents/SIH/back-end/.venv/lib/python3.14/site-packages/pytest_asyncio/plugin.py:794: DeprecationWarning: 'asyncio.set_event_loop_policy' is deprecated and slated for removal in Python 3.16
+    asyncio.set_event_loop_policy(old_loop_policy)
+
+tests/test_admin_endpoints.py::TestAdminEndpoints::test_single_and_bulk_verify_parity
+  /Users/akshatjain/Documents/SIH/back-end/.venv/lib/python3.14/site-packages/pytest_asyncio/plugin.py:942: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+    policy = asyncio.get_event_loop_policy()
+
+tests/test_admin_endpoints.py::TestAdminEndpoints::test_single_and_bulk_verify_parity
+  /Users/akshatjain/Documents/SIH/back-end/.venv/lib/python3.14/site-packages/pytest_asyncio/plugin.py:966: DeprecationWarning: 'asyncio.set_event_loop_policy' is deprecated and slated for removal in Python 3.16
+    asyncio.set_event_loop_policy(previous_policy)
+
+tests/test_admin_endpoints.py::TestAdminEndpoints::test_single_and_bulk_verify_parity
+  /Users/akshatjain/Documents/SIH/back-end/.venv/lib/python3.14/site-packages/pytest_asyncio/plugin.py:978: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+    policy = asyncio.get_event_loop_policy()
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+1 passed, 15 warnings in 1.78s
+$ .venv/bin/pytest -q -s tests/test_admin_endpoints.py::TestAdminEndpoints::test_single_and_bulk_verify_parity tests/test_admin_endpoints.py::TestAdminEndpoints::test_bulk_invalid_id_changes_zero_of_four_record_groups
+✅ Seeded Admin, Operator, and Citizen accounts.
+✅ Seeded 6 Metropolitan Relief Shelters.
+OUTBOX_PARITY report.verification_changed ['category_code', 'location_name', 'new_status', 'occurred_at', 'previous_status', 'severity', 'tracking_id']
+PARITY_DIFF {}
+.ATOMIC_COUNTS changed_incidents=0 verification_events=0 realtime_outbox=0 audit_logs=0
+.
+=============================== warnings summary ===============================
+tests/test_admin_endpoints.py::TestAdminEndpoints::test_single_and_bulk_verify_parity
+  /Users/akshatjain/Documents/SIH/back-end/.venv/lib/python3.14/site-packages/pytest_asyncio/plugin.py:1216: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+    return asyncio.get_event_loop_policy()
+
+tests/test_admin_endpoints.py::TestAdminEndpoints::test_single_and_bulk_verify_parity
+tests/test_admin_endpoints.py::TestAdminEndpoints::test_single_and_bulk_verify_parity
+tests/test_admin_endpoints.py::TestAdminEndpoints::test_bulk_invalid_id_changes_zero_of_four_record_groups
+  /Users/akshatjain/Documents/SIH/back-end/.venv/lib/python3.14/site-packages/pytest_asyncio/plugin.py:772: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+    old_loop_policy = asyncio.get_event_loop_policy()
+
+tests/test_admin_endpoints.py::TestAdminEndpoints::test_single_and_bulk_verify_parity
+tests/test_admin_endpoints.py::TestAdminEndpoints::test_single_and_bulk_verify_parity
+tests/test_admin_endpoints.py::TestAdminEndpoints::test_bulk_invalid_id_changes_zero_of_four_record_groups
+  /Users/akshatjain/Documents/SIH/back-end/.venv/lib/python3.14/site-packages/pytest_asyncio/plugin.py:777: DeprecationWarning: 'asyncio.set_event_loop_policy' is deprecated and slated for removal in Python 3.16
+    asyncio.set_event_loop_policy(policy)
+
+tests/test_admin_endpoints.py::TestAdminEndpoints::test_single_and_bulk_verify_parity
+tests/test_admin_endpoints.py::TestAdminEndpoints::test_single_and_bulk_verify_parity
+tests/test_admin_endpoints.py::TestAdminEndpoints::test_bulk_invalid_id_changes_zero_of_four_record_groups
+  /Users/akshatjain/Documents/SIH/back-end/.venv/lib/python3.14/site-packages/pytest_asyncio/plugin.py:1183: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+    loop = asyncio.get_event_loop_policy().new_event_loop()
+
+tests/test_admin_endpoints.py::TestAdminEndpoints::test_single_and_bulk_verify_parity
+tests/test_admin_endpoints.py::TestAdminEndpoints::test_bulk_invalid_id_changes_zero_of_four_record_groups
+  /Users/akshatjain/Documents/SIH/back-end/.venv/lib/python3.14/site-packages/pytest_asyncio/plugin.py:874: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+    _restore_event_loop_policy(asyncio.get_event_loop_policy()),
+
+tests/test_admin_endpoints.py::TestAdminEndpoints::test_single_and_bulk_verify_parity
+tests/test_admin_endpoints.py::TestAdminEndpoints::test_bulk_invalid_id_changes_zero_of_four_record_groups
+  /Users/akshatjain/Documents/SIH/back-end/.venv/lib/python3.14/site-packages/pytest_asyncio/plugin.py:889: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+    policy = asyncio.get_event_loop_policy()
+
+tests/test_admin_endpoints.py::TestAdminEndpoints::test_single_and_bulk_verify_parity
+  /Users/akshatjain/Documents/SIH/back-end/.venv/lib/python3.14/site-packages/fastapi/routing.py:144: FastAPIDeprecationWarning: ORJSONResponse is deprecated, FastAPI now serializes data directly to JSON bytes via Pydantic when a return type or response model is set, which is faster and doesn't need a custom response class. Read more in the FastAPI docs: https://fastapi.tiangolo.com/advanced/custom-response/#orjson-or-response-model and https://fastapi.tiangolo.com/tutorial/response-model/
+    response = await f(request)
+
+tests/test_admin_endpoints.py::TestAdminEndpoints::test_single_and_bulk_verify_parity
+tests/test_admin_endpoints.py::TestAdminEndpoints::test_bulk_invalid_id_changes_zero_of_four_record_groups
+tests/test_admin_endpoints.py::TestAdminEndpoints::test_bulk_invalid_id_changes_zero_of_four_record_groups
+  /Users/akshatjain/Documents/SIH/back-end/.venv/lib/python3.14/site-packages/pytest_asyncio/plugin.py:794: DeprecationWarning: 'asyncio.set_event_loop_policy' is deprecated and slated for removal in Python 3.16
+    asyncio.set_event_loop_policy(old_loop_policy)
+
+tests/test_admin_endpoints.py::TestAdminEndpoints::test_single_and_bulk_verify_parity
+tests/test_admin_endpoints.py::TestAdminEndpoints::test_bulk_invalid_id_changes_zero_of_four_record_groups
+  /Users/akshatjain/Documents/SIH/back-end/.venv/lib/python3.14/site-packages/pytest_asyncio/plugin.py:942: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+    policy = asyncio.get_event_loop_policy()
+
+tests/test_admin_endpoints.py::TestAdminEndpoints::test_single_and_bulk_verify_parity
+tests/test_admin_endpoints.py::TestAdminEndpoints::test_bulk_invalid_id_changes_zero_of_four_record_groups
+  /Users/akshatjain/Documents/SIH/back-end/.venv/lib/python3.14/site-packages/pytest_asyncio/plugin.py:966: DeprecationWarning: 'asyncio.set_event_loop_policy' is deprecated and slated for removal in Python 3.16
+    asyncio.set_event_loop_policy(previous_policy)
+
+tests/test_admin_endpoints.py::TestAdminEndpoints::test_single_and_bulk_verify_parity
+tests/test_admin_endpoints.py::TestAdminEndpoints::test_bulk_invalid_id_changes_zero_of_four_record_groups
+  /Users/akshatjain/Documents/SIH/back-end/.venv/lib/python3.14/site-packages/pytest_asyncio/plugin.py:978: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+    policy = asyncio.get_event_loop_policy()
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+2 passed, 24 warnings in 2.16s
+$ .venv/bin/pytest -q tests/test_admin_endpoints.py
+..........                                                               [100%]
+=============================== warnings summary ===============================
+tests/test_admin_endpoints.py::TestAdminEndpoints::test_admin_endpoints_require_auth_401
+  /Users/akshatjain/Documents/SIH/back-end/.venv/lib/python3.14/site-packages/pytest_asyncio/plugin.py:1216: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+    return asyncio.get_event_loop_policy()
+
+tests/test_admin_endpoints.py: 11 warnings
+  /Users/akshatjain/Documents/SIH/back-end/.venv/lib/python3.14/site-packages/pytest_asyncio/plugin.py:772: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+    old_loop_policy = asyncio.get_event_loop_policy()
+
+tests/test_admin_endpoints.py: 11 warnings
+  /Users/akshatjain/Documents/SIH/back-end/.venv/lib/python3.14/site-packages/pytest_asyncio/plugin.py:777: DeprecationWarning: 'asyncio.set_event_loop_policy' is deprecated and slated for removal in Python 3.16
+    asyncio.set_event_loop_policy(policy)
+
+tests/test_admin_endpoints.py: 11 warnings
+  /Users/akshatjain/Documents/SIH/back-end/.venv/lib/python3.14/site-packages/pytest_asyncio/plugin.py:1183: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+    loop = asyncio.get_event_loop_policy().new_event_loop()
+
+tests/test_admin_endpoints.py: 10 warnings
+  /Users/akshatjain/Documents/SIH/back-end/.venv/lib/python3.14/site-packages/pytest_asyncio/plugin.py:874: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+    _restore_event_loop_policy(asyncio.get_event_loop_policy()),
+
+tests/test_admin_endpoints.py: 10 warnings
+  /Users/akshatjain/Documents/SIH/back-end/.venv/lib/python3.14/site-packages/pytest_asyncio/plugin.py:889: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+    policy = asyncio.get_event_loop_policy()
+
+tests/test_admin_endpoints.py: 11 warnings
+  /Users/akshatjain/Documents/SIH/back-end/.venv/lib/python3.14/site-packages/pytest_asyncio/plugin.py:794: DeprecationWarning: 'asyncio.set_event_loop_policy' is deprecated and slated for removal in Python 3.16
+    asyncio.set_event_loop_policy(old_loop_policy)
+
+tests/test_admin_endpoints.py: 10 warnings
+  /Users/akshatjain/Documents/SIH/back-end/.venv/lib/python3.14/site-packages/pytest_asyncio/plugin.py:942: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+    policy = asyncio.get_event_loop_policy()
+
+tests/test_admin_endpoints.py: 10 warnings
+  /Users/akshatjain/Documents/SIH/back-end/.venv/lib/python3.14/site-packages/pytest_asyncio/plugin.py:966: DeprecationWarning: 'asyncio.set_event_loop_policy' is deprecated and slated for removal in Python 3.16
+    asyncio.set_event_loop_policy(previous_policy)
+
+tests/test_admin_endpoints.py: 10 warnings
+  /Users/akshatjain/Documents/SIH/back-end/.venv/lib/python3.14/site-packages/pytest_asyncio/plugin.py:978: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+    policy = asyncio.get_event_loop_policy()
+
+tests/test_admin_endpoints.py::TestAdminEndpoints::test_export_limits_enforced_422
+tests/test_admin_endpoints.py::TestAdminEndpoints::test_bulk_verification_limit_enforced_422
+  /Users/akshatjain/Documents/SIH/back-end/.venv/lib/python3.14/site-packages/starlette/_exception_handler.py:59: StarletteDeprecationWarning: 'HTTP_422_UNPROCESSABLE_ENTITY' is deprecated. Use 'HTTP_422_UNPROCESSABLE_CONTENT' instead.
+    response = await handler(conn, exc)  # type: ignore[arg-type]
+
+tests/test_admin_endpoints.py::TestAdminEndpoints::test_bulk_verify_atomic_and_audit_rows
+tests/test_admin_endpoints.py::TestAdminEndpoints::test_bulk_verify_atomic_and_audit_rows
+tests/test_admin_endpoints.py::TestAdminEndpoints::test_single_and_bulk_verify_parity
+  /Users/akshatjain/Documents/SIH/back-end/.venv/lib/python3.14/site-packages/fastapi/routing.py:144: FastAPIDeprecationWarning: ORJSONResponse is deprecated, FastAPI now serializes data directly to JSON bytes via Pydantic when a return type or response model is set, which is faster and doesn't need a custom response class. Read more in the FastAPI docs: https://fastapi.tiangolo.com/advanced/custom-response/#orjson-or-response-model and https://fastapi.tiangolo.com/tutorial/response-model/
+    response = await f(request)
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+10 passed, 100 warnings in 4.33s
+$ .venv/bin/ruff check app/services/report_service.py app/api/v1/verification.py app/api/v1/admin.py tests/test_admin_endpoints.py
+F401 [*] `app.models.outbox.RealtimeOutbox` imported but unused
+  --> app/api/v1/admin.py:18:31
+   |
+16 | from app.db.session import get_db
+17 | from app.models.audit import AuditLog
+18 | from app.models.outbox import RealtimeOutbox
+   |                               ^^^^^^^^^^^^^^
+19 | from app.models.report import WeatherReport
+20 | from app.models.user import User
+   |
+help: Remove unused import: `app.models.outbox.RealtimeOutbox`
+   |
+17 | from app.models.audit import AuditLog
+   - from app.models.outbox import RealtimeOutbox
+18 | from app.models.report import WeatherReport
+   |
+
+I001 [*] Import block is un-sorted or un-formatted
+  --> app/services/report_service.py:1:1
+   |
+ 1 | / import logging
+ 2 | | import math
+ 3 | | import secrets
+ 4 | | import time
+ 5 | | import uuid
+ 6 | | from datetime import datetime, timedelta, timezone
+ 7 | | from typing import Any, Dict, List, Optional, Tuple
+ 8 | |
+ 9 | | from fastapi import UploadFile
+10 | | from geoalchemy2.elements import WKTElement
+11 | | from sqlalchemy import func, or_, select
+12 | | from sqlalchemy.ext.asyncio import AsyncSession
+13 | | from sqlalchemy.orm import joinedload, selectinload
+14 | |
+15 | | from app.core.config import settings
+16 | | from app.ingestion.schemas import NormalizedIngestionEvent
+17 | | from app.models.category import EventCategory
+18 | | from app.models.forecast import ForecastAdvisory
+19 | | from app.models.audit import AuditLog
+20 | | from app.models.media import ReportMedia
+21 | | from app.models.outbox import RealtimeOutbox
+22 | | from app.models.report import WeatherReport
+23 | | from app.models.source import Source
+24 | | from app.models.user import User
+25 | | from app.models.verification import VerificationEvent
+26 | | from app.schemas.report import CitizenReportCreate
+27 | | from app.services.realtime_service import RealtimeService, realtime_service
+28 | | from app.services.storage import StorageService, storage_service
+   | |________________________________________________________________^
+29 |
+30 |   logger = logging.getLogger(__name__)
+   |
+help: Organize imports
+   |
+16 | from app.ingestion.schemas import NormalizedIngestionEvent
+17 + from app.models.audit import AuditLog
+18 | from app.models.category import EventCategory
+19 | from app.models.forecast import ForecastAdvisory
+   - from app.models.audit import AuditLog
+20 | from app.models.media import ReportMedia
+   |
+
+Found 2 errors.
+[*] 2 fixable with the `--fix` option.
+$ .venv/bin/ruff check app/services/report_service.py app/api/v1/verification.py app/api/v1/admin.py tests/test_admin_endpoints.py
+All checks passed!

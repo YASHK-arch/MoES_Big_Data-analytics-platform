@@ -14,9 +14,11 @@ from sqlalchemy.orm import joinedload, selectinload
 
 from app.core.config import settings
 from app.ingestion.schemas import NormalizedIngestionEvent
+from app.models.audit import AuditLog
 from app.models.category import EventCategory
 from app.models.forecast import ForecastAdvisory
 from app.models.media import ReportMedia
+from app.models.outbox import RealtimeOutbox
 from app.models.report import WeatherReport
 from app.models.source import Source
 from app.models.user import User
@@ -481,8 +483,53 @@ class ReportService:
         notes: Optional[str] = None,
         action_metadata: Optional[Dict[str, Any]] = None,
         commit: bool = True,
+        audit_user_id: Optional[uuid.UUID] = None,
+        audit_action: Optional[str] = None,
+        audit_payload: Optional[Dict[str, Any]] = None,
     ) -> WeatherReport:
-        """Update report verification status and record persistent VerificationEvent audit trail."""
+        """Stage a verification transition and optionally commit/publish its outbox row."""
+        report, outbox_row = await self.stage_verification_status(
+            session=session,
+            report_id_or_tracking=report_id_or_tracking,
+            new_status=new_status,
+            notes=notes,
+            action_metadata=action_metadata,
+            audit_user_id=audit_user_id,
+            audit_action=audit_action,
+            audit_payload=audit_payload,
+        )
+        if not commit:
+            return report
+
+        await session.commit()
+
+        stmt = (
+            select(WeatherReport)
+            .where(WeatherReport.id == report.id)
+            .options(
+                selectinload(WeatherReport.category),
+                selectinload(WeatherReport.media),
+                selectinload(WeatherReport.verification_events),
+            )
+            .execution_options(populate_existing=True)
+        )
+        res = await session.execute(stmt)
+        final_report = res.scalar_one_or_none() or report
+        await self.realtime_svc.publish_staged_outbox(outbox_row)
+        return final_report
+
+    async def stage_verification_status(
+        self,
+        session: AsyncSession,
+        report_id_or_tracking: str,
+        new_status: str,
+        notes: Optional[str] = None,
+        action_metadata: Optional[Dict[str, Any]] = None,
+        audit_user_id: Optional[uuid.UUID] = None,
+        audit_action: Optional[str] = None,
+        audit_payload: Optional[Dict[str, Any]] = None,
+    ) -> tuple[WeatherReport, RealtimeOutbox]:
+        """Apply one validated status transition without committing or publishing."""
         report = await self.get_report_by_id_or_tracking(session, report_id_or_tracking)
         if report is None:
             raise ValueError(f"Report not found: {report_id_or_tracking}")
@@ -539,31 +586,23 @@ class ReportService:
             new_status=clean_status,
             category_code=report.reported_category,
         )
-
-        if not commit:
-            return report
-
-        await session.commit()
-
-        # Re-query with populate_existing=True to eagerly load verification_events
-        stmt = (
-            select(WeatherReport)
-            .where(WeatherReport.id == report.id)
-            .options(
-                selectinload(WeatherReport.category),
-                selectinload(WeatherReport.media),
-                selectinload(WeatherReport.verification_events),
+        if audit_user_id is not None and audit_action is not None:
+            session.add(
+                AuditLog(
+                    user_id=audit_user_id,
+                    action=audit_action,
+                    entity_type="WEATHER_REPORT",
+                    entity_id=report.id,
+                    payload=audit_payload
+                    or {
+                        "tracking_id": report.tracking_id,
+                        "action": audit_action,
+                        "target_status": clean_status,
+                        "notes": notes,
+                    },
+                )
             )
-            .execution_options(populate_existing=True)
-        )
-        res = await session.execute(stmt)
-        refreshed = res.scalar_one_or_none()
-        final_report = refreshed or report
-
-        # Fast-path publish to Redis Stream (worker retries if this fails or network blips)
-        await self.realtime_svc.publish_staged_outbox(outbox_row)
-
-        return final_report
+        return report, outbox_row
 
     async def get_or_create_source(
         self,
