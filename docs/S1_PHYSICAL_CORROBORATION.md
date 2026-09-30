@@ -143,3 +143,14 @@ When an external provider fails:
 2. **HTTP 429 / 5xx**: Increment exponential backoff circuit breaker ($10\text{s}, 30\text{s}, 60\text{s}, 300\text{s}$). Return verdict `NEUTRAL` with `provider_status = "PROVIDER_RATE_LIMITED"`.
 3. **Empty / Corrupt Response**: Log error, return verdict `NEUTRAL` with `provider_status = "MALFORMED_DATA"`.
 4. **Zero Incident Rejection**: An outage **never** assigns a negative penalty or modifies verification status.
+
+---
+
+## 8. Limitations & Operational Boundaries
+
+1. **Model Grid Resolution**: Open-Meteo provides numerical weather reanalysis and forecast models at $\sim 0.25^\circ \approx 25\text{ km}$ spatial grid resolution. Hyper-local convective phenomena (such as micro-bursts, isolated cloudbursts, and localized hail swaths $< 5\text{ km}$) may not be resolved in the model grid. Consequently, `PHYSICAL_ALLOW_MODEL_CONTRADICTS=False` is strictly maintained so that model data can support or remain neutral, but never contradict a citizen report.
+2. **Pending IMD AWS Credentials**: Direct physical station corroboration against IMD Automatic Weather Station networks is implemented as a production-ready pluggable slot (`ImdSlotWeatherProvider`), pending official institutional API key provisioning from MoES.
+3. **Dual-Station / Human Ground-Truth Calibration Required**: Ground-truth precision, recall, and F1 accuracy are stamped `ACCURACY: NOT MEASURED` until an official ground-truth dataset annotation campaign with dual-station calibration is executed.
+4. **Flood Safety Asymmetry (P3)**: Urban flood and waterlogging can occur in the absence of local rainfall due to upstream reservoir release, storm water drain failure, high tide blockages, or breached embankments. In accordance with Product Rule P3, absence of rain never contradicts flooding.
+5. **Human Verification Invariant (P6)**: Algorithmic corroboration produces credibility score adjustments only ($0.0000$ to $0.9800$), and is strictly prohibited from mutating `verification_status` (`PENDING`, `UNDER_REVIEW`, `VERIFIED`, `REJECTED`, `DUPLICATE`).
+

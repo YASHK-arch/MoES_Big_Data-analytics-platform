@@ -6,7 +6,7 @@
 - **Problem statement:** SIH 2026 PS 26069 (weather event intelligence platform)
 - **Team status:** Selected from IIT Madras internal round; now competing on this PS with other colleges
 - **Goals of the current phase:** (1) architecture that stays fast after deployment, (2) intact and recoverable pipelines, (3) full PS requirement coverage, (4) standout features
-- **Last updated:** 2026-10-01 (K1 Round 9 close)
+- **Last updated:** 2026-10-01 (S1 Physical Weather Corroboration close)
 - **Deployment status:** Local isolated Docker compose demo stack (`sih-demo`) tested & operational at `:8080`. Total memory: ~1.07 GB idle across 11 containers. Production guardrails & smoke tests verified.
 - **Legend:** ✅ done · 🟡 in progress · ⬜ todo · ❌ failed / blocked · 🔎 needs verification
 
@@ -198,7 +198,7 @@ Re-run only: **A3, A4, A6, A7, A10, B1, B3, B4, B5, B7** (same DB, same methods)
 
 | ID | Feature | Why it wins | Status |
 |---|---|---|---|
-| S1 | **Physical corroboration** beyond CWC: IMD AWS/ARG rainfall, temperature, wind | Uses MoES's own data; strongest differentiator | ⬜ |
+| S1 | **Physical corroboration** beyond CWC: IMD AWS/ARG rainfall, temperature, wind | Uses MoES's own data; strongest differentiator | 🔎 |
 | S2 | **Image forensics**: EXIF time/GPS vs claim, perceptual-hash reuse detection, AI-generated image score | Directly addresses "fake reports" | ⬜ |
 | S3 | **NDMA alert overlay**: reports inside/outside active alert polygons; flag "impact reported, no alert issued" | Actionable insight for authorities | ⬜ |
 | S4 | **Indian languages**: Hindi/regional post classification (Bhashini / IndicBERT) + Hindi UI | India-specific, jury-visible | ⬜ |
@@ -269,6 +269,7 @@ Keep your edits to this file under 40 lines. In your final reply, only state "PR
 | 2026-09-30 | G1–G5 | `current` | Round 6: test DB isolation, geo Redis byte caching (compresslevel=4), evidence linking analysis, migration 0013 dropping duplicate indexes | BE 442 pass; FE 177 pass; tsc 0 errors; ruff clean |
 | 2026-09-30 | O1–O3, O5, V | `d605aa6..b31931a` | Round 8 deployability: Docker multi-stage images, health/ready, metrics Prometheus, React.lazy/chunks, smoke & failure acceptance | BE 442 pass; FE 177 pass; tsc clean; ruff clean |
 | 2026-09-30 | R3, R1–R5, L4 | _working tree_ | Bulk verify/reject emits outbox/SSE event; test DB resets once per session with seeded reference rows; region precedence fixed | R3 SSE regression passes; BE 476/0 ×3; Ruff/mypy clean; format 62 files; Alembic check drift |
+| 2026-10-01 | S1 (1–16) | `s1-physical-corroboration` | S1 Physical Corroboration: pure evaluator, Open-Meteo provider, mig 0019, worker integration, credibility engine, UI card (EN/HI), Prometheus metrics & drills, replay evaluation | BE 523 pass / 0 fail (full & seed 42); FE 182 pass, tsc/lint/build clean; mypy/ruff clean |
 
 ---
 
