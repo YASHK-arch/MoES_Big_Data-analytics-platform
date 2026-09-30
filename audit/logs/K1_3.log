@@ -1,0 +1,3 @@
+$ if test -f audit/genuine_controls_r4.jsonl; then wc -l audit/genuine_controls_r4.jsonl; else printf "NOT FOUND: audit/genuine_controls_r4.jsonl
+"; fi
+NOT FOUND: audit/genuine_controls_r4.jsonl
