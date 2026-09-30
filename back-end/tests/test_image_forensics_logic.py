@@ -15,10 +15,9 @@ Tests:
 import datetime
 import io
 import uuid
-import pytest
+
 from PIL import Image
 
-from app.core.config import settings
 from app.intelligence.image_forensics import (
     ForensicVerdict,
     compute_dhash,
@@ -102,6 +101,7 @@ class TestImageForensicsPureLogic:
             incident_lat=None,
             incident_lon=None,
         )
+        assert result is not None
         # Default limit is 15MB, but let's test extract_exif_metadata with 500 bytes limit
         exif = extract_exif_metadata(b"0" * 500)
         assert not exif["has_exif"]

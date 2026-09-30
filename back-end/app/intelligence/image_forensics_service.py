@@ -6,10 +6,10 @@ reuse, persists findings idempotently, updates credibility, and stages outbox SS
 
 from __future__ import annotations
 
-from datetime import datetime, timezone
 import logging
-from typing import Any, Dict, List, Optional
 import uuid
+from datetime import datetime, timezone
+from typing import Any, Dict, List, Optional
 
 from sqlalchemy import or_, select
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -359,7 +359,6 @@ class ImageForensicsService:
 
         # 2. Process each image
         findings: List[IncidentImageFinding] = []
-        result_items: List[ImageForensicResult] = []
 
         for m in image_media:
             raw_b = media_bytes_map.get(m.id) if media_bytes_map else None

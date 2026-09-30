@@ -12,6 +12,7 @@ from __future__ import annotations
 
 import datetime
 import uuid
+
 import pytest
 from geoalchemy2.elements import WKTElement
 from httpx import ASGITransport, AsyncClient
@@ -81,7 +82,7 @@ async def test_demo_fixture_reused_image_scenario(db_session: AsyncSession):
     assert finding.reuse_verdict == "CONTRADICTS"
     assert finding.credibility_adjustment == -0.05
     assert finding.matched_incident_ids == [other_id]
-    assert len(finding.checks) == 3
+    assert finding.checks is not None and len(finding.checks) == 3
 
 
 @pytest.mark.asyncio
@@ -166,6 +167,7 @@ async def test_demo_fixture_api_serialization(db_session: AsyncSession):
         other_incident_id=other_id,
         force=True,
     )
+    assert finding is not None
     await db_session.commit()
 
     transport = ASGITransport(app=app)

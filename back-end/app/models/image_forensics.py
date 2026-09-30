@@ -147,7 +147,7 @@ class IncidentImageFinding(Base):
         default=0.0,
         nullable=False,
     )
-    checks: Mapped[Optional[Dict[str, Any]]] = mapped_column(
+    checks: Mapped[Optional[List[Dict[str, Any]]]] = mapped_column(
         JSONB,
         nullable=True,
     )

@@ -12,15 +12,14 @@ Guarantees verified:
 import datetime
 import io
 import uuid
+
 import pytest
 from geoalchemy2.elements import WKTElement
 from PIL import Image
 from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.core.config import settings
 from app.intelligence.image_forensics_service import image_forensics_service
-from app.models.category import EventCategory
 from app.models.image_forensics import ImageHash, IncidentImageFinding
 from app.models.media import ReportMedia
 from app.models.outbox import RealtimeOutbox
@@ -47,7 +46,7 @@ async def _create_test_report_with_media(
     db: AsyncSession,
     image_bytes: bytes,
     mime_type: str = "image/jpeg",
-) -> Tuple[WeatherReport, ReportMedia]:
+) -> tuple[WeatherReport, ReportMedia]:
     """Create a persistent test report and linked media."""
     # Ensure source exists
     source_stmt = select(Source).where(Source.source_code == "CITIZEN_WEB").limit(1)

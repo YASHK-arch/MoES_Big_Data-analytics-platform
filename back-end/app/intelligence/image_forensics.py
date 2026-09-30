@@ -13,12 +13,11 @@ Features:
 from __future__ import annotations
 
 import datetime
-from enum import Enum
 import hashlib
 import io
 import logging
-import math
-from typing import Any, Dict, List, Optional, Tuple
+from enum import Enum
+from typing import Any, Dict, List, Optional
 
 import numpy as np
 from PIL import ExifTags, Image, ImageFile, UnidentifiedImageError
@@ -66,15 +65,15 @@ class ForensicCheckResult(BaseModel):
         description="Verdict for this check: SUPPORTS, CONTRADICTS, NEUTRAL",
     )
     observed_value: Optional[str] = Field(
-        None,
+        default=None,
         description="Privacy-preserving observed signal value",
     )
     expected_value: Optional[str] = Field(
-        None,
+        default=None,
         description="Expected reference value from incident declaration",
     )
     difference: Optional[str] = Field(
-        None,
+        default=None,
         description="Quantitative difference between observed and expected",
     )
     reason: str = Field(

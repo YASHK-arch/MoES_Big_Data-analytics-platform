@@ -11,6 +11,7 @@ Verifies:
 
 import datetime
 import uuid
+
 import pytest
 from geoalchemy2.elements import WKTElement
 from httpx import ASGITransport, AsyncClient
