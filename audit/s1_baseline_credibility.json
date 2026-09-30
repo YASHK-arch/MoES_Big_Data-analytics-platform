@@ -1,0 +1,1202 @@
+[
+  {
+    "id": "000fd917-d220-451d-9bfc-277091e4c0a3",
+    "category": "HEATWAVE",
+    "credibility_score": 0.69,
+    "credibility_explanation": {}
+  },
+  {
+    "id": "003cc10c-8317-470e-b1a5-e15f98d0bdb4",
+    "category": "OTHER",
+    "credibility_score": 0.93,
+    "credibility_explanation": {}
+  },
+  {
+    "id": "0177e14c-d5e6-479b-a54a-e05daaf79244",
+    "category": "FLOOD_WATERLOGGING",
+    "credibility_score": 0.82,
+    "credibility_explanation": {}
+  },
+  {
+    "id": "0241931b-6cba-4663-85ae-08871db92bb3",
+    "category": "HEAVY_RAINFALL",
+    "credibility_score": 0.91,
+    "credibility_explanation": {}
+  },
+  {
+    "id": "02848f10-e062-473e-aec1-b949a0f74a6b",
+    "category": "URBAN_FLOOD",
+    "credibility_score": 0.65,
+    "credibility_explanation": {}
+  },
+  {
+    "id": "028ea5e8-9896-4539-abab-39c7d6521028",
+    "category": "FLOOD_WATERLOGGING",
+    "credibility_score": 0.82,
+    "credibility_explanation": {}
+  },
+  {
+    "id": "02be99d6-79b9-46ad-9940-47274b56fb60",
+    "category": "HAILSTORM",
+    "credibility_score": 0.72,
+    "credibility_explanation": {}
+  },
+  {
+    "id": "02ee6ce8-3890-4aec-af81-d4bd9df367f1",
+    "category": "HEATWAVE",
+    "credibility_score": 0.72,
+    "credibility_explanation": {}
+  },
+  {
+    "id": "02f773e5-ca3f-4361-a9ef-ca244a5b6117",
+    "category": "HEATWAVE",
+    "credibility_score": 0.95,
+    "credibility_explanation": {}
+  },
+  {
+    "id": "03783919-3737-4c0c-834e-abc646f02c25",
+    "category": "DROUGHT",
+    "credibility_score": 0.93,
+    "credibility_explanation": {}
+  },
+  {
+    "id": "03fe8752-6054-4fe6-b584-26f4b59e47c4",
+    "category": "OTHER",
+    "credibility_score": 0.71,
+    "credibility_explanation": {}
+  },
+  {
+    "id": "0453a88f-ee9a-4e24-a6e9-311f3f9ca385",
+    "category": "LANDSLIDE",
+    "credibility_score": 0.82,
+    "credibility_explanation": {}
+  },
+  {
+    "id": "045988b6-dff6-4b15-b83a-b008651543af",
+    "category": "HEAVY_RAINFALL",
+    "credibility_score": 0.76,
+    "credibility_explanation": {}
+  },
+  {
+    "id": "0476a92e-b96d-4990-98e1-e8c081e41a78",
+    "category": "THUNDERSTORM_LIGHTNING",
+    "credibility_score": 0.57,
+    "credibility_explanation": {}
+  },
+  {
+    "id": "04b211bf-2578-4eaf-a4d4-5210b0db6699",
+    "category": "FLOOD_WATERLOGGING",
+    "credibility_score": 0.66,
+    "credibility_explanation": {}
+  },
+  {
+    "id": "04b4cd7a-b2c8-46dd-ad07-eac0d5045431",
+    "category": "FOG",
+    "credibility_score": 0.61,
+    "credibility_explanation": {}
+  },
+  {
+    "id": "051ed21e-0c3b-4bb4-85cc-52698b90978a",
+    "category": "CYCLONE_STORM",
+    "credibility_score": 0.93,
+    "credibility_explanation": {}
+  },
+  {
+    "id": "05ba7c97-b410-4ea8-88c0-ab5e7008df91",
+    "category": "HEATWAVE",
+    "credibility_score": 0.6,
+    "credibility_explanation": {}
+  },
+  {
+    "id": "06215d4c-0471-4fb5-b59f-b3b0dd85f9b2",
+    "category": "DROUGHT",
+    "credibility_score": 0.63,
+    "credibility_explanation": {}
+  },
+  {
+    "id": "06302660-fe90-4a36-96ee-ca23eea01b5a",
+    "category": "HAILSTORM",
+    "credibility_score": 0.84,
+    "credibility_explanation": {}
+  },
+  {
+    "id": "06e0f255-1c6d-469e-a135-1e2fee69d5ab",
+    "category": "THUNDERSTORM_LIGHTNING",
+    "credibility_score": 0.7,
+    "credibility_explanation": {}
+  },
+  {
+    "id": "0705cbca-e416-4c34-9865-9b70e23b0157",
+    "category": "FOG",
+    "credibility_score": 0.87,
+    "credibility_explanation": {}
+  },
+  {
+    "id": "074f6adb-b350-4969-aa18-c0c172e183ea",
+    "category": "FOG",
+    "credibility_score": 0.57,
+    "credibility_explanation": {}
+  },
+  {
+    "id": "07bda75d-ff6d-4176-954d-ccc92ee936e1",
+    "category": "DUST_STORM",
+    "credibility_score": 0.8,
+    "credibility_explanation": {}
+  },
+  {
+    "id": "09a6b1a0-f6b4-4e54-beb6-7f26748c3f4d",
+    "category": "LANDSLIDE",
+    "credibility_score": 0.92,
+    "credibility_explanation": {}
+  },
+  {
+    "id": "0ab0d60f-8c14-4fb4-9b01-07adcdde096d",
+    "category": "HEAVY_RAINFALL",
+    "credibility_score": 0.88,
+    "credibility_explanation": {}
+  },
+  {
+    "id": "0b5c2a68-35af-40b6-869a-66e9594ca1b4",
+    "category": "DROUGHT",
+    "credibility_score": 0.57,
+    "credibility_explanation": {}
+  },
+  {
+    "id": "0cb2da7a-1d8d-4004-95d1-08f105bd1b07",
+    "category": "HAILSTORM",
+    "credibility_score": 0.67,
+    "credibility_explanation": {}
+  },
+  {
+    "id": "0cc937e1-e7e6-4b24-b65b-52d71edca051",
+    "category": "FOG",
+    "credibility_score": 0.6,
+    "credibility_explanation": {}
+  },
+  {
+    "id": "0d3da5ab-85e9-4c00-895a-ea14610b6ec4",
+    "category": "CYCLONE_STORM",
+    "credibility_score": 0.61,
+    "credibility_explanation": {}
+  },
+  {
+    "id": "1054a2c9-962e-4241-a340-e730ba0a3cac",
+    "category": "HAILSTORM",
+    "credibility_score": 0.89,
+    "credibility_explanation": {}
+  },
+  {
+    "id": "10e95330-2766-4def-bb41-cbfb434c6bce",
+    "category": "FOG",
+    "credibility_score": 0.55,
+    "credibility_explanation": {}
+  },
+  {
+    "id": "10ef8702-8cd0-43fa-8d6f-69f120ff0878",
+    "category": "LANDSLIDE",
+    "credibility_score": 0.65,
+    "credibility_explanation": {}
+  },
+  {
+    "id": "113436e5-c523-4544-a5d9-85a7ea29265a",
+    "category": "DUST_STORM",
+    "credibility_score": 0.67,
+    "credibility_explanation": {}
+  },
+  {
+    "id": "11658206-43fd-4e45-b2b2-1b10e0a668af",
+    "category": "HAILSTORM",
+    "credibility_score": 0.86,
+    "credibility_explanation": {}
+  },
+  {
+    "id": "11afaf6b-9977-4be2-af61-8333866a9810",
+    "category": "LANDSLIDE",
+    "credibility_score": 0.63,
+    "credibility_explanation": {}
+  },
+  {
+    "id": "11fb3fcd-023c-4b35-b668-c6e980b9ec61",
+    "category": "FOG",
+    "credibility_score": 0.8,
+    "credibility_explanation": {}
+  },
+  {
+    "id": "1357f197-35a3-4138-a55b-862e4f314a0b",
+    "category": "FLOOD_WATERLOGGING",
+    "credibility_score": 0.92,
+    "credibility_explanation": {}
+  },
+  {
+    "id": "13868e0c-6281-4d13-a283-d9ae90542dd3",
+    "category": "URBAN_FLOOD",
+    "credibility_score": 0.73,
+    "credibility_explanation": {}
+  },
+  {
+    "id": "143e10de-9081-4c53-a194-b30e6b06eafa",
+    "category": "HEAVY_RAINFALL",
+    "credibility_score": 0.92,
+    "credibility_explanation": {}
+  },
+  {
+    "id": "1458a823-3550-43d1-b9bb-04de22ebac07",
+    "category": "HAILSTORM",
+    "credibility_score": 0.6,
+    "credibility_explanation": {}
+  },
+  {
+    "id": "1590c5da-18c8-427d-b429-f51ab9839430",
+    "category": "FOG",
+    "credibility_score": 0.61,
+    "credibility_explanation": {}
+  },
+  {
+    "id": "1592e3ff-07f4-4a8b-9571-e1f697c2809a",
+    "category": "OTHER",
+    "credibility_score": 0.83,
+    "credibility_explanation": {}
+  },
+  {
+    "id": "15ae4a7c-5849-4b1c-826f-d0a794826f43",
+    "category": "HEAVY_RAINFALL",
+    "credibility_score": 0.78,
+    "credibility_explanation": {}
+  },
+  {
+    "id": "15d5157f-dbe6-4ceb-aa01-2a5429f6f84c",
+    "category": "HEATWAVE",
+    "credibility_score": 0.71,
+    "credibility_explanation": {}
+  },
+  {
+    "id": "16ac410c-9f4f-4bbc-95cd-499670f54692",
+    "category": "FOG",
+    "credibility_score": 0.79,
+    "credibility_explanation": {}
+  },
+  {
+    "id": "17087dad-16a7-49e8-a492-512ae8a7179e",
+    "category": "CYCLONE_STORM",
+    "credibility_score": 0.69,
+    "credibility_explanation": {}
+  },
+  {
+    "id": "1724804c-8f85-44c6-90ed-200ad15adc17",
+    "category": "CYCLONE_STORM",
+    "credibility_score": 0.77,
+    "credibility_explanation": {}
+  },
+  {
+    "id": "176355ca-ecb3-404c-8e95-2126c690d9df",
+    "category": "LANDSLIDE",
+    "credibility_score": 0.58,
+    "credibility_explanation": {}
+  },
+  {
+    "id": "17c64432-a4a7-4d1b-8549-1936c2ad7671",
+    "category": "STRONG_WIND",
+    "credibility_score": 0.71,
+    "credibility_explanation": {}
+  },
+  {
+    "id": "189bfe5b-c3cd-4a30-a78d-59baa9af9e9c",
+    "category": "DUST_STORM",
+    "credibility_score": 0.72,
+    "credibility_explanation": {}
+  },
+  {
+    "id": "18d53b5f-6582-4507-ac59-389500c07116",
+    "category": "HAILSTORM",
+    "credibility_score": 0.92,
+    "credibility_explanation": {}
+  },
+  {
+    "id": "18ddeea0-0cd2-40e0-82d7-29855bec770e",
+    "category": "HAILSTORM",
+    "credibility_score": 0.85,
+    "credibility_explanation": {}
+  },
+  {
+    "id": "18fe4120-e382-4146-8ed1-e6171fa6466b",
+    "category": "CYCLONE_STORM",
+    "credibility_score": 0.91,
+    "credibility_explanation": {}
+  },
+  {
+    "id": "19557609-f89a-4772-bbae-2b50c11bc8a0",
+    "category": "HEAVY_RAINFALL",
+    "credibility_score": 0.86,
+    "credibility_explanation": {}
+  },
+  {
+    "id": "19ef7d42-073f-4dcf-8de2-f79328488e95",
+    "category": "CYCLONE_STORM",
+    "credibility_score": 0.63,
+    "credibility_explanation": {}
+  },
+  {
+    "id": "1a222c35-10b4-40fa-8c6a-cb2fc860ddb3",
+    "category": "DUST_STORM",
+    "credibility_score": 0.81,
+    "credibility_explanation": {}
+  },
+  {
+    "id": "1a26e8fc-1c5c-4021-9a77-8c572e98c454",
+    "category": "OTHER",
+    "credibility_score": 0.81,
+    "credibility_explanation": {}
+  },
+  {
+    "id": "1ac16925-51b5-4198-9010-ed25bef9ed6e",
+    "category": "FOG",
+    "credibility_score": 0.56,
+    "credibility_explanation": {}
+  },
+  {
+    "id": "1b12e671-3c4d-4991-b706-990112834740",
+    "category": "URBAN_FLOOD",
+    "credibility_score": 0.62,
+    "credibility_explanation": {}
+  },
+  {
+    "id": "1bf1db79-e1d7-43a4-81b0-52e76a100c59",
+    "category": "DROUGHT",
+    "credibility_score": 0.59,
+    "credibility_explanation": {}
+  },
+  {
+    "id": "1c04b3e3-10ed-4627-91e8-d29de6969510",
+    "category": "DUST_STORM",
+    "credibility_score": 0.56,
+    "credibility_explanation": {}
+  },
+  {
+    "id": "1c6b96cc-43ba-49db-82ae-6d8965b02ed4",
+    "category": "OTHER",
+    "credibility_score": 0.56,
+    "credibility_explanation": {}
+  },
+  {
+    "id": "1cad9d1b-ce78-4e01-b1e0-7bb6db8cfc02",
+    "category": "STRONG_WIND",
+    "credibility_score": 0.91,
+    "credibility_explanation": {}
+  },
+  {
+    "id": "1d691da5-fad7-47c4-b761-53d10ae864b4",
+    "category": "DUST_STORM",
+    "credibility_score": 0.84,
+    "credibility_explanation": {}
+  },
+  {
+    "id": "1d8a445b-df5b-436b-8067-65aeb090685b",
+    "category": "LANDSLIDE",
+    "credibility_score": 0.56,
+    "credibility_explanation": {}
+  },
+  {
+    "id": "1dbaeed6-750f-4e5a-827a-bb0bf370b03e",
+    "category": "LANDSLIDE",
+    "credibility_score": 0.84,
+    "credibility_explanation": {}
+  },
+  {
+    "id": "1e11e3ae-bf2e-4e02-b578-6e5f421575a7",
+    "category": "LANDSLIDE",
+    "credibility_score": 0.91,
+    "credibility_explanation": {}
+  },
+  {
+    "id": "1e5c7ade-6123-461c-a074-884751a8e955",
+    "category": "STRONG_WIND",
+    "credibility_score": 0.77,
+    "credibility_explanation": {}
+  },
+  {
+    "id": "1e9b69ad-91ef-47ab-88ab-96f34515bde2",
+    "category": "DUST_STORM",
+    "credibility_score": 0.67,
+    "credibility_explanation": {}
+  },
+  {
+    "id": "1ec8411d-1123-4d1f-9f1d-148c738ab549",
+    "category": "FOG",
+    "credibility_score": 0.78,
+    "credibility_explanation": {}
+  },
+  {
+    "id": "206375fd-b0a9-48c8-a9e3-89608660b0cd",
+    "category": "CYCLONE_STORM",
+    "credibility_score": 0.71,
+    "credibility_explanation": {}
+  },
+  {
+    "id": "20cf52e8-bf40-495f-8952-b5269cc483a4",
+    "category": "THUNDERSTORM_LIGHTNING",
+    "credibility_score": 0.74,
+    "credibility_explanation": {}
+  },
+  {
+    "id": "210fdf64-a5ff-4255-9908-603f2595e693",
+    "category": "FLOOD_WATERLOGGING",
+    "credibility_score": 0.59,
+    "credibility_explanation": {}
+  },
+  {
+    "id": "21575de2-9816-41bf-8f5b-9ae46ae7f5ca",
+    "category": "THUNDERSTORM_LIGHTNING",
+    "credibility_score": 0.9,
+    "credibility_explanation": {}
+  },
+  {
+    "id": "2369ff2e-52d9-44cd-9667-e54bb017e20c",
+    "category": "HEATWAVE",
+    "credibility_score": 0.69,
+    "credibility_explanation": {}
+  },
+  {
+    "id": "23712bff-9cab-4519-b959-b360b098b675",
+    "category": "DROUGHT",
+    "credibility_score": 0.92,
+    "credibility_explanation": {}
+  },
+  {
+    "id": "24fecc70-daea-477a-bb1e-bdda590a4834",
+    "category": "FOG",
+    "credibility_score": 0.89,
+    "credibility_explanation": {}
+  },
+  {
+    "id": "25153248-89ea-48fe-9e08-dccecc0e376a",
+    "category": "URBAN_FLOOD",
+    "credibility_score": 0.69,
+    "credibility_explanation": {}
+  },
+  {
+    "id": "2551a462-8203-402f-9606-d1caa520ddc4",
+    "category": "CYCLONE_STORM",
+    "credibility_score": 0.95,
+    "credibility_explanation": {}
+  },
+  {
+    "id": "25d79e9c-9728-479d-afa1-78da1f233455",
+    "category": "OTHER",
+    "credibility_score": 0.79,
+    "credibility_explanation": {}
+  },
+  {
+    "id": "26fca570-c569-44f0-8e38-45945858c8cf",
+    "category": "OTHER",
+    "credibility_score": 0.92,
+    "credibility_explanation": {}
+  },
+  {
+    "id": "274e0711-15dd-46fd-a103-f756dec94653",
+    "category": "DROUGHT",
+    "credibility_score": 0.65,
+    "credibility_explanation": {}
+  },
+  {
+    "id": "27ca2ea9-eea2-48d7-a373-a63fae7d0b9e",
+    "category": "FOG",
+    "credibility_score": 0.62,
+    "credibility_explanation": {}
+  },
+  {
+    "id": "298224fb-ec4f-4d09-8dee-03c044619dfc",
+    "category": "DROUGHT",
+    "credibility_score": 0.6,
+    "credibility_explanation": {}
+  },
+  {
+    "id": "29978ba7-ee58-4cb8-8dbe-7ee1d5f0e324",
+    "category": "DROUGHT",
+    "credibility_score": 0.69,
+    "credibility_explanation": {}
+  },
+  {
+    "id": "2a9acb3d-97aa-4809-a1e2-e6f92e1bb2a1",
+    "category": "HAILSTORM",
+    "credibility_score": 0.82,
+    "credibility_explanation": {}
+  },
+  {
+    "id": "2b134139-b356-4db4-9666-b321cedb81ad",
+    "category": "OTHER",
+    "credibility_score": 0.56,
+    "credibility_explanation": {}
+  },
+  {
+    "id": "2bd76f39-0c1a-44aa-bc9c-3a3d3037d813",
+    "category": "LANDSLIDE",
+    "credibility_score": 0.81,
+    "credibility_explanation": {}
+  },
+  {
+    "id": "2c4cf112-44cc-480b-97a6-c9e0d08c3b1c",
+    "category": "LANDSLIDE",
+    "credibility_score": 0.77,
+    "credibility_explanation": {}
+  },
+  {
+    "id": "2c798c9d-b260-4aec-ab6b-2020b4685080",
+    "category": "CYCLONE_STORM",
+    "credibility_score": 0.87,
+    "credibility_explanation": {}
+  },
+  {
+    "id": "2ca9c756-c95a-4f7a-b848-b4f5ed15c50a",
+    "category": "HAILSTORM",
+    "credibility_score": 0.8,
+    "credibility_explanation": {}
+  },
+  {
+    "id": "2e026d34-d5ea-462d-a658-054fb7953a2f",
+    "category": "FOG",
+    "credibility_score": 0.94,
+    "credibility_explanation": {}
+  },
+  {
+    "id": "2e3b25df-9792-4b1a-b524-e9eedfd20b56",
+    "category": "THUNDERSTORM_LIGHTNING",
+    "credibility_score": 0.55,
+    "credibility_explanation": {}
+  },
+  {
+    "id": "2ed4459f-b50e-4619-8e8b-5b5128d90de0",
+    "category": "HEATWAVE",
+    "credibility_score": 0.72,
+    "credibility_explanation": {}
+  },
+  {
+    "id": "30460b24-8c31-4f67-a8a1-9adb39ab96cf",
+    "category": "THUNDERSTORM_LIGHTNING",
+    "credibility_score": 0.95,
+    "credibility_explanation": {}
+  },
+  {
+    "id": "31b8dc22-627a-43b4-b414-f6e6c03bc90e",
+    "category": "HEAVY_RAINFALL",
+    "credibility_score": 0.69,
+    "credibility_explanation": {}
+  },
+  {
+    "id": "31caeb11-e00f-4177-8ad8-81e6c4a0940a",
+    "category": "HEAVY_RAINFALL",
+    "credibility_score": 0.71,
+    "credibility_explanation": {}
+  },
+  {
+    "id": "32190e05-b126-4356-b392-75fc190b5b1b",
+    "category": "FOG",
+    "credibility_score": 0.9,
+    "credibility_explanation": {}
+  },
+  {
+    "id": "32390799-5dcb-4ef5-965e-8fc889832c8d",
+    "category": "LANDSLIDE",
+    "credibility_score": 0.87,
+    "credibility_explanation": {}
+  },
+  {
+    "id": "324bd99d-f00f-4808-8476-5bd73dbb1268",
+    "category": "DUST_STORM",
+    "credibility_score": 0.57,
+    "credibility_explanation": {}
+  },
+  {
+    "id": "32fcd340-4bb7-4516-8764-f0e4ccec3cd0",
+    "category": "STRONG_WIND",
+    "credibility_score": 0.89,
+    "credibility_explanation": {}
+  },
+  {
+    "id": "33452277-ff45-4af9-9b1c-dff65bdcbf0b",
+    "category": "FOG",
+    "credibility_score": 0.87,
+    "credibility_explanation": {}
+  },
+  {
+    "id": "3529d0b9-cfb3-400b-903e-27da96a2f532",
+    "category": "DROUGHT",
+    "credibility_score": 0.74,
+    "credibility_explanation": {}
+  },
+  {
+    "id": "358ecab9-eb26-46ee-9c8d-e1fca0f3cf2e",
+    "category": "CYCLONE_STORM",
+    "credibility_score": 0.81,
+    "credibility_explanation": {}
+  },
+  {
+    "id": "35da50d4-87d3-43f7-ba7d-7b1aa9da3b07",
+    "category": "FLOOD_WATERLOGGING",
+    "credibility_score": 0.56,
+    "credibility_explanation": {}
+  },
+  {
+    "id": "365d7869-4cc8-4fff-a7a4-1490d883e9fd",
+    "category": "FOG",
+    "credibility_score": 0.64,
+    "credibility_explanation": {}
+  },
+  {
+    "id": "37da3a70-b1c3-4bb2-910e-840b58e4ea6d",
+    "category": "CYCLONE_STORM",
+    "credibility_score": 0.68,
+    "credibility_explanation": {}
+  },
+  {
+    "id": "37e886fb-359d-497a-b8fa-be7123269b98",
+    "category": "STRONG_WIND",
+    "credibility_score": 0.82,
+    "credibility_explanation": {}
+  },
+  {
+    "id": "3896d803-699b-49f0-ab3a-6362ac4f5dbe",
+    "category": "FLOOD_WATERLOGGING",
+    "credibility_score": 0.91,
+    "credibility_explanation": {}
+  },
+  {
+    "id": "3b47a445-79ef-4a74-ba03-ac77b821879b",
+    "category": "LANDSLIDE",
+    "credibility_score": 0.6,
+    "credibility_explanation": {}
+  },
+  {
+    "id": "3c2a5a62-bd24-4a04-b93d-dc2e8a209725",
+    "category": "HEAVY_RAINFALL",
+    "credibility_score": 0.87,
+    "credibility_explanation": {}
+  },
+  {
+    "id": "3c3fe248-8709-4e7d-ae65-66cee723fef1",
+    "category": "CYCLONE_STORM",
+    "credibility_score": 0.73,
+    "credibility_explanation": {}
+  },
+  {
+    "id": "3c69cabf-5650-48f6-9b35-230b55a38474",
+    "category": "HAILSTORM",
+    "credibility_score": 0.56,
+    "credibility_explanation": {}
+  },
+  {
+    "id": "3c767ac0-cfd1-4175-a6fb-59be5fd53493",
+    "category": "DUST_STORM",
+    "credibility_score": 0.69,
+    "credibility_explanation": {}
+  },
+  {
+    "id": "3c79e759-16f1-4df2-be02-87ad1cb07c62",
+    "category": "HAILSTORM",
+    "credibility_score": 0.56,
+    "credibility_explanation": {}
+  },
+  {
+    "id": "3c89cc27-7944-4fd7-9774-b5b7bd8ad3a1",
+    "category": "FLOOD_WATERLOGGING",
+    "credibility_score": 0.78,
+    "credibility_explanation": {}
+  },
+  {
+    "id": "3e094563-b84d-4a16-9cb1-851276b975cb",
+    "category": "HEATWAVE",
+    "credibility_score": 0.92,
+    "credibility_explanation": {}
+  },
+  {
+    "id": "3e7672d3-814f-41ec-9df2-892725e1ce0b",
+    "category": "OTHER",
+    "credibility_score": 0.77,
+    "credibility_explanation": {}
+  },
+  {
+    "id": "3ecb98ef-47e1-405f-a5cf-c027592e9c8b",
+    "category": "FOG",
+    "credibility_score": 0.67,
+    "credibility_explanation": {}
+  },
+  {
+    "id": "3f87869c-6bc0-4d2b-8bab-ae3031179d58",
+    "category": "FLOOD_WATERLOGGING",
+    "credibility_score": 0.58,
+    "credibility_explanation": {}
+  },
+  {
+    "id": "3fa2774e-7958-4cc9-ab0c-ea55565ce1dc",
+    "category": "DROUGHT",
+    "credibility_score": 0.62,
+    "credibility_explanation": {}
+  },
+  {
+    "id": "4075c813-5885-4610-b37e-9b2d2ecbc3d8",
+    "category": "OTHER",
+    "credibility_score": 0.92,
+    "credibility_explanation": {}
+  },
+  {
+    "id": "40d77547-af39-4fd5-9371-3c5057188a66",
+    "category": "FOG",
+    "credibility_score": 0.78,
+    "credibility_explanation": {}
+  },
+  {
+    "id": "4101c25d-c0ca-4401-919c-0f3e834fbcb1",
+    "category": "LANDSLIDE",
+    "credibility_score": 0.89,
+    "credibility_explanation": {}
+  },
+  {
+    "id": "411bce73-b92b-46e5-b232-8186d87f319d",
+    "category": "STRONG_WIND",
+    "credibility_score": 0.64,
+    "credibility_explanation": {}
+  },
+  {
+    "id": "41260e08-eb48-4d7a-b51a-1da0636ab742",
+    "category": "HEATWAVE",
+    "credibility_score": 0.61,
+    "credibility_explanation": {}
+  },
+  {
+    "id": "43427660-aa19-4471-9ff2-d051fcddbf49",
+    "category": "THUNDERSTORM_LIGHTNING",
+    "credibility_score": 0.69,
+    "credibility_explanation": {}
+  },
+  {
+    "id": "43599290-09ba-41f9-a799-57c7a4b1e456",
+    "category": "FLOOD_WATERLOGGING",
+    "credibility_score": 0.88,
+    "credibility_explanation": {}
+  },
+  {
+    "id": "43626482-ad4e-45ea-817f-d884d3bcb6c2",
+    "category": "HAILSTORM",
+    "credibility_score": 0.88,
+    "credibility_explanation": {}
+  },
+  {
+    "id": "4398f0af-eeb6-44fb-ba48-f5f62bc24e4b",
+    "category": "HEATWAVE",
+    "credibility_score": 0.88,
+    "credibility_explanation": {}
+  },
+  {
+    "id": "43c132a0-385a-4c0e-ae92-9bdd892d449e",
+    "category": "CYCLONE_STORM",
+    "credibility_score": 0.58,
+    "credibility_explanation": {}
+  },
+  {
+    "id": "441a28f8-8f86-4e32-ab22-e272805207a3",
+    "category": "URBAN_FLOOD",
+    "credibility_score": 0.89,
+    "credibility_explanation": {}
+  },
+  {
+    "id": "44c89368-0516-45b4-be05-81ef6d3b3e2b",
+    "category": "HAILSTORM",
+    "credibility_score": 0.89,
+    "credibility_explanation": {}
+  },
+  {
+    "id": "44e2d026-3be3-4160-a30b-10054257b711",
+    "category": "DROUGHT",
+    "credibility_score": 0.79,
+    "credibility_explanation": {}
+  },
+  {
+    "id": "45da870c-dc7f-43e5-a456-9770ab26bf7e",
+    "category": "THUNDERSTORM_LIGHTNING",
+    "credibility_score": 0.63,
+    "credibility_explanation": {}
+  },
+  {
+    "id": "4671feb2-e426-470d-b199-b92417805e2d",
+    "category": "HEATWAVE",
+    "credibility_score": 0.58,
+    "credibility_explanation": {}
+  },
+  {
+    "id": "478991ba-80cb-4203-b0c8-8f13bf9726c4",
+    "category": "HEAVY_RAINFALL",
+    "credibility_score": 0.64,
+    "credibility_explanation": {}
+  },
+  {
+    "id": "4829764c-171d-41b4-8b4d-5dddc22d40a0",
+    "category": "HEATWAVE",
+    "credibility_score": 0.81,
+    "credibility_explanation": {}
+  },
+  {
+    "id": "48357c66-b253-40e0-9b55-cdf5f25f657d",
+    "category": "DROUGHT",
+    "credibility_score": 0.92,
+    "credibility_explanation": {}
+  },
+  {
+    "id": "491f4699-1ae9-481d-8785-671609fac71d",
+    "category": "URBAN_FLOOD",
+    "credibility_score": 0.89,
+    "credibility_explanation": {}
+  },
+  {
+    "id": "49e99390-880e-4bf9-a140-1e35bf3e7aef",
+    "category": "STRONG_WIND",
+    "credibility_score": 0.71,
+    "credibility_explanation": {}
+  },
+  {
+    "id": "49f651fb-a406-4b25-9183-929df9bc6341",
+    "category": "STRONG_WIND",
+    "credibility_score": 0.8,
+    "credibility_explanation": {}
+  },
+  {
+    "id": "4b49ee93-aed9-4973-8780-c568081d6184",
+    "category": "DUST_STORM",
+    "credibility_score": 0.72,
+    "credibility_explanation": {}
+  },
+  {
+    "id": "4b702567-135a-438c-b4c0-6fce35764524",
+    "category": "HEATWAVE",
+    "credibility_score": 0.72,
+    "credibility_explanation": {}
+  },
+  {
+    "id": "4bdcf8ba-2800-4779-b5c3-43e5b3764871",
+    "category": "STRONG_WIND",
+    "credibility_score": 0.78,
+    "credibility_explanation": {}
+  },
+  {
+    "id": "4bffacde-cfd0-47bf-ab62-a541d9dba100",
+    "category": "DROUGHT",
+    "credibility_score": 0.56,
+    "credibility_explanation": {}
+  },
+  {
+    "id": "4ceae09b-ff36-478a-865b-b4bffc13b366",
+    "category": "DUST_STORM",
+    "credibility_score": 0.8,
+    "credibility_explanation": {}
+  },
+  {
+    "id": "4e532e95-eacf-4c91-840c-1dd9009093c0",
+    "category": "HEATWAVE",
+    "credibility_score": 0.6,
+    "credibility_explanation": {}
+  },
+  {
+    "id": "4e5ffca5-4ca3-473a-b925-bc4034fbbc2c",
+    "category": "CYCLONE_STORM",
+    "credibility_score": 0.78,
+    "credibility_explanation": {}
+  },
+  {
+    "id": "4ea9c9c0-f818-4332-924f-2305af725d2b",
+    "category": "FLOOD_WATERLOGGING",
+    "credibility_score": 0.61,
+    "credibility_explanation": {}
+  },
+  {
+    "id": "4f5c1db5-9cbd-4b7e-947b-ba475546dabc",
+    "category": "HEATWAVE",
+    "credibility_score": 0.76,
+    "credibility_explanation": {}
+  },
+  {
+    "id": "4f80187d-cf14-457a-af63-987c467b2ae6",
+    "category": "DROUGHT",
+    "credibility_score": 0.61,
+    "credibility_explanation": {}
+  },
+  {
+    "id": "4fc56546-3e01-4b1e-a323-3cca068b8cb9",
+    "category": "URBAN_FLOOD",
+    "credibility_score": 0.62,
+    "credibility_explanation": {}
+  },
+  {
+    "id": "50b25730-ac31-45be-afb4-74e86dea0ecb",
+    "category": "DUST_STORM",
+    "credibility_score": 0.78,
+    "credibility_explanation": {}
+  },
+  {
+    "id": "5122ed29-2827-4bce-bd6f-102b9843a807",
+    "category": "STRONG_WIND",
+    "credibility_score": 0.78,
+    "credibility_explanation": {}
+  },
+  {
+    "id": "514b35f6-7624-4925-94f1-5145a6d0d01b",
+    "category": "FOG",
+    "credibility_score": 0.62,
+    "credibility_explanation": {}
+  },
+  {
+    "id": "5156001c-037f-4359-a348-aadb8077abd0",
+    "category": "HAILSTORM",
+    "credibility_score": 0.93,
+    "credibility_explanation": {}
+  },
+  {
+    "id": "51e3d35b-e30c-4c38-ae42-0ca8064bd22d",
+    "category": "CYCLONE_STORM",
+    "credibility_score": 0.68,
+    "credibility_explanation": {}
+  },
+  {
+    "id": "54a9464b-045e-4751-b232-dd97088429f9",
+    "category": "OTHER",
+    "credibility_score": 0.82,
+    "credibility_explanation": {}
+  },
+  {
+    "id": "55013e77-532e-45be-92c8-593f8a599ae5",
+    "category": "LANDSLIDE",
+    "credibility_score": 0.6,
+    "credibility_explanation": {}
+  },
+  {
+    "id": "551b4a69-1c67-4459-bc5f-c7e303780623",
+    "category": "FOG",
+    "credibility_score": 0.62,
+    "credibility_explanation": {}
+  },
+  {
+    "id": "552f7832-a05a-4ccc-b775-eacdd102729b",
+    "category": "OTHER",
+    "credibility_score": 0.82,
+    "credibility_explanation": {}
+  },
+  {
+    "id": "5571794f-56fe-4c6c-97ae-485c5e9f06df",
+    "category": "LANDSLIDE",
+    "credibility_score": 0.76,
+    "credibility_explanation": {}
+  },
+  {
+    "id": "55b817e1-ddf9-4b51-af06-250f6b8812b1",
+    "category": "OTHER",
+    "credibility_score": 0.83,
+    "credibility_explanation": {}
+  },
+  {
+    "id": "55d1b793-747b-480d-bca4-c168fff61ed5",
+    "category": "HAILSTORM",
+    "credibility_score": 0.67,
+    "credibility_explanation": {}
+  },
+  {
+    "id": "564fb713-d9f2-4bf5-9838-5d9b32b6f546",
+    "category": "DROUGHT",
+    "credibility_score": 0.61,
+    "credibility_explanation": {}
+  },
+  {
+    "id": "57e3beef-80a7-4a92-a3d3-a952120d541c",
+    "category": "DROUGHT",
+    "credibility_score": 0.74,
+    "credibility_explanation": {}
+  },
+  {
+    "id": "583a2561-635e-4c95-8279-8ecec0d27630",
+    "category": "DUST_STORM",
+    "credibility_score": 0.69,
+    "credibility_explanation": {}
+  },
+  {
+    "id": "58bb6829-380c-4f6e-b2b3-d08a380d5826",
+    "category": "HEATWAVE",
+    "credibility_score": 0.91,
+    "credibility_explanation": {}
+  },
+  {
+    "id": "58c394b4-35a3-4663-b146-ca954b26fb15",
+    "category": "DROUGHT",
+    "credibility_score": 0.82,
+    "credibility_explanation": {}
+  },
+  {
+    "id": "59b204ea-e112-4ca5-8a68-5916ae1a9d92",
+    "category": "URBAN_FLOOD",
+    "credibility_score": 0.92,
+    "credibility_explanation": {}
+  },
+  {
+    "id": "59e06431-ae95-43cb-a73f-823a1ec9eaf3",
+    "category": "HAILSTORM",
+    "credibility_score": 0.86,
+    "credibility_explanation": {}
+  },
+  {
+    "id": "5acd137a-48c5-4ffd-af25-a3b7c7e69d4f",
+    "category": "LANDSLIDE",
+    "credibility_score": 0.87,
+    "credibility_explanation": {}
+  },
+  {
+    "id": "5b40b65a-c76b-483d-a3b2-94889d5119f2",
+    "category": "STRONG_WIND",
+    "credibility_score": 0.61,
+    "credibility_explanation": {}
+  },
+  {
+    "id": "5c05aa93-2fb9-4471-80b7-d9d3970b0d54",
+    "category": "FLOOD_WATERLOGGING",
+    "credibility_score": 0.63,
+    "credibility_explanation": {}
+  },
+  {
+    "id": "5c8fcfb7-b9b6-4fd7-a89d-1c17081ba773",
+    "category": "THUNDERSTORM_LIGHTNING",
+    "credibility_score": 0.74,
+    "credibility_explanation": {}
+  },
+  {
+    "id": "5cf9dce5-c9d4-42d3-8721-beee6a943265",
+    "category": "DUST_STORM",
+    "credibility_score": 0.8,
+    "credibility_explanation": {}
+  },
+  {
+    "id": "5dddb581-b3cf-4c8f-ba55-6fa26fc3fd84",
+    "category": "URBAN_FLOOD",
+    "credibility_score": 0.84,
+    "credibility_explanation": {}
+  },
+  {
+    "id": "5fa8ad9a-46ad-4415-be4c-4cfc8e960855",
+    "category": "CYCLONE_STORM",
+    "credibility_score": 0.62,
+    "credibility_explanation": {}
+  },
+  {
+    "id": "600f6494-9431-45af-bf82-380eaf11184b",
+    "category": "DUST_STORM",
+    "credibility_score": 0.85,
+    "credibility_explanation": {}
+  },
+  {
+    "id": "6070c4ad-55fb-444a-94c4-672a581ca84f",
+    "category": "HAILSTORM",
+    "credibility_score": 0.89,
+    "credibility_explanation": {}
+  },
+  {
+    "id": "60f91d3c-f5c8-4b7d-9e56-64fb0433e6bd",
+    "category": "HEAVY_RAINFALL",
+    "credibility_score": 0.9,
+    "credibility_explanation": {}
+  },
+  {
+    "id": "612e435e-b6f9-4f36-be0c-41422f8f4899",
+    "category": "FOG",
+    "credibility_score": 0.89,
+    "credibility_explanation": {}
+  },
+  {
+    "id": "61b2f9d6-a90c-4710-87c2-5d9f908dfaf3",
+    "category": "HEAVY_RAINFALL",
+    "credibility_score": 0.91,
+    "credibility_explanation": {}
+  },
+  {
+    "id": "61c1e1ca-da2e-47cf-8a8e-2d91535f892b",
+    "category": "CYCLONE_STORM",
+    "credibility_score": 0.79,
+    "credibility_explanation": {}
+  },
+  {
+    "id": "61f8c365-25ac-473f-8f46-7e7c8552fa22",
+    "category": "FOG",
+    "credibility_score": 0.89,
+    "credibility_explanation": {}
+  },
+  {
+    "id": "62132987-0202-47c4-b103-74b00b46e740",
+    "category": "HEATWAVE",
+    "credibility_score": 0.57,
+    "credibility_explanation": {}
+  },
+  {
+    "id": "6265e261-3c4f-49ac-92af-65307621f542",
+    "category": "URBAN_FLOOD",
+    "credibility_score": 0.85,
+    "credibility_explanation": {}
+  },
+  {
+    "id": "62da93d0-7e15-443b-aefd-36168881f2e0",
+    "category": "STRONG_WIND",
+    "credibility_score": 0.76,
+    "credibility_explanation": {}
+  },
+  {
+    "id": "63743ae9-9d27-458d-8c8b-74cff824403c",
+    "category": "HAILSTORM",
+    "credibility_score": 0.6,
+    "credibility_explanation": {}
+  },
+  {
+    "id": "65fefc32-178d-41eb-b314-3d44e1770466",
+    "category": "HEAVY_RAINFALL",
+    "credibility_score": 0.81,
+    "credibility_explanation": {}
+  },
+  {
+    "id": "669cf206-a94a-441e-b781-99042ce2b2e6",
+    "category": "CYCLONE_STORM",
+    "credibility_score": 0.94,
+    "credibility_explanation": {}
+  },
+  {
+    "id": "66df3359-2ae6-42b6-b60a-9b60610c068d",
+    "category": "HAILSTORM",
+    "credibility_score": 0.63,
+    "credibility_explanation": {}
+  },
+  {
+    "id": "6737f4f0-6527-49ee-8ab9-a91e4f547949",
+    "category": "CYCLONE_STORM",
+    "credibility_score": 0.63,
+    "credibility_explanation": {}
+  },
+  {
+    "id": "67a4f474-dd8d-4ca7-a4fb-c127e3567850",
+    "category": "FOG",
+    "credibility_score": 0.57,
+    "credibility_explanation": {}
+  },
+  {
+    "id": "6923ed89-3310-4314-b7cf-d1c8bafafe54",
+    "category": "URBAN_FLOOD",
+    "credibility_score": 0.78,
+    "credibility_explanation": {}
+  },
+  {
+    "id": "697be8cf-153c-46ad-9db9-9fd7068e28e0",
+    "category": "LANDSLIDE",
+    "credibility_score": 0.58,
+    "credibility_explanation": {}
+  },
+  {
+    "id": "69b9291b-e73c-4c8e-838c-586474e1489b",
+    "category": "HAILSTORM",
+    "credibility_score": 0.81,
+    "credibility_explanation": {}
+  },
+  {
+    "id": "6a223138-e919-495b-9228-2d80f700deee",
+    "category": "DROUGHT",
+    "credibility_score": 0.55,
+    "credibility_explanation": {}
+  }
+]
