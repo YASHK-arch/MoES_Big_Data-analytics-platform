@@ -248,7 +248,6 @@ class EvidenceScorer:
         inc_text_res = location_resolver.resolve(text=inc_full_text)
         inc_city = inc_loc_res.city or inc_text_res.city
         inc_state = inc_loc_res.state or inc_text_res.state
-        evi_state = evi_loc_res.state
 
         if not inc_city and incident_loc_name:
             loc_clean = incident_loc_name.lower()

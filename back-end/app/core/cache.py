@@ -32,6 +32,7 @@ async def get_or_compute(
     query_params: Optional[Dict[str, Any]],
     compute_fn: Callable[[], Awaitable[Any]],
     ttl: Optional[int] = None,
+    raw_str: bool = False,
 ) -> Any:
     """Get value from Redis cache or compute with single-flight lock.
 
@@ -53,7 +54,7 @@ async def get_or_compute(
     try:
         cached = await redis_client.get(cache_key)
         if cached is not None:
-            return json.loads(cached)
+            return cached if raw_str else json.loads(cached)
     except Exception as exc:
         logger.warning("Redis cache get error; computing directly: %s", exc)
         return await compute_fn()
@@ -70,7 +71,9 @@ async def get_or_compute(
         try:
             result = await compute_fn()
             # Serialize
-            if hasattr(result, "model_dump"):
+            if isinstance(result, str):
+                serialized = result
+            elif hasattr(result, "model_dump"):
                 serialized = json.dumps(result.model_dump(mode="json"))
             else:
                 serialized = json.dumps(result)
@@ -96,7 +99,7 @@ async def get_or_compute(
             try:
                 cached = await redis_client.get(cache_key)
                 if cached is not None:
-                    return json.loads(cached)
+                    return cached if raw_str else json.loads(cached)
             except Exception:
                 break
 
@@ -104,7 +107,7 @@ async def get_or_compute(
         try:
             stale_val = await redis_client.get(stale_key)
             if stale_val is not None:
-                return json.loads(stale_val)
+                return stale_val if raw_str else json.loads(stale_val)
         except Exception:
             pass
 

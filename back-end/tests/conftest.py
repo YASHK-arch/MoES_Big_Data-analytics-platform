@@ -7,9 +7,23 @@ from httpx import ASGITransport, AsyncClient
 from sqlalchemy import pool, select
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
 
-from app.core.config import settings
+TEST_DB_URL = os.environ.get(
+    "TEST_DATABASE_URL",
+    "postgresql+asyncpg://postgres:postgres@localhost:5432/weather_platform_test",
+)
+os.environ["DATABASE_URL"] = TEST_DB_URL
+os.environ["REDIS_URL"] = os.environ.get("TEST_REDIS_URL", "redis://localhost:6379/15")
+
+from app.core.config import settings  # noqa: E402
 
 settings.DB_DISABLE_POOL = True
+settings.DATABASE_URL = TEST_DB_URL
+settings.REDIS_URL = os.environ["REDIS_URL"]
+
+from app.db import session as db_session_module  # noqa: E402
+
+db_session_module.engine, db_session_module.async_session_factory = db_session_module.create_engine_and_session_factory()
+
 from app.core.security import create_access_token, get_password_hash  # noqa: E402
 from app.main import app  # noqa: E402
 from app.models.user import User  # noqa: E402

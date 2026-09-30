@@ -10,6 +10,8 @@ import orjson
 from fastapi import APIRouter, Depends, HTTPException, Query, Request, Response, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.core.cache import get_or_compute
+from app.core.config import settings
 from app.db.session import get_db
 from app.schemas.geo import GeoJSONFeatureCollection
 from app.services.incident_query_service import incident_query_service
@@ -19,7 +21,15 @@ router = APIRouter()
 
 def create_cached_geojson_response(request: Request, geojson_data: Any) -> Response:
     """Format GeoJSON response with Cache-Control and ETag headers, honoring If-None-Match with 304."""
-    content_bytes = orjson.dumps(geojson_data.model_dump(mode="json"))
+    if isinstance(geojson_data, (bytes, bytearray)):
+        content_bytes = bytes(geojson_data)
+    elif isinstance(geojson_data, str):
+        content_bytes = geojson_data.encode("utf-8")
+    elif hasattr(geojson_data, "model_dump"):
+        content_bytes = orjson.dumps(geojson_data.model_dump(mode="json"))
+    else:
+        content_bytes = orjson.dumps(geojson_data)
+
     etag = f'"{hashlib.sha256(content_bytes).hexdigest()}"'
     headers = {
         "ETag": etag,
@@ -131,13 +141,31 @@ async def get_geo_incidents(
 
         parsed_bbox = (min_lon, min_lat, max_lon, max_lat)
 
-    geojson_data = await incident_query_service.get_geo_incidents(
-        session=db,
-        bbox=parsed_bbox,
-        status=status_filter,
-        category=category,
-        hours_ago=hours_ago,
-        limit=limit or 50,
+    query_params = {
+        "bbox": bbox,
+        "status": status_filter,
+        "category": category,
+        "hours_ago": hours_ago,
+        "limit": limit or 500,
+    }
+
+    async def _compute():
+        res = await incident_query_service.get_geo_incidents(
+            session=db,
+            bbox=parsed_bbox,
+            status=status_filter,
+            category=category,
+            hours_ago=hours_ago,
+            limit=limit or 500,
+        )
+        return orjson.dumps(res.model_dump(mode="json")).decode("utf-8")
+
+    geojson_data = await get_or_compute(
+        endpoint="geo:incidents",
+        query_params=query_params,
+        compute_fn=_compute,
+        ttl=getattr(settings, "DASHBOARD_CACHE_TTL_SECONDS", 10),
+        raw_str=True,
     )
     return create_cached_geojson_response(request, geojson_data)
 

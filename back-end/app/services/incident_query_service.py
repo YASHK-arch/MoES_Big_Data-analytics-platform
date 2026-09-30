@@ -1641,7 +1641,6 @@ class IncidentQueryService:
                         credibility_score=r.credibility_score,
                         credibility_reason=r.credibility_reason,
                         verification_status=r.verification_status,
-                        readiness=self._extract_readiness(r).value,
                         occurred_at=r.occurred_at.isoformat(),
                         location_name=r.location_name,
                     ),
@@ -1690,7 +1689,6 @@ class IncidentQueryService:
                 credibility_score=0.95,
                 credibility_reason=f"Official forecast advisory issued by {adv.source_code}.",
                 verification_status="VERIFIED",
-                readiness="INTELLIGENCE_READY",
                 occurred_at=adv.issued_at.isoformat(),
                 location_name=adv.advisory_text[:100] if adv.advisory_text else "Advisory Area",
             )
