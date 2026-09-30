@@ -48,7 +48,7 @@
 
 ## 3. Configuration Reference
 
-All application settings are defined in [app/core/config.py](file:///Users/akshatjain/Documents/SIH/back-end/app/core/config.py) and populated from `.env`:
+All application settings are defined in [app/core/config.py](back-end/app/core/config.py) and populated from `.env`:
 
 ### 3.1 Database & Core Infrastructure
 

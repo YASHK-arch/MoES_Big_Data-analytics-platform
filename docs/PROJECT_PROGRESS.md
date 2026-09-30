@@ -6,7 +6,7 @@
 - **Problem statement:** SIH 2026 PS 26069 (weather event intelligence platform)
 - **Team status:** Selected from IIT Madras internal round; now competing on this PS with other colleges
 - **Goals of the current phase:** (1) architecture that stays fast after deployment, (2) intact and recoverable pipelines, (3) full PS requirement coverage, (4) standout features
-- **Last updated:** 2026-09-30 (K0 Round 9 verification)
+- **Last updated:** 2026-10-01 (K1 Round 9 close)
 - **Deployment status:** Local isolated Docker compose demo stack (`sih-demo`) tested & operational at `:8080`. Total memory: ~1.07 GB idle across 11 containers. Production guardrails & smoke tests verified.
 - **Legend:** ✅ done · 🟡 in progress · ⬜ todo · ❌ failed / blocked · 🔎 needs verification
 
@@ -33,11 +33,11 @@
 
 | Requirement | Status | Notes / next action |
 |---|---|---|
-| Collect from social media, public datasets, APIs, citizen reports | 🟡 | 8 adapters + 1 demo. data.gov.in searches found historical rainfall/dust-storm datasets; dust pages say sourced APIs NA; rainfall API availability is unverified. No current data.gov.in adapter. No X/Bluesky/Telegram/YouTube. |
+| Collect from social media, public datasets, APIs, citizen reports | 🔎 | 8 adapters + 1 demo. Historical datasets exist; live API not verified; no key configured (K1-6, audit/logs/K1_6.log). No current data.gov.in adapter. No X/Bluesky/Telegram/YouTube. |
 | Posts with `#IMD` and weather hashtags | ✅ | `imd` added to Mastodon hashtag defaults (F6). |
 | Metadata: time, city, state, GPS, photos, videos, category | ✅ | Photos/video accepted (A8). Magic-byte validation works. |
-| Categories incl. fog, dust storm, strong wind | ✅ | R4: 60-post regression suite (fog/dust/wind EN+HI) ≥ 85% accuracy; hoax credibility < 0.45 verified. |
-| ML/AI for fake reports, untrusted sources, duplicates | 🟡 | Duplicates strong. Fake/hoax: rule-based credibility suppression verified. No image forensics yet. |
+| Categories incl. fog, dust storm, strong wind | 🔎 | R4: 60-post regression suite (fog/dust/wind EN+HI) 100% (60/60). 30-post hold-out (agent-authored, not blind) scored 21/30 (70.0% accuracy; FOG 8/10, DUST_STORM 7/10, STRONG_WIND 6/10; 9 misses in audit/logs/K1_2.log). Category rules frozen. RSS 120 items classified: 104 NONE, 16 weather. |
+| ML/AI for fake reports, untrusted sources, duplicates | 🔎 | Duplicates strong. Hoax vs genuine credibility (audit/logs/K1_3.log): 10 genuine posts mean 0.6500 (min/max 0.6500); 10 hoaxes mean 0.4821 (min 0.4215, max 0.5427). 5 old-video hoaxes < 0.45 (0.4215); 5 foreign-location hoaxes > 0.45 (0.5427) because location contradiction is not yet a credibility signal. No image forensics yet. |
 | Big-data tech, real-time large-scale ingestion | ⬜ | Need measured load numbers and a Kafka/Redpanda + ClickHouse/Timescale story. |
 | Dashboard: date/event/location filters, verification tracking, real-time charts | ✅ | Exists. DEMO badge + hide-demo toggle added (R5). |
 | Admin panel | ✅ | R3: operator-only CSV/GeoJSON export (50k max, streamed), bulk verify/reject (100 ids, 1 txn), audit-log table + viewer page, frontend buttons. 401/limit/audit-row tests pass. |
@@ -246,13 +246,14 @@ Keep your edits to this file under 40 lines. In your final reply, only state "PR
 | 2026-09-30 | Baseline (Part A + B, 100k rows) | B1 p50 917 ms / 46 DB conns; B4 p50 1177 ms; B5 +50 Redis conns; B7 0/200 | See Section 3 |
 | 2026-09-30 | Re-audit round 1 (A3, A4, A6, A7, A10, B1, B3, B4, B5, B7) | B1 423 RPS / p50 72 ms / 2 DB conns (cache-assisted); B3 summary 206 ms Seq Scan; B3 page 500 112.8 ms; B4 128 RPS / p50 286 ms; B5 +0 Redis conns; B7 pending 6→7, not recovered | See Section 6 scorecard |
 | 2026-09-30 | Re-audit round 2 (DB 5, S0–S5) | B1 uncached: 99.4 RPS, p50 11.3 ms, 11 conns; B1 cached: 446.6 RPS, p50 64.7 ms, 2 conns; B3 summary: 22.1–35.5 ms Index-Only Scan (no Seq Scan); B3 p500: 2.8–3.7 ms; B4 uncached: 85.1 RPS, p50 562 ms; B4 cached: 83.6 RPS, p50 555 ms; B7: 200/200 COMPLETED in 30s | S0 DB 5 validated; B7 recovered; V0/S5 verified |
-| 2026-09-30 | Re-audit round 3 (C1–C4, 100k rows) | C1 200/200 100% cred match; C2 TTL=0 bypass 196.6 RPS/p50 178ms vs TTL=10 388.9 RPS/p50 77.9ms; C3 4w 219.5 RPS/p50 146.6ms (limit=50 only, not what the frontend sends) | C1–C4 completed; B4 limit=50 artifact |
+| 2026-09-30 | Re-audit round 3 (C1–C4, 100k rows) | C1 200/200 100% cred match; C2 TTL=0 bypass 196.6 RPS/p50 178ms vs TTL=10 388.9 RPS/p50 77.9ms; C3 4w 219.5 RPS/p50 146.6ms (limit=50 only, not what the frontend sends) | C1–C4 completed; C2 precision table evaluated on synthetic test fixture rows |
 | 2026-09-30 | Re-audit round 4 (D1–D5) | D1: 0 only-in-OLD, 3261 only-in-NEW, 1186 identical; C1 credibility equivalence invalid (in-memory); D3: default 500 (~26KB gzip); D4: Redis c50 p50 0.21ms | Full equivalence verified; Redis pooling active; zero duplicate indexes |
 | 2026-09-30 | Re-audit round 5 (E1–E5, 100k rows) | E1: 0/10 neg controls, 80% plausibility; E3: honest B4 (/geo 500 gzip + /reports) 1w 79.2 RPS/p50 488ms vs 4w 77.5 RPS/p50 541ms; E4: c50 RTT p50 0.17–0.38ms, auto-reconnect 0.03s; E5: 18 idxs (52MB), 20k COPY 6978 rps | E1–E5 verified; geo payload reduced -6.5% raw (-16.5KB); local commits cleanly split |
-| 2026-09-30 | Re-audit round 6 (G1–G5, 100k rows) | G1 test isolation (weather_platform_test); G2 geo p50 104.2ms cached (4w)/156.1ms (1w), uncached 487.5ms; G3 bench 100% prec/rec; G5 migration 0013 dropped 2 dup idxs, 20k COPY +26.7% (1237ms) | G1–G5 complete; zero duplicate indexes in DB |
+| 2026-09-30 | Re-audit round 6 (G1–G5, 100k rows) | G1 test isolation (weather_platform_test); G2 geo p50 104.2ms cached (4w)/156.1ms (1w), uncached 487.5ms; G3 bench 100% prec/rec (synthetic); G5 migration 0013 dropped 2 dup idxs, 20k COPY +26.7% (1237ms) | G1–G5 complete; G3 metrics evaluated on 10,000 synthetic test fixture rows in audit DB |
 | 2026-09-30 | Round 8 Deployability (O1–O5, V1–V6) | Web :8080 SPA; API :8000; 11 containers healthy; memory 1097 MiB (< 3.5GB); smoke 10/10 cats + rate limit 429 + SSE pass; prod 404 docs; redis 20s stop 503->200 without api restart; down/up persist 623 rpts; main chunk 24.66 kB | Fully deployed, isolated demo compose stack verified |
 | 2026-09-30 | Round 8b Verification | 452/452 pytest pass; ruff 0; mypy 0; alembic 0015; P0(c) p1 0.19ms / p500 8.01ms; H1 6 backfilled; H2 delta 0.0435 / max 0.1742; H3 prec 5.9%/10.3%/13.3%; scheduler 256m, api 512m; conn budget 23 | All Round 8b checks verified |
-| 2026-09-30 | K0 Round 9 verification (R1–R5, L4) | R4 60/60; holdout 25/30 (83.3%; dust 7/10); RSS 120 normalized / 33 city-state / 8 items and 357 accepted candidate links; 10/10 hoaxes <0.45; L4 10,000/10,000 | RSS 3 feeds HTTP 200, 2 HTTP 404; dev/test/audit Alembic 0017; audit 0016/0017 round-trip passed; pytest 476/0 three consecutive runs |
+| 2026-09-30 | K0 Round 9 verification (R1–R5, L4) | Initial R1-R5 checks; RSS 3 feeds 200 / 2 feeds 404; dev/test/audit Alembic 0017; pytest 476/0 | Commits b4a74c9, 7ce9624, ee8e17d, 4c1ad25, 7babb02, fd9632e |
+| 2026-10-01 | K1 Round 9 close (R1–R5, static gates) | Pytest 479/479 passed (random seed 20261001 & normal); mypy 9 errors in 2 files (0 in feedback.py); ruff check/format clean; alembic check exit 0 (mig 0018); R4 holdout 21/30 (70.0%); Hoax mean 0.4821 (5 old-video <0.45, 5 foreign-location 0.5427) vs genuine 0.6500; RSS 120 items snapshot (audit/rss_snapshot_k1.json), summary capped at 280 chars, IMD/NDTV 404 commented; R3 parity verified (single & bulk staging unified); audit DB 10,000 synthetic test fixtures reconciled | Commits 4a52c11, 806c35c, ee0d466, 56c8712, 6c03511, f606088, e63b3ac, 0d398f8, f32b4f0, ba4d349 |
 
 ---
 
@@ -303,10 +304,10 @@ Keep your edits to this file under 40 lines. In your final reply, only state "PR
 | 26 | Remote Git backup: pushed all commits up to Round 8 and audit suite to `origin/main` | High | — | ✅ |
 | 27 | Accidental `FLUSHALL` risk on shared Redis instances (mitigated by isolated demo container stack) | High | — | ✅ |
 | 28 | L4 test marker: is_test_fixture column added (mig 0016); 10k fixture items tagged in audit DB | Low | — | ✅ (Round 9a) |
-| 29 | R1 catalog claim: weather-related static datasets exist; inspected rainfall/dust records have no sourced API, and portal API catalog showed 0 APIs | Medium | — | 🔎 |
-| 30 | R2 live RSS: IMD and NDTV feed URLs returned 404; descriptions and expanded raw_payload metadata are persisted without a summary length cap | Medium | — | 🔎 |
-| 31 | R4 unseen 30-post holdout scored 25/30 (83.3%; dust storm 7/10); no rule edits after benchmark commit; genuine-control dataset absent | High | — | 🔎 |
-| 32 | `alembic check` still detects archive/PostGIS schema drift; AUDIT migration 0015→0017→0016→0017 succeeds | Medium | — | 🔎 |
+| 29 | R1 data.gov.in: historical datasets exist; live API not verified; no key configured (K1-6 log audit/logs/K1_6.log) | Medium | — | 🔎 |
+| 30 | R2 live RSS: Snapshot audit/rss_snapshot_k1.json (120 items); IMD & NDTV URLs returned 404 (disabled in config with comment); summary capped at 280 chars in DB storage; 30-item labeling sample written to audit/rss_label_sample.csv | Medium | — | 🔎 |
+| 31 | R4 holdout & credibility: 30-post holdout (agent-authored, not blind) scored 21/30 (70.0% accuracy; 9 misses listed in audit/logs/K1_2.log); hoax mean 0.4821 vs genuine 0.6500 (5 foreign-location >0.45; audit/logs/K1_3.log); category_rules.py diff empty | High | — | 🔎 |
+| 32 | `alembic check`: migration 0018 added for archive metadata & ORM index alignment; PostGIS filter added to env.py; alembic check exit 0; audit DB upgrade head -> downgrade -1 -> upgrade head verified (audit/logs/K1_7.log) | Medium | — | ✅ |
 | 33 | Test DB is truncated once per session and seeded; observation test uses unique location; full suite 476/0 three consecutive runs | Medium | — | ✅ |
 
 ---

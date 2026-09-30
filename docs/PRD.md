@@ -52,7 +52,7 @@ The **National Weather Big Data Analytics Platform (SIH26069)** solves this gap 
   - Event classification (primary disaster categories). — **IMPLEMENTED**
   - Duplicate detection and spatial-temporal clustering ($R \le 2.5\text{ km}$, $\Delta T \le 120\text{ min}$). — **IMPLEMENTED**
   - Explainable credibility scoring ($0.0000$ to $0.9800$) with transparent component breakdown. — **IMPLEMENTED**
-  - Meteorological sensor corroboration against proximate IMD AWS and CWC river gauges. — **IMPLEMENTED**
+  - Meteorological sensor corroboration against proximate IMD AWS and CWC river gauges. — **NOT IMPLEMENTED** (IMD is mock-only; physical sensor corroboration is planned S1).
 - **Centralized Data Storage**: PostgreSQL 16 + PostGIS unified repository with spatial GiST indexing and MinIO binary media storage. — **IMPLEMENTED**
 - **Real-Time Interactive Dashboard**:
   - Dynamic Map Explorer displaying live events with Leaflet and bounded GeoJSON layers. — **IMPLEMENTED**
