@@ -1,0 +1,41 @@
+=== Starting 50-user geo load sampler ===
+
+[BEFORE] pg_stat_activity:
+state  | count 
+--------+-------
+ active |     1
+ idle   |     1
+(2 rows)
+
+[BEFORE] docker stats (weather_ containers):
+weather_redis	0.66%	12.41MiB / 7.748GiB
+weather_minio	0.18%	121.9MiB / 7.748GiB
+weather_postgres	0.00%	203.8MiB / 7.748GiB
+
+[DURING] pg_stat_activity:
+state  | count 
+--------+-------
+ active |     1
+ idle   |     1
+(2 rows)
+
+[DURING] docker stats (weather_ containers):
+weather_redis	0.68%	16.12MiB / 7.748GiB
+weather_minio	0.17%	121.2MiB / 7.748GiB
+weather_postgres	0.00%	203.7MiB / 7.748GiB
+
+[AFTER] pg_stat_activity:
+state  | count 
+--------+-------
+ active |     1
+ idle   |     1
+(2 rows)
+
+[AFTER] docker stats (weather_ containers):
+weather_redis	0.68%	15.74MiB / 7.748GiB
+weather_minio	1.06%	121.8MiB / 7.748GiB
+weather_postgres	0.00%	203.5MiB / 7.748GiB
+
+=== Results: 100/100 success ===
+  Status codes: {200: 100}
+  p50=347ms  p95=608ms  max=713ms
