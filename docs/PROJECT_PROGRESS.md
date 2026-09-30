@@ -6,7 +6,7 @@
 - **Problem statement:** SIH 2026 PS 26069 (weather event intelligence platform)
 - **Team status:** Selected from IIT Madras internal round; now competing on this PS with other colleges
 - **Goals of the current phase:** (1) architecture that stays fast after deployment, (2) intact and recoverable pipelines, (3) full PS requirement coverage, (4) standout features
-- **Last updated:** 2026-09-30 (Round 5 audit complete)
+- **Last updated:** 2026-09-30 (Round 6 audit complete)
 - **Deployment status:** NOT deployed. Everything runs locally on a developer laptop (load generator, API, Postgres, Redis, workers and IDE agent share CPU/RAM). Treat absolute benchmark numbers as pessimistic and noisy; compare only before/after runs under the same conditions, and repeat suspicious timings 3 times. Deploy target: _undecided_ (fill in).
 - **Legend:** ✅ done · 🟡 in progress · ⬜ todo · ❌ failed / blocked · 🔎 needs verification
 
@@ -246,9 +246,10 @@ Keep your edits to this file under 40 lines. In your final reply, only state "PR
 | 2026-09-30 | Baseline (Part A + B, 100k rows) | B1 p50 917 ms / 46 DB conns; B4 p50 1177 ms; B5 +50 Redis conns; B7 0/200 | See Section 3 |
 | 2026-09-30 | Re-audit round 1 (A3, A4, A6, A7, A10, B1, B3, B4, B5, B7) | B1 423 RPS / p50 72 ms / 2 DB conns (cache-assisted); B3 summary 206 ms Seq Scan; B3 page 500 112.8 ms; B4 128 RPS / p50 286 ms; B5 +0 Redis conns; B7 pending 6→7, not recovered | See Section 6 scorecard |
 | 2026-09-30 | Re-audit round 2 (DB 5, S0–S5) | B1 uncached: 99.4 RPS, p50 11.3 ms, 11 conns; B1 cached: 446.6 RPS, p50 64.7 ms, 2 conns; B3 summary: 22.1–35.5 ms Index-Only Scan (no Seq Scan); B3 p500: 2.8–3.7 ms; B4 uncached: 85.1 RPS, p50 562 ms; B4 cached: 83.6 RPS, p50 555 ms; B7: 200/200 COMPLETED in 30s | S0 DB 5 validated; B7 recovered; V0/S5 verified |
-| 2026-09-30 | Re-audit round 3 (C1–C4, 100k rows) | C1 200/200 100% cred match; C2 TTL=0 bypass 196.6 RPS/p50 178ms vs TTL=10 388.9 RPS/p50 77.9ms; C3 4w 219.5 RPS/p50 146.6ms (<150ms) | C1–C4 completed; B4 p50 < 150ms target achieved |
-| 2026-09-30 | Re-audit round 4 (D1–D5) | D1: 0 only-in-OLD, 3261 only-in-NEW, 1186 identical; D3: map sends no limit (500 default restored, ~26KB gzip); D4: Redis c50 RTT p50 5.39ms -> 0.21ms, summary 441.8 RPS / p50 66.5ms | Full equivalence verified; Redis pooling active; zero duplicate indexes |
+| 2026-09-30 | Re-audit round 3 (C1–C4, 100k rows) | C1 200/200 100% cred match; C2 TTL=0 bypass 196.6 RPS/p50 178ms vs TTL=10 388.9 RPS/p50 77.9ms; C3 4w 219.5 RPS/p50 146.6ms (limit=50 only, not what the frontend sends) | C1–C4 completed; B4 limit=50 artifact |
+| 2026-09-30 | Re-audit round 4 (D1–D5) | D1: 0 only-in-OLD, 3261 only-in-NEW, 1186 identical; C1 credibility equivalence invalid (in-memory); D3: default 500 (~26KB gzip); D4: Redis c50 p50 0.21ms | Full equivalence verified; Redis pooling active; zero duplicate indexes |
 | 2026-09-30 | Re-audit round 5 (E1–E5, 100k rows) | E1: 0/10 neg controls, 80% plausibility; E3: honest B4 (/geo 500 gzip + /reports) 1w 79.2 RPS/p50 488ms vs 4w 77.5 RPS/p50 541ms; E4: c50 RTT p50 0.17–0.38ms, auto-reconnect 0.03s; E5: 18 idxs (52MB), 20k COPY 6978 rps | E1–E5 verified; geo payload reduced -6.5% raw (-16.5KB); local commits cleanly split |
+| 2026-09-30 | Re-audit round 6 (G1–G5, 100k rows) | G1 test isolation (weather_platform_test); G2 geo p50 104.2ms cached (4w)/156.1ms (1w), uncached 487.5ms; G3 bench 100% prec/rec; G5 migration 0013 dropped 2 dup idxs, 20k COPY +26.7% (1237ms) | G1–G5 complete; zero duplicate indexes in DB |
 
 ---
 
@@ -259,8 +260,9 @@ Keep your edits to this file under 40 lines. In your final reply, only state "PR
 | 2026-09-30 | F1–F6 | _baseline_ | Redis deadlock fix, stream recovery (XAUTOCLAIM + DLQ), report rate limit, production guards, new categories + alignment, `imd` hashtag | BE 419 pass / 1 skip; FE 174 pass; tsc 0 errors; ruff clean |
 | 2026-09-30 | V0, P1–P4, P6 | _batch2_ | DB pool, gzip, dashboard cache, shared SSE subscriber, frontend debounce | BE 435 pass; FE 177 pass; tsc 0 errors |
 | 2026-09-30 | S1, S2, P3, O9 | `d9f717d`, `a1b95e8`, `383ee6b` | Fix XREADGROUP BLOCK 0 & XAUTOCLAIM cursor (B7), add migration 0011 summary covering index (B3), optimize evidence linking 1-to-N | BE 436 pass / 0 fail; FE 177 pass; tsc 0 errors; ruff clean |
-| 2026-09-30 | D1–D5, B4, C1–C4 | `baee985`, `9c8ee38`, `6556100` | Evidence linking equivalence restored (0 only-in-OLD), Redis connection pooling (c50 p50 0.21ms), geo limit, regression tests | BE 441 pass; FE 177 pass; tsc 0 errors; ruff clean |
-| 2026-09-30 | E1–E5 | `b0e72af`, `6efda69`, `276f106`, `9e33220`, `9052ca5` | Round 5: precision tightening, honest B4 load test, unused geo property drop, Redis pool audit & reconnect, 18-index analysis | BE 442 pass; FE 177 pass; tsc 0 errors; ruff clean |
+| 2026-09-30 | D1–D5, B4, C1–C4 | `6efda69`, `b0e72af` | Evidence linking equivalence restored (0 only-in-OLD), Redis connection pooling (c50 p50 0.21ms), geo limit, regression tests | BE 441 pass; FE 177 pass; tsc 0 errors; ruff clean |
+| 2026-09-30 | E1–E5 | `276f106`, `9e33220`, `9052ca5`, `a553fd3` | Round 5: precision tightening, honest B4 load test, unused geo property drop, Redis pool audit & reconnect, 18-index analysis | BE 442 pass; FE 177 pass; tsc 0 errors; ruff clean |
+| 2026-09-30 | G1–G5 | `current` | Round 6: test DB isolation, geo Redis byte caching (compresslevel=4), evidence linking analysis, migration 0013 dropping duplicate indexes | BE 442 pass; FE 177 pass; tsc 0 errors; ruff clean |
 
 ---
 
@@ -284,6 +286,14 @@ Keep your edits to this file under 40 lines. In your final reply, only state "PR
 | 14 | A7: verify `/docs` and startup guards with `ENVIRONMENT=production` (deferred until deployment) | Low now / Medium at deploy | — | ⏸ |
 | 15 | Re-audit ran on Redis DB 0: verified fresh on Redis DB 5 | Medium | — | ✅ |
 | 16 | Audit test scripts freeze: B7 frozen and verified 200/200 pass | Medium | — | ✅ |
+| 17 | Test DB isolation: pytest redirected to dedicated `weather_platform_test` database and Redis DB 15 | High | — | ✅ (G1) |
+| 18 | H1: All event_category rows ensured via migration 0014; NULL category_id backfilled from reported_category; DUST_STORM/STRONG_WIND now appear in dashboard | High | — | ✅ (H1) |
+| 19 | H2: 200-incident credibility analysis — mean delta 0.0435; 68.5% increased, 13.5% decreased; RELATED links inflate scores by mean 0.0637 | Medium | — | ✅ (H2/analysis-only) |
+| 20 | H3: Evidence precision checker repaired (None-safe city/state lookup); evaluated at thresholds 0.45/0.50/0.55 | Medium | — | ✅ (H3) |
+| 21 | H4: Migration 0015 partial geo-sort index `(occurred_at DESC NULLS LAST, created_at DESC) WHERE geom IS NOT NULL` — Seq Scan 30ms → Index Scan 3ms; 50-user load 100% Redis-served, Postgres CPU 0% | High | — | ✅ (H4) |
+| 22 | H4: max_connections=100; pg_stat_activity under 50-user geo load: active=1 (sampler only), Postgres never queried | Medium | — | ✅ (H4) |
+| 23 | H5: Geo gzip size variation (G2: 19-20KB, R5/now: 37KB): explained by row count difference — 2047 geo-tagged reports in 24h window now vs fewer at earlier measurement | Low | — | ✅ (H5) |
+| 24 | H5: Mypy errors a1b95e8→HEAD: **31 → 31** (no regression); all 31 are pre-existing in feedback.py (Column[T] assignment type narrowing) | Low | — | ✅ (H5) |
 
 ---
 
