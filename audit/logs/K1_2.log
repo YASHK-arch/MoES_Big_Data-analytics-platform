@@ -4,3 +4,24 @@ NOT FOUND: audit/holdout_r4_v2.jsonl
 $ git diff --stat -- back-end/app/intelligence/category_rules.py
 $ git status --short
 ?? audit/logs/K1_2.log
+$ cd back-end && .venv/bin/python - <<PY (single hold-out run)
+header=AGENT-AUTHORED, NOT BLIND; posts=30; correct=20; accuracy=20/30=0.6667
+FOG: 6/10=0.6000
+DUST_STORM: 7/10=0.7000
+STRONG_WIND: 7/10=0.7000
+CONFUSION rows=expected cols=FOG,DUST_STORM,STRONG_WIND,OTHER,NONE
+FOG 6 0 0 4 0
+DUST_STORM 0 7 0 3 0
+STRONG_WIND 0 0 7 3 0
+MISSES=10
+MISS expected=FOG predicted=OTHER text='Lucknow bypass pe subah itna dhuandhar tha ki aage wali bus bas laal dots jaisi dikh rahi thi.'
+MISS expected=FOG predicted=OTHER text='आज नोएडा सेक्टर 62 में कोहरा इतना घना है कि सामने की लेन भी नहीं दिख रही।'
+MISS expected=FOG predicted=OTHER text='Patna junction side full white-out scene, train horns and no visibility rn.'
+MISS expected=FOG predicted=OTHER text='सुबह की कुहासे वाली हालत में airport road पर visibility बहुत कम है।'
+MISS expected=DUST_STORM predicted=OTHER text='जैसलमेर में रेत वाली आंधी ने आसमान पीला कर दिया, बाहर निकलना मुश्किल.'
+MISS expected=DUST_STORM predicted=OTHER text='Barmer highway pe aandhi aisi ki balu seedha aankhon mein, bikes pulled over.'
+MISS expected=DUST_STORM predicted=OTHER text='बीकानेर रोड पर मिट्टी वाली तेज आंधी, helmet visor पर रेत जम गई.'
+MISS expected=STRONG_WIND predicted=OTHER text='तेज झक्कड़ से पुराने पेड़ की डाल टूटकर फुटपाथ पर आ गिरी.'
+MISS expected=STRONG_WIND predicted=OTHER text='हवा के थपेड़े इतने तेज कि दुकान का फाइबर बोर्ड उखड़ गया.'
+MISS expected=STRONG_WIND predicted=OTHER text='हवा का तेज झोंका आया और छत पर रखी खाली बाल्टी नीचे गिर गई.'
+$ git diff --stat -- back-end/app/intelligence/category_rules.py
