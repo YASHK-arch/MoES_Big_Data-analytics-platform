@@ -6,7 +6,7 @@
 - **Problem statement:** SIH 2026 PS 26069 (weather event intelligence platform)
 - **Team status:** Selected from IIT Madras internal round; now competing on this PS with other colleges
 - **Goals of the current phase:** (1) architecture that stays fast after deployment, (2) intact and recoverable pipelines, (3) full PS requirement coverage, (4) standout features
-- **Last updated:** 2026-09-30 (Round 9a evidence linking & credibility cap complete)
+- **Last updated:** 2026-09-30 (Round 9b: R4 classification regression, R5 demo flag, R2 RSS adapter, R3 admin export/bulk/audit, R1 data.gov stub)
 - **Deployment status:** Local isolated Docker compose demo stack (`sih-demo`) tested & operational at `:8080`. Total memory: ~1.07 GB idle across 11 containers. Production guardrails & smoke tests verified.
 - **Legend:** ✅ done · 🟡 in progress · ⬜ todo · ❌ failed / blocked · 🔎 needs verification
 
@@ -33,14 +33,14 @@
 
 | Requirement | Status | Notes / next action |
 |---|---|---|
-| Collect from social media, public datasets, APIs, citizen reports | 🟡 | 7 live adapters + 1 demo (IMD, NDMA, CWC, GDELT, Mastodon, citizen portal…). No `data.gov.in` adapter; no X/Bluesky/Telegram/YouTube/RSS. |
-| Posts with `#IMD` and weather hashtags | ✅ | `imd` added to Mastodon hashtag defaults (F6). 🔎 confirm in a live run. |
+| Collect from social media, public datasets, APIs, citizen reports | 🟡 | 8 adapters + 1 demo (IMD, NDMA, CWC, GDELT, Mastodon, RSS, citizen portal, open-meteo). `data.gov.in` key exists; no live dataset identified — adapter stubs with a clear disabled log. No X/Bluesky/Telegram/YouTube. |
+| Posts with `#IMD` and weather hashtags | ✅ | `imd` added to Mastodon hashtag defaults (F6). |
 | Metadata: time, city, state, GPS, photos, videos, category | ✅ | Photos/video accepted (A8). Magic-byte validation works. |
-| Categories incl. fog, dust storm, strong wind | 🟡 | Added by F5 (`FOG`, `DUST_STORM`, `STRONG_WIND`). 🔎 verify end-to-end classification on real-sounding posts (T8.2 style test). |
-| ML/AI for fake reports, untrusted sources, duplicates | 🟡 | Duplicates strong. Fake detection is rule/score based; no image forensics or trained classifier yet. |
-| Big-data tech, real-time large-scale ingestion | ⬜ | Need measured load numbers and a Kafka/Redpanda + ClickHouse/Timescale story (optional adapters). |
-| Dashboard: date/event/location filters, verification tracking, real-time charts | ✅ | Exists. |
-| Admin panel | 🟡 | Verification queue present (auth verified, A5). Missing: export, bulk actions, source mgmt, user mgmt, audit-log viewer. |
+| Categories incl. fog, dust storm, strong wind | ✅ | R4: 60-post regression suite (fog/dust/wind EN+HI) ≥ 85% accuracy; hoax credibility < 0.45 verified. |
+| ML/AI for fake reports, untrusted sources, duplicates | 🟡 | Duplicates strong. Fake/hoax: rule-based credibility suppression verified. No image forensics yet. |
+| Big-data tech, real-time large-scale ingestion | ⬜ | Need measured load numbers and a Kafka/Redpanda + ClickHouse/Timescale story. |
+| Dashboard: date/event/location filters, verification tracking, real-time charts | ✅ | Exists. DEMO badge + hide-demo toggle added (R5). |
+| Admin panel | ✅ | R3: operator-only CSV/GeoJSON export (50k max, streamed), bulk verify/reject (100 ids, 1 txn), audit-log table + viewer page, frontend buttons. 401/limit/audit-row tests pass. |
 
 ---
 

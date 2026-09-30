@@ -1,5 +1,6 @@
 from fastapi import APIRouter
 
+from app.api.v1.admin import router as admin_router
 from app.api.v1.analytics import router as analytics_router
 from app.api.v1.auth import router as auth_router
 from app.api.v1.citizen import router as citizen_router
@@ -20,6 +21,7 @@ api_v1_router = APIRouter()
 # Register endpoint routers
 api_v1_router.include_router(health_router, tags=["Health"])
 api_v1_router.include_router(auth_router, prefix="/auth", tags=["Authentication"])
+api_v1_router.include_router(admin_router, prefix="/admin", tags=["Admin Operations"])
 api_v1_router.include_router(citizen_router, prefix="/citizen", tags=["Citizen Portal"])
 api_v1_router.include_router(events_router, prefix="/events", tags=["Realtime Events"])
 api_v1_router.include_router(incidents_router, prefix="/incidents", tags=["Incidents"])

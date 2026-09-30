@@ -15,8 +15,19 @@ import {
   ReportDetailData,
   ReportListQueryParams,
 } from '@/types';
+import { Link } from 'react-router-dom';
+import { adminApi } from '@/services/adminApi';
 import { incidentKeys, dashboardKeys, analyticsKeys } from '@/lib/queryKeys';
-import { ChevronLeft, ChevronRight, ShieldCheck } from 'lucide-react';
+import {
+  ChevronLeft,
+  ChevronRight,
+  ClipboardList,
+  Download,
+  Loader2,
+  ShieldCheck,
+  CheckCircle2,
+  XCircle,
+} from 'lucide-react';
 
 export const AdminVerificationQueuePage: React.FC = () => {
   const queryClient = useQueryClient();
@@ -33,6 +44,9 @@ export const AdminVerificationQueuePage: React.FC = () => {
 
   const [selectedReport, setSelectedReport] = useState<ReportDetailData | null>(null);
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
+  const [isExporting, setIsExporting] = useState<string | null>(null);
+  const [isBulkLoading, setIsBulkLoading] = useState(false);
+  const [bulkFeedback, setBulkFeedback] = useState<string | null>(null);
 
   // Map UI filters to backend query parameters
   const queryParams: ReportListQueryParams = useMemo(() => {
@@ -154,6 +168,58 @@ export const AdminVerificationQueuePage: React.FC = () => {
     setSelectedReport(null);
   };
 
+  const handleExport = async (format: 'csv' | 'geojson') => {
+    try {
+      setIsExporting(format);
+      await adminApi.downloadExport(format, {
+        limit: 50000,
+        category: filters.category !== 'ALL' ? filters.category : undefined,
+        status:
+          filters.status !== 'ALL'
+            ? filters.status === 'ACTIVE'
+              ? 'PENDING,UNDER_REVIEW'
+              : filters.status
+            : undefined,
+        severity: filters.severity !== 'ALL' ? filters.severity : undefined,
+      });
+    } catch (err) {
+      console.error(`Export ${format} failed:`, err);
+    } finally {
+      setIsExporting(null);
+    }
+  };
+
+  const handleBulkAction = async (action: 'VERIFY' | 'REJECT') => {
+    if (selectedIds.size === 0) return;
+    const ids = Array.from(selectedIds).slice(0, 100);
+    const confirmed = window.confirm(
+      `Are you sure you want to bulk ${action.toLowerCase()} ${ids.length} selected report(s)?`
+    );
+    if (!confirmed) return;
+
+    try {
+      setIsBulkLoading(true);
+      setBulkFeedback(null);
+      const res = await adminApi.bulkVerification({
+        incident_ids: ids,
+        action,
+        notes: `Bulk operator ${action.toLowerCase()} triage action`,
+        rejection_reason: action === 'REJECT' ? 'OPERATOR_BULK_TRIAGE' : undefined,
+      });
+      setBulkFeedback(
+        `Successfully ${action === 'VERIFY' ? 'verified' : 'rejected'} ${res.data.processed_count} incident(s).`
+      );
+      setSelectedIds(new Set());
+      handleActionComplete();
+      setTimeout(() => setBulkFeedback(null), 5000);
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : 'Bulk action failed';
+      setBulkFeedback(`Error: ${msg}`);
+    } finally {
+      setIsBulkLoading(false);
+    }
+  };
+
   return (
     <div className="flex min-h-screen flex-col bg-slate-50 text-slate-900">
       <Navbar />
@@ -175,7 +241,117 @@ export const AdminVerificationQueuePage: React.FC = () => {
                 Review and triage incoming citizen reports requiring authorized operator attention.
               </p>
             </div>
+
+            {/* Admin Header Actions */}
+            <div className="flex flex-wrap items-center gap-2">
+              <Link
+                to="/admin/audit-logs"
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-slate-700 bg-white border border-slate-300 rounded-lg hover:bg-slate-50 transition-colors shadow-sm"
+              >
+                <ClipboardList className="h-3.5 w-3.5 text-slate-500" />
+                <span>Audit Logs</span>
+              </Link>
+
+              <button
+                type="button"
+                onClick={() => handleExport('csv')}
+                disabled={isExporting !== null}
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-slate-700 bg-white border border-slate-300 rounded-lg hover:bg-slate-50 transition-colors shadow-sm disabled:opacity-50"
+              >
+                {isExporting === 'csv' ? (
+                  <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                ) : (
+                  <Download className="h-3.5 w-3.5 text-slate-500" />
+                )}
+                <span>Export CSV</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => handleExport('geojson')}
+                disabled={isExporting !== null}
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-slate-700 bg-white border border-slate-300 rounded-lg hover:bg-slate-50 transition-colors shadow-sm disabled:opacity-50"
+              >
+                {isExporting === 'geojson' ? (
+                  <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                ) : (
+                  <Download className="h-3.5 w-3.5 text-slate-500" />
+                )}
+                <span>Export GeoJSON</span>
+              </button>
+            </div>
           </div>
+
+          {/* Feedback Banner */}
+          {bulkFeedback && (
+            <div
+              className={`mt-4 p-3 rounded-xl border text-xs font-medium flex items-center justify-between ${
+                bulkFeedback.startsWith('Error')
+                  ? 'bg-rose-50 border-rose-200 text-rose-800'
+                  : 'bg-emerald-50 border-emerald-200 text-emerald-800'
+              }`}
+            >
+              <span>{bulkFeedback}</span>
+              <button
+                type="button"
+                onClick={() => setBulkFeedback(null)}
+                className="text-slate-400 hover:text-slate-600 font-bold ml-2"
+              >
+                ✕
+              </button>
+            </div>
+          )}
+
+          {/* Bulk Action Toolbar */}
+          {selectedIds.size > 0 && (
+            <div className="mt-4 flex flex-wrap items-center justify-between gap-3 rounded-xl border border-blue-200 bg-blue-50/90 p-3 shadow-xs">
+              <div className="flex items-center gap-2">
+                <span className="inline-flex h-6 w-6 items-center justify-center rounded-full bg-blue-600 text-xs font-bold text-white">
+                  {selectedIds.size}
+                </span>
+                <span className="text-xs font-semibold text-blue-950">
+                  {selectedIds.size} incident{selectedIds.size > 1 ? 's' : ''} selected
+                </span>
+                <button
+                  type="button"
+                  onClick={() => setSelectedIds(new Set())}
+                  className="text-xs text-blue-700 hover:text-blue-900 underline ml-2 cursor-pointer"
+                >
+                  Clear
+                </button>
+              </div>
+
+              <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  disabled={isBulkLoading}
+                  onClick={() => handleBulkAction('VERIFY')}
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-white bg-emerald-600 hover:bg-emerald-700 rounded-lg shadow-sm transition-colors disabled:opacity-50 cursor-pointer"
+                >
+                  {isBulkLoading ? (
+                    <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                  ) : (
+                    <CheckCircle2 className="h-3.5 w-3.5" />
+                  )}
+                  <span>Verify Selected ({selectedIds.size})</span>
+                </button>
+
+                <button
+                  type="button"
+                  disabled={isBulkLoading}
+                  onClick={() => handleBulkAction('REJECT')}
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-white bg-rose-600 hover:bg-rose-700 rounded-lg shadow-sm transition-colors disabled:opacity-50 cursor-pointer"
+                >
+                  {isBulkLoading ? (
+                    <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                  ) : (
+                    <XCircle className="h-3.5 w-3.5" />
+                  )}
+                  <span>Reject Selected ({selectedIds.size})</span>
+                </button>
+              </div>
+            </div>
+          )}
 
           {/* KPI Summary Cards */}
           <div className="mt-6">

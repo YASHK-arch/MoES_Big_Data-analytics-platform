@@ -53,6 +53,11 @@ const AdminVerificationQueuePage = lazy(() =>
     default: m.AdminVerificationQueuePage,
   }))
 );
+const AdminAuditLogPage = lazy(() =>
+  import("@/pages/AdminAuditLogPage").then((m) => ({
+    default: m.AdminAuditLogPage,
+  }))
+);
 const AnalyticsPage = lazy(() =>
   import("@/pages/AnalyticsPage").then((m) => ({ default: m.AnalyticsPage }))
 );
@@ -205,6 +210,14 @@ export function App() {
                   element={
                     <ProtectedRoute roles={["OPERATOR", "ADMIN"]}>
                       <AdminVerificationQueuePage />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/admin/audit-logs"
+                  element={
+                    <ProtectedRoute roles={["OPERATOR", "ADMIN"]}>
+                      <AdminAuditLogPage />
                     </ProtectedRoute>
                   }
                 />

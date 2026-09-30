@@ -11,6 +11,7 @@ export * from './duplicate';
 export * from './geo';
 export * from './verification';
 export * from './report';
+export * from './admin';
 export * from './analytics';
 export * from './realtime';
 
